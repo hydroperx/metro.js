@@ -3,7 +3,7 @@ import { pointsToRem } from "../utils/points";
 import assert from "assert";
 import extend from "extend";
 
-export type HGroupOptions = {
+export type VGroupOptions = {
     padding?: number,
     paddingLeft?: number,
     paddingRight?: number,
@@ -50,25 +50,25 @@ export type HGroupOptions = {
     children?: React.ReactNode,
 };
 
-const horizontalAlignMaps: any = {
-    "start": "start",
-    "left": "start",
-    "center": "center",
-    "end": "end",
-    "right": "end",
-    "spaceBetween": "space-between"
-};
-
 const verticalAlignMaps: any = {
     "start": "start",
     "top": "start",
     "center": "center",
     "end": "end",
     "bottom": "end",
+    "spaceBetween": "space-between"
+};
+
+const horizontalAlignMaps: any = {
+    "start": "start",
+    "left": "start",
+    "center": "center",
+    "end": "end",
+    "right": "end",
     "stretch": "stretch"
 };
 
-export function HGroup(options: HGroupOptions)
+export function VGroup(options: VGroupOptions)
 {
     const newStyle: React.CSSProperties = {};
 
@@ -134,16 +134,16 @@ export function HGroup(options: HGroupOptions)
     {
         newStyle.overflowY = "hidden";
     }
-    if (options.horizontalAlign)
-    {
-        const m = horizontalAlignMaps[options.horizontalAlign];
-        assert(!!m, `Unsupported horizontal alignment: ${options.horizontalAlign}`);
-        newStyle.justifyContent = m;
-    }
     if (options.verticalAlign)
     {
         const m = verticalAlignMaps[options.verticalAlign];
         assert(!!m, `Unsupported vertical alignment: ${options.verticalAlign}`);
+        newStyle.justifyContent = m;
+    }
+    if (options.horizontalAlign)
+    {
+        const m = horizontalAlignMaps[options.horizontalAlign];
+        assert(!!m, `Unsupported horizontal alignment: ${options.horizontalAlign}`);
         newStyle.alignItems = m;
     }
 

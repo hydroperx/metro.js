@@ -1,7 +1,11 @@
+Use Emotion for stylizing components through a CSS class.
+
+- https://emotion.sh/docs/introduction
+
 Basic components
 
-- [ ] HGroup
-- [ ] VGroup
+- [x] HGroup
+- [x] VGroup
 
 Shortcuts
 
