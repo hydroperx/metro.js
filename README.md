@@ -5,5 +5,5 @@
 Install it with:
 
 ```sh
-bun i @jetengine/metro @emotion/css @emotion/react
+bun i @hydroper/metro @emotion/css @emotion/react
 ```
