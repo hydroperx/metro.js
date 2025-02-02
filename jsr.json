@@ -1,0 +1,6 @@
+{
+  "name": "@hydroper/metrocomponents",
+  "version": "1.0.0",
+  "exports": "./src/index.ts",
+  "license": "Apache-2.0"
+}
