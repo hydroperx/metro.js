@@ -46,6 +46,8 @@ export type HGroupOptions = {
     maxWidth?: number,
     maxHeight?: number,
 
+    visible?: boolean,
+
     style?: React.CSSProperties,
     children?: React.ReactNode,
 };
@@ -72,7 +74,7 @@ export function HGroup(options: HGroupOptions)
 {
     const newStyle: React.CSSProperties = {};
 
-    newStyle.display = "flex";
+    newStyle.display = (options.visible ?? true) ? "flex" : "none";
     newStyle.flexDirection = "row";
 
     if (options.padding !== undefined)

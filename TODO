@@ -6,7 +6,7 @@ Basic components
 
 - [x] HGroup
 - [x] VGroup
-- [ ] Label
+- [x] Label
 - [ ] Button
 - [ ] LoadingIcon
   - See https://stackoverflow.com/a/20371835/26380963
