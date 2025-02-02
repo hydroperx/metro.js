@@ -3,8 +3,8 @@ import extend from "extend";
 import { css } from "@emotion/css";
 
 export type ButtonVariant =
-    "normal" |
     "primary" |
+    "secondary" |
     "danger" |
     "white-outline" |
     "white-outline-primary";
@@ -54,6 +54,11 @@ export function Button(options: ButtonOptions)
         newStyle.maxHeight = pointsToRem(options.maxHeight);
     }
 
+    if (options.disabled)
+    {
+        newStyle.opacity = "0.67";
+    }
+
     if (options.style)
     {
         extend(newStyle, options.style);
@@ -61,10 +66,11 @@ export function Button(options: ButtonOptions)
 
     let className: string = "";
 
-    switch (options.variant ?? "normal")
+    switch (options.variant ?? "secondary")
     {
-        case "normal":
+        case "secondary":
         {
+            // uses providedTheme.colors.foreground as character color
             className = css `
             `;
             break;

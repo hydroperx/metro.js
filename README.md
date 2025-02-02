@@ -37,3 +37,19 @@ import "@fontsource/open-sans/400.css";
 import "@fontsource/open-sans/500.css";
 import "@fontsource/open-sans/700.css";
 ```
+
+## Documentation
+
+### Theming
+
+By default, the `lightTheme` is used. The built-in themes are `lightTheme`, `darkTheme` and `purpleTheme`. You can provide a specific theme for a React section using:
+
+```tsx
+import { ThemeProvider } from "@hydroper/metrocomponents";
+
+// somewhere in React content
+<ThemeProvider value={theme}>
+</ThemeProvider>
+```
+
+You can nest it as well.

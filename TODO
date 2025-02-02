@@ -11,9 +11,21 @@ Basic components
 - [ ] LoadingIcon
   - See https://stackoverflow.com/a/20371835/26380963
 - [ ] ContextMenu
-  - [ ] `desktop: boolean`: Causes a desktop rendering of the context menu. Implement that with a context provider `ContextMenuDesktop_Context.Provider`.
+  - [ ] `desktop?: boolean`: Causes a desktop rendering of the context menu. Implement that with a context provider `ContextMenuDesktop_Context.Provider`.
 - [ ] ContextMenuItem
+- [ ] OptionList
+  - [ ] `big?: boolean`: If `true`, displays a big elegant option list.
+- [ ] TextInput
+  - [ ] Always white, containing dark text.
+  - [ ] Bordered when the provided theme's `colors.background` is dark (use the `color` NPM package to decide this).
+  - [ ] `icon?: "search"` (search icon is displayed at the right with a background equals `providedTheme.colors.primaryBackground`)
+  - [ ] `disabled?: boolean`
 
 Shortcuts
 
 - [ ] Keyboard shortcuts
+
+Icons
+
+- [ ] Icon white/black mode
+- [ ] Search icon
