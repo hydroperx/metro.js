@@ -18,7 +18,9 @@ bunx jsr add @hydroper/metrocomponents
 bun i @emotion/css @emotion/react
 ```
 
-### Installing the Open Sans font
+> Note that this package uses the [Emotion](https://emotion.sh) library for skinning UI components.
+
+### Installing the required Open Sans font
 
 Install it using Bun:
 

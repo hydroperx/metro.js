@@ -7,17 +7,19 @@ export type Theme =
         background: string,
         foreground: string,
 
-        buttonBackground: string,
-        hoveredButtonBackground: string,
-        pressedButtonBackground: string,
+        darkMenuBackground: string,
 
-        primaryButtonBackground: string,
-        hoveredPrimaryButtonBackground: string,
-        pressedPrimaryButtonBackground: string,
+        primaryBackground: string,
+        hoveredPrimaryBackground: string,
+        pressedPrimaryBackground: string,
 
-        dangerButtonBackground: string,
-        hoveredDangerButtonBackground: string,
-        pressedDangerButtonBackground: string,
+        secondaryBackground: string,
+        hoveredSecondaryBackground: string,
+        pressedSecondaryBackground: string,
+
+        dangerBackground: string,
+        hoveredDangerBackground: string,
+        pressedDangerBackground: string,
 
         focusDashes: string,
     },

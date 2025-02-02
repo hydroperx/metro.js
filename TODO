@@ -10,6 +10,9 @@ Basic components
 - [ ] Button
 - [ ] LoadingIcon
   - See https://stackoverflow.com/a/20371835/26380963
+- [ ] ContextMenu
+  - [ ] `desktop: boolean`: Causes a desktop rendering of the context menu. Implement that with a context provider `ContextMenuDesktop_Context.Provider`.
+- [ ] ContextMenuItem
 
 Shortcuts
 
