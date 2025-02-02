@@ -22,16 +22,6 @@ export type ButtonOptions =
 
     autoFocus?: boolean,
 
-    /**
-     * For use in adhered button groups.
-     */
-    adhereRight?: boolean,
-
-    /**
-     * For use in adhered button groups.
-     */
-    adhereLeft?: boolean,
-
     minWidth?: number,
     minHeight?: number,
     maxWidth?: number,
