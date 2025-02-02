@@ -8,6 +8,8 @@ Basic components
 - [x] VGroup
 - [ ] Label
 - [ ] Button
+- [ ] LoadingIcon
+  - See https://stackoverflow.com/a/20371835/26380963
 
 Shortcuts
 
