@@ -7,7 +7,7 @@ Basic components
 - [x] HGroup
 - [x] VGroup
 - [x] Label
-- [ ] Button
+- [x] Button
 - [ ] LoadingIcon
   - See https://stackoverflow.com/a/20371835/26380963
 - [ ] ContextMenu
