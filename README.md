@@ -11,21 +11,21 @@ Set of React components using the Metro design.
 
 ### Installing required packages
 
-Install it using [Bun](https://bun.sh):
+Installation:
 
 ```sh
-bunx jsr add @hydroper/metrocomponents
-bun i @emotion/css @emotion/react
+npx jsr add @hydroper/metrocomponents
+npm i @emotion/css @emotion/react
 ```
 
 > Note that this package uses the [Emotion](https://emotion.sh) library for skinning UI components.
 
 ### Installing the required Open Sans font
 
-Install it using Bun:
+Installation:
 
 ```sh
-bun i @fontsource/open-sans
+npm i @fontsource/open-sans
 ```
 
 Import it into your entry point TypeScript as follows:
