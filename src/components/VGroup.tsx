@@ -75,7 +75,7 @@ export function VGroup(options: VGroupOptions)
     const newStyle: React.CSSProperties = {};
 
     newStyle.display = (options.visible ?? true) ? "flex" : "none";
-    newStyle.flexDirection = "row";
+    newStyle.flexDirection = "column";
 
     if (options.padding !== undefined)
     {
