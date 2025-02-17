@@ -3,13 +3,15 @@
   "type": "module",
   "devDependencies": {
     "@types/react-dom": "^18.3.1",
-    "buffer": "^6.0.3",
-    "parcel": "^2.13.3",
-    "process": "^0.11.10"
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "~5.7.2",
+    "vite": "^6.1.0"
   },
   "scripts": {
-    "start": "parcel src/index.html --dist-dir dist",
-    "build": "parcel build src/index.html --dist-dir dist"
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@emotion/css": "^11.13.5",
@@ -18,8 +20,5 @@
     "@hydroper/metrocomponents": "file:..",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
-  },
-  "@parcel/resolver-default": {
-    "packageExports": true
   }
 }
