@@ -2,10 +2,22 @@ import { pointsToRem } from "../utils/points";
 import extend from "extend";
 import { useContext } from "react";
 import { ThemeContext } from "../theme";
+import { fontSize } from "../utils/commonMeasures";
 
 export type ContainerOptions =
 {
     full?: boolean,
+
+    padding?: number,
+    paddingLeft?: number,
+    paddingRight?: number,
+    paddingTop?: number,
+    paddingBottom?: number,
+
+    /**
+     * Indicates whether or not character selection is enabled for this container.
+     */
+    selection?: boolean,
 
     /**
      * Indicates whether the container should use a solid color
@@ -36,10 +48,25 @@ export function Container(options: ContainerOptions)
 
     const newStyle: React.CSSProperties = {};
 
-    if (options.full)
+    if (options.padding !== undefined)
     {
-        newStyle.width = "100%";
-        newStyle.height = "100%";
+        newStyle.padding = pointsToRem(options.padding);
+    }
+    if (options.paddingLeft !== undefined)
+    {
+        newStyle.paddingLeft = pointsToRem(options.paddingLeft);
+    }
+    if (options.paddingRight !== undefined)
+    {
+        newStyle.paddingRight = pointsToRem(options.paddingRight);
+    }
+    if (options.paddingTop !== undefined)
+    {
+        newStyle.paddingTop = pointsToRem(options.paddingTop);
+    }
+    if (options.paddingBottom !== undefined)
+    {
+        newStyle.paddingBottom = pointsToRem(options.paddingBottom);
     }
     if (options.solid)
     {
@@ -47,6 +74,17 @@ export function Container(options: ContainerOptions)
     }
 
     newStyle.color = theme.colors.foreground ?? "#000";
+
+    // Enable or disable selection
+    newStyle.userSelect =
+    newStyle.WebkitUserSelect =
+    newStyle.MozUserSelect = (options.selection ?? true) ? "auto" : "none";
+
+    // Set font size
+    newStyle.fontSize = fontSize;
+
+    // Set font family
+    newStyle.fontFamily = "'Open Sans', 'Segoe UI', sans";
 
     if (options.minWidth !== undefined)
     {
@@ -63,6 +101,11 @@ export function Container(options: ContainerOptions)
     if (options.maxHeight !== undefined)
     {
         newStyle.maxHeight = pointsToRem(options.maxHeight);
+    }
+    if (options.full)
+    {
+        newStyle.width = "100%";
+        newStyle.height = "100%";
     }
 
     if (options.style)

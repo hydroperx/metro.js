@@ -10,6 +10,8 @@ export type HGroupOptions = {
     paddingTop?: number,
     paddingBottom?: number,
 
+    inline?: boolean,
+
     gap?: number,
     /**
      * Horizontal alignment.
@@ -19,12 +21,6 @@ export type HGroupOptions = {
      * Vertical alignment.
      */
     verticalAlign?: Alignment,
-    /**
-     * Grow factor of the component relative to
-     * its container. This indicates how much space
-     * the component takes out of a number of items.
-     */
-    grow?: number,
 
     /**
      * Whether to clip in case content overflows.
@@ -74,7 +70,7 @@ export function HGroup(options: HGroupOptions)
 {
     const newStyle: React.CSSProperties = {};
 
-    newStyle.display = (options.visible ?? true) ? "flex" : "none";
+    newStyle.display = (options.visible ?? true) ? (options.inline ? "inline-flex" : "flex") : "none";
     newStyle.flexDirection = "row";
 
     if (options.padding !== undefined)
@@ -116,10 +112,6 @@ export function HGroup(options: HGroupOptions)
     if (options.maxHeight !== undefined)
     {
         newStyle.maxHeight = pointsToRem(options.maxHeight);
-    }
-    if (options.grow !== undefined)
-    {
-        newStyle.flexGrow = String(options.grow);
     }
 
     newStyle.overflow = "auto";

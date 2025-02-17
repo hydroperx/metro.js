@@ -4,6 +4,7 @@ import { css } from "@emotion/css";
 import { useContext } from "react";
 import { ThemeContext } from "../theme";
 import Color from "color";
+import { fontSize } from "../utils/commonMeasures";
 
 export type ButtonVariant =
     "primary" |
@@ -34,6 +35,11 @@ export type ButtonOptions =
 
     style?: React.CSSProperties,
     children?: React.ReactNode,
+
+    click?: React.MouseEventHandler<HTMLButtonElement>,
+    mouseOver?: React.MouseEventHandler<HTMLButtonElement>,
+    mouseOut?: React.MouseEventHandler<HTMLButtonElement>,
+    mouseUp?: React.MouseEventHandler<HTMLButtonElement>,
 };
 
 export function Button(options: ButtonOptions)
@@ -71,7 +77,7 @@ export function Button(options: ButtonOptions)
 
     let className: string = "";
     
-    const padding = "0.7rem 1rem";
+    const padding = "0.6rem 1rem";
 
     switch (options.variant ?? "secondary")
     {
@@ -83,7 +89,8 @@ export function Button(options: ButtonOptions)
                 color: ${theme.colors.foreground};
                 padding: ${padding};
                 border: none;
-                border-radius: none;
+                border-radius: 0;
+                font-size: ${fontSize};
 
                 &:hover {
                     background: ${theme.colors.hoveredSecondaryBackground};
@@ -108,7 +115,8 @@ export function Button(options: ButtonOptions)
                 color: ${theme.colors.primaryForeground};
                 padding: ${padding};
                 border: none;
-                border-radius: none;
+                border-radius: 0;
+                font-size: ${fontSize};
 
                 &:hover {
                     background: ${theme.colors.hoveredPrimaryBackground};
@@ -133,7 +141,8 @@ export function Button(options: ButtonOptions)
                 color: ${theme.colors.dangerForeground};
                 padding: ${padding};
                 border: none;
-                border-radius: none;
+                border-radius: 0;
+                font-size: ${fontSize};
 
                 &:hover {
                     background: ${theme.colors.hoveredDangerBackground};
@@ -163,7 +172,8 @@ export function Button(options: ButtonOptions)
                 color: ${color};
                 padding: ${padding};
                 border: 2px solid ${color};
-                border-radius: none;
+                border-radius: 0;
+                font-size: ${fontSize};
 
                 &:hover {
                     background: ${hoverBg};
@@ -185,8 +195,8 @@ export function Button(options: ButtonOptions)
         {
             const dark = Color(theme.colors.background).isDark();
             const color = dark ? "#fff" : "#000";
-            const bg = dark ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.4)";
-            const hoverBg = dark ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)";
+            const bg = dark ? "rgba(255, 255, 255, 0.3)" : "rgba(0, 0, 0, 0.3)";
+            const hoverBg = dark ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 0.5)";
             const pressedCharColor = dark ? "#000" : "#fff";
 
             className = css `
@@ -194,7 +204,8 @@ export function Button(options: ButtonOptions)
                 color: ${color};
                 padding: ${padding};
                 border: 2px solid ${color};
-                border-radius: none;
+                border-radius: 0;
+                font-size: ${fontSize};
 
                 &:hover {
                     background: ${hoverBg};
@@ -214,5 +225,19 @@ export function Button(options: ButtonOptions)
         }
     }
 
-    return <button className={className} style={newStyle} type={options.type ?? "button"} disabled={options.disabled ?? false} autoFocus={options.autoFocus ?? false}>{options.children}</button>;
+    return (
+        <button
+            className={className}
+            onClick={options.click}
+            onMouseOver={options.mouseOver}
+            onMouseOut={options.mouseOut}
+            onMouseUp={options.mouseUp}
+            style={newStyle}
+            type={options.type ?? "button"}
+            disabled={options.disabled ?? false}
+            autoFocus={options.autoFocus ?? false}>            
+
+            {options.children}
+        </button>
+        );
 }
