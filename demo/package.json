@@ -2,14 +2,24 @@
   "name": "demo",
   "type": "module",
   "devDependencies": {
-    "@types/react-dom": "^19.0.3"
+    "@types/react-dom": "^19.0.3",
+    "buffer": "^6.0.3",
+    "parcel": "^2.13.3",
+    "process": "^0.11.10"
   },
-  "scripts": {},
+  "scripts": {
+    "start": "parcel src/index.html --dist-dir dist",
+    "build": "parcel build src/index.html --dist-dir dist"
+  },
   "dependencies": {
     "@emotion/css": "^11.13.5",
     "@emotion/react": "^11.14.0",
+    "@fontsource/open-sans": "^5.1.1",
     "@hydroper/metrocomponents": "file:..",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
+  },
+  "@parcel/resolver-default": {
+    "packageExports": true
   }
 }
