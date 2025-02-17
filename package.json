@@ -20,7 +20,7 @@
   "keywords": ["metro", "ui"],
   "author": "Hydroper <HydroperFox@gmail.com>",
   "devDependencies": {
-    "@types/react": "^18.3.18",
+    "@types/react": "^18.3.1",
     "@types/assert": "^1.5.11",
     "@types/clone": "^2.1.4",
     "@types/color": "^4.2.0",

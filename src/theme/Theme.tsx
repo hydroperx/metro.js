@@ -132,5 +132,3 @@ export const purpleTheme: Theme = clone(darkTheme);
 purpleTheme.colors.background = "#180053";
 
 export const ThemeContext: React.Context<Theme> = createContext(lightTheme);
-
-export const ThemeProvider = ThemeContext.Provider;
