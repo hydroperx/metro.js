@@ -171,7 +171,7 @@ export function Button(options: ButtonOptions)
                 background: none;
                 color: ${color};
                 padding: ${padding};
-                border: 2px solid ${color};
+                border: 0.15rem solid ${color};
                 border-radius: 0;
                 font-size: ${fontSize};
 
@@ -203,7 +203,7 @@ export function Button(options: ButtonOptions)
                 background: ${bg};
                 color: ${color};
                 padding: ${padding};
-                border: 2px solid ${color};
+                border: 0.15rem solid ${color};
                 border-radius: 0;
                 font-size: ${fontSize};
 
