@@ -1,1 +1,0 @@
-export const fontSize: string = "0.95rem";

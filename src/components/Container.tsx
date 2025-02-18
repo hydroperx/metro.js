@@ -2,7 +2,7 @@ import { pointsToRem } from "../utils/points";
 import extend from "extend";
 import { useContext } from "react";
 import { ThemeContext } from "../theme";
-import { fontSize } from "../utils/commonMeasures";
+import { fontFamily, fontSize } from "../utils/commonValues";
 
 export type ContainerOptions =
 {
@@ -84,7 +84,7 @@ export function Container(options: ContainerOptions)
     newStyle.fontSize = fontSize;
 
     // Set font family
-    newStyle.fontFamily = "'Open Sans', 'Segoe UI', sans";
+    newStyle.fontFamily = fontFamily;
 
     if (options.minWidth !== undefined)
     {

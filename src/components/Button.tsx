@@ -4,7 +4,7 @@ import { css } from "@emotion/css";
 import { useContext } from "react";
 import { ThemeContext } from "../theme";
 import Color from "color";
-import { fontSize } from "../utils/commonMeasures";
+import { fontSize } from "../utils/commonValues";
 
 export type ButtonVariant =
     "primary" |

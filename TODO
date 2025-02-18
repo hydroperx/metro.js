@@ -9,8 +9,6 @@ Basic components
 - [x] Label
 - [x] Button
 - [x] Container
-- [ ] LoadingIcon
-  - See https://stackoverflow.com/a/20371835/26380963
 - [ ] ContextMenu
   - [ ] `desktop?: boolean`: Causes a desktop rendering of the context menu. Implement that with a context provider `ContextMenuDesktop_Context.Provider`.
 - [ ] ContextMenuItem
@@ -30,3 +28,7 @@ Icons
 
 - [ ] Icon white/black mode
 - [ ] Search icon
+- [ ] Previous icon
+- [ ] Next icon
+- [ ] Loading icon
+  - See https://stackoverflow.com/a/20371835/26380963
