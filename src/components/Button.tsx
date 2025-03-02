@@ -102,7 +102,7 @@ export function Button(options: ButtonOptions)
                 }
 
                 &:focus {
-                    outline: 1px dashed ${theme.colors.focusDashes};
+                    outline: 1px dotted ${theme.colors.focusDashes};
                     outline-offset: -0.7rem;
                 }
             `;
@@ -128,7 +128,7 @@ export function Button(options: ButtonOptions)
                 }
 
                 &:focus {
-                    outline: 1px dashed ${theme.colors.focusDashes};
+                    outline: 1px dotted ${theme.colors.focusDashes};
                     outline-offset: -0.7rem;
                 }
             `;
@@ -154,7 +154,7 @@ export function Button(options: ButtonOptions)
                 }
 
                 &:focus {
-                    outline: 1px dashed ${theme.colors.focusDashes};
+                    outline: 1px dotted ${theme.colors.focusDashes};
                     outline-offset: -0.7rem;
                 }
             `;
@@ -185,7 +185,7 @@ export function Button(options: ButtonOptions)
                 }
 
                 &:focus {
-                    outline: 1px dashed ${color};
+                    outline: 1px dotted ${color};
                     outline-offset: -0.7rem;
                 }
             `;
@@ -217,7 +217,7 @@ export function Button(options: ButtonOptions)
                 }
 
                 &:focus {
-                    outline: 1px dashed ${color};
+                    outline: 1px dotted ${color};
                     outline-offset: -0.7rem;
                 }
             `;
