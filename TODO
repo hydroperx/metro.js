@@ -12,9 +12,10 @@ Basic components
 - [x] Container
 - [x] ContextMenu
   - [x] Close all context menus when mouse gets down out
-  - [ ] Apply smooth transition on showing
-    - [ ] Top context menus
+  - [x] Apply smooth transition on showing
+    - [x] Top context menus
     - [ ] Submenus
+    - [ ] It is not working. Fix it.
   - [ ] Handle escape keys
   - [ ] Handle navigation keys
     - [ ] horizontal keys open/close submenu (LTR or RTL based)

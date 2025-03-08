@@ -1,4 +1,4 @@
-export function computePosition(referenceElement: HTMLElement, positioningElement: HTMLElement, options: ComputePositionOptions | null = null): [number, number]
+export function computePosition(referenceElement: HTMLElement, positioningElement: HTMLElement, options: ComputePositionOptions | null = null): [number, number, Side]
 {
     // Change the display so the positioning size is obtained
     let prevDisplay = positioningElement.style.display;
@@ -208,7 +208,7 @@ export function computePosition(referenceElement: HTMLElement, positioningElemen
     // Revert positioning display style
     positioningElement.style.display = prevDisplay;
 
-    return [x, y];
+    return [x, y, resolution];
 }
 
 export type ComputePositionOptions = {

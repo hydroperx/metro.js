@@ -144,20 +144,17 @@ export function ContextMenu(options: ContextMenuOptions)
         // Pause animation
         setAnimationPlayState("paused");
 
-        // Preferred side
-        let prefer: Side = "bottom";
+        // Side resolution
+        let sideResolution: Side = "bottom";
 
         // Resulting positions
         let x = 0, y = 0;
 
         if (e.detail.reference)
         {
-            // Update preferred side
-            prefer = e.detail.prefer ?? prefer;
-
             // Position context menu after a reference element.
-            [x, y] = computePosition(e.detail.reference, div, {
-                prefer,
+            [x, y, sideResolution] = computePosition(e.detail.reference, div, {
+                prefer: e.detail.prefer,
             });
         }
         else
@@ -179,17 +176,19 @@ export function ContextMenu(options: ContextMenuOptions)
         }
 
         // (x, y) transition
-        switch (prefer)
+        switch (sideResolution)
         {
             case "top":
             {
                 setX(x);
                 setY(y - 15);
                 setOpacity(0);
-                setAnimationPlayState("running");
                 animationTimeout = window.setTimeout(() => {
-                    setOpacity(1);
-                    setY(y);
+                    setAnimationPlayState("running");
+                    animationTimeout = window.setTimeout(() => {
+                        setOpacity(1);
+                        setY(y);
+                    }, 100);
                 }, 300);
                 break;
             }
@@ -198,10 +197,12 @@ export function ContextMenu(options: ContextMenuOptions)
                 setX(x);
                 setY(y + 15);
                 setOpacity(0);
-                setAnimationPlayState("running");
                 animationTimeout = window.setTimeout(() => {
-                    setOpacity(1);
-                    setY(y);
+                    setAnimationPlayState("running");
+                    animationTimeout = window.setTimeout(() => {
+                        setOpacity(1);
+                        setY(y);
+                    }, 100);
                 }, 300);
                 break;
             }
@@ -211,8 +212,11 @@ export function ContextMenu(options: ContextMenuOptions)
                 setX(x - 15);
                 setOpacity(0);
                 animationTimeout = window.setTimeout(() => {
-                    setOpacity(1);
-                    setX(x);
+                    setAnimationPlayState("running");
+                    animationTimeout = window.setTimeout(() => {
+                        setOpacity(1);
+                        setX(x);
+                    }, 100);
                 }, 300);
                 break;
             }
@@ -222,8 +226,11 @@ export function ContextMenu(options: ContextMenuOptions)
                 setX(x + 15);
                 setOpacity(0);
                 animationTimeout = window.setTimeout(() => {
-                    setOpacity(1);
-                    setX(x);
+                    setAnimationPlayState("running");
+                    animationTimeout = window.setTimeout(() => {
+                        setOpacity(1);
+                        setX(x);
+                    }, 100);
                 }, 300);
                 break;
             }
