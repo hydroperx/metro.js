@@ -179,6 +179,7 @@ export function ContextMenu(options: ContextMenuOptions)
         }
 
         // (x, y) transition
+        const timeoutDelay = 35;
         switch (sideResolution)
         {
             case "top":
@@ -190,7 +191,7 @@ export function ContextMenu(options: ContextMenuOptions)
                     setTransition(visibleTransition);
                     setOpacity(1);
                     setY(y);
-                }, 10);
+                }, timeoutDelay);
                 break;
             }
             case "bottom":
@@ -202,7 +203,7 @@ export function ContextMenu(options: ContextMenuOptions)
                     setTransition(visibleTransition);
                     setOpacity(1);
                     setY(y);
-                }, 10);
+                }, timeoutDelay);
                 break;
             }
             case "left":
@@ -214,7 +215,7 @@ export function ContextMenu(options: ContextMenuOptions)
                     setTransition(visibleTransition);
                     setOpacity(1);
                     setX(x);
-                }, 10);
+                }, timeoutDelay);
                 break;
             }
             case "right":
@@ -226,7 +227,7 @@ export function ContextMenu(options: ContextMenuOptions)
                     setTransition(visibleTransition);
                     setOpacity(1);
                     setX(x);
-                }, 10);
+                }, timeoutDelay);
                 break;
             }
         }
@@ -581,6 +582,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
         div.style.top = y + "px";
 
         // (x, y) transition
+        const timeoutDelay = 25;
         switch (sideResolution)
         {
             case "top":
@@ -592,7 +594,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
                     div.style.transition = visibleTransition;
                     div.style.opacity = "1";
                     div.style.top = y + "px";
-                }, 10);
+                }, timeoutDelay);
                 break;
             }
             case "bottom":
@@ -604,7 +606,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
                     div.style.transition = visibleTransition;
                     div.style.opacity = "1";
                     div.style.top = y + "px";
-                }, 10);
+                }, timeoutDelay);
                 break;
             }
             case "left":
@@ -616,7 +618,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
                     div.style.transition = visibleTransition;
                     div.style.opacity = "1";
                     div.style.left = x + "px";
-                }, 10);
+                }, timeoutDelay);
                 break;
             }
             case "right":
@@ -628,7 +630,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
                     div.style.transition = visibleTransition;
                     div.style.opacity = "1";
                     div.style.left = x + "px";
-                }, 10);
+                }, timeoutDelay);
                 break;
             }
         }
