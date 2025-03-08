@@ -38,6 +38,10 @@ const submenuItemClassName = "ContextMenuSubmenu-item";
 // Submenus are identified by this class name.
 const submenuClassName = "ContextMenuSubmenuList-submenu";
 
+// Weak map allowing to remove Input listeners of submenus reliably.
+// The keys are the submenu lists themselves, not the submenu representing items.
+const submenuInputPressedListeners = new WeakMap<HTMLDivElement, Function>();
+
 /**
  * Hook for using a context menu.
  */
@@ -272,6 +276,11 @@ export function ContextMenu(options: ContextMenuOptions)
         for (const div of Array.from(divElement.querySelectorAll("." + submenuClassName)) as HTMLDivElement[])
         {
             div.style.visibility = "hidden";
+            const listener = submenuInputPressedListeners.get(div);
+            if (listener)
+            {
+                Input.input.removeEventListener("inputPressed", listener as any);
+            }
         }
     }
 
@@ -677,6 +686,9 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
         // Button
         const buttonElement = buttonRef.current!;
 
+        // Input listeners
+        Input.input.addEventListener("inputPressed", input_onInputPressed);
+
         // Position context menu after butotn.
         const [x, y, sideResolution] = computePosition(buttonElement, div, {
             prefer: localeDir == "ltr" ? "right" : "left",
@@ -746,10 +758,19 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
             clearTimeout(transitionTimeout);
             transitionTimeout = -1;
         }
+
+        // Input listeners
+        Input.input.removeEventListener("inputPressed", input_onInputPressed);
+
         const parent = element.parentElement;
-        for (const div of Array.from(parent.querySelectorAll("." + submenuClassName)))
+        for (const div of Array.from(parent.querySelectorAll("." + submenuClassName)) as HTMLDivElement[])
         {
-            (div as HTMLElement).style.visibility = "hidden";
+            div.style.visibility = "hidden";
+            const listener = submenuInputPressedListeners.get(div);
+            if (listener)
+            {
+                Input.input.removeEventListener("inputPressed", listener as any);
+            }
         }
     }
 
@@ -782,12 +803,128 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
         }
     }
 
+    // Handle arrows and escape
+    function input_onInputPressed(): void
+    {
+        // Obtain button element
+        const button = buttonRef.current!;
+
+        // Obtain div element
+        const div = button.nextElementSibling as HTMLDivElement;
+
+        if (Input.input.justPressed("escape"))
+        {
+            // If this is the innermost context menu open, close it.
+            const innermost = !Array.from(div.querySelectorAll("." + submenuClassName))
+                .some(div => (div as HTMLElement).style.visibility == "visible");
+            if (innermost)
+            {
+                hideAllFromParent(div);
+
+                // focus back the submenu representing item.
+                button.focus();
+            }
+
+            return;
+        }
+
+        for (let i = 0; i < div.children.length; i++)
+        {
+            // Child (item or submenu)
+            const child = div.children[i] as HTMLElement;
+
+            // If focused
+            if (document.activeElement === child)
+            {
+                // navigate up
+                if (Input.input.justPressed("navigateUp"))
+                {
+                    focusPrevSibling(child);
+                }
+                // navigate down
+                else if (Input.input.justPressed("navigateDown"))
+                {
+                    focusNextSibling(child);
+                }
+                // open submenu
+                else if (Input.input.justPressed(localeDir == "ltr" ? "navigateRight" : "navigateLeft") && child.classList.contains(submenuItemClassName))
+                {
+                    (child as HTMLButtonElement).click();
+                }
+                // close current submenu
+                else if (Input.input.justPressed(localeDir == "ltr" ? "navigateLeft" : "navigateRight"))
+                {
+                    hideAllFromParent(div);
+
+                    // focus back the submenu representing item.
+                    button.focus();
+                }
+
+                return;
+            }
+        }
+
+        // If this is the innermost context menu open
+        const innermost = !Array.from(div.querySelectorAll("." + submenuClassName))
+                .some(div => (div as HTMLElement).style.visibility == "visible");
+        if (innermost)
+        {
+            // focus last
+            if (Input.input.justPressed("navigateUp"))
+            {
+                let first = div.children.length == 0 ? null : div.children[0];
+                if (first)
+                {
+                    focusPrevSibling(first as HTMLElement);
+                }
+            }
+            // focus first
+            else if (Input.input.justPressed("navigateDown"))
+            {
+                let last = div.children.length == 0 ? null : div.children[div.children.length - 1];
+                if (last)
+                {
+                    focusNextSibling(last as HTMLElement);
+                }
+            }
+            // close current submenu
+            else if (Input.input.justPressed(localeDir == "ltr" ? "navigateLeft" : "navigateRight"))
+            {
+                hideAllFromParent(div);
+
+                // focus back the submenu representing item.
+                button.focus();
+            }
+        }
+    }
+
     useEffect(() => {
         const buttonElement = buttonRef.current!;
 
         buttonElement.addEventListener("mouseover", button_onMouseOver);
         buttonElement.addEventListener("mouseout", button_onMouseOut);
         buttonElement.addEventListener("click", button_onClick);
+
+        // Obtain submenu list div
+        const div = buttonElement.nextElementSibling as HTMLDivElement;
+
+        // Track input pressed listener
+        if (div)
+        {
+            submenuInputPressedListeners.set(div, input_onInputPressed);
+        }
+
+        // Input listeners
+        if ((div?.style).visibility == "visible")
+        {
+            Input.input.addEventListener("inputPressed", input_onInputPressed);
+        }
+
+        return () => {
+            // Input listeners
+            Input.input.removeEventListener("inputPressed", input_onInputPressed);
+            submenuInputPressedListeners.delete(div);
+        };
     });
 
     return (
