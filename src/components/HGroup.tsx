@@ -45,7 +45,14 @@ export type HGroupOptions = {
     visible?: boolean,
 
     style?: React.CSSProperties,
+    className?: string,
     children?: React.ReactNode,
+
+    contextMenu?: React.MouseEventHandler<HTMLDivElement>,
+    click?: React.MouseEventHandler<HTMLDivElement>,
+    mouseOver?: React.MouseEventHandler<HTMLDivElement>,
+    mouseOut?: React.MouseEventHandler<HTMLDivElement>,
+    mouseUp?: React.MouseEventHandler<HTMLDivElement>,
 };
 
 const horizontalAlignMaps: any = {
@@ -114,8 +121,6 @@ export function HGroup(options: HGroupOptions)
         newStyle.maxHeight = pointsToRem(options.maxHeight);
     }
 
-    newStyle.overflow = "auto";
-
     if (options.clip)
     {
         newStyle.overflow = "hidden";
@@ -146,5 +151,15 @@ export function HGroup(options: HGroupOptions)
         extend(newStyle, options.style);
     }
 
-    return <div style={newStyle}>{options.children}</div>;
+    return <div
+        className={options.className ?? ""}
+        style={newStyle}
+        onClick={options.click}
+        onMouseOver={options.mouseOver}
+        onMouseOut={options.mouseOut}
+        onMouseUp={options.mouseUp}
+        onContextMenu={options.contextMenu}>
+            
+        {options.children}
+    </div>;
 }

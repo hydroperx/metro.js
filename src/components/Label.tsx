@@ -16,6 +16,7 @@ export type LabelOptions = {
     visible?: boolean,
 
     style?: React.CSSProperties,
+    className?: string,
     children?: React.ReactNode,
 };
 
@@ -42,7 +43,7 @@ export function Label(options: LabelOptions)
                 font-family: "Open Sans", sans;
                 font-size: 0.9rem;
             `;
-            return <span className={className} style={newStyle}>{options.children}</span>;
+            return <span className={className + (options.className ? " " + options.className : "")} style={newStyle}>{options.children}</span>;
         }
         case "heading1":
         {
@@ -51,7 +52,7 @@ export function Label(options: LabelOptions)
                 font-weight: lighter;
                 font-size: 2.1rem;
             `;
-            return <h1 className={className} style={newStyle}>{options.children}</h1>;
+            return <h1 className={className + (options.className ? " " + options.className : "")} style={newStyle}>{options.children}</h1>;
         }
         case "heading2":
         {
@@ -60,7 +61,7 @@ export function Label(options: LabelOptions)
                 font-weight: lighter;
                 font-size: 1.7rem;
             `;
-            return <h2 className={className} style={newStyle}>{options.children}</h2>;
+            return <h2 className={className + (options.className ? " " + options.className : "")} style={newStyle}>{options.children}</h2>;
         }
         case "heading3":
         {
@@ -69,7 +70,7 @@ export function Label(options: LabelOptions)
                 font-size: 1.3rem;
                 font-weight: bold;
             `;
-            return <h3 className={className} style={newStyle}>{options.children}</h3>;
+            return <h3 className={className + (options.className ? " " + options.className : "")} style={newStyle}>{options.children}</h3>;
         }
         case "heading4":
         {
@@ -78,7 +79,7 @@ export function Label(options: LabelOptions)
                 font-size: 1.1rem;
                 font-weight: bold;
             `;
-            return <h4 className={className} style={newStyle}>{options.children}</h4>;
+            return <h4 className={className + (options.className ? " " + options.className : "")} style={newStyle}>{options.children}</h4>;
         }
         case "legend":
         {
@@ -86,7 +87,7 @@ export function Label(options: LabelOptions)
                 font-family: "Open Sans", sans;
                 font-size: 0.77rem;
             `;
-            return <span className={className} style={newStyle}>{options.children}</span>;
+            return <span className={className + (options.className ? " " + options.className : "")} style={newStyle}>{options.children}</span>;
         }
     }
 }

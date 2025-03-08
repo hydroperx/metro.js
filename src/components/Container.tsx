@@ -1,6 +1,7 @@
 import { pointsToRem } from "../utils/points";
 import extend from "extend";
 import { useContext } from "react";
+import { css } from "@emotion/css";
 import { ThemeContext } from "../theme";
 import { fontFamily, fontSize } from "../utils/commonValues";
 
@@ -34,7 +35,14 @@ export type ContainerOptions =
     visible?: boolean,
 
     style?: React.CSSProperties,
+    className?: string,
     children?: React.ReactNode,
+
+    contextMenu?: React.MouseEventHandler<HTMLDivElement>,
+    click?: React.MouseEventHandler<HTMLDivElement>,
+    mouseOver?: React.MouseEventHandler<HTMLDivElement>,
+    mouseOut?: React.MouseEventHandler<HTMLDivElement>,
+    mouseUp?: React.MouseEventHandler<HTMLDivElement>,
 };
 
 /**
@@ -102,6 +110,7 @@ export function Container(options: ContainerOptions)
     {
         newStyle.maxHeight = pointsToRem(options.maxHeight);
     }
+    newStyle.overflow = "auto";
     if (options.full)
     {
         newStyle.width = "100%";
@@ -113,5 +122,28 @@ export function Container(options: ContainerOptions)
         extend(newStyle, options.style);
     }
 
-    return <div style={newStyle}>{options.children}</div>;
+    const className = css `
+        &::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+            background: ${theme.colors.scrollBarTrack ?? "#E9E9E9"};
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: ${theme.colors.scrollBarThumb ?? "#CDCDCD"};
+            border-radius: 0;
+        }
+    `;
+
+    return <div
+        className={className + (options.className ? " " + options.className : "")}
+        style={newStyle}
+        onClick={options.click}
+        onMouseOver={options.mouseOver}
+        onMouseOut={options.mouseOut}
+        onMouseUp={options.mouseUp}
+        onContextMenu={options.contextMenu}>
+
+        {options.children}
+    </div>;
 }

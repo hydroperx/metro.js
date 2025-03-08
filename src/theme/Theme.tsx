@@ -10,9 +10,19 @@ export type Theme =
         foreground?: string,
 
         /**
-         * Used in components that may be bordered such as text inputs.
+         * Used in components such as text inputs, tooltips and context menu.
          */
-        border?: string,
+        inputBackground?: string,
+
+        /**
+         * Used in components such as text inputs, tooltips and context menu.
+         */
+        inputBorder?: string,
+
+        anchor?: string,
+
+        scrollBarTrack?: string,
+        scrollBarThumb?: string,
 
         /**
          * Used in buttons for instance.
@@ -75,7 +85,13 @@ export const lightTheme: Theme =
         background: "#fff",
         foreground: "#000",
 
-        border: "#b5b5b5",
+        inputBorder: "#b5b5b5",
+        inputBackground: "#fff",
+
+        anchor: "#594C87",
+
+        scrollBarTrack: "#E9E9E9",
+        scrollBarThumb: "#CDCDCD",
 
         primaryBackground: "#3a00c8",
         primaryForeground: "#fff",
@@ -96,7 +112,7 @@ export const lightTheme: Theme =
 };
 
 /**
- * A dark gray theme.
+ * A dark theme.
  */
 export const darkTheme: Theme =
 {
@@ -105,7 +121,13 @@ export const darkTheme: Theme =
         background: "#1d1d1d",
         foreground: "#fff",
 
-        border: "#555",
+        inputBorder: "#555",
+        inputBackground: "#232323",
+
+        anchor: "#594C87",
+
+        scrollBarTrack: "rgba(0,0,0,0)",
+        scrollBarThumb: "#333",
 
         primaryBackground: "#3a00c8",
         primaryForeground: "#fff",
