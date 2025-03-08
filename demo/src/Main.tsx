@@ -34,20 +34,20 @@ function App()
                     <ArrowButton direction="right" size={9}></ArrowButton>
                 </HGroup>
                 <ContextMenu id={contextMenuId}>
-                    <ContextMenuItem click={() => {alert("clicked item 1")}}>
+                    <ContextMenuItem className="foo" click={() => {alert("clicked item 1")}}>
                         <ContextMenuCheck state="none"/>
                         <ContextMenuIcon></ContextMenuIcon>
                         <ContextMenuLabel>Item 1</ContextMenuLabel>
                         <ContextMenuRight>Ctrl+Z</ContextMenuRight>
                     </ContextMenuItem>
-                    <ContextMenuItem>
+                    <ContextMenuItem className="bar">
                         <ContextMenuCheck state="checked"/>
                         <ContextMenuIcon></ContextMenuIcon>
                         <ContextMenuLabel>Item 2</ContextMenuLabel>
                         <ContextMenuRight></ContextMenuRight>
                     </ContextMenuItem>
                     <ContextMenuSeparator/>
-                    <ContextMenuItem>
+                    <ContextMenuItem className="qux">
                         <ContextMenuCheck state="option"/>
                         <ContextMenuIcon></ContextMenuIcon>
                         <ContextMenuLabel>Item 3</ContextMenuLabel>

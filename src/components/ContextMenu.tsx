@@ -163,6 +163,7 @@ export function ContextMenu(options: ContextMenuOptions)
         window.addEventListener("mousedown", viewport_onMouseDown);
 
         // Input listeners
+        Input.input.removeEventListener("inputPressed", input_onInputPressed);
         Input.input.addEventListener("inputPressed", input_onInputPressed);
 
         // Side resolution
@@ -402,15 +403,13 @@ export function ContextMenu(options: ContextMenuOptions)
     eventDispatcher.addEventListener("hideAll", hideAll);
 
     useEffect(() => {
-        // Viewport event listeners
         if (visible)
         {
+            // Viewport event listeners
             window.addEventListener("mousedown", viewport_onMouseDown);
-        }
 
-        // Input listeners
-        if (visible)
-        {
+            // Input listeners
+            Input.input.removeEventListener("inputPressed", input_onInputPressed);
             Input.input.addEventListener("inputPressed", input_onInputPressed);
         }
 
@@ -527,13 +526,15 @@ export function ContextMenuItem(options: ContextMenuItemOptions)
     }
 
     return (
-        <button className={className} disabled={options.disabled} onClick={button_onClick} ref={buttonRef}>
+        <button className={className + " " + options.className} disabled={options.disabled} onClick={button_onClick} ref={buttonRef}>
             {options.children}
         </button>
     );
 }
 
 export type ContextMenuItemOptions = {
+    className?: string,
+
     disabled?: boolean,
     children?: React.ReactNode,
     click?: () => void,
@@ -616,7 +617,7 @@ export function ContextMenuRight(options: ContextMenuRightOptions)
     const size = pointsToRem(3);
 
     return (
-        <span style={{flexGrow: 4, textAlign: localeDir == "ltr" ? "right" : "left", fontSize: "0.8rem", opacity: "0.6", minWidth: size, minHeight: size}}>
+        <span style={{flexGrow: 4, marginLeft: localeDir == "ltr" ? "2rem" : "", marginRight: localeDir == "rtl" ? "2rem" : "", textAlign: localeDir == "ltr" ? "right" : "left", fontSize: "0.8rem", opacity: "0.6", minWidth: size, minHeight: size}}>
             {options.children}
         </span>
     );
@@ -687,6 +688,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
         const buttonElement = buttonRef.current!;
 
         // Input listeners
+        Input.input.removeEventListener("inputPressed", input_onInputPressed);
         Input.input.addEventListener("inputPressed", input_onInputPressed);
 
         // Position context menu after butotn.
@@ -925,11 +927,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
         if (div)
         {
             submenuInputPressedListeners.set(div, input_onInputPressed);
-        }
-
-        // Input listeners
-        if ((div?.style).visibility == "visible")
-        {
+            Input.input.removeEventListener("inputPressed", input_onInputPressed);
             Input.input.addEventListener("inputPressed", input_onInputPressed);
         }
 
