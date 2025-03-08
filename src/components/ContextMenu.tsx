@@ -126,8 +126,8 @@ export function ContextMenu(options: ContextMenuOptions)
     // References
     const divRef = useRef<HTMLDivElement | null>(null);
 
-    // Animation timeout
-    let animationTimeout = -1;
+    // Transition timeout
+    let transitionTimeout = -1;
 
     // Handle "show" signal
     function eventDispatcher_onShow(e: CustomEvent<ContextMenuEvent>): void
@@ -186,7 +186,7 @@ export function ContextMenu(options: ContextMenuOptions)
                 setX(x);
                 setY(y + 15);
                 setOpacity(0);
-                animationTimeout = window.setTimeout(() => {
+                transitionTimeout = window.setTimeout(() => {
                     setTransition(visibleTransition);
                     setOpacity(1);
                     setY(y);
@@ -198,7 +198,7 @@ export function ContextMenu(options: ContextMenuOptions)
                 setX(x);
                 setY(y - 15);
                 setOpacity(0);
-                animationTimeout = window.setTimeout(() => {
+                transitionTimeout = window.setTimeout(() => {
                     setTransition(visibleTransition);
                     setOpacity(1);
                     setY(y);
@@ -210,7 +210,7 @@ export function ContextMenu(options: ContextMenuOptions)
                 setY(y);
                 setX(x + 15);
                 setOpacity(0);
-                animationTimeout = window.setTimeout(() => {
+                transitionTimeout = window.setTimeout(() => {
                     setTransition(visibleTransition);
                     setOpacity(1);
                     setX(x);
@@ -222,7 +222,7 @@ export function ContextMenu(options: ContextMenuOptions)
                 setY(y);
                 setX(x - 15);
                 setOpacity(0);
-                animationTimeout = window.setTimeout(() => {
+                transitionTimeout = window.setTimeout(() => {
                     setTransition(visibleTransition);
                     setOpacity(1);
                     setX(x);
@@ -241,10 +241,10 @@ export function ContextMenu(options: ContextMenuOptions)
         // Hide base context menu
         setVisible(false);
 
-        if (animationTimeout !== -1)
+        if (transitionTimeout !== -1)
         {
-            clearTimeout(animationTimeout);
-            animationTimeout = -1;
+            clearTimeout(transitionTimeout);
+            transitionTimeout = -1;
         }
 
         // Viewport event listeners
@@ -550,37 +550,101 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
         }
     `;
 
-    function show(divElement: HTMLDivElement): void
+    // Transition timeout
+    let transitionTimeout = -1;
+
+    function show(div: HTMLDivElement): void
     {
         // Hide all context menu's submenus from the parent
-        hideAllFromParent(divElement);
+        hideAllFromParent(div);
 
         // Do not re-open the submenu.
-        if (divElement.style.visibility == "visible")
+        if (div.style.visibility == "visible")
         {
             return;
         }
 
         // Turn visible
-        divElement.style.visibility = "visible";
+        div.style.visibility = "visible";
+
+        // Disable transition
+        div.style.transition = "";
 
         // Button
         const buttonElement = buttonRef.current!;
 
         // Position context menu after butotn.
-        const [newX, newY] = computePosition(buttonElement, divElement, {
+        const [x, y, sideResolution] = computePosition(buttonElement, div, {
             prefer: localeDir == "ltr" ? "right" : "left",
         });
-        divElement.style.left = newX + "px";
-        divElement.style.top = newY + "px";
+        div.style.left = x + "px";
+        div.style.top = y + "px";
+
+        // (x, y) transition
+        switch (sideResolution)
+        {
+            case "top":
+            {
+                div.style.left = x + "px";
+                div.style.top = (y + 15) + "px";
+                div.style.opacity = "0";
+                transitionTimeout = window.setTimeout(() => {
+                    div.style.transition = visibleTransition;
+                    div.style.opacity = "1";
+                    div.style.top = y + "px";
+                }, 10);
+                break;
+            }
+            case "bottom":
+            {
+                div.style.left = x + "px";
+                div.style.top = (y - 15) + "px";
+                div.style.opacity = "0";
+                transitionTimeout = window.setTimeout(() => {
+                    div.style.transition = visibleTransition;
+                    div.style.opacity = "1";
+                    div.style.top = y + "px";
+                }, 10);
+                break;
+            }
+            case "left":
+            {
+                div.style.top = y + "px";
+                div.style.left = (x + 15) + "px";
+                div.style.opacity = "0";
+                transitionTimeout = window.setTimeout(() => {
+                    div.style.transition = visibleTransition;
+                    div.style.opacity = "1";
+                    div.style.left = x + "px";
+                }, 10);
+                break;
+            }
+            case "right":
+            {
+                div.style.top = y + "px";
+                div.style.left = (x - 15) + "px";
+                div.style.opacity = "0";
+                transitionTimeout = window.setTimeout(() => {
+                    div.style.transition = visibleTransition;
+                    div.style.opacity = "1";
+                    div.style.left = x + "px";
+                }, 10);
+                break;
+            }
+        }
     }
 
     function hideAllFromParent(element: HTMLElement): void
     {
-        const parent = element.parentElement;
-        for (const divElement of Array.from(parent.querySelectorAll("." + submenuClassName)))
+        if (transitionTimeout !== -1)
         {
-            (divElement as HTMLElement).style.visibility = "hidden";
+            clearTimeout(transitionTimeout);
+            transitionTimeout = -1;
+        }
+        const parent = element.parentElement;
+        for (const div of Array.from(parent.querySelectorAll("." + submenuClassName)))
+        {
+            (div as HTMLElement).style.visibility = "hidden";
         }
     }
 
@@ -656,6 +720,7 @@ export function ContextMenuSubmenuList(options: ContextMenuSubmenuListOptions)
                 border: "0.15rem solid " + theme.colors.inputBorder,
                 padding: pointsToRem(2) + " 0",
                 minWidth: "12rem",
+                opacity: "0",
             }}>
             {options.children}
         </div>
