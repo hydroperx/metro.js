@@ -160,6 +160,7 @@ export function ContextMenu(options: ContextMenuOptions)
         setTransition("");
 
         // Viewport event listeners
+        window.removeEventListener("mousedown", viewport_onMouseDown);
         window.addEventListener("mousedown", viewport_onMouseDown);
 
         // Input listeners
@@ -406,6 +407,7 @@ export function ContextMenu(options: ContextMenuOptions)
         if (visible)
         {
             // Viewport event listeners
+            window.removeEventListener("mousedown", viewport_onMouseDown);
             window.addEventListener("mousedown", viewport_onMouseDown);
 
             // Input listeners
