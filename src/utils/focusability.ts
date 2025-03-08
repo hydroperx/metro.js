@@ -20,10 +20,10 @@ export function canFocus(element: HTMLElement): boolean {
 export function focusPrevSibling(element: HTMLElement): void
 {
     const parent = element.parentElement;
-    const children = Array.from(parent.children);
+    const children = Array.from(parent.children) as HTMLElement[];
     const i = children.indexOf(element);
     const list = children.slice(0, i).reverse().concat(children.slice(i + 1).reverse());
-    const firstFocusable = list.find(e => canFocus(e as HTMLElement));
+    const firstFocusable = list.find(e => canFocus(e));
     if (firstFocusable)
     {
         (firstFocusable as HTMLElement).focus();
@@ -36,10 +36,10 @@ export function focusPrevSibling(element: HTMLElement): void
 export function focusNextSibling(element: HTMLElement): void
 {
     const parent = element.parentElement;
-    const children = Array.from(parent.children);
+    const children = Array.from(parent.children) as HTMLElement[];
     const i = children.indexOf(element);
     const list = children.slice(i + 1).concat(children.slice(0, i + 1));
-    const firstFocusable = list.find(e => canFocus(e as HTMLElement));
+    const firstFocusable = list.find(e => canFocus(e));
     if (firstFocusable)
     {
         (firstFocusable as HTMLElement).focus();
