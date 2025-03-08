@@ -11,10 +11,13 @@ Basic components
 - [x] Arrow button
 - [x] Container
 - [x] ContextMenu
-  - [ ] Handle escape keys
-  - [ ] Handle navigation keys
-    - [ ] horizontal keys open/close submenu (LTR or RTL based)
-    - [ ] vertical keys navigates focus between menu items)
+  - [x] Handle escape keys
+    - [ ] for submenus, focus back to the submenu representing item
+  - [x] Handle navigation keys
+    - [x] horizontal keys open/close submenu (LTR or RTL based)
+      - [ ] close for submenu
+        - [ ] focus back the submenu representing item
+    - [x] vertical keys navigates focus between menu items
 - [ ] OptionList
   - [ ] `big?: boolean`: If `true`, displays a big elegant option list.
 - [ ] TextInput

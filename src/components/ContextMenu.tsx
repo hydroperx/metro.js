@@ -6,7 +6,9 @@ import { computePosition, fitViewportPosition, Side } from "../utils/placement";
 import { ThemeContext } from "../theme";
 import { fontSize } from "../utils/commonValues";
 import { pointsToRem } from "../utils/points";
+import { focusPrevSibling, focusNextSibling } from "../utils/focusability";
 import assert from "assert";
+import { Input } from "@hydroper/inputaction";
 import { ArrowIcon, BulletIcon, CheckedIcon, IconOptions } from "./Icons";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
 
@@ -29,6 +31,9 @@ const visibleTransition = "opacity 0.3s ease, top 0.3s ease, left 0.3s ease";
 // Event dispatcher used for sending signals to
 // context menus, such as requests to show them and to hide them.
 const eventDispatcher = new ContextMenuEventDispatcher();
+
+// Items representing submenus are identified by this class name.
+const submenuItemClassName = "ContextMenuSubmenu-item";
 
 // Submenus are identified by this class name.
 const submenuClassName = "ContextMenuSubmenuList-submenu";
@@ -116,6 +121,9 @@ export function ContextMenu(options: ContextMenuOptions)
     // Use the theme context
     const theme = useContext(ThemeContext);
 
+    // Locale direction
+    const localeDir = useContext(LocaleDirectionContext);
+
     // State
     const [visible, setVisible] = useState<boolean>(false);
     const [x, setX] = useState<number>(0);
@@ -146,6 +154,12 @@ export function ContextMenu(options: ContextMenuOptions)
 
         // Disable transition
         setTransition("");
+
+        // Viewport event listeners
+        window.addEventListener("mousedown", viewport_onMouseDown);
+
+        // Input listeners
+        Input.input.addEventListener("inputPressed", input_onInputPressed);
 
         // Side resolution
         let sideResolution: Side = "bottom";
@@ -251,6 +265,9 @@ export function ContextMenu(options: ContextMenuOptions)
         // Viewport event listeners
         window.removeEventListener("mousedown", viewport_onMouseDown);
 
+        // Input listeners
+        Input.input.removeEventListener("inputPressed", input_onInputPressed);
+
         // Hide submenus by querying their classes
         for (const div of Array.from(divElement.querySelectorAll("." + submenuClassName)) as HTMLDivElement[])
         {
@@ -298,17 +315,103 @@ export function ContextMenu(options: ContextMenuOptions)
         }
     }
 
+    // Handle arrows and escape
+    function input_onInputPressed(): void
+    {
+        // Obtain div element
+        const div = divRef.current!;
+
+        if (Input.input.justPressed("escape"))
+        {
+            // If this is the innermost context menu open, close it.
+            const innermost = !Array.from(div.querySelectorAll("." + submenuClassName))
+                .some(div => (div as HTMLElement).style.visibility == "visible");
+            if (innermost)
+            {
+                // since this is the only context menu open, just close "all".
+                hideAllContextMenu();
+            }
+
+            return;
+        }
+
+        for (let i = 0; i < div.children.length; i++)
+        {
+            // Child (item or submenu)
+            const child = div.children[i] as HTMLElement;
+
+            // If focused
+            if (document.activeElement === child)
+            {
+                // navigate up
+                if (Input.input.justPressed("navigateUp"))
+                {
+                    focusPrevSibling(child);
+                }
+                // navigate down
+                else if (Input.input.justPressed("navigateDown"))
+                {
+                    focusNextSibling(child);
+                }
+                // open submenu
+                else if (Input.input.justPressed(localeDir == "ltr" ? "navigateRight" : "navigateLeft") && child.classList.contains(submenuItemClassName))
+                {
+                    (child as HTMLButtonElement).click();
+                }
+                
+                return;
+            }
+        }
+
+        // If this is the innermost context menu open
+        const innermost = !Array.from(div.querySelectorAll("." + submenuClassName))
+                .some(div => (div as HTMLElement).style.visibility == "visible");
+        if (innermost)
+        {
+            // focus last
+            if (Input.input.justPressed("navigateUp"))
+            {
+                let first = div.children.length == 0 ? null : div.children[0];
+                if (first)
+                {
+                    focusPrevSibling(first as HTMLElement);
+                }
+            }
+            // focus first
+            else if (Input.input.justPressed("navigateDown"))
+            {
+                let last = div.children.length == 0 ? null : div.children[div.children.length - 1];
+                if (last)
+                {
+                    focusNextSibling(last as HTMLElement);
+                }
+            }
+        }
+    }
+
     eventDispatcher.addEventListener("show", eventDispatcher_onShow);
     eventDispatcher.addEventListener("hideAll", hideAll);
 
     useEffect(() => {
         // Viewport event listeners
-        window.addEventListener("mousedown", viewport_onMouseDown);
+        if (visible)
+        {
+            window.addEventListener("mousedown", viewport_onMouseDown);
+        }
+
+        // Input listeners
+        if (visible)
+        {
+            Input.input.addEventListener("inputPressed", input_onInputPressed);
+        }
 
         // Cleanup
         return () => {
             // Viewport event listeners
             window.removeEventListener("mousedown", viewport_onMouseDown);
+
+            // Input listeners
+            Input.input.removeEventListener("inputPressed", input_onInputPressed);
 
             // Event dispatcher listeners
             eventDispatcher.removeEventListener("show", eventDispatcher_onShow);
@@ -688,7 +791,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
     });
 
     return (
-        <button className={className} ref={buttonRef}>
+        <button className={className + " " + submenuItemClassName} ref={buttonRef}>
             {options.children}
         </button>
     );
