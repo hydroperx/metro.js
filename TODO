@@ -15,7 +15,6 @@ Basic components
   - [x] Apply smooth transition on showing
     - [x] Top context menus
     - [ ] Submenus
-    - [ ] It is not working. Fix it.
   - [ ] Handle escape keys
   - [ ] Handle navigation keys
     - [ ] horizontal keys open/close submenu (LTR or RTL based)

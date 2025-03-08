@@ -23,6 +23,9 @@ interface ContextMenuEvent {
     readonly prefer: Side | undefined;
 }
 
+// Transition used in context menus.
+const visibleTransition = "opacity 0.3s ease, top 0.3s ease, left 0.3s ease";
+
 // Event dispatcher used for sending signals to
 // context menus, such as requests to show them and to hide them.
 const eventDispatcher = new ContextMenuEventDispatcher();
@@ -118,7 +121,7 @@ export function ContextMenu(options: ContextMenuOptions)
     const [x, setX] = useState<number>(0);
     const [y, setY] = useState<number>(0);
     const [opacity, setOpacity] = useState<number>(0);
-    const [animationPlayState, setAnimationPlayState] = useState<AnimationPlayState>("paused");
+    const [transition, setTransition] = useState<string>("");
 
     // References
     const divRef = useRef<HTMLDivElement | null>(null);
@@ -141,8 +144,8 @@ export function ContextMenu(options: ContextMenuOptions)
         // Obtain div element
         const div = divRef.current!;
 
-        // Pause animation
-        setAnimationPlayState("paused");
+        // Disable transition
+        setTransition("");
 
         // Side resolution
         let sideResolution: Side = "bottom";
@@ -181,57 +184,49 @@ export function ContextMenu(options: ContextMenuOptions)
             case "top":
             {
                 setX(x);
-                setY(y - 15);
+                setY(y + 15);
                 setOpacity(0);
                 animationTimeout = window.setTimeout(() => {
-                    setAnimationPlayState("running");
-                    animationTimeout = window.setTimeout(() => {
-                        setOpacity(1);
-                        setY(y);
-                    }, 100);
-                }, 300);
+                    setTransition(visibleTransition);
+                    setOpacity(1);
+                    setY(y);
+                }, 10);
                 break;
             }
             case "bottom":
             {
                 setX(x);
-                setY(y + 15);
+                setY(y - 15);
                 setOpacity(0);
                 animationTimeout = window.setTimeout(() => {
-                    setAnimationPlayState("running");
-                    animationTimeout = window.setTimeout(() => {
-                        setOpacity(1);
-                        setY(y);
-                    }, 100);
-                }, 300);
+                    setTransition(visibleTransition);
+                    setOpacity(1);
+                    setY(y);
+                }, 10);
                 break;
             }
             case "left":
             {
                 setY(y);
-                setX(x - 15);
+                setX(x + 15);
                 setOpacity(0);
                 animationTimeout = window.setTimeout(() => {
-                    setAnimationPlayState("running");
-                    animationTimeout = window.setTimeout(() => {
-                        setOpacity(1);
-                        setX(x);
-                    }, 100);
-                }, 300);
+                    setTransition(visibleTransition);
+                    setOpacity(1);
+                    setX(x);
+                }, 10);
                 break;
             }
             case "right":
             {
                 setY(y);
-                setX(x + 15);
+                setX(x - 15);
                 setOpacity(0);
                 animationTimeout = window.setTimeout(() => {
-                    setAnimationPlayState("running");
-                    animationTimeout = window.setTimeout(() => {
-                        setOpacity(1);
-                        setX(x);
-                    }, 100);
-                }, 300);
+                    setTransition(visibleTransition);
+                    setOpacity(1);
+                    setX(x);
+                }, 10);
                 break;
             }
         }
@@ -333,8 +328,7 @@ export function ContextMenu(options: ContextMenuOptions)
             left: x + "px",
             top: y + "px",
             opacity: opacity.toString(),
-            animation: "opacity 0.3s ease, top 0.3s ease, left 0.3s ease",
-            animationPlayState,
+            transition,
         }}>
             {options.children}
         </div>
