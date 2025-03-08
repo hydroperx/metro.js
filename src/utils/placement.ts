@@ -29,13 +29,20 @@ export function computePosition(referenceElement: HTMLElement, positioningElemen
             {
                 resolution = "top";
             }
-            else if (referenceRect.right + margin + positioningRect.width < viewportWidth)
+            else if (options.orthogonal)
             {
-                resolution = "right";
+                if (referenceRect.right + margin + positioningRect.width < viewportWidth)
+                {
+                    resolution = "right";
+                }
+                else
+                {
+                    resolution = "left";
+                }
             }
             else
             {
-                resolution = "left";
+                resolution = "bottom";
             }
             break;
         }
@@ -49,13 +56,20 @@ export function computePosition(referenceElement: HTMLElement, positioningElemen
             {
                 resolution = "bottom";
             }
-            else if (referenceRect.right + margin + positioningRect.width < viewportWidth)
+            else if (options.orthogonal)
             {
-                resolution = "right";
+                if (referenceRect.right + margin + positioningRect.width < viewportWidth)
+                {
+                    resolution = "right";
+                }
+                else
+                {
+                    resolution = "left";
+                }
             }
             else
             {
-                resolution = "left";
+                resolution = "top";
             }
             break;
         }
@@ -70,13 +84,20 @@ export function computePosition(referenceElement: HTMLElement, positioningElemen
             {
                 resolution = "right";
             }
-            else if (referenceRect.top - margin - positioningRect.height >= 0)
+            else if (options.orthogonal)
             {
-                resolution = "top";
+                if (referenceRect.top - margin - positioningRect.height >= 0)
+                {
+                    resolution = "top";
+                }
+                else
+                {
+                    resolution = "bottom";
+                }
             }
             else
             {
-                resolution = "bottom";
+                resolution = "left";
             }
             break;
         }
@@ -91,13 +112,20 @@ export function computePosition(referenceElement: HTMLElement, positioningElemen
             {
                 resolution = "left";
             }
-            else if (referenceRect.top - margin - positioningRect.height >= 0)
+            else if (options.orthogonal)
             {
-                resolution = "top";
+                if (referenceRect.top - margin - positioningRect.height >= 0)
+                {
+                    resolution = "top";
+                }
+                else
+                {
+                    resolution = "bottom";
+                }
             }
             else
             {
-                resolution = "bottom";
+                resolution = "right";
             }
         }
     }
@@ -186,6 +214,13 @@ export function computePosition(referenceElement: HTMLElement, positioningElemen
 export type ComputePositionOptions = {
     prefer?: Side,
     margin?: number,
+    /**
+     * If `prefer` is `left` or `right`, may result into `top` or `bottom`;
+     * if `top` or `bottom`, may result into `left` or `right`.
+     * 
+     * @default false
+     */
+    orthogonal?: boolean,
 };
 
 export type Side = "top" | "bottom" | "left" | "right";
