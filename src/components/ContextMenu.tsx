@@ -669,7 +669,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
     function show(div: HTMLDivElement): void
     {
         // Hide all context menu's submenus from the parent
-        hideAllFromParent(div);
+        hideAllFromParent(div, true);
 
         // Do not re-open the submenu.
         if (div.style.visibility == "visible")
@@ -751,7 +751,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
         }
     }
 
-    function hideAllFromParent(element: HTMLElement): void
+    function hideAllFromParent(element: HTMLElement, excludeSelf: boolean = false): void
     {
         if (transitionTimeout !== -1)
         {
@@ -759,11 +759,24 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
             transitionTimeout = -1;
         }
 
-        // Input listeners
-        Input.input.removeEventListener("inputPressed", input_onInputPressed);
-
         const parent = element.parentElement;
-        for (const div of Array.from(parent.querySelectorAll("." + submenuClassName)) as HTMLDivElement[])
+        const divs = Array.from(parent.querySelectorAll("." + submenuClassName)) as HTMLDivElement[];
+
+        // Exclude self submenu
+        if (excludeSelf)
+        {
+            if (element instanceof HTMLButtonElement)
+            {
+                element = element.nextElementSibling as HTMLElement;
+            }
+            const i = divs.indexOf(element as HTMLDivElement);
+            if (i !== -1)
+            {
+                divs.splice(i, 1);
+            }
+        }
+
+        for (const div of divs)
         {
             div.style.visibility = "hidden";
             const listener = submenuInputPressedListeners.get(div);

@@ -11,7 +11,6 @@ Basic components
 - [x] Arrow button
 - [x] Container
 - [x] ContextMenu
-  - [ ] Avoid closing the submenu itself in function show() in the first line
 - [ ] OptionList
   - [ ] `big?: boolean`: If `true`, displays a big elegant option list.
 - [ ] TextInput

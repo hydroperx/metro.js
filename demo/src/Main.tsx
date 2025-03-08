@@ -34,7 +34,7 @@ function App()
                     <ArrowButton direction="right" size={9}></ArrowButton>
                 </HGroup>
                 <ContextMenu id={contextMenuId}>
-                    <ContextMenuItem>
+                    <ContextMenuItem click={() => {alert("clicked item 1")}}>
                         <ContextMenuCheck state="none"/>
                         <ContextMenuIcon></ContextMenuIcon>
                         <ContextMenuLabel>Item 1</ContextMenuLabel>
@@ -60,12 +60,35 @@ function App()
                         <ContextMenuRight><ContextMenuSubIcon/></ContextMenuRight>
                     </ContextMenuSubmenu>
                     <ContextMenuSubmenuList>
+                        <ContextMenuItem click={() => alert("clicked item a")}>
+                            <ContextMenuIcon></ContextMenuIcon>
+                            <ContextMenuLabel>Item A</ContextMenuLabel>
+                            <ContextMenuRight></ContextMenuRight>
+                        </ContextMenuItem>
+                        <ContextMenuItem disabled={true}>
+                            <ContextMenuIcon></ContextMenuIcon>
+                            <ContextMenuLabel>Item A</ContextMenuLabel>
+                            <ContextMenuRight></ContextMenuRight>
+                        </ContextMenuItem>
+                        <ContextMenuSubmenu>
+                            <ContextMenuCheck state="none"/>
+                            <ContextMenuIcon></ContextMenuIcon>
+                            <ContextMenuLabel>Submenu A</ContextMenuLabel>
+                            <ContextMenuRight><ContextMenuSubIcon/></ContextMenuRight>
+                        </ContextMenuSubmenu>
+                        <ContextMenuSubmenuList>
+                            <ContextMenuItem click={() => alert("clicked item a1")}>
+                                <ContextMenuIcon></ContextMenuIcon>
+                                <ContextMenuLabel>Item A1</ContextMenuLabel>
+                                <ContextMenuRight></ContextMenuRight>
+                            </ContextMenuItem>
                             <ContextMenuItem disabled={true}>
                                 <ContextMenuIcon></ContextMenuIcon>
-                                <ContextMenuLabel>Item A</ContextMenuLabel>
+                                <ContextMenuLabel>Item A1</ContextMenuLabel>
                                 <ContextMenuRight></ContextMenuRight>
                             </ContextMenuItem>
                         </ContextMenuSubmenuList>
+                    </ContextMenuSubmenuList>
                 </ContextMenu>
             </Container>
         </Container>
