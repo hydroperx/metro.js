@@ -224,7 +224,7 @@ export function Select(options: SelectOptions)
 
         // start list top & bottom
         div.style.top = (base_top + base_h / 2) + "px";
-        div.style.bottom = (base_bottom - base_h / 2) + "px";
+        div.style.bottom = (base_bottom + base_h / 2) + "px";
 
         // start transition
         transitionTimeout = setTimeout(() => {
@@ -475,6 +475,7 @@ export function Select(options: SelectOptions)
                         flexDirection: "column",
                         overflowY: "scroll",
                         scrollbarWidth: "none",
+                        flexGrow: "3",
                     }}>
                     {options.children}
                 </div>
