@@ -9,7 +9,7 @@ import { UpArrowIcon, DownArrowIcon } from "./Icons";
 import { computePosition, fitViewportPosition, Side } from "../utils/placement";
 import { ThemeContext } from "../theme";
 import { fontSize } from "../utils/commonValues";
-import { pointsToRem } from "../utils/points";
+import { pointsToRem, pointsToRemValue } from "../utils/points";
 import { focusPrevSibling, focusNextSibling } from "../utils/focusability";
 import { RemObserver } from "../utils/RemObserver";
 
@@ -39,6 +39,9 @@ window.addEventListener("mousedown", function(): void
 {
     currentMouseDownListener?.();
 });
+
+// Cooldown when clicking options
+let cooldown = 0;
 
 /**
  * Represents a list of selectable values.
@@ -72,10 +75,11 @@ export function Select(options: SelectOptions)
     let buttonSerializedStyles: SerializedStyles = css `
         background: ${theme.colors.inputBackground};
         border: 0.15rem solid  ${theme.colors.inputBorder};
+        color: ${theme.colors.foreground};
         display: flex;
         flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
         gap: 0.9rem;
-        padding: ${(pointsToRem(2) + 0.5)}rem 0.7rem";
+        padding: ${pointsToRemValue(2) + 0.5}rem 0.7rem;
         min-width: 15rem;
         outline: none;
 
@@ -133,6 +137,9 @@ export function Select(options: SelectOptions)
             return;
         }
 
+        // Update cooldown
+        cooldown = Date.now();
+
         // Viewport event listeners
         currentMouseDownListener = viewport_onMouseDown;
 
@@ -188,14 +195,9 @@ export function Select(options: SelectOptions)
         const baseRect = baseOption.getBoundingClientRect();
         const base_bottom = baseRect.bottom;
         const base_h = baseRect.height;
-
-        const list_x = base_x;
-        const list_w = button_w;
         
-        // Calculate maximum height
-        div.style.height = "0rem";
-        const max_h = children.reduce((k, e) => k + e.getBoundingClientRect().height, 0)
-            + div.getBoundingClientRect().height;
+        // Calculate maximum list top
+        const max_list_top = children.slice(0, base_i).reduce((k, e) => k - e.getBoundingClientRect().height, base_top);
         
         // Viewport deviation
         const viewportDeviation = 9 * rem;
@@ -209,29 +211,67 @@ export function Select(options: SelectOptions)
             list_top -= h;
         }
 
-        // list height
+        // find list bottom and set initial top position for option items
         let list_bottom = baseOption.getBoundingClientRect().bottom;
         for (const option of children.slice(base_i + 1))
         {
             const h = option.getBoundingClientRect().height;
+            option.style.top = (base_top + h / 2) + "px";
+
             if (list_bottom - h < viewportDeviation) break;
             list_bottom -= h;
         }
 
         // start list top & bottom
-        const start_list_top = base_top + base_h / 2;
-        const start_list_bottom = base_bottom - base_h / 2;
+        div.style.top = (base_top + base_h / 2) + "px";
+        div.style.bottom = (base_bottom - base_h / 2) + "px";
 
-        fixme();
+        // start transition
+        transitionTimeout = setTimeout(() => {
+            div.style.transition = visibleTransition;
+            div.style.top = list_top + "px";
+            div.style.bottom = list_bottom + "px";
+
+            // set opacity and top position for options
+            let acc = base_top;
+            baseOption.style.opacity = "1";
+            for (const option of children.slice(0, base_i).reverse())
+            {
+                const h = option.getBoundingClientRect().height;
+                if (acc - h < viewportDeviation) break;
+                acc -= h;
+                option.style.top = acc + "px";
+                option.style.opacity = "1";
+                list_top -= h;
+            }
+            acc = base_top + base_h;
+            for (const option of children.slice(base_i + 1))
+            {
+                const h = option.getBoundingClientRect().height;
+                if (acc - h >= window.innerHeight - viewportDeviation) break;
+                option.style.top = acc + "px";
+                acc += h;
+                option.style.opacity = "1";
+                list_top -= h;
+            }
+
+            // now, revert the "fixed" position of the options
+            transitionTimeout = setTimeout(() => {
+                for (const option of children)
+                {
+                    option.style.position = "static";
+                    option.style.top = "";
+                }
+                itemListDiv.scrollTop = base_top - max_list_top;
+            }, 200);
+        }, 35);
     }
 
     // Trigger value change
     function triggerChange(value: string): void
     {
-        if (!visible)
-        {
-            return;
-        }
+        // Set value
+        setValue(value);
 
         // Item list div
         const itemListDiv = getItemListDiv();
@@ -247,6 +287,7 @@ export function Select(options: SelectOptions)
         if (selectedOption)
         {
             selectedOption.setAttribute("data-selected", "true");
+            setValueHyperText(selectedOption.innerHTML);
         }
 
         // Dispatch event
@@ -277,7 +318,7 @@ export function Select(options: SelectOptions)
         // Change function
         currentSelectChange = null;
 
-        fixme();
+        throw new Error("unimplemented")
     }
 
     function getDiv(): HTMLDivElement {
@@ -285,19 +326,18 @@ export function Select(options: SelectOptions)
     }
 
     function getUpArrowDiv(): HTMLDivElement {
-        return divRef.current![0] as HTMLDivElement;
+        return divRef.current!.children[0] as HTMLDivElement;
     }
 
     function getDownArrowDiv(): HTMLDivElement {
-        return divRef.current![2] as HTMLDivElement;
+        return divRef.current!.children[2] as HTMLDivElement;
     }
 
     function getItemListDiv(): HTMLDivElement {
-        return divRef.current![1] as HTMLDivElement;
+        return divRef.current!.children[1] as HTMLDivElement;
     }
 
-    // Detect mouse down event out of the list,
-    // closing itself.
+    // Detect mouse down event out of the list, closing itself.
     function viewport_onMouseDown(): void
     {
         if (!visible)
@@ -305,7 +345,13 @@ export function Select(options: SelectOptions)
             return;
         }
 
-        fixme();
+        const div = getDiv();
+        if (div.matches(":hover"))
+        {
+            return;
+        }
+
+        close();
     }
 
     // Handle arrows and escape
@@ -406,7 +452,8 @@ export function Select(options: SelectOptions)
                 style={options.style}
                 className={options.className}
                 disabled={!!options.disabled}
-                dangerouslySetInnerHTML={{ __html: valueHyperText }}>
+                dangerouslySetInnerHTML={{ __html: valueHyperText }}
+                onClick={open}>
             </button>
             <div ref={divRef} style={{
                 display: "inline-flex",
@@ -463,7 +510,7 @@ export type SelectOptions = {
     change?: (value: string) => void,
 };
 
-export function SelectItem(options: SelectItemOptions)
+export function SelectOption(options: SelectOptionOptions)
 {
     // Locale direction
     const localeDir = useContext(LocaleDirectionContext);
@@ -504,6 +551,10 @@ export function SelectItem(options: SelectItemOptions)
 
     function button_onClick(): void
     {
+        if (cooldown > Date.now() - 50)
+        {
+            return;
+        }
         currentSelectClose?.();
         currentSelectChange?.(options.value);
     }
@@ -515,7 +566,7 @@ export function SelectItem(options: SelectItemOptions)
     );
 }
 
-export type SelectItemOptions = {
+export type SelectOptionOptions = {
     children?: React.ReactNode,
     style?: React.CSSProperties,
     className?: string,

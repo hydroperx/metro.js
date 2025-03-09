@@ -2,8 +2,8 @@ import { createRoot } from "react-dom/client";
 import { useEffect, useState } from "react";
 import {
     Button, Container, Label, HGroup, VGroup, ArrowButton, ThemeContext,
-    LoadingIcon,
-    lightTheme, darkTheme
+    LoadingIcon, Select, SelectOption,
+    lightTheme, darkTheme,
 } from "@hydroper/metrocomponents";
 import type { Theme } from "@hydroper/metrocomponents";
 import {
@@ -45,6 +45,13 @@ function App()
                     <VGroup horizontalAlign="center">
                         <LoadingIcon size={9}/>
                     </VGroup>
+                </div>
+                <div>
+                    <Select default="foo">
+                        <SelectOption value="foo">Foo</SelectOption>
+                        <SelectOption value="bar">Bar</SelectOption>
+                        <SelectOption value="qux">Qux</SelectOption>
+                    </Select>
                 </div>
                 <ContextMenu id={contextMenuId}>
                     <ContextMenuItem className="foo" click={() => {alert("clicked item 1")}}>
