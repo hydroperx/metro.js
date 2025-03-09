@@ -160,6 +160,11 @@ export function ContextMenu(options: ContextMenuOptions)
     // Transition timeout
     let transitionTimeout = -1;
 
+    function getItemListDiv(): HTMLDivElement
+    {
+        return divRef.current.children[1] as HTMLDivElement;
+    }
+
     // Handle "show" signal
     function eventDispatcher_onShow(e: CustomEvent<ContextMenuEvent>): void
     {
@@ -273,8 +278,8 @@ export function ContextMenu(options: ContextMenuOptions)
     // Handle "hideAll" signal
     function hideAll(): void
     {
-        // Obtain div element
-        const divElement = divRef.current!;
+        // Obtain item list div
+        const itemListDiv = getItemListDiv();
 
         // Hide base context menu
         setVisible(false);
@@ -292,7 +297,7 @@ export function ContextMenu(options: ContextMenuOptions)
         currentInputPressedListener = null;
 
         // Hide submenus by querying their classes
-        for (const div of Array.from(divElement.querySelectorAll("." + submenuClassName)) as HTMLDivElement[])
+        for (const div of Array.from(itemListDiv.querySelectorAll("." + submenuClassName)) as HTMLDivElement[])
         {
             div.style.visibility = "hidden";
             submenuInputPressedListeners.delete(div);
@@ -322,7 +327,7 @@ export function ContextMenu(options: ContextMenuOptions)
 
             if (out)
             {
-                for (const div1 of Array.from(div.querySelectorAll("." + submenuClassName)) as HTMLDivElement[])
+                for (const div1 of Array.from(getItemListDiv().querySelectorAll("." + submenuClassName)) as HTMLDivElement[])
                 {
                     if ($(div1).is(":hidden"))
                     {
@@ -352,13 +357,13 @@ export function ContextMenu(options: ContextMenuOptions)
             return;
         }
 
-        // Obtain div element
-        const div = divRef.current!;
+        // Obtain item list div
+        const itemListDiv = getItemListDiv();
 
         if (Input.input.justPressed("escape"))
         {
             // If this is the innermost context menu open, close it.
-            const submenus = (Array.from(div.querySelectorAll("." + submenuClassName)) as HTMLDivElement[])
+            const submenus = (Array.from(itemListDiv.querySelectorAll("." + submenuClassName)) as HTMLDivElement[])
                 .filter(div => div.style.visibility == "visible");
             const innermost = submenus.length === 0;
             if (innermost)
@@ -375,10 +380,10 @@ export function ContextMenu(options: ContextMenuOptions)
             return;
         }
 
-        for (let i = 0; i < div.children.length; i++)
+        for (let i = 0; i < itemListDiv.children.length; i++)
         {
             // Child (item or submenu)
-            const child = div.children[i] as HTMLElement;
+            const child = itemListDiv.children[i] as HTMLElement;
 
             // If focused
             if (document.activeElement === child)
@@ -400,9 +405,9 @@ export function ContextMenu(options: ContextMenuOptions)
                     const submenuList = child.nextElementSibling;
                     if (submenuList.classList.contains(submenuClassName))
                     {
-                        if (submenuList.lastElementChild)
+                        if (submenuList.children[1].lastElementChild)
                         {
-                            focusNextSibling(submenuList.lastElementChild as HTMLElement);
+                            focusNextSibling(submenuList.children[1].lastElementChild as HTMLElement);
                         }
                     }
                 }
@@ -412,7 +417,7 @@ export function ContextMenu(options: ContextMenuOptions)
         }
 
         // If this is the innermost context menu open
-        const submenus = (Array.from(div.querySelectorAll("." + submenuClassName)) as HTMLDivElement[])
+        const submenus = (Array.from(itemListDiv.querySelectorAll("." + submenuClassName)) as HTMLDivElement[])
             .filter(div => div.style.visibility == "visible");
         const innermost = submenus.length === 0;
         if (innermost)
@@ -420,7 +425,7 @@ export function ContextMenu(options: ContextMenuOptions)
             // focus last
             if (Input.input.justPressed("navigateUp"))
             {
-                let first = div.children.length == 0 ? null : div.children[0];
+                let first = itemListDiv.firstElementChild;
                 if (first)
                 {
                     focusPrevSibling(first as HTMLElement);
@@ -429,7 +434,7 @@ export function ContextMenu(options: ContextMenuOptions)
             // focus first
             else if (Input.input.justPressed("navigateDown"))
             {
-                let last = div.children.length == 0 ? null : div.children[div.children.length - 1];
+                let last = itemListDiv.lastElementChild;
                 if (last)
                 {
                     focusNextSibling(last as HTMLElement);
@@ -481,7 +486,16 @@ export function ContextMenu(options: ContextMenuOptions)
             opacity: opacity.toString(),
             transition,
         }}>
-            {options.children}
+            <div className="up-arrow"></div>
+            <div
+                className="list"
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                }}>
+                {options.children}
+            </div>
+            <div className="down-arrow"></div>
         </div>
     );
 }
@@ -706,6 +720,19 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
     // Transition timeout
     let transitionTimeout = -1;
 
+    function getDiv(): HTMLDivElement
+    {
+        const button = buttonRef.current!;
+        const div = button.nextElementSibling;
+        assert(div instanceof HTMLDivElement && div.classList.contains(submenuClassName), "Incorrectly built submenu.");
+        return div as HTMLDivElement;
+    }
+
+    function getItemListDiv(): HTMLDivElement
+    {
+        return getDiv().children[1] as HTMLDivElement;
+    }
+
     function show(div: HTMLDivElement): void
     {
         // Hide all context menu's submenus from the parent
@@ -807,6 +834,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
         {
             if (element instanceof HTMLButtonElement)
             {
+                assert(element.nextElementSibling instanceof HTMLElement, "Incorrectly built submenu.");
                 element = element.nextElementSibling as HTMLElement;
             }
             const i = divs.indexOf(element as HTMLDivElement);
@@ -825,10 +853,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
 
     function button_onClick(_e: MouseEvent): void
     {
-        const buttonElement = buttonRef.current!;
-
-        assert(buttonElement.nextElementSibling.classList.contains(submenuClassName));
-        show(buttonElement.nextElementSibling as HTMLDivElement);
+        show(getDiv());
     }
 
     let hoverTimeout: number = -1;
@@ -836,10 +861,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
     function button_onMouseOver(e: MouseEvent): void
     {
         hoverTimeout = window.setTimeout(() => {
-            const buttonElement = buttonRef.current!;
-
-            assert(buttonElement.nextElementSibling.classList.contains(submenuClassName));
-            show(buttonElement.nextElementSibling as HTMLDivElement);
+            show(getDiv());
         }, 500);
     }
 
@@ -859,7 +881,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
         const button = buttonRef.current!;
 
         // Obtain div element
-        const div = button.nextElementSibling as HTMLDivElement;
+        const div = getDiv();
 
         if (Input.input.justPressed("escape"))
         {
@@ -877,10 +899,13 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
             return;
         }
 
-        for (let i = 0; i < div.children.length; i++)
+        // Item list div
+        const itemListDiv = getItemListDiv();
+
+        for (let i = 0; i < itemListDiv.children.length; i++)
         {
             // Child (item or submenu)
-            const child = div.children[i] as HTMLElement;
+            const child = itemListDiv.children[i] as HTMLElement;
 
             // If focused
             if (document.activeElement === child)
@@ -902,9 +927,9 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
                     const submenuList = child.nextElementSibling;
                     if (submenuList.classList.contains(submenuClassName))
                     {
-                        if (submenuList.lastElementChild)
+                        if (submenuList.children[1].lastElementChild)
                         {
-                            focusNextSibling(submenuList.lastElementChild as HTMLElement);
+                            focusNextSibling(submenuList.children[1].lastElementChild as HTMLElement);
                         }
                     }
                 }
@@ -929,7 +954,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
             // focus last
             if (Input.input.justPressed("navigateUp"))
             {
-                let first = div.children.length == 0 ? null : div.children[0];
+                let first = itemListDiv.firstElementChild;
                 if (first)
                 {
                     focusPrevSibling(first as HTMLElement);
@@ -938,7 +963,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
             // focus first
             else if (Input.input.justPressed("navigateDown"))
             {
-                let last = div.children.length == 0 ? null : div.children[div.children.length - 1];
+                let last = itemListDiv.lastElementChild;
                 if (last)
                 {
                     focusNextSibling(last as HTMLElement);
@@ -962,8 +987,8 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
         buttonElement.addEventListener("mouseout", button_onMouseOut);
         buttonElement.addEventListener("click", button_onClick);
 
-        // Obtain submenu list div
-        const div = buttonElement.nextElementSibling as HTMLDivElement;
+        // Submenu div
+        const div = getDiv();
 
         // Track input pressed listener
         if (div)
@@ -1014,7 +1039,17 @@ export function ContextMenuSubmenuList(options: ContextMenuSubmenuListOptions)
                 minWidth: "12rem",
                 opacity: "0",
             }}>
-            {options.children}
+            <div className="up-arrow"></div>
+            <div
+                className="list"
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                }}>
+                
+                {options.children}
+            </div>
+            <div className="down-arrow"></div>
         </div>
     );
 }

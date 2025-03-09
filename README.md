@@ -81,6 +81,12 @@ registerIcon("iconX", { black: source, white: source });
 
 These icons can then be used in for example `Icon` and `IconButton` components.
 
+### Measuring points
+
+The cascading `font-size` property in the `<html>` tag is used for determining the unit in points in the library. 1 point equals `0.25rem`, where `rem` is the `font-size` pixels of the `<html>` tag.
+
+If it is desired to grow or reduce all the user interface together, you may adjust the `font-size` of the `<html>` tag.
+
 ### Icons
 
 The built-in icons may serve as base for designing newer icons. Here are links to existing useful icons:
