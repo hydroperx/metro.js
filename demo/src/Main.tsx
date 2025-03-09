@@ -32,7 +32,7 @@ function App()
             <Container padding={5}>
                 <Label variant="heading1">Metro demo</Label>
                 <div style={{margin: "12rem"}}></div>
-                <HGroup inline gap={2} style={{float: "right", marginRight: "3rem"}}>
+                <HGroup gap={2} style={{float: "right", marginRight: "3rem"}}>
                     <Button variant="outline-primary" tooltip="An useful description.">X</Button>
                     <Button variant="outline">Y</Button>
                     <ArrowButton direction="right" size={9}></ArrowButton>

@@ -237,7 +237,6 @@ export function LoadingIcon(options: LoadingIconOptions)
             padding-top: ${(size * 0.25 * rem) /5}px;
             width: ${size * 0.25 * rem}px;
             height: ${size * 0.25 * rem}px;
-            margin: auto;
 
             .progress-ring__wrap {
                 position: absolute;
