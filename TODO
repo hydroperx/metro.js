@@ -13,8 +13,9 @@ Basic components
 - [x] Container
 - [x] ContextMenu
   - [ ] Allow scrolling the context menu (`scroll?: boolean`)
-- [ ] Select
+- [x] Select
   - [ ] Future: a more Metro like transition and positioning that centers the selected option to the input button
+   - [ ] "Open transition" draft: https://github.com/realhydroper/tsmetrocomponents/blob/d18900aad5e94d3429e4a762d1f79015dcf9aef4/src/components/Select.tsx#L161
   - [ ] Add a "down" arrow icon to the right of the input button.
   - [ ] `big?: boolean`: If `true`, displays a big elegant select list (only the main button changes).
     - [ ] In this case, select list goes always below the button
