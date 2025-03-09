@@ -15,6 +15,7 @@ Basic components
   - [ ] Allow scrolling the context menu (`scroll?: boolean`)
 - [ ] Select
   - [ ] Future: a more Metro like transition and positioning that centers the selected option to the input button
+  - [ ] Add a "down" arrow icon to the right of the input button.
   - [ ] `big?: boolean`: If `true`, displays a big elegant select list (only the main button changes).
     - [ ] In this case, select list goes always below the button
 - [ ] TextInput
