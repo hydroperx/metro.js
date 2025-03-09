@@ -13,7 +13,7 @@ export function Button(options: ButtonOptions)
     // Take the theme context
     const theme = useContext(ThemeContext);
 
-    const buttonElement: Ref<HTMLButtonElement> = useRef(null);
+    const buttonRef: Ref<HTMLButtonElement> = useRef(null);
 
     const newStyle: React.CSSProperties = {};
 
@@ -293,11 +293,15 @@ export function Button(options: ButtonOptions)
         if (tooltipElement.current)
         {
             tooltipTimeout = window.setTimeout(() => {
-                setTooltipVisible(true);
+                const button = buttonRef.current;
+                if (button.matches(":hover"))
+                {
+                    setTooltipVisible(true);
+                }
             }, 700);
 
             // Adjust tooltip position
-            const [x, y] = computePosition(buttonElement.current, tooltipElement.current, {
+            const [x, y] = computePosition(buttonRef.current, tooltipElement.current, {
                 prefer: "bottom",
                 margin: 7,
             });
@@ -321,7 +325,7 @@ export function Button(options: ButtonOptions)
 
     return <>
             <button
-                ref={buttonElement}
+                ref={buttonRef}
                 className={className + (options.className ? " " + options.className : "")}
                 onFocus={options.focus}
                 onClick={options.click}
@@ -341,7 +345,8 @@ export function Button(options: ButtonOptions)
                 <div ref={tooltipElement} style={{
                     background: theme.colors.inputBackground,
                     border: "0.15rem solid " + theme.colors.inputBorder,
-                    display: tooltipVisible ? "inline-block" : "none",
+                    display: "inline-block",
+                    visibility: tooltipVisible ? "visible" : "hidden",
                     position: "fixed",
                     left: tooltipX + "px",
                     top: tooltipY + "px",
