@@ -38,9 +38,18 @@ const submenuItemClassName = "ContextMenuSubmenu-item";
 // Submenus are identified by this class name.
 const submenuClassName = "ContextMenuSubmenuList-submenu";
 
-// Weak map allowing to remove Input listeners of submenus reliably.
+// Invoked by the global Input action listener.
+let currentInputPressedListener: Function | null = null;
+
+// Weak map mapping to Input listeners of submenus reliably.
 // The keys are the submenu lists themselves, not the submenu representing items.
 const submenuInputPressedListeners = new WeakMap<HTMLDivElement, Function>();
+
+// Globalized input action listener
+Input.input.addEventListener("inputPressed", function(): void
+{
+    currentInputPressedListener?.();
+});
 
 /**
  * Hook for using a context menu.
@@ -164,8 +173,7 @@ export function ContextMenu(options: ContextMenuOptions)
         window.addEventListener("mousedown", viewport_onMouseDown);
 
         // Input listeners
-        Input.input.removeEventListener("inputPressed", input_onInputPressed);
-        Input.input.addEventListener("inputPressed", input_onInputPressed);
+        currentInputPressedListener = input_onInputPressed;
 
         // Side resolution
         let sideResolution: Side = "bottom";
@@ -272,17 +280,13 @@ export function ContextMenu(options: ContextMenuOptions)
         window.removeEventListener("mousedown", viewport_onMouseDown);
 
         // Input listeners
-        Input.input.removeEventListener("inputPressed", input_onInputPressed);
+        currentInputPressedListener = null;
 
         // Hide submenus by querying their classes
         for (const div of Array.from(divElement.querySelectorAll("." + submenuClassName)) as HTMLDivElement[])
         {
             div.style.visibility = "hidden";
-            const listener = submenuInputPressedListeners.get(div);
-            if (listener)
-            {
-                Input.input.removeEventListener("inputPressed", listener as any);
-            }
+            submenuInputPressedListeners.delete(div);
         }
     }
 
@@ -335,12 +339,18 @@ export function ContextMenu(options: ContextMenuOptions)
         if (Input.input.justPressed("escape"))
         {
             // If this is the innermost context menu open, close it.
-            const innermost = !Array.from(div.querySelectorAll("." + submenuClassName))
-                .some(div => (div as HTMLElement).style.visibility == "visible");
+            const submenus = (Array.from(div.querySelectorAll("." + submenuClassName)) as HTMLDivElement[])
+                .filter(div => div.style.visibility == "visible");
+            const innermost = submenus.length === 0;
             if (innermost)
             {
                 // since this is the only context menu open, just close "all".
                 hideAllContextMenu();
+            }
+            else
+            {
+                // Check input on submenu
+                submenuInputPressedListeners.get(submenus[submenus.length - 1])();
             }
 
             return;
@@ -368,6 +378,14 @@ export function ContextMenu(options: ContextMenuOptions)
                 else if (Input.input.justPressed(localeDir == "ltr" ? "navigateRight" : "navigateLeft") && child.classList.contains(submenuItemClassName))
                 {
                     (child as HTMLButtonElement).click();
+                    const submenuList = child.nextElementSibling;
+                    if (submenuList.classList.contains(submenuClassName))
+                    {
+                        if (submenuList.lastElementChild)
+                        {
+                            focusNextSibling(submenuList.lastElementChild as HTMLElement);
+                        }
+                    }
                 }
                 
                 return;
@@ -375,8 +393,9 @@ export function ContextMenu(options: ContextMenuOptions)
         }
 
         // If this is the innermost context menu open
-        const innermost = !Array.from(div.querySelectorAll("." + submenuClassName))
-                .some(div => (div as HTMLElement).style.visibility == "visible");
+        const submenus = (Array.from(div.querySelectorAll("." + submenuClassName)) as HTMLDivElement[])
+            .filter(div => div.style.visibility == "visible");
+        const innermost = submenus.length === 0;
         if (innermost)
         {
             // focus last
@@ -398,6 +417,11 @@ export function ContextMenu(options: ContextMenuOptions)
                 }
             }
         }
+        else
+        {
+            // Check input on submenu
+            submenuInputPressedListeners.get(submenus[submenus.length - 1])();
+        }
     }
 
     eventDispatcher.addEventListener("show", eventDispatcher_onShow);
@@ -411,8 +435,7 @@ export function ContextMenu(options: ContextMenuOptions)
             window.addEventListener("mousedown", viewport_onMouseDown);
 
             // Input listeners
-            Input.input.removeEventListener("inputPressed", input_onInputPressed);
-            Input.input.addEventListener("inputPressed", input_onInputPressed);
+            currentInputPressedListener = input_onInputPressed;
         }
 
         // Cleanup
@@ -421,7 +444,7 @@ export function ContextMenu(options: ContextMenuOptions)
             window.removeEventListener("mousedown", viewport_onMouseDown);
 
             // Input listeners
-            Input.input.removeEventListener("inputPressed", input_onInputPressed);
+            currentInputPressedListener = null;
 
             // Event dispatcher listeners
             eventDispatcher.removeEventListener("show", eventDispatcher_onShow);
@@ -690,8 +713,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
         const buttonElement = buttonRef.current!;
 
         // Input listeners
-        Input.input.removeEventListener("inputPressed", input_onInputPressed);
-        Input.input.addEventListener("inputPressed", input_onInputPressed);
+        submenuInputPressedListeners.set(div, input_onInputPressed);
 
         // Position context menu after butotn.
         const [x, y, sideResolution] = computePosition(buttonElement, div, {
@@ -783,11 +805,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
         for (const div of divs)
         {
             div.style.visibility = "hidden";
-            const listener = submenuInputPressedListeners.get(div);
-            if (listener)
-            {
-                Input.input.removeEventListener("inputPressed", listener as any);
-            }
+            submenuInputPressedListeners.delete(div);
         }
     }
 
@@ -867,6 +885,14 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
                 else if (Input.input.justPressed(localeDir == "ltr" ? "navigateRight" : "navigateLeft") && child.classList.contains(submenuItemClassName))
                 {
                     (child as HTMLButtonElement).click();
+                    const submenuList = child.nextElementSibling;
+                    if (submenuList.classList.contains(submenuClassName))
+                    {
+                        if (submenuList.lastElementChild)
+                        {
+                            focusNextSibling(submenuList.lastElementChild as HTMLElement);
+                        }
+                    }
                 }
                 // close current submenu
                 else if (Input.input.justPressed(localeDir == "ltr" ? "navigateLeft" : "navigateRight"))
@@ -929,13 +955,10 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
         if (div)
         {
             submenuInputPressedListeners.set(div, input_onInputPressed);
-            Input.input.removeEventListener("inputPressed", input_onInputPressed);
-            Input.input.addEventListener("inputPressed", input_onInputPressed);
         }
 
         return () => {
             // Input listeners
-            Input.input.removeEventListener("inputPressed", input_onInputPressed);
             submenuInputPressedListeners.delete(div);
         };
     });

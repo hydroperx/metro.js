@@ -12,7 +12,6 @@ Basic components
   - [x] Arrow button
 - [x] Container
 - [x] ContextMenu
-  - [ ] Fix bug: when the context menu is reopened, navigation keys are not working properly.
   - [ ] Allow scrolling the context menu
 - [ ] OptionList
   - [ ] `big?: boolean`: If `true`, displays a big elegant option list.
