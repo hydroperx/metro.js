@@ -1,7 +1,7 @@
 import { pointsToRem } from "../utils/points";
 import extend from "extend";
 import { useContext } from "react";
-import { css } from "@emotion/css";
+import { css } from "@emotion/react";
 import { ThemeContext } from "../theme";
 import { fontFamily, fontSize } from "../utils/commonValues";
 
@@ -122,7 +122,7 @@ export function Container(options: ContainerOptions)
         extend(newStyle, options.style);
     }
 
-    const className = css `
+    const serializedStyles = css `
         &::-webkit-scrollbar {
             width: 12px;
             height: 12px;
@@ -136,7 +136,8 @@ export function Container(options: ContainerOptions)
     `;
 
     return <div
-        className={className + (options.className ? " " + options.className : "")}
+        css={serializedStyles}
+        className={options.className ? " " + options.className : ""}
         style={newStyle}
         onClick={options.click}
         onMouseOver={options.mouseOver}

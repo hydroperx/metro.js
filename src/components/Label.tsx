@@ -1,6 +1,6 @@
 import assert from "assert";
 import extend from "extend";
-import { css } from "@emotion/css";
+import { css } from "@emotion/react";
 
 export type LabelVariant = 
     "normal" |
@@ -39,55 +39,55 @@ export function Label(options: LabelOptions)
     {
         case "normal":
         {
-            const className = css `
+            const serializedStyles = css `
                 font-family: "Open Sans", sans;
                 font-size: 0.9rem;
             `;
-            return <span className={className + (options.className ? " " + options.className : "")} style={newStyle}>{options.children}</span>;
+            return <span css={serializedStyles} className={options.className} style={newStyle}>{options.children}</span>;
         }
         case "heading1":
         {
-            const className = css `
+            const serializedStyles = css `
                 font-family: "Open Sans", sans;
                 font-weight: lighter;
                 font-size: 2.1rem;
             `;
-            return <h1 className={className + (options.className ? " " + options.className : "")} style={newStyle}>{options.children}</h1>;
+            return <h1 css={serializedStyles} className={options.className} style={newStyle}>{options.children}</h1>;
         }
         case "heading2":
         {
-            const className = css `
+            const serializedStyles = css `
                 font-family: "Open Sans", sans;
                 font-weight: lighter;
                 font-size: 1.7rem;
             `;
-            return <h2 className={className + (options.className ? " " + options.className : "")} style={newStyle}>{options.children}</h2>;
+            return <h2 css={serializedStyles} className={options.className} style={newStyle}>{options.children}</h2>;
         }
         case "heading3":
         {
-            const className = css `
+            const serializedStyles = css `
                 font-family: "Open Sans", sans;
                 font-size: 1.3rem;
                 font-weight: bold;
             `;
-            return <h3 className={className + (options.className ? " " + options.className : "")} style={newStyle}>{options.children}</h3>;
+            return <h3 css={serializedStyles} className={options.className} style={newStyle}>{options.children}</h3>;
         }
         case "heading4":
         {
-            const className = css `
+            const serializedStyles = css `
                 font-family: "Open Sans", sans;
                 font-size: 1.1rem;
                 font-weight: bold;
             `;
-            return <h4 className={className + (options.className ? " " + options.className : "")} style={newStyle}>{options.children}</h4>;
+            return <h4 css={serializedStyles} className={options.className} style={newStyle}>{options.children}</h4>;
         }
         case "legend":
         {
-            const className = css `
+            const serializedStyles = css `
                 font-family: "Open Sans", sans;
                 font-size: 0.77rem;
             `;
-            return <span className={className + (options.className ? " " + options.className : "")} style={newStyle}>{options.children}</span>;
+            return <span css={serializedStyles} className={options.className} style={newStyle}>{options.children}</span>;
         }
     }
 }

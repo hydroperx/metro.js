@@ -20,6 +20,8 @@ npm i @emotion/css @emotion/react
 
 > Note that this package uses the [Emotion](https://emotion.sh) library for skinning UI components.
 
+Ensure to follow the [steps here](https://stackoverflow.com/a/77162508/26380963) for properly setting up the Emotion engine.
+
 ### Installing the required Open Sans font
 
 Installation:

@@ -1,6 +1,6 @@
 import { pointsToRem } from "../utils/points";
 import extend from "extend";
-import { css } from "@emotion/css";
+import { css, SerializedStyles } from "@emotion/react";
 import React, { Ref, useContext, useRef, useState, useEffect } from "react";
 import Color from "color";
 import { fontSize } from "../utils/commonValues";
@@ -44,7 +44,8 @@ export function Button(options: ButtonOptions)
         extend(newStyle, options.style);
     }
 
-    let className: string = "";
+    // Emotion CSS
+    let serializedStyles: SerializedStyles = null;
     
     const padding = "0.6rem 1rem";
 
@@ -57,7 +58,7 @@ export function Button(options: ButtonOptions)
             const hoverBg = dark ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.4)";
             const pressedBg = dark ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)";
 
-            className = css `
+            serializedStyles = css `
                 background: none;
                 color: ${color};
                 padding: ${padding};
@@ -89,7 +90,7 @@ export function Button(options: ButtonOptions)
             const color = theme.colors.anchor ?? "#000";
             const hoverColor = Color(color).lighten(0.3).toString();
 
-            className = css `
+            serializedStyles = css `
                 background: none;
                 color: ${color};
                 padding: ${padding};
@@ -119,7 +120,7 @@ export function Button(options: ButtonOptions)
         case "secondary":
         {
             // uses providedTheme.colors.foreground as character color
-            className = css `
+            serializedStyles = css `
                 background: ${theme.colors.secondaryBackground};
                 color: ${theme.colors.foreground};
                 padding: ${padding};
@@ -149,7 +150,7 @@ export function Button(options: ButtonOptions)
         }
         case "primary":
         {
-            className = css `
+            serializedStyles = css `
                 background: ${theme.colors.primaryBackground};
                 color: ${theme.colors.primaryForeground};
                 padding: ${padding};
@@ -179,7 +180,7 @@ export function Button(options: ButtonOptions)
         }
         case "danger":
         {
-            className = css `
+            serializedStyles = css `
                 background: ${theme.colors.dangerBackground};
                 color: ${theme.colors.dangerForeground};
                 padding: ${padding};
@@ -214,7 +215,7 @@ export function Button(options: ButtonOptions)
             const hoverBg = dark ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.4)";
             const pressedCharColor = dark ? "#000" : "#fff";
 
-            className = css `
+            serializedStyles = css `
                 background: none;
                 color: ${color};
                 padding: ${padding};
@@ -250,7 +251,7 @@ export function Button(options: ButtonOptions)
             const hoverBg = dark ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 0.5)";
             const pressedCharColor = dark ? "#000" : "#fff";
 
-            className = css `
+            serializedStyles = css `
                 background: ${bg};
                 color: ${color};
                 padding: ${padding};
@@ -326,7 +327,8 @@ export function Button(options: ButtonOptions)
     return <>
             <button
                 ref={buttonRef}
-                className={className + (options.className ? " " + options.className : "")}
+                css={serializedStyles}
+                className={options.className}
                 onFocus={options.focus}
                 onClick={options.click}
                 onMouseOver={mouseOver as any}
@@ -422,7 +424,7 @@ export function IconButton(options: IconButtonOptions)
     }
 
     // Build style class
-    const className = css `
+    const serializedStyles = css `
         background: none;
         border: none;
         border-radius: 0;
@@ -467,7 +469,8 @@ export function IconButton(options: IconButtonOptions)
     return (
         <button
             ref={ref}
-            className={className + (options.className ? " " + options.className : "")}
+            css={serializedStyles}
+            className={options.className}
             onFocus={options.focus}
             onClick={options.click}
             onMouseOver={options.mouseOver}

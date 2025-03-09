@@ -1,6 +1,6 @@
 import { TypedEventTarget } from "@hydroper/typedeventtarget";
 import { useContext, useRef, useState, useEffect } from "react";
-import { css } from "@emotion/css";
+import { css } from "@emotion/react";
 import Color from "color";
 import { computePosition, fitViewportPosition, Side } from "../utils/placement";
 import { ThemeContext } from "../theme";
@@ -512,7 +512,7 @@ export function ContextMenuItem(options: ContextMenuItemOptions)
 
     // Build the style class
     const hoverBackground = Color(theme.colors.inputBackground).darken(0.4).toString();
-    const className = css `
+    const serializedStyles = css `
         display: inline-flex;
         flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
         gap: 0.9rem;
@@ -565,7 +565,7 @@ export function ContextMenuItem(options: ContextMenuItemOptions)
     }
 
     return (
-        <button className={className + " " + options.className} disabled={options.disabled} onClick={button_onClick} ref={buttonRef}>
+        <button css={serializedStyles} className={options.className} disabled={options.disabled} onClick={button_onClick} ref={buttonRef}>
             {options.children}
         </button>
     );
@@ -682,7 +682,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
 
     // Build the style class
     const hoverBackground = Color(theme.colors.inputBackground).darken(0.4).toString();
-    const className = css `
+    const serializedStyles = css `
         display: inline-flex;
         flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
         gap: 0.9rem;
@@ -978,7 +978,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
     });
 
     return (
-        <button className={className + " " + submenuItemClassName} ref={buttonRef}>
+        <button css={serializedStyles} className={submenuItemClassName} ref={buttonRef}>
             {options.children}
         </button>
     );

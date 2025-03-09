@@ -1,10 +1,14 @@
 import { createRoot } from "react-dom/client";
 import { useEffect } from "react";
-import { Button, Container, Label, HGroup, ArrowButton, ContextMenuSubIcon, ThemeContext, darkTheme} from "@hydroper/metrocomponents";
+import {
+    Button, Container, Label, HGroup, VGroup, ArrowButton, ThemeContext,
+    LoadingIcon,
+    darkTheme
+} from "@hydroper/metrocomponents";
 import {
     useContextMenu, ContextMenu,
     ContextMenuItem, ContextMenuCheck, ContextMenuIcon, ContextMenuLabel, ContextMenuRight,
-    ContextMenuSeparator, ContextMenuSubmenu, ContextMenuSubmenuList
+    ContextMenuSeparator, ContextMenuSubmenu, ContextMenuSubIcon, ContextMenuSubmenuList
 } from "@hydroper/metrocomponents";
 import "@fontsource/open-sans/300.css";
 import "@fontsource/open-sans/400.css";
@@ -26,13 +30,16 @@ function App()
     return <ThemeContext.Provider value={darkTheme}>
         <Container full solid selection={false} contextMenu={Container_onContextMenu as any}>
             <Container padding={5}>
-                <Label variant="heading1">Hi there</Label>
+                <Label variant="heading1">Metro demo</Label>
                 <div style={{margin: "12rem"}}></div>
                 <HGroup inline gap={2} style={{float: "right", marginRight: "3rem"}}>
                     <Button variant="outline-primary" tooltip="An useful description.">X</Button>
                     <Button variant="outline">Y</Button>
                     <ArrowButton direction="right" size={9}></ArrowButton>
                 </HGroup>
+                <VGroup horizontalAlign="center">
+                    <LoadingIcon size={9}/>
+                </VGroup>
                 <ContextMenu id={contextMenuId}>
                     <ContextMenuItem className="foo" click={() => {alert("clicked item 1")}}>
                         <ContextMenuCheck state="none"/>
