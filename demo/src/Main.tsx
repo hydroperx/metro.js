@@ -1,10 +1,11 @@
 import { createRoot } from "react-dom/client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
     Button, Container, Label, HGroup, VGroup, ArrowButton, ThemeContext,
     LoadingIcon,
-    darkTheme
+    lightTheme, darkTheme
 } from "@hydroper/metrocomponents";
+import type { Theme } from "@hydroper/metrocomponents";
 import {
     useContextMenu, ContextMenu,
     ContextMenuItem, ContextMenuCheck, ContextMenuIcon, ContextMenuLabel, ContextMenuRight,
@@ -27,14 +28,17 @@ function App()
         });
     }
 
-    return <ThemeContext.Provider value={darkTheme}>
+    // States
+    const [theme, setTheme] = useState<Theme>(darkTheme);
+
+    return <ThemeContext.Provider value={theme}>
         <Container full solid selection={false} contextMenu={Container_onContextMenu as any}>
             <Container padding={5}>
                 <Label variant="heading1">Metro demo</Label>
                 <div style={{margin: "12rem"}}></div>
                 <HGroup gap={2} style={{float: "right", marginRight: "3rem"}}>
-                    <Button variant="outline-primary" tooltip="An useful description.">X</Button>
-                    <Button variant="outline">Y</Button>
+                    <Button variant="outline-primary" tooltip="An useful description." click={() => { setTheme(lightTheme); }}>Light</Button>
+                    <Button variant="outline"  click={() => { setTheme(darkTheme); }}>Dark</Button>
                     <ArrowButton direction="right" size={9}></ArrowButton>
                 </HGroup>
                 <div>

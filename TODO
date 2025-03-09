@@ -14,7 +14,10 @@ Basic components
 - [x] ContextMenu
   - [ ] Allow scrolling the context menu (`scroll?: boolean`)
 - [ ] Select
-  - [ ] `big?: boolean`: If `true`, displays a big elegant select list.
+  - [ ] Update for initial value (+ update valueHyperText)
+  - [ ] On selection, update valueHyperText
+  - [ ] Handle disabled
+  - [ ] `big?: boolean`: If `true`, displays a big elegant select list (only the main button changes).
   - [ ] Scroll (display arrows smartly based in scroll events; at a certain amount of items the list is scrollable)
   - [ ] RTL support
   - [ ] Transition

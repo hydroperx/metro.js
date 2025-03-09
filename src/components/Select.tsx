@@ -1,15 +1,16 @@
 import React, { useContext, useRef, useState, useEffect } from "react";
-import { css } from "@emotion/react";
+import { css, SerializedStyles } from "@emotion/react";
 import Color from "color";
+import { Input } from "@hydroper/inputaction";
+import $ from "jquery";
+import assert from "assert";
+import { LocaleDirectionContext } from "../layout/LocaleDirection";
+import { UpArrowIcon, DownArrowIcon } from "./Icons";
 import { computePosition, fitViewportPosition, Side } from "../utils/placement";
 import { ThemeContext } from "../theme";
 import { fontSize } from "../utils/commonValues";
 import { pointsToRem } from "../utils/points";
 import { focusPrevSibling, focusNextSibling } from "../utils/focusability";
-import { Input } from "@hydroper/inputaction";
-import $ from "jquery";
-import assert from "assert";
-import { LocaleDirectionContext } from "../layout/LocaleDirection";
 
 // Invoked by the global Input action listener.
 let currentInputPressedListener: Function | null = null;
@@ -19,6 +20,12 @@ Input.input.addEventListener("inputPressed", function(): void
 {
     currentInputPressedListener?.();
 });
+
+// Global function for changing the selected value of an open context menu.
+let currentSelectChange: Function | null = null;
+
+// Global function for closing the currently open select.
+let currentSelectClose: Function | null = null;
 
 // Invoked by the global mouse down event listener
 let currentMouseDownListener: Function | null = null;
@@ -46,23 +53,108 @@ export function Select(options: SelectOptions)
     const [y, setY] = useState<number>(0);
     const [opacity, setOpacity] = useState<number>(0);
     const [transition, setTransition] = useState<string>("");
+    const [value, setValue] = useState<string>(options.default ?? "");
+    const [valueHyperText, setValueHyperText] = useState<string>("");
 
-    // References
+    // Refs
+    const buttonRef = useRef<HTMLButtonElement | null>(null);
     const divRef = useRef<HTMLDivElement | null>(null);
 
     // Transition timeout
     let transitionTimeout = -1;
 
+    // Button CSS
+    const hoverBackground = Color(theme.colors.inputBackground).darken(0.4).toString();
+    let buttonSerializedStyles: SerializedStyles = css `
+        background: ${theme.colors.inputBackground};
+        border: 0.15rem solid  ${theme.colors.inputBorder};
+        display: flex;
+        flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
+        gap: 0.9rem;
+        padding: ${(pointsToRem(2) + 0.5)}rem 0.7rem";
+        min-width: 15rem;
+        outline: none;
+
+        &:hover, &:focus {
+            background: ${hoverBackground};
+        }
+
+        &:active, &[data-selected="true"] {
+            background: ${theme.colors.foreground};
+            color: ${theme.colors.background};
+        }
+
+        &:disabled {
+            opacity: 0.5;
+        }
+    `;
+
     // Open the list
     function open(): void
     {
+        if (visible)
+        {
+            return;
+        }
+
+        // Viewport event listeners
+        currentMouseDownListener = viewport_onMouseDown;
+
+        // Input listeners
+        currentInputPressedListener = input_onInputPressed;
+
+        // Change function
+        currentSelectChange = triggerChange;
+
         fixme();
+    }
+
+    // Trigger value change
+    function triggerChange(value: string): void
+    {
+        if (!visible)
+        {
+            return;
+        }
     }
 
     // Close the list
     function close(): void
     {
+        if (!visible)
+        {
+            return;
+        }
+
+        // Cancel last transition
+        if (transitionTimeout != -1)
+        {
+            window.clearTimeout(transitionTimeout);
+            transitionTimeout = -1;
+        }
+
+        // Viewport event listeners
+        currentMouseDownListener = null;
+
+        // Input listeners
+        currentInputPressedListener = null;
+
+        // Change function
+        currentSelectChange = null;
+
         fixme();
+    }
+
+    function getDiv(): HTMLDivElement {
+        return divRef.current! as HTMLDivElement;
+    }
+
+    function getUpArrowDiv(): HTMLDivElement {
+        return divRef.current![0] as HTMLDivElement;
+    }
+
+    function getDownArrowDiv(): HTMLDivElement {
+        return divRef.current![2] as HTMLDivElement;
     }
 
     function getItemListDiv(): HTMLDivElement {
@@ -150,38 +242,55 @@ export function Select(options: SelectOptions)
 
             // Input listeners
             currentInputPressedListener = input_onInputPressed;
+
+            // Change function
+            currentSelectChange = triggerChange;
         }
     }, [visible]);
 
     return (
-        <div ref={divRef} id={options.id} style={{
-            display: "inline-flex",
-            visibility: visible ? "visible" : "hidden",
-            flexDirection: "column",
-            position: "fixed",
-            background: theme.colors.inputBackground,
-            borderTop: "0.15rem solid " + theme.colors.inputBorder,
-            borderBottom: "0.15rem solid " + theme.colors.inputBorder,
-            padding: pointsToRem(2) + " 0",
-            minWidth: "12rem",
-            left: x + "px",
-            top: y + "px",
-            opacity: opacity.toString(),
-            transition,
-        }}>
-            <div className="up-arrow"></div>
-            <div
-                className="list"
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    overflowY: "scroll",
-                    scrollbarWidth: "none",
-                }}>
-                {options.children}
+        <>
+            <button
+                ref={buttonRef}
+                css={buttonSerializedStyles}
+                style={options.style}
+                className={options.className}
+                disabled={!!options.disabled}
+                dangerouslySetInnerHTML={{ __html: valueHyperText }}>
+            </button>
+            <div ref={divRef} style={{
+                display: "inline-flex",
+                visibility: visible ? "visible" : "hidden",
+                flexDirection: "column",
+                position: "fixed",
+                background: theme.colors.inputBackground,
+                borderTop: "0.15rem solid " + theme.colors.inputBorder,
+                borderBottom: "0.15rem solid " + theme.colors.inputBorder,
+                padding: pointsToRem(2) + " 0",
+                minWidth: "12rem",
+                left: x + "px",
+                top: y + "px",
+                opacity: opacity.toString(),
+                transition,
+            }}>
+                <div className="up-arrow" style={{textAlign: "center"}}>
+                    <UpArrowIcon size={2.7}/>
+                </div>
+                <div
+                    className="list"
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        overflowY: "scroll",
+                        scrollbarWidth: "none",
+                    }}>
+                    {options.children}
+                </div>
+                <div className="down-arrow" style={{textAlign: "center"}}>
+                    <DownArrowIcon size={2.7}/>
+                </div>
             </div>
-            <div className="down-arrow"></div>
-        </div>
+        </>
     );
 }
 
@@ -196,7 +305,74 @@ export type SelectOptions = {
     default?: string,
 
     /**
+     * Whether input is disabled.
+     */
+    disabled?: boolean,
+
+    /**
      * Event triggered on value change.
      */
     change?: (value: string) => void,
+};
+
+export function SelectItem(options: SelectItemOptions)
+{
+    // Locale direction
+    const localeDir = useContext(LocaleDirectionContext);
+
+    // Use the theme context
+    const theme = useContext(ThemeContext);
+
+    // Button ref
+    const buttonRef = useRef<HTMLButtonElement | null>(null);
+
+    // Build the style class
+    const hoverBackground = Color(theme.colors.inputBackground).darken(0.4).toString();
+    const serializedStyles = css `
+        display: inline-flex;
+        flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
+        gap: 0.9rem;
+        padding: 0.5rem 0.7rem;
+        background: none;
+        border: none;
+        outline: none;
+        color: ${theme.colors.foreground};
+        font-size: ${fontSize};
+
+        &:hover, &:focus {
+            background: ${hoverBackground};
+        }
+
+        &:active, &[data-selected="true"] {
+            background: ${theme.colors.foreground};
+            color: ${theme.colors.background};
+        }
+
+        &:disabled {
+            opacity: 0.5;
+        }
+    `;
+
+    function button_onClick(): void
+    {
+        currentSelectClose?.();
+        currentSelectChange?.(options.value);
+    }
+
+    return (
+        <button css={serializedStyles} className={options.className} onClick={button_onClick} ref={buttonRef}>
+            {options.children}
+        </button>
+    );
+}
+
+export type SelectItemOptions = {
+    children?: React.ReactNode,
+    style?: React.CSSProperties,
+    className?: string,
+
+    /**
+     * Value.
+     */
+    value: string,
 };

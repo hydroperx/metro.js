@@ -2,16 +2,16 @@ import { TypedEventTarget } from "@hydroper/typedeventtarget";
 import { useContext, useRef, useState, useEffect } from "react";
 import { css } from "@emotion/react";
 import Color from "color";
-import { computePosition, fitViewportPosition, Side } from "../utils/placement";
-import { ThemeContext } from "../theme";
-import { fontSize } from "../utils/commonValues";
-import { pointsToRem } from "../utils/points";
-import { focusPrevSibling, focusNextSibling } from "../utils/focusability";
 import assert from "assert";
 import { Input } from "@hydroper/inputaction";
 import $ from "jquery";
 import { ArrowIcon, BulletIcon, CheckedIcon, IconOptions } from "./Icons";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
+import { computePosition, fitViewportPosition, Side } from "../utils/placement";
+import { ThemeContext } from "../theme";
+import { fontSize } from "../utils/commonValues";
+import { pointsToRem } from "../utils/points";
+import { focusPrevSibling, focusNextSibling } from "../utils/focusability";
 
 class ContextMenuEventDispatcher extends (EventTarget as TypedEventTarget<{
     show: CustomEvent<ContextMenuEvent>;
@@ -472,7 +472,7 @@ export function ContextMenu(options: ContextMenuOptions)
     });
 
     return (
-        <div ref={divRef} id={options.id} style={{
+        <div ref={divRef} style={{
             display: "inline-flex",
             visibility: visible ? "visible" : "hidden",
             flexDirection: "column",
@@ -567,9 +567,9 @@ export function ContextMenuItem(options: ContextMenuItemOptions)
     }
 
     useEffect(() => {
-        const buttonElement = buttonRef.current!;
+        const button = buttonRef.current!;
 
-        buttonElement.addEventListener("mouseover", button_onMouseX);
+        button.addEventListener("mouseover", button_onMouseX);
     });
     
     function button_onClick(): void
@@ -751,13 +751,13 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
         div.style.transition = "";
 
         // Button
-        const buttonElement = buttonRef.current!;
+        const button = buttonRef.current!;
 
         // Input listeners
         submenuInputPressedListeners.set(div, input_onInputPressed);
 
         // Position context menu after butotn.
-        const [x, y, sideResolution] = computePosition(buttonElement, div, {
+        const [x, y, sideResolution] = computePosition(button, div, {
             prefer: localeDir == "ltr" ? "right" : "left",
         });
         div.style.left = x + "px";
@@ -981,11 +981,11 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
     }
 
     useEffect(() => {
-        const buttonElement = buttonRef.current!;
+        const button = buttonRef.current!;
 
-        buttonElement.addEventListener("mouseover", button_onMouseOver);
-        buttonElement.addEventListener("mouseout", button_onMouseOut);
-        buttonElement.addEventListener("click", button_onClick);
+        button.addEventListener("mouseover", button_onMouseOver);
+        button.addEventListener("mouseout", button_onMouseOut);
+        button.addEventListener("click", button_onClick);
 
         // Submenu div
         const div = getDiv();
