@@ -42,6 +42,6 @@ export class RemObserver
         }
     
         const result = Number(widthMatch[1]);
-        return !isNaN(result) ? result / 0.625 : 0;
+        return !isNaN(result) ? result : 0;
     }
 }

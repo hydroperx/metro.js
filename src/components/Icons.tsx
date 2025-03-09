@@ -152,8 +152,6 @@ export function LoadingIcon(options: LoadingIconOptions)
 
     // Set style
     const newStyle: React.CSSProperties = {};
-    newStyle.width = "100%";
-    newStyle.height = "100%";
     newStyle.verticalAlign = "middle";
     if (options.style)
     {
@@ -229,21 +227,22 @@ export function LoadingIcon(options: LoadingIconOptions)
         100% { transform: rotate(955deg); opacity: 0; } 
     `;
 
+    // Size
+    const size = options.size ?? 9;
+
     // Build class name
     useEffect(() => {
         setSerializedStyles(css `
-            .progress-ring {
-                position: relative;
-                padding-top: ${(options.size * 0.25 * rem) /5}px;
-                width: ${options.size * 0.25 * rem}px;
-                height: ${options.size * 0.25 * rem}px;
-                margin: auto;
-            }
+            position: relative;
+            padding-top: ${(size * 0.25 * rem) /5}px;
+            width: ${size * 0.25 * rem}px;
+            height: ${size * 0.25 * rem}px;
+            margin: auto;
 
             .progress-ring__wrap {
                 position: absolute;
-                width: ${(options.size * 0.25 * rem ) - 2}px;
-                height: ${(options.size * 0.25 * rem ) - 2}px;
+                width: ${(size * 0.25 * rem ) - 2}px;
+                height: ${(size * 0.25 * rem ) - 2}px;
             }
 
             .progress-ring__circle {
@@ -251,8 +250,8 @@ export function LoadingIcon(options: LoadingIconOptions)
                 animation-iteration-count: infinite;
                 animation-name: ${orbit};
                 animation-duration: ${time}ms;
-                width: ${(options.size * 0.25 * rem) - 2}px;
-                height: ${(options.size * 0.25 * rem) - 2}px;
+                width: ${(size * 0.25 * rem) - 2}px;
+                height: ${(size * 0.25 * rem) - 2}px;
 
                 opacity: 0;
             }
@@ -260,26 +259,26 @@ export function LoadingIcon(options: LoadingIconOptions)
             .progress-ring__circle:after {
                 content: '';
                 position: absolute;
-                width: ${(options.size * 0.25 * rem) / 8}px;
-                height: ${(options.size * 0.25 * rem) / 8}px;
-                border-radius: ${(options.size * 0.25 * rem) / 8}px;
+                width: ${(size * 0.25 * rem) / 8}px;
+                height: ${(size * 0.25 * rem) / 8}px;
+                border-radius: ${(size * 0.25 * rem) / 8}px;
                 box-shadow: 0px 0px 5% ${color};
                 background: ${color};
             }
 
-            .progress-ring__wrap:nth-child(2) {
+            .progress-ring__wrap:nth-of-type(2) {
                 transform: rotate(${r}deg);
                 .progress-ring__circle {    animation-delay: ${time / m}ms; }
             }
-            .progress-ring__wrap:nth-child(3) {
+            .progress-ring__wrap:nth-of-type(3) {
                 transform: rotate(${r * 2}deg);
                 .progress-ring__circle {    animation-delay: ${time / m*2}ms; }
             }
-            .progress-ring__wrap:nth-child(4) {
+            .progress-ring__wrap:nth-of-type(4) {
                 transform: rotate(${r * 3}deg);
                 .progress-ring__circle {    animation-delay: ${time / m*3}ms; }
             }
-            .progress-ring__wrap:nth-child(5) {
+            .progress-ring__wrap:nth-of-type(5) {
                 transform: rotate(${r * 4}deg);
                 .progress-ring__circle {    animation-delay: ${time / m*4}ms; }
             }

@@ -37,9 +37,11 @@ function App()
                     <Button variant="outline">Y</Button>
                     <ArrowButton direction="right" size={9}></ArrowButton>
                 </HGroup>
-                <VGroup horizontalAlign="center">
-                    <LoadingIcon size={9}/>
-                </VGroup>
+                <div>
+                    <VGroup horizontalAlign="center">
+                        <LoadingIcon size={9}/>
+                    </VGroup>
+                </div>
                 <ContextMenu id={contextMenuId}>
                     <ContextMenuItem className="foo" click={() => {alert("clicked item 1")}}>
                         <ContextMenuCheck state="none"/>
