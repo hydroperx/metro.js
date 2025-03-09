@@ -21,16 +21,12 @@ import arrow_button_hover_white from "./icons/arrow-button-hover-white.svg";
 import arrow_button_pressed_white from "./icons/arrow-button-pressed-white.svg";
 
 export type IconOptions = {
-    type?: IconType,
+    type?: string,
     size?: number,
     style?: React.CSSProperties,
 };
 
-export type IconType =
-    | "bullet" | "checked"
-    | "arrow" | "arrowButton" | "arrowButtonHover" | "arrowButtonPressed";
-
-const iconMap = new Map<IconType, {black: any, white: any}>([
+const iconMap = new Map<string, {black: any, white: any}>([
     ["bullet", { black: bullet_black, white: bullet_white }],
     ["checked", { black: checked_black, white: checked_white }],
     ["arrow", { black: arrow_black, white: arrow_white }],
@@ -38,6 +34,11 @@ const iconMap = new Map<IconType, {black: any, white: any}>([
     ["arrowButtonHover", { black: arrow_button_hover_black, white: arrow_button_hover_white }],
     ["arrowButtonPressed", { black: arrow_button_pressed_black, white: arrow_button_pressed_white }],
 ]);
+
+export function registerIcon(type: string, sources: { black: any, white: any }): void
+{
+    iconMap.set(type, sources);
+}
 
 export function Icon(options: IconOptions)
 {

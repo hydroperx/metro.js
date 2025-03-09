@@ -67,6 +67,27 @@ const direction: LocaleDirection = "ltr";
 </LocaleDirectionContext.Provider>
 ```
 
+### Registering icons
+
+Register custom icons with:
+
+```tsx
+import { registerIcon } from "@hydroper/metrocomponents";
+
+registerIcon("iconX", { black: source, white: source });
+```
+
+These icons can then be used in for example `Icon` and `IconButton` components.
+
+### Icons
+
+The built-in icons may serve as base for designing newer icons. Here are links to existing useful icons:
+
+- Round arc icons
+  - [Arrow button icon](src/components/icons/arrow-button-white.svg)
+  - [Arrow button "hover" icon](src/components/icons/arrow-button-hover-white.svg)
+  - [Arrow button "pressed" icon](src/components/icons/arrow-button-pressed-white.svg)
+
 ### Context menu
 
 ```tsx

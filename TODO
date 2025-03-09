@@ -8,7 +8,8 @@ Basic components
 - [x] VGroup
 - [x] Label
 - [x] Button
-- [x] Arrow button
+- [x] Icon button
+  - [x] Arrow button
 - [x] Container
 - [x] ContextMenu
   - [ ] Fix bug: when the context menu is reopened, navigation keys are not working properly.

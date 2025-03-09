@@ -5,51 +5,8 @@ import React, { Ref, useContext, useRef, useState, useEffect } from "react";
 import Color from "color";
 import { fontSize } from "../utils/commonValues";
 import { computePosition } from "../utils/placement";
-import { Icon, IconType } from "./Icons";
+import { Icon } from "./Icons";
 import { ThemeContext } from "../theme";
-
-export type ButtonVariant =
-    "none" |
-    "anchor" |
-    "primary" |
-    "secondary" |
-    "danger" |
-    "outline" |
-    "outline-primary";
-
-export type ButtonType =
-    "button" | "reset" | "submit";
-
-export type ButtonOptions =
-{
-    variant?: ButtonVariant,
-
-    type?: ButtonType,
-
-    disabled?: boolean,
-
-    autoFocus?: boolean,
-
-    minWidth?: number,
-    minHeight?: number,
-    maxWidth?: number,
-    maxHeight?: number,
-
-    visible?: boolean,
-
-    style?: React.CSSProperties,
-    className?: string,
-    children?: React.ReactNode,
-
-    focus?: React.FocusEventHandler<HTMLButtonElement>,
-    click?: React.MouseEventHandler<HTMLButtonElement>,
-    contextMenu?: React.MouseEventHandler<HTMLButtonElement>,
-    mouseOver?: React.MouseEventHandler<HTMLButtonElement>,
-    mouseOut?: React.MouseEventHandler<HTMLButtonElement>,
-    mouseUp?: React.MouseEventHandler<HTMLButtonElement>,
-
-    tooltip?: string,
-};
 
 export function Button(options: ButtonOptions)
 {
@@ -395,48 +352,68 @@ export function Button(options: ButtonOptions)
     </>;
 }
 
-export type ArrowButtonOptions = {
-    direction: ArrowButtonDirection,
-    size?: number,
+export type ButtonVariant =
+    "none" |
+    "anchor" |
+    "primary" |
+    "secondary" |
+    "danger" |
+    "outline" |
+    "outline-primary";
+
+export type ButtonType =
+    "button" | "reset" | "submit";
+
+export type ButtonOptions =
+{
+    variant?: ButtonVariant,
+
+    type?: ButtonType,
+
     disabled?: boolean,
+
     autoFocus?: boolean,
+
+    minWidth?: number,
+    minHeight?: number,
+    maxWidth?: number,
+    maxHeight?: number,
+
+    visible?: boolean,
 
     style?: React.CSSProperties,
     className?: string,
+    children?: React.ReactNode,
 
-    contextMenu?: React.MouseEventHandler<HTMLButtonElement>,
     focus?: React.FocusEventHandler<HTMLButtonElement>,
     click?: React.MouseEventHandler<HTMLButtonElement>,
+    contextMenu?: React.MouseEventHandler<HTMLButtonElement>,
     mouseOver?: React.MouseEventHandler<HTMLButtonElement>,
     mouseOut?: React.MouseEventHandler<HTMLButtonElement>,
     mouseUp?: React.MouseEventHandler<HTMLButtonElement>,
-};
 
-export type ArrowButtonDirection = "left" | "right" | "up" | "down";
+    tooltip?: string,
+};
 
 /**
  * Represents an arrow button.
  */
-export function ArrowButton(options: ArrowButtonOptions)
+export function IconButton(options: IconButtonOptions)
 {
     // Take the theme context
     const theme = useContext(ThemeContext);
 
-        // Button ref
+    // Button ref
     const ref = useRef<HTMLButtonElement | null>(null);
 
     // Icon type
-    const [type, setType] = useState<IconType>("arrowButton");
-
-    // Direction
-    const d = options.direction;
+    const [type, setType] = useState<string>(options.normalIcon);
 
     // Stylize
-    const newStyle: React.CSSProperties = {};
-    newStyle.transform = `rotate(${d == "left" ? 0 : d == "right" ? 180 : d == "up" ? 90 : -90}deg)`;
-    if (options.style)
+    const iconStyle: React.CSSProperties = {};
+    if (options.rotation !== undefined)
     {
-        extend(newStyle, options.style);
+        iconStyle.transform = `rotate(${options.rotation}deg)`;
     }
 
     // Build style class
@@ -460,10 +437,10 @@ export function ArrowButton(options: ArrowButtonOptions)
         }
     `;
 
-    const mouseDownListener = () => { setType("arrowButtonPressed"); };
-    const mouseUpListener = () => { setType("arrowButtonHover"); };
-    const mouseOverListener = () => { setType("arrowButtonHover"); };
-    const mouseOutListener = () => { setType("arrowButton"); };
+    const mouseDownListener = () => { setType(options.pressedIcon); };
+    const mouseUpListener = () => { setType(options.hoverIcon); };
+    const mouseOverListener = () => { setType(options.hoverIcon); };
+    const mouseOutListener = () => { setType(options.normalIcon); };
 
     useEffect(() => {
         // Obtain button
@@ -493,9 +470,81 @@ export function ArrowButton(options: ArrowButtonOptions)
             onMouseUp={options.mouseUp}
             onContextMenu={options.contextMenu}
             disabled={options.disabled ?? false}
-            autoFocus={options.autoFocus ?? false}>
+            autoFocus={options.autoFocus ?? false}
+            style={options.style}>
 
-            <Icon type={type} size={options.size} style={newStyle}/>
+            <Icon type={type} size={options.size} style={iconStyle}/>
         </button>
     );
 }
+
+export type IconButtonOptions = {
+    normalIcon: string,
+    hoverIcon: string,
+    pressedIcon: string,
+
+    /**
+     * Rotation degrees.
+     */
+    rotation?: number,
+    size?: number,
+    disabled?: boolean,
+    autoFocus?: boolean,
+
+    style?: React.CSSProperties,
+    className?: string,
+
+    contextMenu?: React.MouseEventHandler<HTMLButtonElement>,
+    focus?: React.FocusEventHandler<HTMLButtonElement>,
+    click?: React.MouseEventHandler<HTMLButtonElement>,
+    mouseOver?: React.MouseEventHandler<HTMLButtonElement>,
+    mouseOut?: React.MouseEventHandler<HTMLButtonElement>,
+    mouseUp?: React.MouseEventHandler<HTMLButtonElement>,
+};
+
+/**
+ * Represents an arrow button.
+ */
+export function ArrowButton(options: ArrowButtonOptions)
+{
+    // Direction
+    const d = options.direction;
+
+    return (
+        <IconButton
+            normalIcon="arrowButton"
+            hoverIcon="arrowButtonHover"
+            pressedIcon="arrowButtonPressed"
+            rotation={d == "left" ? 0 : d == "right" ? 180 : d == "up" ? 90 : -90}
+            className={options.className}
+            focus={options.focus}
+            click={options.click}
+            mouseOver={options.mouseOver}
+            mouseOut={options.mouseOut}
+            mouseUp={options.mouseUp}
+            contextMenu={options.contextMenu}
+            disabled={options.disabled ?? false}
+            autoFocus={options.autoFocus ?? false}
+            style={options.style}
+            size={options.size}/>
+    );
+}
+
+export type ArrowButtonOptions = {
+    direction: ArrowButtonDirection,
+    size?: number,
+    disabled?: boolean,
+    autoFocus?: boolean,
+
+    style?: React.CSSProperties,
+    className?: string,
+
+    contextMenu?: React.MouseEventHandler<HTMLButtonElement>,
+    focus?: React.FocusEventHandler<HTMLButtonElement>,
+    click?: React.MouseEventHandler<HTMLButtonElement>,
+    mouseOver?: React.MouseEventHandler<HTMLButtonElement>,
+    mouseOut?: React.MouseEventHandler<HTMLButtonElement>,
+    mouseUp?: React.MouseEventHandler<HTMLButtonElement>,
+};
+
+export type ArrowButtonDirection = "left" | "right" | "up" | "down";
