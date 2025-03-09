@@ -11,6 +11,10 @@ import { ThemeContext } from "../theme";
 import { fontSize } from "../utils/commonValues";
 import { pointsToRem } from "../utils/points";
 import { focusPrevSibling, focusNextSibling } from "../utils/focusability";
+import { RemObserver } from "../utils/RemObserver";
+
+// Item visible transition
+const visibleTransition = "opacity 0.2s ease, top 0.2s ease, left 0.2s ease, height 0.2s ease";
 
 // Invoked by the global Input action listener.
 let currentInputPressedListener: Function | null = null;
@@ -51,10 +55,10 @@ export function Select(options: SelectOptions)
     const [visible, setVisible] = useState<boolean>(false);
     const [x, setX] = useState<number>(0);
     const [y, setY] = useState<number>(0);
-    const [opacity, setOpacity] = useState<number>(0);
     const [transition, setTransition] = useState<string>("");
     const [value, setValue] = useState<string>(options.default ?? "");
     const [valueHyperText, setValueHyperText] = useState<string>("");
+    let [rem, setRem] = useState<number>(0);
 
     // Refs
     const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -97,6 +101,38 @@ export function Select(options: SelectOptions)
             return;
         }
 
+        // List div
+        const itemListDiv = getItemListDiv();
+        const children = Array.from(itemListDiv.children) as HTMLButtonElement[];
+
+        // Find the selected entry
+        let selectedOption: HTMLButtonElement | null = children
+            .find(e => e.getAttribute("data-value") == value) ?? null;
+
+        if (selectedOption)
+        {
+            // Set the item[data-selected] attribute.
+            for (const option of children)
+            {
+                option.removeAttribute("data-selected");
+            }
+            selectedOption.setAttribute("data-selected", "true");
+        }
+
+        // Base option
+        let baseOption: HTMLButtonElement | null = selectedOption;
+        if (!baseOption && itemListDiv.firstElementChild)
+        {
+            assert(itemListDiv.firstElementChild instanceof HTMLButtonElement, "Malformed Select item.");
+            baseOption = itemListDiv.firstElementChild as HTMLButtonElement;
+        }
+
+        // A base option is needed to open the select list
+        if (!baseOption)
+        {
+            return;
+        }
+
         // Viewport event listeners
         currentMouseDownListener = viewport_onMouseDown;
 
@@ -105,6 +141,46 @@ export function Select(options: SelectOptions)
 
         // Change function
         currentSelectChange = triggerChange;
+
+        // Turn visible
+        setVisible(true);
+
+        // Open transition
+        openTransition(baseOption);
+    }
+
+    // Perform a open-up transition centering the base option
+    // to the button.
+    function openTransition(baseOption: HTMLButtonElement): void
+    {
+        // Button
+        const button = buttonRef.current!;
+        const buttonRect = button.getBoundingClientRect();
+        const button_w = buttonRect.width / rem;
+
+        // Div
+        const div = getDiv();
+
+        // List div
+        const itemListDiv = getItemListDiv();
+        const children = Array.from(itemListDiv.children) as HTMLButtonElement[];
+
+        // Adjust initial styles
+        for (const option of children)
+        {
+            option.style.width = button_w + "rem";
+            option.style.position = "fixed";
+            option.style.transition = "";
+        }
+        div.style.width = button_w + "rem";
+        div.style.transition = "";
+
+        // Base values
+        const base_x = buttonRect.x;
+        const base_y = buttonRect.y;
+        const base_i = children.indexOf(baseOption);
+
+        const list_w = button_w;
 
         fixme();
     }
@@ -116,6 +192,25 @@ export function Select(options: SelectOptions)
         {
             return;
         }
+
+        // Item list div
+        const itemListDiv = getItemListDiv();
+        const children = Array.from(itemListDiv.children) as HTMLButtonElement[];
+
+        // Set the item[data-selected] attribute
+        for (const option of children)
+        {
+            option.removeAttribute("data-selected");
+        }
+        let selectedOption: HTMLButtonElement | null = children
+            .find(e => e.getAttribute("data-value") == value) ?? null;
+        if (selectedOption)
+        {
+            selectedOption.setAttribute("data-selected", "true");
+        }
+
+        // Dispatch event
+        options.change?.(value);
     }
 
     // Close the list
@@ -248,6 +343,21 @@ export function Select(options: SelectOptions)
         }
     }, [visible]);
 
+    // Initial change event
+    useEffect(() => {
+        triggerChange(value);
+    }, [value]);
+
+    // Observe rem size
+    useEffect(() => {
+        const remObserver = new RemObserver(value => {
+            setRem(value);
+        });
+        return () => {
+            remObserver.cleanup();
+        };
+    });
+
     return (
         <>
             <button
@@ -267,10 +377,8 @@ export function Select(options: SelectOptions)
                 borderTop: "0.15rem solid " + theme.colors.inputBorder,
                 borderBottom: "0.15rem solid " + theme.colors.inputBorder,
                 padding: pointsToRem(2) + " 0",
-                minWidth: "12rem",
                 left: x + "px",
                 top: y + "px",
-                opacity: opacity.toString(),
                 transition,
             }}>
                 <div className="up-arrow" style={{textAlign: "center"}}>
@@ -360,7 +468,7 @@ export function SelectItem(options: SelectItemOptions)
     }
 
     return (
-        <button css={serializedStyles} className={options.className} onClick={button_onClick} ref={buttonRef}>
+        <button css={serializedStyles} className={options.className} onClick={button_onClick} ref={buttonRef} data-value={options.value}>
             {options.children}
         </button>
     );

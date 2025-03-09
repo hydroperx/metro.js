@@ -221,7 +221,7 @@ export function ContextMenu(options: ContextMenuOptions)
         }
 
         // (x, y) transition
-        const timeoutDelay = 35;
+        const timeoutDelay = 45;
         switch (sideResolution)
         {
             case "top":

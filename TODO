@@ -18,6 +18,7 @@ Basic components
   - [ ] On selection, update valueHyperText
   - [ ] Handle disabled
   - [ ] `big?: boolean`: If `true`, displays a big elegant select list (only the main button changes).
+    - [ ] In this case, open transition must be simplified and select list goes always below the button
   - [ ] Scroll (display arrows smartly based in scroll events; at a certain amount of items the list is scrollable)
   - [ ] RTL support
   - [ ] Transition
