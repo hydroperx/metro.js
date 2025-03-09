@@ -47,9 +47,9 @@ const submenuInputPressedListeners = new WeakMap<HTMLDivElement, Function>();
 let currentInputPressedListener: Function | null = null;
 
 // Globalized input action listener
-Input.input.addEventListener("inputPressed", function(): void
+Input.input.addEventListener("inputPressed", function(e: Event): void
 {
-    currentInputPressedListener?.();
+    currentInputPressedListener?.(e);
 });
 
 // Invoked by the global mouse down event listener
@@ -350,7 +350,7 @@ export function ContextMenu(options: ContextMenuOptions)
     }
 
     // Handle arrows and escape
-    function input_onInputPressed(): void
+    function input_onInputPressed(e: Event): void
     {
         if (!visible)
         {
@@ -391,11 +391,13 @@ export function ContextMenu(options: ContextMenuOptions)
                 // navigate up
                 if (Input.input.justPressed("navigateUp"))
                 {
+                    e.preventDefault();
                     focusPrevSibling(child);
                 }
                 // navigate down
                 else if (Input.input.justPressed("navigateDown"))
                 {
+                    e.preventDefault();
                     focusNextSibling(child);
                 }
                 // open submenu
@@ -407,6 +409,7 @@ export function ContextMenu(options: ContextMenuOptions)
                     {
                         if (submenuList.children[1].lastElementChild)
                         {
+                            e.preventDefault();
                             focusNextSibling(submenuList.children[1].lastElementChild as HTMLElement);
                         }
                     }
@@ -428,6 +431,7 @@ export function ContextMenu(options: ContextMenuOptions)
                 let first = itemListDiv.firstElementChild;
                 if (first)
                 {
+                    e.preventDefault();
                     focusPrevSibling(first as HTMLElement);
                 }
             }
@@ -437,6 +441,7 @@ export function ContextMenu(options: ContextMenuOptions)
                 let last = itemListDiv.lastElementChild;
                 if (last)
                 {
+                    e.preventDefault();
                     focusNextSibling(last as HTMLElement);
                 }
             }
@@ -444,7 +449,7 @@ export function ContextMenu(options: ContextMenuOptions)
         else
         {
             // Check input on submenu
-            submenuInputPressedListeners.get(submenus[submenus.length - 1])();
+            submenuInputPressedListeners.get(submenus[submenus.length - 1])(e);
         }
     }
 
@@ -875,7 +880,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
     }
 
     // Handle arrows and escape
-    function input_onInputPressed(): void
+    function input_onInputPressed(e: Event): void
     {
         // Obtain button element
         const button = buttonRef.current!;
@@ -913,11 +918,13 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
                 // navigate up
                 if (Input.input.justPressed("navigateUp"))
                 {
+                    e.preventDefault();
                     focusPrevSibling(child);
                 }
                 // navigate down
                 else if (Input.input.justPressed("navigateDown"))
                 {
+                    e.preventDefault();
                     focusNextSibling(child);
                 }
                 // open submenu
@@ -929,6 +936,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
                     {
                         if (submenuList.children[1].lastElementChild)
                         {
+                            e.preventDefault();
                             focusNextSibling(submenuList.children[1].lastElementChild as HTMLElement);
                         }
                     }
@@ -957,6 +965,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
                 let first = itemListDiv.firstElementChild;
                 if (first)
                 {
+                    e.preventDefault();
                     focusPrevSibling(first as HTMLElement);
                 }
             }
@@ -966,6 +975,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
                 let last = itemListDiv.lastElementChild;
                 if (last)
                 {
+                    e.preventDefault();
                     focusNextSibling(last as HTMLElement);
                 }
             }
