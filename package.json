@@ -8,7 +8,7 @@
     "@emotion/css": "^11.13.5",
     "@emotion/react": "^11.14.0",
     "@hydroper/colorobserver": "npm:@jsr/hydroper__colorobserver@^1.0.0",
-    "@hydroper/inputaction": "npm:@jsr/hydroper__inputaction@^1.0.4",
+    "@hydroper/inputaction": "npm:@jsr/hydroper__inputaction@^1.0.5",
     "@hydroper/typedeventtarget": "npm:@jsr/hydroper__typedeventtarget@^1.0.0",
     "@types/delta-e": "^0.0.2",
     "@types/jquery": "^3.5.32",

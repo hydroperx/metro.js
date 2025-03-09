@@ -20,9 +20,9 @@ const visibleTransition = "opacity 300ms ease, top 300ms ease";
 let currentInputPressedListener: Function | null = null;
 
 // Globalized input action listener
-Input.input.addEventListener("inputPressed", function(): void
+Input.input.addEventListener("inputPressed", function(e: Event): void
 {
-    currentInputPressedListener?.();
+    currentInputPressedListener?.(e);
 });
 
 // Global function for changing the selected value of an open context menu.
@@ -286,7 +286,7 @@ export function Select(options: SelectOptions)
     }
 
     // Handle arrows and escape
-    function input_onInputPressed(): void
+    function input_onInputPressed(e: Event): void
     {
         if (!visible)
         {
@@ -314,11 +314,13 @@ export function Select(options: SelectOptions)
                 // navigate up
                 if (Input.input.justPressed("navigateUp"))
                 {
+                    e.preventDefault();
                     focusPrevSibling(child);
                 }
                 // navigate down
                 else if (Input.input.justPressed("navigateDown"))
                 {
+                    e.preventDefault();
                     focusNextSibling(child);
                 }
                 
@@ -332,6 +334,7 @@ export function Select(options: SelectOptions)
             let first = listDiv.firstElementChild;
             if (first)
             {
+                e.preventDefault();
                 focusPrevSibling(first as HTMLElement);
             }
         }
@@ -341,6 +344,7 @@ export function Select(options: SelectOptions)
             let last = listDiv.lastElementChild;
             if (last)
             {
+                e.preventDefault();
                 focusNextSibling(last as HTMLElement);
             }
         }
