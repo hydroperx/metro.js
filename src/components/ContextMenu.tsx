@@ -9,6 +9,7 @@ import { pointsToRem } from "../utils/points";
 import { focusPrevSibling, focusNextSibling } from "../utils/focusability";
 import assert from "assert";
 import { Input } from "@hydroper/inputaction";
+import $ from "jquery";
 import { ArrowIcon, BulletIcon, CheckedIcon, IconOptions } from "./Icons";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
 
@@ -49,6 +50,15 @@ const submenuInputPressedListeners = new WeakMap<HTMLDivElement, Function>();
 Input.input.addEventListener("inputPressed", function(): void
 {
     currentInputPressedListener?.();
+});
+
+// Invoked by the global mouse down event listener
+let currentMouseDownListener: Function | null = null;
+
+// Globalized mouse down event listener
+window.addEventListener("mousedown", function(): void
+{
+    currentMouseDownListener?.();
 });
 
 /**
@@ -169,8 +179,7 @@ export function ContextMenu(options: ContextMenuOptions)
         setTransition("");
 
         // Viewport event listeners
-        window.removeEventListener("mousedown", viewport_onMouseDown);
-        window.addEventListener("mousedown", viewport_onMouseDown);
+        currentMouseDownListener = viewport_onMouseDown;
 
         // Input listeners
         currentInputPressedListener = input_onInputPressed;
@@ -272,12 +281,12 @@ export function ContextMenu(options: ContextMenuOptions)
 
         if (transitionTimeout !== -1)
         {
-            clearTimeout(transitionTimeout);
+            window.clearTimeout(transitionTimeout);
             transitionTimeout = -1;
         }
 
         // Viewport event listeners
-        window.removeEventListener("mousedown", viewport_onMouseDown);
+        currentMouseDownListener = null;
 
         // Input listeners
         currentInputPressedListener = null;
@@ -294,12 +303,17 @@ export function ContextMenu(options: ContextMenuOptions)
     // closing all connected menus.
     function viewport_onMouseDown(): void
     {
+        if (!visible)
+        {
+            return;
+        }
+
         // Obtain div element
         const div = divRef.current!;
 
         // Test hover
         let out = true;
-        if (div.style.visibility === "visible")
+        if ($(div).is(":visible"))
         {
             if (div.matches(":hover"))
             {
@@ -310,7 +324,7 @@ export function ContextMenu(options: ContextMenuOptions)
             {
                 for (const div1 of Array.from(div.querySelectorAll("." + submenuClassName)) as HTMLDivElement[])
                 {
-                    if (div1.style.visibility === "hidden")
+                    if ($(div1).is(":hidden"))
                     {
                         continue;
                     }
@@ -333,6 +347,11 @@ export function ContextMenu(options: ContextMenuOptions)
     // Handle arrows and escape
     function input_onInputPressed(): void
     {
+        if (!visible)
+        {
+            return;
+        }
+
         // Obtain div element
         const div = divRef.current!;
 
@@ -424,28 +443,23 @@ export function ContextMenu(options: ContextMenuOptions)
         }
     }
 
-    eventDispatcher.addEventListener("show", eventDispatcher_onShow);
-    eventDispatcher.addEventListener("hideAll", hideAll);
-
     useEffect(() => {
         if (visible)
         {
             // Viewport event listeners
-            window.removeEventListener("mousedown", viewport_onMouseDown);
-            window.addEventListener("mousedown", viewport_onMouseDown);
+            currentMouseDownListener = viewport_onMouseDown;
 
             // Input listeners
             currentInputPressedListener = input_onInputPressed;
         }
+    }, [visible]);
+
+    useEffect(() => {
+        eventDispatcher.addEventListener("show", eventDispatcher_onShow);
+        eventDispatcher.addEventListener("hideAll", hideAll);
 
         // Cleanup
         return () => {
-            // Viewport event listeners
-            window.removeEventListener("mousedown", viewport_onMouseDown);
-
-            // Input listeners
-            currentInputPressedListener = null;
-
             // Event dispatcher listeners
             eventDispatcher.removeEventListener("show", eventDispatcher_onShow);
             eventDispatcher.removeEventListener("hideAll", hideAll);
@@ -781,7 +795,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
     {
         if (transitionTimeout !== -1)
         {
-            clearTimeout(transitionTimeout);
+            window.clearTimeout(transitionTimeout);
             transitionTimeout = -1;
         }
 
@@ -833,7 +847,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
     {
         if (hoverTimeout !== -1)
         {
-            clearTimeout(hoverTimeout);
+            window.clearTimeout(hoverTimeout);
             hoverTimeout = -1;
         }
     }
