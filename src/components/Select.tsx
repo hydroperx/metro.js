@@ -14,7 +14,7 @@ import { focusPrevSibling, focusNextSibling } from "../utils/focusability";
 import { RemObserver } from "../utils/RemObserver";
 
 // Item visible transition
-const visibleTransition = "opacity 0.2s ease, top 0.2s ease, left 0.2s ease, height 0.2s ease";
+const visibleTransition = "opacity 0.2s ease, top 0.2s ease, bottom 0.2s ease";
 
 // Invoked by the global Input action listener.
 let currentInputPressedListener: Function | null = null;
@@ -165,22 +165,62 @@ export function Select(options: SelectOptions)
         const itemListDiv = getItemListDiv();
         const children = Array.from(itemListDiv.children) as HTMLButtonElement[];
 
+        // Base values
+        const base_x = buttonRect.x;
+
         // Adjust initial styles
         for (const option of children)
         {
             option.style.width = button_w + "rem";
             option.style.position = "fixed";
+            option.style.left = base_x + "px";
             option.style.transition = "";
+            option.style.opacity = "0";
         }
         div.style.width = button_w + "rem";
+        div.style.left = base_x + "px";
         div.style.transition = "";
 
         // Base values
-        const base_x = buttonRect.x;
-        const base_y = buttonRect.y;
+        const base_top = buttonRect.top;
         const base_i = children.indexOf(baseOption);
+        baseOption.style.top = `${base_top}px`;
+        const baseRect = baseOption.getBoundingClientRect();
+        const base_bottom = baseRect.bottom;
+        const base_h = baseRect.height;
 
+        const list_x = base_x;
         const list_w = button_w;
+        
+        // Calculate maximum height
+        div.style.height = "0rem";
+        const max_h = children.reduce((k, e) => k + e.getBoundingClientRect().height, 0)
+            + div.getBoundingClientRect().height;
+        
+        // Viewport deviation
+        const viewportDeviation = 9 * rem;
+
+        // list top
+        let list_top = base_top;
+        for (const option of children.slice(0, base_i))
+        {
+            const h = option.getBoundingClientRect().height;
+            if (list_top - h < viewportDeviation) break;
+            list_top -= h;
+        }
+
+        // list height
+        let list_bottom = baseOption.getBoundingClientRect().bottom;
+        for (const option of children.slice(base_i + 1))
+        {
+            const h = option.getBoundingClientRect().height;
+            if (list_bottom - h < viewportDeviation) break;
+            list_bottom -= h;
+        }
+
+        // start list top & bottom
+        const start_list_top = base_top + base_h / 2;
+        const start_list_bottom = base_bottom - base_h / 2;
 
         fixme();
     }
@@ -439,6 +479,7 @@ export function SelectItem(options: SelectItemOptions)
     const serializedStyles = css `
         display: inline-flex;
         flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
+        flex-wrap: wrap;
         gap: 0.9rem;
         padding: 0.5rem 0.7rem;
         background: none;
