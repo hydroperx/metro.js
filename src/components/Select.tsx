@@ -159,6 +159,9 @@ export function Select(options: SelectOptions)
             margin: 3,
         });
 
+        // Stop transition
+        setTransition("");
+
         div.style.height = "";
         if (y + div.getBoundingClientRect().height > window.innerHeight)
         {
@@ -227,6 +230,9 @@ export function Select(options: SelectOptions)
 
         // Dispatch event
         options.change?.(value);
+
+        // Focus button
+        buttonRef.current!.focus();
     }
 
     // Close the list
