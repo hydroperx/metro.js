@@ -13,16 +13,17 @@ Basic components
 - [x] Container
 - [x] ContextMenu
   - [ ] Allow scrolling the context menu (`scroll?: boolean`)
-- [ ] OptionList
-  - [ ] `big?: boolean`: If `true`, displays a big elegant option list.
+- [ ] Select
+  - [ ] `big?: boolean`: If `true`, displays a big elegant select list.
   - [ ] Scroll (display arrows smartly based in scroll events; at a certain amount of items the list is scrollable)
-    - [ ] Stylize to hide the scrollbar (size = 0); only the arrows appear.
   - [ ] RTL support
   - [ ] Transition
     - [ ] Trick: items have horizontal border, and the list has vertical borders.
     - [ ] Trick: during transition items are fixed and positioned manually; however, after transition, they are normally positioned (allowing for scroll), with the input position centering the selected option after open.
     - [ ] Open transition (start with all items invisible and expand them centering the current selected option to the input)
+      - [ ] z-index of selected item is the maximum
     - [ ] Close transition (push the last selected option towards the input)
+      - [ ] z-index of selected item is the maximum
 - [ ] TextInput
   - [ ] Bordered when the provided theme's `colors.background` is a near or equal color to `color.inputBackground`
     - https://stackoverflow.com/a/29247003/26380963

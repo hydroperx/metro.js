@@ -39,12 +39,12 @@ const submenuItemClassName = "ContextMenuSubmenu-item";
 // Submenus are identified by this class name.
 const submenuClassName = "ContextMenuSubmenuList-submenu";
 
-// Invoked by the global Input action listener.
-let currentInputPressedListener: Function | null = null;
-
 // Weak map mapping to Input listeners of submenus reliably.
 // The keys are the submenu lists themselves, not the submenu representing items.
 const submenuInputPressedListeners = new WeakMap<HTMLDivElement, Function>();
+
+// Invoked by the global Input action listener.
+let currentInputPressedListener: Function | null = null;
 
 // Globalized input action listener
 Input.input.addEventListener("inputPressed", function(): void

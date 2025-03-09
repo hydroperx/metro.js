@@ -1,4 +1,4 @@
-import { useContext, useRef, useState, useEffect } from "react";
+import React, { useContext, useRef, useState, useEffect } from "react";
 import { css } from "@emotion/react";
 import Color from "color";
 import { computePosition, fitViewportPosition, Side } from "../utils/placement";
@@ -11,10 +11,28 @@ import $ from "jquery";
 import assert from "assert";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
 
+// Invoked by the global Input action listener.
+let currentInputPressedListener: Function | null = null;
+
+// Globalized input action listener
+Input.input.addEventListener("inputPressed", function(): void
+{
+    currentInputPressedListener?.();
+});
+
+// Invoked by the global mouse down event listener
+let currentMouseDownListener: Function | null = null;
+
+// Globalized mouse down event listener
+window.addEventListener("mousedown", function(): void
+{
+    currentMouseDownListener?.();
+});
+
 /**
- * Represents a context menu.
+ * Represents a list of selectable values.
  */
-export function OptionList(options: OptionListOptions)
+export function Select(options: SelectOptions)
 {
     // Use the theme context
     const theme = useContext(ThemeContext);
@@ -38,11 +56,13 @@ export function OptionList(options: OptionListOptions)
     // Open the list
     function open(): void
     {
+        fixme();
     }
 
     // Close the list
     function close(): void
     {
+        fixme();
     }
 
     function getItemListDiv(): HTMLDivElement {
@@ -150,10 +170,33 @@ export function OptionList(options: OptionListOptions)
             transition,
         }}>
             <div className="up-arrow"></div>
-            <div className="list">
+            <div
+                className="list"
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    overflowY: "scroll",
+                    scrollbarWidth: "none",
+                }}>
                 {options.children}
             </div>
             <div className="down-arrow"></div>
         </div>
     );
 }
+
+export type SelectOptions = {
+    children?: React.ReactNode,
+    style?: React.CSSProperties,
+    className?: string,
+
+    /**
+     * Default value.
+     */
+    default?: string,
+
+    /**
+     * Event triggered on value change.
+     */
+    change?: (value: string) => void,
+};
