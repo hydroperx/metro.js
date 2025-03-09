@@ -195,7 +195,7 @@ export function Select(options: SelectOptions)
         const baseRect = baseOption.getBoundingClientRect();
         const base_bottom = baseRect.bottom;
         const base_h = baseRect.height;
-        
+
         // Calculate maximum list top
         const max_list_top = children.slice(0, base_i).reduce((k, e) => k - e.getBoundingClientRect().height, base_top);
         
@@ -212,7 +212,7 @@ export function Select(options: SelectOptions)
         }
 
         // find list bottom and set initial top position for option items
-        let list_bottom = baseOption.getBoundingClientRect().bottom;
+        let list_bottom = base_bottom;
         for (const option of children.slice(base_i + 1))
         {
             const h = option.getBoundingClientRect().height;
@@ -229,8 +229,8 @@ export function Select(options: SelectOptions)
         // start transition
         transitionTimeout = setTimeout(() => {
             div.style.transition = visibleTransition;
-            div.style.top = list_top + "px";
-            div.style.bottom = list_bottom + "px";
+            div.style.top = (list_top / rem) + "rem";
+            div.style.bottom = (list_bottom / rem) + "rem";
 
             // set opacity and top position for options
             let acc = base_top;
@@ -242,7 +242,6 @@ export function Select(options: SelectOptions)
                 acc -= h;
                 option.style.top = acc + "px";
                 option.style.opacity = "1";
-                list_top -= h;
             }
             acc = base_top + base_h;
             for (const option of children.slice(base_i + 1))
@@ -252,7 +251,6 @@ export function Select(options: SelectOptions)
                 option.style.top = acc + "px";
                 acc += h;
                 option.style.opacity = "1";
-                list_top -= h;
             }
 
             // now, revert the "fixed" position of the options
@@ -463,13 +461,12 @@ export function Select(options: SelectOptions)
                 background: theme.colors.inputBackground,
                 borderTop: "0.15rem solid " + theme.colors.inputBorder,
                 borderBottom: "0.15rem solid " + theme.colors.inputBorder,
-                padding: pointsToRem(2) + " 0",
                 left: x + "px",
                 top: y + "px",
                 transition,
             }}>
-                <div className="up-arrow" style={{textAlign: "center"}}>
-                    <UpArrowIcon size={2.7}/>
+                <div className="up-arrow" style={{display: "flex", flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
+                    <UpArrowIcon size={2.5}/>
                 </div>
                 <div
                     className="list"
@@ -481,8 +478,8 @@ export function Select(options: SelectOptions)
                     }}>
                     {options.children}
                 </div>
-                <div className="down-arrow" style={{textAlign: "center"}}>
-                    <DownArrowIcon size={2.7}/>
+                <div className="down-arrow" style={{display: "flex", flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
+                    <DownArrowIcon size={2.5}/>
                 </div>
             </div>
         </>
