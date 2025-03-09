@@ -537,11 +537,11 @@ export function ContextMenuItem(options: ContextMenuItemOptions)
         color: ${theme.colors.foreground};
         font-size: ${fontSize};
 
-        &:hover, &:focus {
+        &:hover:not(:disabled), &:focus:not(:disabled) {
             background: ${hoverBackground};
         }
 
-        &:active {
+        &:active:not(:disabled) {
             background: ${theme.colors.foreground};
             color: ${theme.colors.background};
         }

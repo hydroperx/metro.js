@@ -26,7 +26,8 @@ export function focusPrevSibling(element: HTMLElement): void
     const firstFocusable = list.find(e => canFocus(e));
     if (firstFocusable)
     {
-        (firstFocusable as HTMLElement).focus();
+        firstFocusable.focus();
+        firstFocusable.scrollIntoView();
     }
 }
 
@@ -42,6 +43,7 @@ export function focusNextSibling(element: HTMLElement): void
     const firstFocusable = list.find(e => canFocus(e));
     if (firstFocusable)
     {
-        (firstFocusable as HTMLElement).focus();
+        firstFocusable.focus();
+        firstFocusable.scrollIntoView();
     }
 }

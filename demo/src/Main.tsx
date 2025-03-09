@@ -47,10 +47,22 @@ function App()
                     </VGroup>
                 </div>
                 <div>
-                    <Select default="foo">
+                    <Select default="qux1">
                         <SelectOption value="foo">Foo</SelectOption>
                         <SelectOption value="bar">Bar</SelectOption>
                         <SelectOption value="qux">Qux</SelectOption>
+                        <SelectOption value="foo9">Foo 9</SelectOption>
+                        <SelectOption value="bar3">Bar 3</SelectOption>
+                        <SelectOption value="qux2">Qux 2</SelectOption>
+                        <SelectOption value="foo1">Foo 1</SelectOption>
+                        <SelectOption value="bar0">Bar 0</SelectOption>
+                        <SelectOption value="quxA">Qux A</SelectOption>
+                        <SelectOption value="fooB">Foo B</SelectOption>
+                        <SelectOption value="barC">Bar C</SelectOption>
+                        <SelectOption value="quxD">Qux D</SelectOption>
+                        <SelectOption value="fooE">Foo E</SelectOption>
+                        <SelectOption value="barF">Bar F</SelectOption>
+                        <SelectOption value="qux1">Qux 1</SelectOption>
                     </Select>
                 </div>
                 <ContextMenu id={contextMenuId}>

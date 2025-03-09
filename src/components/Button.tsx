@@ -66,15 +66,15 @@ export function Button(options: ButtonOptions)
                 border-radius: 0;
                 font-size: ${fontSize};
 
-                &:hover {
+                &:hover:not(:disabled) {
                     background: ${hoverBg};
                 }
 
-                &:active {
+                &:active:not(:disabled) {
                     background: ${pressedBg};
                 }
 
-                &:focus {
+                &:focus:not(:disabled) {
                     outline: 1px dotted ${color};
                     outline-offset: -0.4rem;
                 }
@@ -98,15 +98,15 @@ export function Button(options: ButtonOptions)
                 border-radius: 0;
                 font-size: ${fontSize};
 
-                &:hover {
+                &:hover:not(:disabled) {
                     color: ${hoverColor};
                 }
 
-                &:active {
+                &:active:not(:disabled) {
                     color: ${hoverColor};
                 }
 
-                &:focus {
+                &:focus:not(:disabled) {
                     outline: 1px dotted ${theme.colors.focusDashes};
                     outline-offset: -0.4rem;
                 }
@@ -128,16 +128,16 @@ export function Button(options: ButtonOptions)
                 border-radius: 0;
                 font-size: ${fontSize};
 
-                &:hover {
+                &:hover:not(:disabled) {
                     background: ${theme.colors.hoveredSecondaryBackground};
                 }
 
-                &:active {
+                &:active:not(:disabled) {
                     background: ${theme.colors.pressedBackground};
                     color: ${theme.colors.pressedForeground};
                 }
 
-                &:focus {
+                &:focus:not(:disabled) {
                     outline: 1px dotted ${theme.colors.focusDashes};
                     outline-offset: -0.4rem;
                 }
@@ -158,16 +158,16 @@ export function Button(options: ButtonOptions)
                 border-radius: 0;
                 font-size: ${fontSize};
 
-                &:hover {
+                &:hover:not(:disabled) {
                     background: ${theme.colors.hoveredPrimaryBackground};
                 }
 
-                &:active {
+                &:active:not(:disabled) {
                     background: ${theme.colors.pressedBackground};
                     color: ${theme.colors.pressedForeground};
                 }
 
-                &:focus {
+                &:focus:not(:disabled) {
                     outline: 1px dotted ${theme.colors.focusDashes};
                     outline-offset: -0.4rem;
                 }
@@ -188,16 +188,16 @@ export function Button(options: ButtonOptions)
                 border-radius: 0;
                 font-size: ${fontSize};
 
-                &:hover {
+                &:hover:not(:disabled) {
                     background: ${theme.colors.hoveredDangerBackground};
                 }
 
-                &:active {
+                &:active:not(:disabled) {
                     background: ${theme.colors.pressedBackground};
                     color: ${theme.colors.pressedForeground};
                 }
 
-                &:focus {
+                &:focus:not(:disabled) {
                     outline: 1px dotted ${theme.colors.focusDashes};
                     outline-offset: -0.4rem;
                 }
@@ -223,16 +223,16 @@ export function Button(options: ButtonOptions)
                 border-radius: 0;
                 font-size: ${fontSize};
 
-                &:hover {
+                &:hover:not(:disabled) {
                     background: ${hoverBg};
                 }
 
-                &:active {
+                &:active:not(:disabled) {
                     background: ${color};
                     color: ${pressedCharColor};
                 }
 
-                &:focus {
+                &:focus:not(:disabled) {
                     outline: 1px dotted ${color};
                     outline-offset: -0.4rem;
                 }
@@ -259,16 +259,16 @@ export function Button(options: ButtonOptions)
                 border-radius: 0;
                 font-size: ${fontSize};
 
-                &:hover {
+                &:hover:not(:disabled) {
                     background: ${hoverBg};
                 }
 
-                &:active {
+                &:active:not(:disabled) {
                     background: ${color};
                     color: ${pressedCharColor};
                 }
 
-                &:focus {
+                &:focus:not(:disabled) {
                     outline: 1px dotted ${color};
                     outline-offset: -0.4rem;
                 }

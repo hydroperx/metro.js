@@ -14,7 +14,7 @@ import { focusPrevSibling, focusNextSibling } from "../utils/focusability";
 import { RemObserver } from "../utils/RemObserver";
 
 // Item visible transition
-const visibleTransition = "opacity 0.2s ease, top 0.2s ease, bottom 0.2s ease";
+const visibleTransition = "opacity 300ms ease, top 300ms ease";
 
 // Invoked by the global Input action listener.
 let currentInputPressedListener: Function | null = null;
@@ -58,10 +58,11 @@ export function Select(options: SelectOptions)
     const [visible, setVisible] = useState<boolean>(false);
     const [x, setX] = useState<number>(0);
     const [y, setY] = useState<number>(0);
+    const [opacity, setOpacity] = useState<number>(0);
     const [transition, setTransition] = useState<string>("");
     const [value, setValue] = useState<string>(options.default ?? "");
     const [valueHyperText, setValueHyperText] = useState<string>("");
-    let [rem, setRem] = useState<number>(0);
+    const [rem, setRem] = useState<number>(0);
 
     // Refs
     const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -83,11 +84,11 @@ export function Select(options: SelectOptions)
         min-width: 15rem;
         outline: none;
 
-        &:hover, &:focus {
+        &:hover:not(:disabled), &:focus:not(:disabled) {
             background: ${hoverBackground};
         }
 
-        &:active, &[data-selected="true"] {
+        &:active:not(:disabled) {
             background: ${theme.colors.foreground};
             color: ${theme.colors.background};
         }
@@ -131,12 +132,6 @@ export function Select(options: SelectOptions)
             baseOption = itemListDiv.firstElementChild as HTMLButtonElement;
         }
 
-        // A base option is needed to open the select list
-        if (!baseOption)
-        {
-            return;
-        }
-
         // Update cooldown
         cooldown = Date.now();
 
@@ -149,120 +144,62 @@ export function Select(options: SelectOptions)
         // Change function
         currentSelectChange = triggerChange;
 
+        // Close function
+        currentSelectClose = close;
+
         // Turn visible
         setVisible(true);
-
-        // Open transition
-        openTransition(baseOption);
-    }
-
-    // Perform a open-up transition centering the base option
-    // to the button.
-    function openTransition(baseOption: HTMLButtonElement): void
-    {
-        // Button
-        const button = buttonRef.current!;
-        const buttonRect = button.getBoundingClientRect();
-        const button_w = buttonRect.width / rem;
 
         // Div
         const div = getDiv();
 
-        // List div
-        const itemListDiv = getItemListDiv();
-        const children = Array.from(itemListDiv.children) as HTMLButtonElement[];
+        // Position after button.
+        const [x, y, sideResolution] = computePosition(buttonRef.current!, div, {
+            prefer: "bottom",
+            margin: 3,
+        });
 
-        // Base values
-        const base_x = buttonRect.x;
-
-        // Adjust initial styles
-        for (const option of children)
+        div.style.height = "";
+        if (y + div.getBoundingClientRect().height > window.innerHeight)
         {
-            option.style.width = button_w + "rem";
-            option.style.position = "fixed";
-            option.style.left = base_x + "px";
-            option.style.transition = "";
-            option.style.opacity = "0";
-        }
-        div.style.width = button_w + "rem";
-        div.style.left = base_x + "px";
-        div.style.transition = "";
-
-        // Base values
-        const base_top = buttonRect.top;
-        const base_i = children.indexOf(baseOption);
-        baseOption.style.top = `${base_top}px`;
-        const baseRect = baseOption.getBoundingClientRect();
-        const base_bottom = baseRect.bottom;
-        const base_h = baseRect.height;
-
-        // Calculate maximum list top
-        const max_list_top = children.slice(0, base_i).reduce((k, e) => k - e.getBoundingClientRect().height, base_top);
-        
-        // Viewport deviation
-        const viewportDeviation = 9 * rem;
-
-        // list top
-        let list_top = base_top;
-        for (const option of children.slice(0, base_i))
-        {
-            const h = option.getBoundingClientRect().height;
-            if (list_top - h < viewportDeviation) break;
-            list_top -= h;
+            div.style.height = ((window.innerHeight - 10 - y) / rem) + "rem";
         }
 
-        // find list bottom and set initial top position for option items
-        let list_bottom = base_bottom;
-        for (const option of children.slice(base_i + 1))
+        // (x, y) transition
+        const timeoutDelay = 45;
+        switch (sideResolution)
         {
-            const h = option.getBoundingClientRect().height;
-            option.style.top = (base_top + h / 2) + "px";
-
-            if (list_bottom - h < viewportDeviation) break;
-            list_bottom -= h;
-        }
-
-        // start list top & bottom
-        div.style.top = (base_top + base_h / 2) + "px";
-        div.style.bottom = (base_bottom + base_h / 2) + "px";
-
-        // start transition
-        transitionTimeout = setTimeout(() => {
-            div.style.transition = visibleTransition;
-            div.style.top = (list_top / rem) + "rem";
-            div.style.bottom = (list_bottom / rem) + "rem";
-
-            // set opacity and top position for options
-            let acc = base_top;
-            baseOption.style.opacity = "1";
-            for (const option of children.slice(0, base_i).reverse())
+            case "top":
             {
-                const h = option.getBoundingClientRect().height;
-                if (acc - h < viewportDeviation) break;
-                acc -= h;
-                option.style.top = acc + "px";
-                option.style.opacity = "1";
-            }
-            acc = base_top + base_h;
-            for (const option of children.slice(base_i + 1))
-            {
-                const h = option.getBoundingClientRect().height;
-                if (acc - h >= window.innerHeight - viewportDeviation) break;
-                option.style.top = acc + "px";
-                acc += h;
-                option.style.opacity = "1";
-            }
+                setX(x);
+                setY(y + 15);
+                setOpacity(0);
+                transitionTimeout = window.setTimeout(() => {
+                    setTransition(visibleTransition);
+                    setOpacity(1);
+                    setY(y);
 
-            // now, revert the "fixed" position of the options
-            transitionTimeout = setTimeout(() => {
-                for (const option of children)
-                {
-                    option.style.position = "static";
-                    option.style.top = "";
-                }
-                itemListDiv.scrollTop = base_top - max_list_top;
-            }, 200);
-        }, 35);
+                    // Focus base option
+                    baseOption?.focus();
+                }, timeoutDelay);
+                break;
+            }
+            case "bottom":
+            {
+                setX(x);
+                setY(y - 15);
+                setOpacity(0);
+                transitionTimeout = window.setTimeout(() => {
+                    setTransition(visibleTransition);
+                    setOpacity(1);
+                    setY(y);
+
+                    // Focus base option
+                    baseOption?.focus();
+                }, timeoutDelay);
+                break;
+            }
+        }
     }
 
     // Trigger value change
@@ -295,7 +232,7 @@ export function Select(options: SelectOptions)
     // Close the list
     function close(): void
     {
-        if (!visible)
+        if (!visible || options.disabled)
         {
             return;
         }
@@ -316,19 +253,15 @@ export function Select(options: SelectOptions)
         // Change function
         currentSelectChange = null;
 
-        throw new Error("unimplemented")
+        // Close function
+        currentSelectClose = null;
+
+        // Turn invisible
+        setVisible(false);
     }
 
     function getDiv(): HTMLDivElement {
         return divRef.current! as HTMLDivElement;
-    }
-
-    function getUpArrowDiv(): HTMLDivElement {
-        return divRef.current!.children[0] as HTMLDivElement;
-    }
-
-    function getDownArrowDiv(): HTMLDivElement {
-        return divRef.current!.children[2] as HTMLDivElement;
     }
 
     function getItemListDiv(): HTMLDivElement {
@@ -424,6 +357,9 @@ export function Select(options: SelectOptions)
 
             // Change function
             currentSelectChange = triggerChange;
+
+            // Close function
+            currentSelectClose = close;
         }
     }, [visible]);
 
@@ -432,7 +368,7 @@ export function Select(options: SelectOptions)
         triggerChange(value);
     }, [value]);
 
-    // Observe rem size
+    // Observe CSS rem unit
     useEffect(() => {
         const remObserver = new RemObserver(value => {
             setRem(value);
@@ -458,11 +394,13 @@ export function Select(options: SelectOptions)
                 visibility: visible ? "visible" : "hidden",
                 flexDirection: "column",
                 position: "fixed",
+                minWidth: "15rem",
+                maxHeight: "25rem",
                 background: theme.colors.inputBackground,
-                borderTop: "0.15rem solid " + theme.colors.inputBorder,
-                borderBottom: "0.15rem solid " + theme.colors.inputBorder,
+                border: "0.15rem solid " + theme.colors.inputBorder,
                 left: x + "px",
                 top: y + "px",
+                opacity: opacity.toString(),
                 transition,
             }}>
                 <div className="up-arrow" style={{display: "flex", flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
@@ -553,8 +491,8 @@ export function SelectOption(options: SelectOptionOptions)
         {
             return;
         }
-        currentSelectClose?.();
         currentSelectChange?.(options.value);
+        currentSelectClose?.();
     }
 
     return (
