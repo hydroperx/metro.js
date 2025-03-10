@@ -9,6 +9,8 @@ export type ContainerOptions =
 {
     full?: boolean,
 
+    easeOutPosition?: boolean,
+
     padding?: number,
     paddingLeft?: number,
     paddingRight?: number,
@@ -87,6 +89,10 @@ export function Container(options: ContainerOptions)
     {
         newStyle.width = "100%";
         newStyle.height = "100%";
+    }
+    if (options.easeOutPosition)
+    {
+        newStyle.transition = "left 200ms ease-out, top 200ms ease-out, right 200ms ease-out, bottom 200ms ease-out";
     }
 
     if (options.style) extend(newStyle, options.style);

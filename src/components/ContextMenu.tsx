@@ -27,7 +27,7 @@ interface ContextMenuEvent {
 }
 
 // Transition used in context menus.
-const visibleTransition = "opacity 0.3s ease, top 0.3s ease, left 0.3s ease";
+const visibleTransition = "opacity 0.3s ease-out, top 0.3s ease-out, left 0.3s ease-out";
 
 // Event dispatcher used for sending signals to
 // context menus, such as requests to show them and to hide them.

@@ -14,7 +14,7 @@ import { focusPrevSibling, focusNextSibling } from "../utils/focusability";
 import { RemObserver } from "../utils/RemObserver";
 
 // Item visible transition
-const visibleTransition = "opacity 300ms ease, top 300ms ease";
+const visibleTransition = "opacity 300ms ease-out, top 300ms ease-out";
 
 // Invoked by the global Input action listener.
 let currentInputPressedListener: Function | null = null;
