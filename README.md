@@ -98,6 +98,10 @@ The built-in icons may serve as base for designing newer icons. Here are links t
 
 ### Input navigation
 
+This library uses [`@hydroper/inputaction`](https://jsr.io/@hydroper/inputaction) for detecting pressed input such as keyboard arrows. You may customize the global `Input.input` input actions for supporting buttons other than arrow keys.
+
+**Important**
+
 - Elements that may be navigated with arrow buttons contain the cascading class name `.buttonNavigable`. This is useful for applications like games for avoid duplicating focus handling by detecting that class name.
 
 ### Context menu
