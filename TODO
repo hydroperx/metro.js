@@ -20,7 +20,9 @@ Basic components
   - [ ] Bordered when the provided theme's `colors.background` is a near or equal color to `color.inputBackground`
     - https://stackoverflow.com/a/29247003/26380963
     - https://www.npmjs.com/package/color-convert
+  - [ ] `placeholder?: string`
   - [ ] `icon?: "search"` (search icon is displayed at the right with a background equals `providedTheme.colors.primaryBackground`)
+  - [ ] A right "clear" icon will appear once the input has got content.
   - [ ] `disabled?: boolean`
 - [ ] CheckBox
   - black&white
