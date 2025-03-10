@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import {
     Button, Container, Label, HGroup, VGroup, ArrowButton, ThemeContext,
     LoadingIcon, Select, SelectOption, TextInput,
-    lightTheme, darkTheme, purpleTheme,
+    ThemePresets,
     LocaleDirectionContext,
 } from "@hydroper/metrocomponents";
 import type { Theme, LocaleDirection } from "@hydroper/metrocomponents";
@@ -16,6 +16,7 @@ import "@fontsource/open-sans/300.css";
 import "@fontsource/open-sans/400.css";
 import "@fontsource/open-sans/500.css";
 import "@fontsource/open-sans/700.css";
+import clone from "clone";
 
 function App()
 {
@@ -30,13 +31,13 @@ function App()
     }
 
     // States
-    const [theme, setTheme] = useState<Theme>(darkTheme);
+    const [theme, setTheme] = useState<Theme>(ThemePresets.dark);
     const [localeDirection, setLocaleDirection] = useState<LocaleDirection>("ltr");
 
     // Change theme
     function changeTheme(value: string): void
     {
-        setTheme(value == "light" ? lightTheme : value == "dark" ? darkTheme : purpleTheme);
+        setTheme((ThemePresets as any)[value]);
     }
 
     // Change locale direction
@@ -57,6 +58,7 @@ function App()
                                 <SelectOption value="dark">Dark</SelectOption>
                                 <SelectOption value="light">Light</SelectOption>
                                 <SelectOption value="purple">Purple</SelectOption>
+                                <SelectOption value="green">Green</SelectOption>
                             </Select>
                             <Select default="ltr" big change={changeLocaleDir}>
                                 <SelectOption value="ltr">Left-to-right</SelectOption>

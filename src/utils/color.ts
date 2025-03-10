@@ -17,3 +17,8 @@ export function colorDelta(a: Color, b: Color): number
         { L: bLAB[0], A: bLAB[1], B: bLAB[2] }
     );
 }
+
+export function colorsAreSimiliar(a: Color, b: Color): boolean
+{
+    return colorDelta(a, b) <= 15;
+}

@@ -588,6 +588,7 @@ export function ContextMenuItem(options: ContextMenuItemOptions)
     function button_onMouseX(_e: MouseEvent): void
     {
         const button = buttonRef.current!;
+        button.focus();
         hideAllFromParent(button);
     }
 
@@ -907,6 +908,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
 
     function button_onMouseOver(e: MouseEvent): void
     {
+        buttonRef.current!.focus();
         hoverTimeout = window.setTimeout(() => {
             show(getDiv());
         }, 500);

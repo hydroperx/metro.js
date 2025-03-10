@@ -20,7 +20,9 @@ export function CheckBox(options: CheckBoxOptions)
     const localeDir = useContext(LocaleDirectionContext);
 
     // Refs
-    const buttonRef = useRef<HTMLButtonElement | null>(null);
+    const button_ref = useRef<HTMLButtonElement | null>(null);
+    const unchecked_div_ref = useRef<HTMLDivElement | null>(null);
+    const checked_div_ref = useRef<HTMLDivElement | null>(null);
 
     // States
     const [value, setValue] = useState<boolean>(!!options.default);
@@ -31,6 +33,7 @@ export function CheckBox(options: CheckBoxOptions)
     const s = border_width + padding;
     const w = 4;
 
+    // CSS
     const serializedStyles = css `
         background: none;
         border: ${border_width}rem solid  ${theme.colors.inputBorder};
@@ -52,7 +55,7 @@ export function CheckBox(options: CheckBoxOptions)
     `;
 
     useEffect(() => {
-        const button = buttonRef.current!;
+        const button = button_ref.current!;
 
         // pass element
         options.element?.(button);
@@ -67,7 +70,7 @@ export function CheckBox(options: CheckBoxOptions)
 
     return (
         <button
-            ref={buttonRef}
+            ref={button_ref}
             id={options.id}
             css={serializedStyles}
             data-value={value.toString()}
@@ -75,6 +78,15 @@ export function CheckBox(options: CheckBoxOptions)
             style={options.style}
             className={options.className}
             onClick={button_onClick}>
+
+            <div
+                ref={unchecked_div_ref}
+                style={{
+                    background: "",
+                    width: "100%",
+                    height: "100%",
+                }}>
+            </div>
         </button>
     );
 }

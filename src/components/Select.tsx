@@ -12,6 +12,7 @@ import { fontFamily, fontSize, maximumZIndex } from "../utils/common";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
 import { focusPrevSibling, focusNextSibling } from "../utils/focusability";
 import { RemObserver } from "../utils/RemObserver";
+import { colorsAreSimiliar } from "../utils/color";
 
 // Item visible transition
 const visibleTransition = "opacity 300ms ease-out, top 300ms ease-out";
@@ -105,6 +106,8 @@ export function Select(options: SelectOptions)
     }
     else
     {
+        const usePrimaryColor = colorsAreSimiliar(Color(theme.colors.background), Color(theme.colors.primaryBackground));
+
         buttonSerializedStyles = css `
             background: ${theme.colors.inputBackground};
             border: 0.15rem solid  ${theme.colors.inputBorder};
@@ -123,8 +126,8 @@ export function Select(options: SelectOptions)
             }
 
             &:active:not(:disabled) {
-                background: ${theme.colors.foreground};
-                color: ${theme.colors.background};
+                background: ${usePrimaryColor ? theme.colors.primaryBackground : theme.colors.foreground};
+                color: ${usePrimaryColor ? theme.colors.primaryForeground : theme.colors.background};
             }
 
             &:disabled {

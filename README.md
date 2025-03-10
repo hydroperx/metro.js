@@ -43,7 +43,7 @@ import "@fontsource/open-sans/700.css";
 
 ### Theming
 
-By default, the `lightTheme` is used. The built-in themes are `lightTheme`, `darkTheme` and `purpleTheme`. You can provide a specific theme for a React section using:
+By default, the `light` theme preset is used. Theme presets can be referenced in `ThemePresets`. You can provide a specific theme for a React section using:
 
 ```tsx
 import { ThemeContext } from "@hydroper/metrocomponents";

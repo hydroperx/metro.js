@@ -75,10 +75,7 @@ export type Theme =
     },
 };
 
-/**
- * A light theme.
- */
-export const lightTheme: Theme =
+const light: Theme =
 {
     colors:
     {
@@ -111,10 +108,7 @@ export const lightTheme: Theme =
     },
 };
 
-/**
- * A dark theme.
- */
-export const darkTheme: Theme =
+const dark: Theme =
 {
     colors:
     {
@@ -147,10 +141,21 @@ export const darkTheme: Theme =
     },
 };
 
-/**
- * A purple dark theme.
- */
-export const purpleTheme: Theme = clone(darkTheme);
-purpleTheme.colors.background = "#180053";
 
-export const ThemeContext: React.Context<Theme> = createContext(lightTheme);
+const purple: Theme = clone(dark);
+purple.colors.background =
+purple.colors.primaryBackground = "#180053";
+
+const green = clone(dark);
+green.colors.background =
+green.colors.primaryBackground = "#3F8700";
+green.colors.anchor = "#ef7127";
+
+export const ThemePresets = {
+    light,
+    dark,
+    purple,
+    green,
+};
+
+export const ThemeContext: React.Context<Theme> = createContext(light);
