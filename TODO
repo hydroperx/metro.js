@@ -16,7 +16,7 @@ Basic components
 - [x] TextInput
 - [ ] CheckBox
   - [ ] Horizontal drag-n-drop of carret
-  - [ ] RTL
+    - [ ] RTL
 - [ ] LoadingBar (consists of horizontally moving dots)
 - [ ] FormItem
   - A horizontal group generally containing of a label and a form control.

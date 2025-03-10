@@ -34,7 +34,7 @@ export function CheckBox(options: CheckBoxOptions)
     const padding = 0.15;
     const side_length = border_width + padding;
     const w = pointsToRemValue(14);
-    const h = pointsToRemValue(6);
+    const h = pointsToRemValue(6.1);
     const carret_w = pointsToRemValue(4);
     const checked_color = enhanceBrightness(theme.colors.background, theme.colors.primaryBackground);
     const checked_hover_color = lighten(checked_color, 0.3);
@@ -75,10 +75,11 @@ export function CheckBox(options: CheckBoxOptions)
 
         & .CheckBox-checked-rect {
             position: absolute;
-            ${localeDir == "ltr" ? "left" : "right"}: 0;
+            ${localeDir == "ltr" ? "left" : "right"}: ${padding}rem;
+            top: ${padding}rem;
+            bottom: ${padding}rem;
             transition: left 200ms ease-out, right 200ms ease-out;
             background: ${checked_color};
-            height: 100%;
         }
 
         &:hover .CheckBox-checked-rect {
@@ -90,7 +91,7 @@ export function CheckBox(options: CheckBoxOptions)
             transition: right 200ms ease-out;
             width: ${carret_w}rem;
             height: ${h}rem;
-            top: -${side_length}rem;
+            top: -${side_length / 2}rem;
             background: ${theme.colors.foreground};
         }
     `;
@@ -119,6 +120,10 @@ export function CheckBox(options: CheckBoxOptions)
         options.change?.(value);
     }
 
+    useEffect(() => {
+        set_carret_left(localeDir == "ltr" ? (value ? 100 : 0) : value ? 0 : 100);
+    }, [localeDir]);
+
     return (
         <button
             ref={button_ref}
@@ -136,14 +141,14 @@ export function CheckBox(options: CheckBoxOptions)
                 ref={checked_div_ref}
                 className="CheckBox-checked-rect"
                 style={{
-                    [localeDir == "ltr" ? "right" : "left"]: checked_horizontal_pos + "%",
+                    [localeDir == "ltr" ? "right" : "left"]: "calc(" + (checked_horizontal_pos) + `% + ${padding}rem)`,
                 }}>
             </div>
             <div
                 ref={carret_ref}
                 className="CheckBox-carret"
                 style={{
-                    right: (100 - carret_left) + "%",
+                    right: "calc(" + (100 - carret_left) + `% - ${side_length}rem)`,
                 }}>
             </div>
         </button>
