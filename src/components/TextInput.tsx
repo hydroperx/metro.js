@@ -87,6 +87,7 @@ export function TextInput(options: TextInputOptions)
     return (
         options.multiline ?
             <textarea
+                id={options.id}
                 css={serializedStyles}
                 className={options.className}
                 style={newStyle}
@@ -109,6 +110,7 @@ export function TextInput(options: TextInputOptions)
                 {options.default}
             </textarea> :
             <input
+                id={options.id}
                 css={serializedStyles}
                 className={options.className}
                 style={newStyle}
@@ -136,6 +138,8 @@ export function TextInput(options: TextInputOptions)
 }
 
 export type TextInputOptions = {
+    id?: string,
+
     /**
      * Placeholder text.
      */

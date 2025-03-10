@@ -13,6 +13,11 @@ export type LabelVariant =
 export type LabelOptions = {
     variant?: LabelVariant,
 
+    /**
+     * Indicates the form component this label connects to by its ID.
+     */
+    for?: string,
+
     visible?: boolean,
 
     style?: React.CSSProperties,
@@ -43,6 +48,10 @@ export function Label(options: LabelOptions)
                 font-family: "Open Sans", sans;
                 font-size: 0.9rem;
             `;
+            if (options.for)
+            {
+                return <label css={serializedStyles} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>;
+            }
             return <span css={serializedStyles} className={options.className} style={newStyle}>{options.children}</span>;
         }
         case "heading1":
@@ -87,6 +96,10 @@ export function Label(options: LabelOptions)
                 font-family: "Open Sans", sans;
                 font-size: 0.77rem;
             `;
+            if (options.for)
+            {
+                return <label css={serializedStyles} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>;
+            }
             return <span css={serializedStyles} className={options.className} style={newStyle}>{options.children}</span>;
         }
     }

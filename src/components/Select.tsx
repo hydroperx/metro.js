@@ -432,6 +432,7 @@ export function Select(options: SelectOptions)
     return (
         <>
             <button
+                id={options.id}
                 ref={buttonRef}
                 css={buttonSerializedStyles}
                 style={options.style}
@@ -493,6 +494,8 @@ export function Select(options: SelectOptions)
 }
 
 export type SelectOptions = {
+    id?: string,
+
     children?: React.ReactNode,
     style?: React.CSSProperties,
     className?: string,
