@@ -15,21 +15,6 @@ export type LabelVariant =
     "heading4" |
     "legend";
 
-export type LabelOptions = {
-    variant?: LabelVariant,
-
-    /**
-     * Indicates the form component this label connects to by its ID.
-     */
-    for?: string,
-
-    visible?: boolean,
-
-    style?: React.CSSProperties,
-    className?: string,
-    children?: React.ReactNode,
-};
-
 export function Label(options: LabelOptions)
 {
     // Use the theme context
@@ -58,9 +43,9 @@ export function Label(options: LabelOptions)
             `;
             if (options.for)
             {
-                return <label css={serializedStyles} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>;
+                return <label id={options.id} css={serializedStyles} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>;
             }
-            return <span css={serializedStyles} className={options.className} style={newStyle}>{options.children}</span>;
+            return <span id={options.id} css={serializedStyles} className={options.className} style={newStyle}>{options.children}</span>;
         }
         case "heading1":
         {
@@ -69,8 +54,13 @@ export function Label(options: LabelOptions)
                 font-family: ${fontFamily};
                 font-weight: lighter;
                 font-size: 2.1rem;
+                margin: 0.67em 0;
             `;
-            return <h1 css={serializedStyles} className={options.className} style={newStyle}>{options.children}</h1>;
+            if (options.for)
+            {
+                return <label id={options.id} css={serializedStyles} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>;
+            }
+            return <h1 id={options.id} css={serializedStyles} className={options.className} style={newStyle}>{options.children}</h1>;
         }
         case "heading2":
         {
@@ -79,8 +69,13 @@ export function Label(options: LabelOptions)
                 font-family: ${fontFamily};
                 font-weight: lighter;
                 font-size: 1.7rem;
+                margin: 0.67em 0;
             `;
-            return <h2 css={serializedStyles} className={options.className} style={newStyle}>{options.children}</h2>;
+            if (options.for)
+            {
+                return <label id={options.id} css={serializedStyles} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>;
+            }
+            return <h2 id={options.id} css={serializedStyles} className={options.className} style={newStyle}>{options.children}</h2>;
         }
         case "heading3":
         {
@@ -89,8 +84,13 @@ export function Label(options: LabelOptions)
                 font-family: ${fontFamily};
                 font-size: 1.3rem;
                 font-weight: bold;
+                margin: 0.67em 0;
             `;
-            return <h3 css={serializedStyles} className={options.className} style={newStyle}>{options.children}</h3>;
+            if (options.for)
+            {
+                return <label id={options.id} css={serializedStyles} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>;
+            }
+            return <h3 id={options.id} css={serializedStyles} className={options.className} style={newStyle}>{options.children}</h3>;
         }
         case "heading4":
         {
@@ -99,8 +99,13 @@ export function Label(options: LabelOptions)
                 font-family: ${fontFamily};
                 font-size: 1.1rem;
                 font-weight: bold;
+                margin: 0.67em 0;
             `;
-            return <h4 css={serializedStyles} className={options.className} style={newStyle}>{options.children}</h4>;
+            if (options.for)
+            {
+                return <label id={options.id} css={serializedStyles} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>;
+            }
+            return <h4 id={options.id} css={serializedStyles} className={options.className} style={newStyle}>{options.children}</h4>;
         }
         case "legend":
         {
@@ -110,9 +115,26 @@ export function Label(options: LabelOptions)
             `;
             if (options.for)
             {
-                return <label css={serializedStyles} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>;
+                return <label id={options.id} css={serializedStyles} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>;
             }
-            return <span css={serializedStyles} className={options.className} style={newStyle}>{options.children}</span>;
+            return <span id={options.id} css={serializedStyles} className={options.className} style={newStyle}>{options.children}</span>;
         }
     }
 }
+
+export type LabelOptions = {
+    variant?: LabelVariant,
+
+    id?: string,
+
+    /**
+     * Indicates the form component this label connects to by its ID.
+     */
+    for?: string,
+
+    visible?: boolean,
+
+    style?: React.CSSProperties,
+    className?: string,
+    children?: React.ReactNode,
+};
