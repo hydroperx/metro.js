@@ -85,7 +85,7 @@ const light: Theme =
         inputBorder: "#b5b5b5",
         inputBackground: "#fff",
 
-        anchor: "#594C87",
+        anchor: "#b700f3",
 
         scrollBarTrack: "#E9E9E9",
         scrollBarThumb: "#CDCDCD",
