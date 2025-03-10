@@ -80,6 +80,13 @@ export function TextInput(options: TextInputOptions)
         extend(newStyle, options.style);
     }
 
+    useEffect(() => {
+        const element = options.multiline ? textAreaRef.current! : inputRef.current!;
+
+        // Pass element
+        options.element?.(element);
+    });
+
     return (
         options.multiline ?
             <textarea
@@ -217,6 +224,8 @@ export type TextInputOptions = {
 
     style?: React.CSSProperties,
     className?: string,
+
+    element?: (element: HTMLElement) => void,
 
     /**
      * Change event.

@@ -429,6 +429,13 @@ export function Select(options: SelectOptions)
         };
     });
 
+    useEffect(() => {
+        const button = buttonRef.current!;
+
+        // Pass element
+        options.element?.(button);
+    });
+
     return (
         <>
             <button
@@ -519,6 +526,8 @@ export type SelectOptions = {
      * Event triggered on value change.
      */
     change?: (value: string) => void,
+
+    element?: (element: HTMLButtonElement) => void,
 };
 
 export function SelectOption(options: SelectOptionOptions)

@@ -318,6 +318,13 @@ export function Button(options: ButtonOptions)
         return userMouseOut?.(e as any);
     };
 
+    useEffect(() => {
+        const button = buttonRef.current!;
+
+        // Pass element
+        options.element?.(button);
+    });
+
     return <>
             <button
                 ref={buttonRef}
@@ -388,6 +395,8 @@ export type ButtonOptions =
     className?: string,
     children?: React.ReactNode,
 
+    element?: (element: HTMLButtonElement) => void,
+
     focus?: React.FocusEventHandler<HTMLButtonElement>,
     click?: React.MouseEventHandler<HTMLButtonElement>,
     contextMenu?: React.MouseEventHandler<HTMLButtonElement>,
@@ -447,6 +456,9 @@ export function IconButton(options: IconButtonOptions)
         // Obtain button
         const button = ref.current!;
 
+        // Pass element
+        options.element?.(button);
+
         button.addEventListener("mousedown", mouseDownListener);
         button.addEventListener("mouseup", mouseUpListener);
         button.addEventListener("mouseover", mouseOverListener);
@@ -458,7 +470,7 @@ export function IconButton(options: IconButtonOptions)
             button.removeEventListener("mouseover", mouseOverListener);
             button.removeEventListener("mouseout", mouseOutListener);
         };
-    }, [type]);
+    });
 
     return (
         <button
@@ -496,6 +508,8 @@ export type IconButtonOptions = {
     style?: React.CSSProperties,
     className?: string,
 
+    element?: (element: HTMLButtonElement) => void,
+
     contextMenu?: React.MouseEventHandler<HTMLButtonElement>,
     focus?: React.FocusEventHandler<HTMLButtonElement>,
     click?: React.MouseEventHandler<HTMLButtonElement>,
@@ -519,6 +533,7 @@ export function ArrowButton(options: ArrowButtonOptions)
             pressedIcon="arrowButtonPressed"
             rotation={d == "left" ? 0 : d == "right" ? 180 : d == "up" ? 90 : -90}
             className={options.className}
+            element={options.element}
             focus={options.focus}
             click={options.click}
             mouseOver={options.mouseOver}
@@ -540,6 +555,8 @@ export type ArrowButtonOptions = {
 
     style?: React.CSSProperties,
     className?: string,
+
+    element?: (element: HTMLButtonElement) => void,
 
     contextMenu?: React.MouseEventHandler<HTMLButtonElement>,
     focus?: React.FocusEventHandler<HTMLButtonElement>,
