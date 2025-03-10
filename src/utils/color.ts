@@ -20,5 +20,13 @@ export function colorDelta(a: Color, b: Color): number
 
 export function colorsAreSimiliar(a: Color, b: Color): boolean
 {
-    return colorDelta(a, b) <= 15;
+    return colorDelta(a, b) <= 20;
+}
+
+export function enhanceColorBrightness(background: string, color: string): string
+{
+    const a = Color(background);
+    const b = Color(color);
+    return (a.isDark() ? (b.isDark() ? b.lighten(0.5) : b)
+        : (b.isLight() ? b.darken(0.5) : b)).toString();
 }

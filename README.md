@@ -46,10 +46,10 @@ import "@fontsource/open-sans/700.css";
 By default, the `light` theme preset is used. Theme presets can be referenced in `ThemePresets`. You can provide a specific theme for a React section using:
 
 ```tsx
-import { ThemeContext } from "@hydroper/metrocomponents";
+import { ThemeContext, ThemePresets } from "@hydroper/metrocomponents";
 
 // somewhere in React content
-<ThemeContext.Provider value={theme}>
+<ThemeContext.Provider value={ThemePresets.green}>
 </ThemeContext.Provider>
 ```
 
@@ -69,6 +69,18 @@ const direction: LocaleDirection = "ltr";
 </LocaleDirectionContext.Provider>
 ```
 
+### Primary colors
+
+To opt in to using primary colors in certain components such as heading titles, use the `PreferPrimaryColorsContext` context:
+
+```tsx
+import { PreferPrimaryColorsContext } from "@hydroper/metrocomponents";
+
+// somewhere in React content
+<PreferPrimaryColorsContext.Provider value={true}>
+</PreferPrimaryColorsContext.Provider>
+```
+
 ### Registering icons
 
 Register custom icons with:
@@ -79,15 +91,7 @@ import { registerIcon } from "@hydroper/metrocomponents";
 registerIcon("iconX", { black: source, white: source });
 ```
 
-These icons can then be used in for example `Icon` and `IconButton` components.
-
-### Measuring points
-
-The cascading `font-size` property in the `<html>` tag is used for determining the unit in points in the library. 1 point equals `0.25rem`, where `rem` is the `font-size` pixels of the `<html>` tag.
-
-If it is desired to grow or reduce all the user interface together, you may adjust the `font-size` of the `<html>` tag.
-
-### Icons
+### Built-in icons
 
 The built-in icons may serve as base for designing newer icons. Here are links to existing useful icons:
 
@@ -95,6 +99,14 @@ The built-in icons may serve as base for designing newer icons. Here are links t
   - [Arrow button icon](src/icons/arrow-button-white.svg)
   - [Arrow button "hover" icon](src/icons/arrow-button-hover-white.svg)
   - [Arrow button "pressed" icon](src/icons/arrow-button-pressed-white.svg)
+
+These icons can then be used in for example `Icon` and `IconButton` components.
+
+### Measuring points
+
+The cascading `font-size` property in the `<html>` tag is used for determining the unit in points in the library. 1 point equals `0.25rem`, where `rem` is the `font-size` pixels of the `<html>` tag.
+
+If it is desired to grow or reduce all the user interface together, you may adjust the `font-size` of the `<html>` tag.
 
 ### Input navigation
 

@@ -12,7 +12,6 @@ import { fontFamily, fontSize, maximumZIndex } from "../utils/common";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
 import { focusPrevSibling, focusNextSibling } from "../utils/focusability";
 import { RemObserver } from "../utils/RemObserver";
-import { colorsAreSimiliar } from "../utils/color";
 
 // Item visible transition
 const visibleTransition = "opacity 300ms ease-out, top 300ms ease-out";
@@ -106,8 +105,6 @@ export function Select(options: SelectOptions)
     }
     else
     {
-        const usePrimaryColor = colorsAreSimiliar(Color(theme.colors.background), Color(theme.colors.primaryBackground));
-
         buttonSerializedStyles = css `
             background: ${theme.colors.inputBackground};
             border: 0.15rem solid  ${theme.colors.inputBorder};
@@ -126,8 +123,8 @@ export function Select(options: SelectOptions)
             }
 
             &:active:not(:disabled) {
-                background: ${usePrimaryColor ? theme.colors.primaryBackground : theme.colors.foreground};
-                color: ${usePrimaryColor ? theme.colors.primaryForeground : theme.colors.background};
+                background: ${theme.colors.primaryBackground};
+                color: ${theme.colors.primaryForeground};
             }
 
             &:disabled {
@@ -547,7 +544,6 @@ export function SelectOption(options: SelectOptionOptions)
 
     // Build the style class
     const hoverBackground = Color(theme.colors.inputBackground).darken(0.4).toString();
-    const usePrimaryColor = colorsAreSimiliar(Color(theme.colors.background), Color(theme.colors.primaryBackground));
     const serializedStyles = css `
         display: inline-flex;
         flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
@@ -566,8 +562,8 @@ export function SelectOption(options: SelectOptionOptions)
         }
 
         &:active, &[data-selected="true"] {
-            background: ${usePrimaryColor ? theme.colors.primaryBackground : theme.colors.foreground};
-            color: ${usePrimaryColor ? theme.colors.primaryForeground : theme.colors.background};
+            background: ${theme.colors.primaryBackground};
+            color: ${theme.colors.primaryForeground};
         }
 
         &:disabled {

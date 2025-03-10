@@ -1,6 +1,11 @@
 import assert from "assert";
 import extend from "extend";
+import Color from "color";
 import { css } from "@emotion/react";
+import { useContext } from "react";
+import { ThemeContext, PreferPrimaryColorsContext } from "../theme/Theme";
+import { fontFamily  } from "../utils/common";
+import { enhanceColorBrightness } from "../utils/color";
 
 export type LabelVariant = 
     "normal" |
@@ -27,14 +32,17 @@ export type LabelOptions = {
 
 export function Label(options: LabelOptions)
 {
+    // Use the theme context
+    const theme = useContext(ThemeContext);
+
+    // Determine which coloring is preferred
+    const preferPrimaryColors = useContext(PreferPrimaryColorsContext);
+
+    // Variant
     const variant = options.variant ?? "normal";
 
     const newStyle: React.CSSProperties = {};
-    newStyle.fontFamily = "'Open Sans', sans";
-    if (!(options.visible ?? true))
-    {
-        newStyle.display = "none";
-    }
+    if (!(options.visible ?? true)) newStyle.display = "none";
     if (options.style)
     {
         extend(newStyle, options.style);
@@ -45,7 +53,7 @@ export function Label(options: LabelOptions)
         case "normal":
         {
             const serializedStyles = css `
-                font-family: "Open Sans", sans;
+                font-family: ${fontFamily};
                 font-size: 0.9rem;
             `;
             if (options.for)
@@ -57,7 +65,8 @@ export function Label(options: LabelOptions)
         case "heading1":
         {
             const serializedStyles = css `
-                font-family: "Open Sans", sans;
+                ${preferPrimaryColors ? `color: ${enhanceColorBrightness(theme.colors.background, theme.colors.primaryBackground)};` : ""}
+                font-family: ${fontFamily};
                 font-weight: lighter;
                 font-size: 2.1rem;
             `;
@@ -66,7 +75,8 @@ export function Label(options: LabelOptions)
         case "heading2":
         {
             const serializedStyles = css `
-                font-family: "Open Sans", sans;
+                ${preferPrimaryColors ? `color: ${enhanceColorBrightness(theme.colors.background, theme.colors.primaryBackground)};` : ""}
+                font-family: ${fontFamily};
                 font-weight: lighter;
                 font-size: 1.7rem;
             `;
@@ -75,7 +85,8 @@ export function Label(options: LabelOptions)
         case "heading3":
         {
             const serializedStyles = css `
-                font-family: "Open Sans", sans;
+                ${preferPrimaryColors ? `color: ${enhanceColorBrightness(theme.colors.background, theme.colors.primaryBackground)};` : ""}
+                font-family: ${fontFamily};
                 font-size: 1.3rem;
                 font-weight: bold;
             `;
@@ -84,7 +95,8 @@ export function Label(options: LabelOptions)
         case "heading4":
         {
             const serializedStyles = css `
-                font-family: "Open Sans", sans;
+                ${preferPrimaryColors ? `color: ${enhanceColorBrightness(theme.colors.background, theme.colors.primaryBackground)};` : ""}
+                font-family: ${fontFamily};
                 font-size: 1.1rem;
                 font-weight: bold;
             `;
@@ -93,7 +105,7 @@ export function Label(options: LabelOptions)
         case "legend":
         {
             const serializedStyles = css `
-                font-family: "Open Sans", sans;
+                font-family: ${fontFamily};
                 font-size: 0.77rem;
             `;
             if (options.for)
