@@ -3,14 +3,17 @@ import { css, SerializedStyles } from "@emotion/react";
 import Color from "color";
 import $ from "jquery";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
-import { ThemeContext } from "../theme";
+import { ThemeContext, PreferPrimaryColorsContext } from "../theme";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
-import { colorsAreSimiliar, lighten, darken } from "../utils/color";
+import { lighten, enhanceBrightness, contrast } from "../utils/color";
 
 export function CheckBox(options: CheckBoxOptions)
 {
     // Use the theme context
     const theme = useContext(ThemeContext);
+
+    // Determine which coloring is preferred
+    const preferPrimaryColors = useContext(PreferPrimaryColorsContext);
 
     // Locale direction
     const localeDir = useContext(LocaleDirectionContext);
@@ -28,11 +31,14 @@ export function CheckBox(options: CheckBoxOptions)
     const padding = 0.15;
     const s = border_width + padding;
     const w = 4;
+    const checked_color = enhanceBrightness(theme.colors.background, theme.colors.primaryBackground);
+    const border_color = preferPrimaryColors ? checked_color : contrast(theme.colors.background, 0.4);
+    const unchecked_color = preferPrimaryColors ? lighten(checked_color, 0.3) : border_color;
 
     // CSS
     const serializedStyles = css `
         background: none;
-        border: ${border_width}rem solid  ${theme.colors.inputBorder};
+        border: ${border_width}rem solid  ${border_color};
         display: flex;
         flex-direction: row;
         padding: ${padding}rem;
@@ -47,6 +53,18 @@ export function CheckBox(options: CheckBoxOptions)
 
         &:disabled {
             opacity: 0.5;
+        }
+
+        & .CheckBox-unchecked-rect {
+            background: ${unchecked_color};
+            width: 100%;
+            height: 100%;
+        }
+
+        & .CheckBox-checked-rect {
+            position: relative;
+            background: ${checked_color};
+            height: 100%;
         }
     `;
 
@@ -75,13 +93,9 @@ export function CheckBox(options: CheckBoxOptions)
             className={options.className}
             onClick={button_onClick}>
 
-            <div
-                ref={unchecked_div_ref}
-                style={{
-                    background: "",
-                    width: "100%",
-                    height: "100%",
-                }}>
+            <div ref={unchecked_div_ref} className="CheckBox-unchecked-rect">
+            </div>
+            <div ref={checked_div_ref} className="CheckBox-checked-rect">
             </div>
         </button>
     );

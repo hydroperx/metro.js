@@ -71,7 +71,7 @@ const direction: LocaleDirection = "ltr";
 
 ### Primary colors
 
-To opt in to using primary colors in certain components such as heading titles, use the `PreferPrimaryColorsContext` context:
+To opt in to using primary colors in certain components such as heading titles and checkboxes, use the `PreferPrimaryColorsContext` context:
 
 ```tsx
 import { PreferPrimaryColorsContext } from "@hydroper/metrocomponents";

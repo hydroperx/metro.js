@@ -25,12 +25,12 @@ export function colorsAreSimiliar(a: any, b: any): boolean
     return colorDelta(a, b) <= 20;
 }
 
-export function enhanceColorBrightness(background: any, color: any): string
+export function enhanceBrightness(background: any, color: any): string
 {
     const a = to_color_object(background);
     const b = to_color_object(color);
-    return (a.isDark() ? (b.isDark() ? b.lighten(0.5) : b)
-        : (b.isLight() ? b.darken(0.5) : b)).toString();
+    return (a.isDark() ? (b.isDark() ? lighten(b, 0.5) : b)
+        : (b.isLight() ? darken(b, 0.5) : b)).toString();
 }
 
 function to_color_object(a: any): Color
@@ -58,4 +58,13 @@ export function lighten(a: any, ratio: number): string
         r = r.lighten(ratio);
     }
     return r.toString();
+}
+
+/**
+ * Lightens a color if dark; darkens a color if light.
+ */
+export function contrast(a: any, ratio: number): string
+{
+    a = to_color_object(a);
+    return a.isLight() ? darken(a, ratio) : lighten(a, ratio);
 }
