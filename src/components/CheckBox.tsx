@@ -121,6 +121,7 @@ export function CheckBox(options: CheckBoxOptions)
     }
 
     useEffect(() => {
+        // Update carret
         set_carret_left(localeDir == "ltr" ? (value ? 100 : 0) : value ? 0 : 100);
     }, [localeDir]);
 
