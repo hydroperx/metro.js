@@ -6,10 +6,10 @@ import assert from "assert";
 import { Input } from "@hydroper/inputaction";
 import $ from "jquery";
 import { ArrowIcon, BulletIcon, CheckedIcon, IconOptions } from "./Icons";
-import { LocaleDirectionContext } from "../layout/LocaleDirection";
+import { LocaleDirection, LocaleDirectionContext } from "../layout/LocaleDirection";
 import { computePosition, fitViewportPosition, Side } from "../utils/placement";
 import { ThemeContext } from "../theme";
-import { fontSize } from "../utils/commonValues";
+import { fontFamily, fontSize } from "../utils/common";
 import { pointsToRem } from "../utils/points";
 import { focusPrevSibling, focusNextSibling } from "../utils/focusability";
 
@@ -146,6 +146,8 @@ export function ContextMenu(options: ContextMenuOptions)
 
     // Locale direction
     const localeDir = useContext(LocaleDirectionContext);
+    const localeDirRef = useRef<{ value?: LocaleDirection }>({}).current;
+    localeDirRef.value = localeDir;
 
     // State
     const [visible, setVisible] = useState<boolean>(false);
@@ -401,7 +403,7 @@ export function ContextMenu(options: ContextMenuOptions)
                     focusNextSibling(child);
                 }
                 // open submenu
-                else if (Input.input.justPressed(localeDir == "ltr" ? "navigateRight" : "navigateLeft") && child.classList.contains(submenuItemClassName))
+                else if (Input.input.justPressed(localeDirRef.value == "ltr" ? "navigateRight" : "navigateLeft") && child.classList.contains(submenuItemClassName))
                 {
                     (child as HTMLButtonElement).click();
                     const submenuList = child.nextElementSibling;
@@ -541,6 +543,7 @@ export function ContextMenuItem(options: ContextMenuItemOptions)
         outline: none;
         color: ${theme.colors.foreground};
         font-size: ${fontSize};
+        font-family: ${fontFamily};
 
         &:hover:not(:disabled), &:focus:not(:disabled) {
             background: ${hoverBackground};
@@ -692,6 +695,8 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
 {
     // Locale direction
     const localeDir = useContext(LocaleDirectionContext);
+    const localeDirRef = useRef<{ value?: LocaleDirection }>({}).current;
+    localeDirRef.value = localeDir;
 
     // Use the theme context
     const theme = useContext(ThemeContext);
@@ -711,6 +716,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
         outline: none;
         color: ${theme.colors.foreground};
         font-size: ${fontSize};
+        font-family: ${fontFamily};
 
         &:hover, &:focus {
             background: ${hoverBackground};
@@ -763,7 +769,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
 
         // Position context menu after butotn.
         const [x, y, sideResolution] = computePosition(button, div, {
-            prefer: localeDir == "ltr" ? "right" : "left",
+            prefer: localeDirRef.value == "ltr" ? "right" : "left",
         });
         div.style.left = x + "px";
         div.style.top = y + "px";
@@ -928,7 +934,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
                     focusNextSibling(child);
                 }
                 // open submenu
-                else if (Input.input.justPressed(localeDir == "ltr" ? "navigateRight" : "navigateLeft") && child.classList.contains(submenuItemClassName))
+                else if (Input.input.justPressed(localeDirRef.value == "ltr" ? "navigateRight" : "navigateLeft") && child.classList.contains(submenuItemClassName))
                 {
                     (child as HTMLButtonElement).click();
                     const submenuList = child.nextElementSibling;
@@ -942,7 +948,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
                     }
                 }
                 // close current submenu
-                else if (Input.input.justPressed(localeDir == "ltr" ? "navigateLeft" : "navigateRight"))
+                else if (Input.input.justPressed(localeDirRef.value == "ltr" ? "navigateLeft" : "navigateRight"))
                 {
                     hideAllFromParent(div);
 
@@ -980,7 +986,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
                 }
             }
             // close current submenu
-            else if (Input.input.justPressed(localeDir == "ltr" ? "navigateLeft" : "navigateRight"))
+            else if (Input.input.justPressed(localeDirRef.value == "ltr" ? "navigateLeft" : "navigateRight"))
             {
                 hideAllFromParent(div);
 

@@ -15,10 +15,7 @@ Basic components
   - [ ] Allow scrolling the context menu (`scroll?: boolean`)
 - [x] Select
   - [ ] Future: a more Metro like transition and positioning that centers the selected option to the input button
-   - [ ] "Open transition" draft: https://github.com/realhydroper/tsmetrocomponents/blob/d18900aad5e94d3429e4a762d1f79015dcf9aef4/src/components/Select.tsx#L161 (in this draft, `base_bottom =` apparently needs to be assigned something else, like `window.innerHeight - baseRect.top - baseRect.height`, to work better.
-  - [ ] Add a "down" arrow icon to the right of the input button.
-  - [ ] `big?: boolean`: If `true`, displays a big elegant select list (only the main button changes).
-    - [ ] In this case, select list goes always below the button
+   - [ ] "Open transition" draft: https://github.com/realhydroper/tsmetrocomponents/blob/d18900aad5e94d3429e4a762d1f79015dcf9aef4/src/components/Select.tsx#L161 (in this draft, `base_bottom =` apparently needs to be assigned something else, like `window.innerHeight - baseRect.top - baseRect.height`, to work better).
 - [ ] TextInput
   - [ ] Bordered when the provided theme's `colors.background` is a near or equal color to `color.inputBackground`
     - https://stackoverflow.com/a/29247003/26380963

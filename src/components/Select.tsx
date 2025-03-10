@@ -8,7 +8,7 @@ import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { UpArrowIcon, DownArrowIcon } from "./Icons";
 import { computePosition, fitViewportPosition, Side } from "../utils/placement";
 import { ThemeContext } from "../theme";
-import { fontSize } from "../utils/commonValues";
+import { fontFamily, fontSize } from "../utils/common";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
 import { focusPrevSibling, focusNextSibling } from "../utils/focusability";
 import { RemObserver } from "../utils/RemObserver";
@@ -60,6 +60,7 @@ export function Select(options: SelectOptions)
     const [y, setY] = useState<number>(0);
     const [opacity, setOpacity] = useState<number>(0);
     const [transition, setTransition] = useState<string>("");
+    const [arrowsVisible, setArrowsVisible] = useState<boolean>(false);
     const [value, setValue] = useState<string>(options.default ?? "");
     const [valueHyperText, setValueHyperText] = useState<string>("");
     const [rem, setRem] = useState<number>(0);
@@ -73,30 +74,64 @@ export function Select(options: SelectOptions)
 
     // Button CSS
     const hoverBackground = Color(theme.colors.inputBackground).darken(0.4).toString();
-    let buttonSerializedStyles: SerializedStyles = css `
-        background: ${theme.colors.inputBackground};
-        border: 0.15rem solid  ${theme.colors.inputBorder};
-        color: ${theme.colors.foreground};
-        display: flex;
-        flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
-        gap: 0.9rem;
-        padding: ${pointsToRemValue(2) + 0.5}rem 0.7rem;
-        min-width: 15rem;
-        outline: none;
+    let buttonSerializedStyles: SerializedStyles = null;
+    
+    if (options.big)
+    {
+        buttonSerializedStyles = css `
+            background: none;
+            border: none;
+            color: ${theme.colors.foreground};
+            font-size: 2rem;
+            font-family: ${fontFamily};
+            font-weight: lighter;
+            outline: none;
+            display: flex;
+            gap: 1rem;
+            flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
+            align-items: center;
+            padding: ${pointsToRemValue(2)}rem 0.7rem;
+            min-width: 10rem;
+            opacity: 0.7;
 
-        &:hover:not(:disabled), &:focus:not(:disabled) {
-            background: ${hoverBackground};
-        }
+            &:hover:not(:disabled), &:focus:not(:disabled), &:active:not(:disabled) {
+                opacity: 1;
+            }
 
-        &:active:not(:disabled) {
-            background: ${theme.colors.foreground};
-            color: ${theme.colors.background};
-        }
+            &:disabled {
+                opacity: 0.4;
+            }
+        `;
+    }
+    else
+    {
+        buttonSerializedStyles = css `
+            background: ${theme.colors.inputBackground};
+            border: 0.15rem solid  ${theme.colors.inputBorder};
+            color: ${theme.colors.foreground};
+            font-family: ${fontFamily};
+            font-size: ${fontSize};
+            display: flex;
+            flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
+            align-items: center;
+            padding: ${pointsToRemValue(2) + 0.15}rem 0.7rem;
+            min-width: 15rem;
+            outline: none;
 
-        &:disabled {
-            opacity: 0.5;
-        }
-    `;
+            &:hover:not(:disabled), &:focus:not(:disabled) {
+                background: ${hoverBackground};
+            }
+
+            &:active:not(:disabled) {
+                background: ${theme.colors.foreground};
+                color: ${theme.colors.background};
+            }
+
+            &:disabled {
+                opacity: 0.5;
+            }
+        `;
+    }
 
     // Open the list
     function open(): void
@@ -152,6 +187,12 @@ export function Select(options: SelectOptions)
 
         // Div
         const div = getDiv();
+
+        // Turn arrows visible or hidden
+        const k_scroll = itemListDiv.scrollTop;
+        itemListDiv.scrollTop = 10;
+        setArrowsVisible(itemListDiv.scrollTop != 0);
+        itemListDiv.scrollTop = k_scroll;
 
         // Position after button.
         const [x, y, sideResolution] = computePosition(buttonRef.current!, div, {
@@ -396,8 +437,23 @@ export function Select(options: SelectOptions)
                 style={options.style}
                 className={options.className}
                 disabled={!!options.disabled}
-                dangerouslySetInnerHTML={{ __html: valueHyperText }}
                 onClick={open}>
+                
+                <div style={{
+                    display: "inline-flex",
+                    flexDirection: localeDir == "ltr" ? "row" : "row-reverse",
+                    gap: "0.9rem"
+                }} dangerouslySetInnerHTML={{ __html: valueHyperText }}>
+                </div>
+
+                <div style={{
+                    display: "inline-flex",
+                    flexGrow: 2,
+                    flexDirection: localeDir == "ltr" ? "row-reverse" : "row",
+                    opacity: "0.7",
+                }}>
+                    <DownArrowIcon size={options.big ? 6 : 3.5}/>
+                </div>
             </button>
             <div ref={divRef} style={{
                 display: "inline-flex",
@@ -413,7 +469,7 @@ export function Select(options: SelectOptions)
                 opacity: opacity.toString(),
                 transition,
             }}>
-                <div className="up-arrow" style={{display: "flex", flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
+                <div className="up-arrow" style={{display: arrowsVisible ? "flex" : "none", flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
                     <UpArrowIcon size={2.5}/>
                 </div>
                 <div
@@ -427,7 +483,7 @@ export function Select(options: SelectOptions)
                     }}>
                     {options.children}
                 </div>
-                <div className="down-arrow" style={{display: "flex", flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
+                <div className="down-arrow" style={{display: arrowsVisible ? "flex" : "none", flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
                     <DownArrowIcon size={2.5}/>
                 </div>
             </div>
@@ -449,6 +505,11 @@ export type SelectOptions = {
      * Whether input is disabled.
      */
     disabled?: boolean,
+
+    /**
+     * Whether the input button is a light big or not.
+     */
+    big?: boolean,
 
     /**
      * Event triggered on value change.

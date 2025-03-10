@@ -3,7 +3,7 @@ import extend from "extend";
 import { css, SerializedStyles } from "@emotion/react";
 import React, { Ref, useContext, useRef, useState, useEffect } from "react";
 import Color from "color";
-import { fontSize } from "../utils/commonValues";
+import { fontFamily, fontSize } from "../utils/common";
 import { computePosition } from "../utils/placement";
 import { Icon } from "./Icons";
 import { ThemeContext } from "../theme";
@@ -65,6 +65,7 @@ export function Button(options: ButtonOptions)
                 border: none;
                 border-radius: 0;
                 font-size: ${fontSize};
+                font-family: ${fontFamily};
 
                 &:hover:not(:disabled) {
                     background: ${hoverBg};
@@ -97,6 +98,7 @@ export function Button(options: ButtonOptions)
                 border: none;
                 border-radius: 0;
                 font-size: ${fontSize};
+                font-family: ${fontFamily};
 
                 &:hover:not(:disabled) {
                     color: ${hoverColor};
@@ -127,6 +129,7 @@ export function Button(options: ButtonOptions)
                 border: none;
                 border-radius: 0;
                 font-size: ${fontSize};
+                font-family: ${fontFamily};
 
                 &:hover:not(:disabled) {
                     background: ${theme.colors.hoveredSecondaryBackground};
@@ -157,6 +160,7 @@ export function Button(options: ButtonOptions)
                 border: none;
                 border-radius: 0;
                 font-size: ${fontSize};
+                font-family: ${fontFamily};
 
                 &:hover:not(:disabled) {
                     background: ${theme.colors.hoveredPrimaryBackground};
@@ -187,6 +191,7 @@ export function Button(options: ButtonOptions)
                 border: none;
                 border-radius: 0;
                 font-size: ${fontSize};
+                font-family: ${fontFamily};
 
                 &:hover:not(:disabled) {
                     background: ${theme.colors.hoveredDangerBackground};
@@ -222,6 +227,7 @@ export function Button(options: ButtonOptions)
                 border: 0.15rem solid ${color};
                 border-radius: 0;
                 font-size: ${fontSize};
+                font-family: ${fontFamily};
 
                 &:hover:not(:disabled) {
                     background: ${hoverBg};
@@ -258,6 +264,7 @@ export function Button(options: ButtonOptions)
                 border: 0.15rem solid ${color};
                 border-radius: 0;
                 font-size: ${fontSize};
+                font-family: ${fontFamily};
 
                 &:hover:not(:disabled) {
                     background: ${hoverBg};

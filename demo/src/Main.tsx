@@ -4,8 +4,9 @@ import {
     Button, Container, Label, HGroup, VGroup, ArrowButton, ThemeContext,
     LoadingIcon, Select, SelectOption,
     lightTheme, darkTheme,
+    LocaleDirectionContext,
 } from "@hydroper/metrocomponents";
-import type { Theme } from "@hydroper/metrocomponents";
+import type { Theme, LocaleDirection } from "@hydroper/metrocomponents";
 import {
     useContextMenu, ContextMenu,
     ContextMenuItem, ContextMenuCheck, ContextMenuIcon, ContextMenuLabel, ContextMenuRight,
@@ -30,101 +31,115 @@ function App()
 
     // States
     const [theme, setTheme] = useState<Theme>(darkTheme);
+    const [localeDirection, setLocaleDirection] = useState<LocaleDirection>("ltr");
 
-    return <ThemeContext.Provider value={theme}>
-        <Container full solid selection={false} contextMenu={Container_onContextMenu as any}>
-            <Container padding={5}>
-                <Label variant="heading1">Metro demo</Label>
-                <div style={{margin: "12rem"}}></div>
-                <HGroup gap={2} style={{float: "right", marginRight: "3rem"}}>
-                    <Button variant="outline-primary" tooltip="An useful description." click={() => { setTheme(lightTheme); }}>Light</Button>
-                    <Button variant="outline"  click={() => { setTheme(darkTheme); }}>Dark</Button>
-                    <ArrowButton direction="right" size={9}></ArrowButton>
-                </HGroup>
-                <div>
-                    <VGroup horizontalAlign="center">
-                        <LoadingIcon size={9}/>
-                    </VGroup>
-                </div>
-                <div>
-                    <Select default="qux1">
-                        <SelectOption value="foo">Foo</SelectOption>
-                        <SelectOption value="bar">Bar</SelectOption>
-                        <SelectOption value="qux">Qux</SelectOption>
-                        <SelectOption value="foo9">Foo 9</SelectOption>
-                        <SelectOption value="bar3">Bar 3</SelectOption>
-                        <SelectOption value="qux2">Qux 2</SelectOption>
-                        <SelectOption value="foo1">Foo 1</SelectOption>
-                        <SelectOption value="bar0">Bar 0</SelectOption>
-                        <SelectOption value="quxA">Qux A</SelectOption>
-                        <SelectOption value="fooB">Foo B</SelectOption>
-                        <SelectOption value="barC">Bar C</SelectOption>
-                        <SelectOption value="quxD">Qux D</SelectOption>
-                        <SelectOption value="fooE">Foo E</SelectOption>
-                        <SelectOption value="barF">Bar F</SelectOption>
-                        <SelectOption value="qux1">Qux 1</SelectOption>
-                    </Select>
-                </div>
-                <ContextMenu id={contextMenuId}>
-                    <ContextMenuItem className="foo" click={() => {alert("clicked item 1")}}>
-                        <ContextMenuCheck state="none"/>
-                        <ContextMenuIcon></ContextMenuIcon>
-                        <ContextMenuLabel>Item 1</ContextMenuLabel>
-                        <ContextMenuRight>Ctrl+Z</ContextMenuRight>
-                    </ContextMenuItem>
-                    <ContextMenuItem className="bar">
-                        <ContextMenuCheck state="checked"/>
-                        <ContextMenuIcon></ContextMenuIcon>
-                        <ContextMenuLabel>Item 2</ContextMenuLabel>
-                        <ContextMenuRight></ContextMenuRight>
-                    </ContextMenuItem>
-                    <ContextMenuSeparator/>
-                    <ContextMenuItem className="qux">
-                        <ContextMenuCheck state="option"/>
-                        <ContextMenuIcon></ContextMenuIcon>
-                        <ContextMenuLabel>Item 3</ContextMenuLabel>
-                        <ContextMenuRight></ContextMenuRight>
-                    </ContextMenuItem>
-                    <ContextMenuSubmenu>
-                        <ContextMenuCheck state="none"/>
-                        <ContextMenuIcon></ContextMenuIcon>
-                        <ContextMenuLabel>Submenu 1</ContextMenuLabel>
-                        <ContextMenuRight><ContextMenuSubIcon/></ContextMenuRight>
-                    </ContextMenuSubmenu>
-                    <ContextMenuSubmenuList>
-                        <ContextMenuItem click={() => alert("clicked item a")}>
-                            <ContextMenuIcon></ContextMenuIcon>
-                            <ContextMenuLabel>Item A</ContextMenuLabel>
-                            <ContextMenuRight></ContextMenuRight>
-                        </ContextMenuItem>
-                        <ContextMenuItem disabled={true}>
-                            <ContextMenuIcon></ContextMenuIcon>
-                            <ContextMenuLabel>Item A</ContextMenuLabel>
-                            <ContextMenuRight></ContextMenuRight>
-                        </ContextMenuItem>
-                        <ContextMenuSubmenu>
-                            <ContextMenuCheck state="none"/>
-                            <ContextMenuIcon></ContextMenuIcon>
-                            <ContextMenuLabel>Submenu A</ContextMenuLabel>
-                            <ContextMenuRight><ContextMenuSubIcon/></ContextMenuRight>
-                        </ContextMenuSubmenu>
-                        <ContextMenuSubmenuList>
-                            <ContextMenuItem click={() => alert("clicked item a1")}>
+    return (
+        <LocaleDirectionContext.Provider value={localeDirection}>
+            <ThemeContext.Provider value={theme}>
+                <Container full solid selection={false} contextMenu={Container_onContextMenu as any}>
+                    <Container padding={5}>
+                        <Label variant="heading1">Metro demo</Label>
+                        <div style={{margin: "12rem"}}></div>
+                        <HGroup gap={2} style={{float: "right", marginRight: "3rem"}}>
+                            <Button variant="outline-primary" tooltip="An useful description." click={() => { setTheme(lightTheme); }}>Light</Button>
+                            <Button variant="outline"  click={() => { setTheme(darkTheme); }}>Dark</Button>
+                            <ArrowButton direction="right" size={9}></ArrowButton>
+                        </HGroup>
+                        <HGroup gap={2}>
+                            <Button variant="outline-primary" click={() => { setLocaleDirection("ltr"); }}>LTR</Button>
+                            <Button variant="outline"  click={() => { setLocaleDirection("rtl"); }}>RTL</Button>
+                        </HGroup>
+                        <VGroup horizontalAlign="center">
+                            <LoadingIcon size={9}/>
+                        </VGroup>
+                        <div>
+                            <Select default="foo" big>
+                                <SelectOption value="foo">Foo</SelectOption>
+                                <SelectOption value="bar">Bar</SelectOption>
+                                <SelectOption value="qux">Qux</SelectOption>
+                            </Select>
+                        </div>
+                        <div>
+                            <Select default="qux1">
+                                <SelectOption value="foo">Foo</SelectOption>
+                                <SelectOption value="bar">Bar</SelectOption>
+                                <SelectOption value="qux">Qux</SelectOption>
+                                <SelectOption value="foo9">Foo 9</SelectOption>
+                                <SelectOption value="bar3">Bar 3</SelectOption>
+                                <SelectOption value="qux2">Qux 2</SelectOption>
+                                <SelectOption value="foo1">Foo 1</SelectOption>
+                                <SelectOption value="bar0">Bar 0</SelectOption>
+                                <SelectOption value="quxA">Qux A</SelectOption>
+                                <SelectOption value="fooB">Foo B</SelectOption>
+                                <SelectOption value="barC">Bar C</SelectOption>
+                                <SelectOption value="quxD">Qux D</SelectOption>
+                                <SelectOption value="fooE">Foo E</SelectOption>
+                                <SelectOption value="barF">Bar F</SelectOption>
+                                <SelectOption value="qux1">Qux 1</SelectOption>
+                            </Select>
+                        </div>
+                        <ContextMenu id={contextMenuId}>
+                            <ContextMenuItem className="foo" click={() => {alert("clicked item 1")}}>
+                                <ContextMenuCheck state="none"/>
                                 <ContextMenuIcon></ContextMenuIcon>
-                                <ContextMenuLabel>Item A1</ContextMenuLabel>
+                                <ContextMenuLabel>Item 1</ContextMenuLabel>
+                                <ContextMenuRight>Ctrl+Z</ContextMenuRight>
+                            </ContextMenuItem>
+                            <ContextMenuItem className="bar">
+                                <ContextMenuCheck state="checked"/>
+                                <ContextMenuIcon></ContextMenuIcon>
+                                <ContextMenuLabel>Item 2</ContextMenuLabel>
                                 <ContextMenuRight></ContextMenuRight>
                             </ContextMenuItem>
-                            <ContextMenuItem disabled={true}>
+                            <ContextMenuSeparator/>
+                            <ContextMenuItem className="qux">
+                                <ContextMenuCheck state="option"/>
                                 <ContextMenuIcon></ContextMenuIcon>
-                                <ContextMenuLabel>Item A1</ContextMenuLabel>
+                                <ContextMenuLabel>Item 3</ContextMenuLabel>
                                 <ContextMenuRight></ContextMenuRight>
                             </ContextMenuItem>
-                        </ContextMenuSubmenuList>
-                    </ContextMenuSubmenuList>
-                </ContextMenu>
-            </Container>
-        </Container>
-    </ThemeContext.Provider>;
+                            <ContextMenuSubmenu>
+                                <ContextMenuCheck state="none"/>
+                                <ContextMenuIcon></ContextMenuIcon>
+                                <ContextMenuLabel>Submenu 1</ContextMenuLabel>
+                                <ContextMenuRight><ContextMenuSubIcon/></ContextMenuRight>
+                            </ContextMenuSubmenu>
+                            <ContextMenuSubmenuList>
+                                <ContextMenuItem click={() => alert("clicked item a")}>
+                                    <ContextMenuIcon></ContextMenuIcon>
+                                    <ContextMenuLabel>Item A</ContextMenuLabel>
+                                    <ContextMenuRight></ContextMenuRight>
+                                </ContextMenuItem>
+                                <ContextMenuItem disabled={true}>
+                                    <ContextMenuIcon></ContextMenuIcon>
+                                    <ContextMenuLabel>Item A</ContextMenuLabel>
+                                    <ContextMenuRight></ContextMenuRight>
+                                </ContextMenuItem>
+                                <ContextMenuSubmenu>
+                                    <ContextMenuCheck state="none"/>
+                                    <ContextMenuIcon></ContextMenuIcon>
+                                    <ContextMenuLabel>Submenu A</ContextMenuLabel>
+                                    <ContextMenuRight><ContextMenuSubIcon/></ContextMenuRight>
+                                </ContextMenuSubmenu>
+                                <ContextMenuSubmenuList>
+                                    <ContextMenuItem click={() => alert("clicked item a1")}>
+                                        <ContextMenuIcon></ContextMenuIcon>
+                                        <ContextMenuLabel>Item A1</ContextMenuLabel>
+                                        <ContextMenuRight></ContextMenuRight>
+                                    </ContextMenuItem>
+                                    <ContextMenuItem disabled={true}>
+                                        <ContextMenuIcon></ContextMenuIcon>
+                                        <ContextMenuLabel>Item A1</ContextMenuLabel>
+                                        <ContextMenuRight></ContextMenuRight>
+                                    </ContextMenuItem>
+                                </ContextMenuSubmenuList>
+                            </ContextMenuSubmenuList>
+                        </ContextMenu>
+                    </Container>
+                </Container>
+            </ThemeContext.Provider>
+        </LocaleDirectionContext.Provider>
+    );
 }
 
 // Disable default context menu

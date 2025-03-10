@@ -3,7 +3,7 @@ import extend from "extend";
 import { useContext } from "react";
 import { css } from "@emotion/react";
 import { ThemeContext } from "../theme";
-import { fontFamily, fontSize } from "../utils/commonValues";
+import { fontFamily, fontSize } from "../utils/common";
 
 export type ContainerOptions =
 {
