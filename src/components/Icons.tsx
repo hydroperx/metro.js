@@ -21,6 +21,7 @@ import React, { useEffect, useRef, useState, useContext } from "react";
 import Color from "color";
 import { css, SerializedStyles, keyframes } from "@emotion/react";
 import extend from "extend";
+import assert from "assert";
 import { pointsToRem } from "../utils/points";
 import { RemObserver } from "../utils/RemObserver";
 
@@ -82,10 +83,22 @@ export function Icon(options: IconOptions)
             colorObserver.cleanup();
         };
     });
-    
+
+    const m = iconMap.get(type);
+    assert(m !== undefined, "Icon is not defined: " + type);
     return (
-        <img ref={ref} src={iconMap.get(type)[color]} draggable={false} alt={type} style={newStyle}></img>
+        <img ref={ref} src={m[color]} draggable={false} alt={type} style={newStyle}></img>
     );
+}
+
+/**
+ * Gets the source of an icon.
+ */
+export function getIcon(type: string, color: "white" | "black")
+{
+    const m = iconMap.get(type);
+    assert(m !== undefined, "Icon is not defined: " + type);
+    return m[color];
 }
 
 export function CheckedIcon(options: IconOptions)

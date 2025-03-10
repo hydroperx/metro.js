@@ -1,10 +1,10 @@
 import { TypedEventTarget } from "@hydroper/typedeventtarget";
 import { useContext, useRef, useState, useEffect } from "react";
-import { css } from "@emotion/react";
+import { css, SerializedStyles } from "@emotion/react";
 import Color from "color";
 import { Input } from "@hydroper/inputaction";
 import extend from "extend";
-import { ArrowIcon, BulletIcon, CheckedIcon, IconOptions } from "./Icons";
+import { ArrowIcon, BulletIcon, CheckedIcon, getIcon, Icon, IconOptions } from "./Icons";
 import { LocaleDirection, LocaleDirectionContext } from "../layout/LocaleDirection";
 import { computePosition, fitViewportPosition, Side } from "../utils/placement";
 import { ThemeContext } from "../theme";
@@ -20,8 +20,9 @@ export function TextInput(options: TextInputOptions)
     // Locale direction
     const localeDir = useContext(LocaleDirectionContext);
 
-    // Icon type
+    // Icon
     const icon: string | null = options.icon ?? (options.search ? "search" : null);
+    const iconSize = 5;
 
     // Refs
     const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -38,9 +39,15 @@ export function TextInput(options: TextInputOptions)
         font-family: ${fontFamily};
         font-size: ${fontSize};
         padding: ${pointsToRem(2.15)} 0.7rem;
+        ${icon === null || options.multiline ? "" : `padding-right: ${pointsToRem(iconSize + 3)};`}
+        ${icon === null || options.multiline ? "" : `background-image: url("${getIcon(icon, dark ? "white" : "black")}");`}
+        background-position: center right 0.5rem;
+        background-size: ${pointsToRem(iconSize)};
+        background-repeat: no-repeat;
         text-align: ${localeDir == "ltr" ? "left" : "right"};
         min-width: 5rem;
         outline: none;
+        vertical-align: middle;
 
         &::placeholder {
             color: ${dark ? Color(theme.colors.foreground).darken(0.4).toString() : Color(theme.colors.foreground).lighten(0.4).toString()};
@@ -54,6 +61,15 @@ export function TextInput(options: TextInputOptions)
         &:disabled {
             background: ${dark ? Color(theme.colors.inputBackground).lighten(0.7).toString() : Color(theme.colors.inputBackground).darken(0.7).toString()};
             border: 0.15rem solid  ${dark ? Color(theme.colors.inputBorder).lighten(0.7).toString() : Color(theme.colors.inputBorder).darken(0.7).toString()};
+        }
+    
+        &::-webkit-search-cancel-button {
+            -webkit-appearance: none;
+            width: ${pointsToRem(5)};
+            height: ${pointsToRem(5)};
+            background: url("${getIcon("clear", dark ? "white" : "black")}");
+            background-size: ${pointsToRem(5)};
+            background-repeat: no-repeat;
         }
     `;
 
@@ -76,7 +92,7 @@ export function TextInput(options: TextInputOptions)
                 style={newStyle}
                 ref={textAreaRef}
                 placeholder={options.placeholder}
-                onChange={event => { options?.change(textAreaRef.current.value, event) }}
+                onChange={event => { options.change?.(textAreaRef.current.value, event) }}
                 onScroll={options.scroll}
                 onFocus={options.focus}
                 onClick={options.click}
@@ -86,36 +102,36 @@ export function TextInput(options: TextInputOptions)
                 onContextMenu={options.contextMenu}
                 autoFocus={options.autoFocus}
                 disabled={options.disabled}
-                autoComplete={options.autoComplete}>
+                autoComplete={options.autoComplete}
+                rows={options.rows}
+                cols={options.columns}>
 
                 {options.default}
             </textarea> :
-            <>
-                <input
-                    css={serializedStyles}
-                    className={options.className}
-                    style={newStyle}
-                    ref={inputRef}
-                    type={
-                        options.email ? "email" :
-                        options.password ? "password" :
-                        options.number ? "number" :
-                        options.search ? "search" :
-                        options.telephone ? "telephone" : "text"}
-                    placeholder={options.placeholder}
-                    value={options.default}
-                    onChange={event => { options?.change(inputRef.current.value, event) }}
-                    onScroll={options.scroll}
-                    onFocus={options.focus}
-                    onClick={options.click}
-                    onMouseOver={options.mouseOver}
-                    onMouseOut={options.mouseOut}
-                    onMouseUp={options.mouseUp}
-                    onContextMenu={options.contextMenu}
-                    autoFocus={options.autoFocus}
-                    disabled={options.disabled}
-                    autoComplete={options.autoComplete}/>
-            </>
+            <input
+                css={serializedStyles}
+                className={options.className}
+                style={newStyle}
+                ref={inputRef}
+                type={
+                    options.email ? "email" :
+                    options.password ? "password" :
+                    options.number ? "number" :
+                    options.search ? "search" :
+                    options.telephone ? "telephone" : "text"}
+                placeholder={options.placeholder}
+                value={options.default}
+                onChange={event => { options.change?.(inputRef.current.value, event) }}
+                onScroll={options.scroll}
+                onFocus={options.focus}
+                onClick={options.click}
+                onMouseOver={options.mouseOver}
+                onMouseOut={options.mouseOut}
+                onMouseUp={options.mouseUp}
+                onContextMenu={options.contextMenu}
+                autoFocus={options.autoFocus}
+                disabled={options.disabled}
+                autoComplete={options.autoComplete}/>
     );
 }
 
@@ -181,6 +197,16 @@ export type TextInputOptions = {
      * [See MDN reference](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete).
      */
     autoComplete?: string,
+
+    /**
+     * For multiline inputs, indicates the number of rows.
+     */
+    rows?: number,
+
+    /**
+     * For multiline inputs, indicates the number of columns.
+     */
+    columns?: number,
 
     minWidth?: number,
     minHeight?: number,

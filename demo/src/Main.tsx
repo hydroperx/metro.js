@@ -61,7 +61,8 @@ function App()
                                 <SelectOption value="ltr">Left-to-right</SelectOption>
                                 <SelectOption value="rtl">Right-to-left</SelectOption>
                             </Select>
-                            <TextInput placeholder="Type something"/>
+                            <TextInput search placeholder="Type something"/>
+                            <TextInput multiline/>
                         </VGroup>
                         <HGroup gap={2} style={{float: "right", marginRight: "3rem"}}>
                             <Button variant="outline-primary" tooltip="An useful description.">Outline primary</Button>
