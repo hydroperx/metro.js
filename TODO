@@ -17,6 +17,9 @@ Basic components
 - [ ] CheckBox
   - [ ] RTL
 - [ ] LoadingBar (consists of horizontally moving dots)
+- [ ] FormItem
+  - A horizontal group generally containing of a label and a form control.
+  - [ ] RTL
 - [ ] Tile container
   - [ ] Live tiles
   - [ ] Bottom bar (triggered on right click or long touch pressure)

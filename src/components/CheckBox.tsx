@@ -22,18 +22,25 @@ export function CheckBox(options: CheckBoxOptions)
     const button_ref = useRef<HTMLButtonElement | null>(null);
     const unchecked_div_ref = useRef<HTMLDivElement | null>(null);
     const checked_div_ref = useRef<HTMLDivElement | null>(null);
+    const carret_ref = useRef<HTMLDivElement | null>();
 
     // States
     const [value, setValue] = useState<boolean>(!!options.default);
+    const [checked_horizontal_pos, set_checked_horizontal_pos] = useState<number>(0); // percent
+    const [carret_left, set_carret_left] = useState<number>(0); // percent
 
     // Misc.
     const border_width = 0.15;
     const padding = 0.15;
-    const s = border_width + padding;
-    const w = 4;
+    const side_length = border_width + padding;
+    const w = pointsToRemValue(12);
+    const h = pointsToRemValue(4);
+    const carret_w = pointsToRemValue(2);
     const checked_color = enhanceBrightness(theme.colors.background, theme.colors.primaryBackground);
+    const checked_hover_color = lighten(checked_color, 0.3);
     const border_color = preferPrimaryColors ? checked_color : contrast(theme.colors.background, 0.4);
     const unchecked_color = preferPrimaryColors ? lighten(checked_color, 0.3) : border_color;
+    const unchecked_hover_color = lighten(unchecked_color, 0.3);
 
     // CSS
     const serializedStyles = css `
@@ -43,6 +50,7 @@ export function CheckBox(options: CheckBoxOptions)
         flex-direction: row;
         padding: ${padding}rem;
         width: ${w}rem;
+        height: ${h}rem;
         outline: none;
         position: absolute;
 
@@ -61,10 +69,25 @@ export function CheckBox(options: CheckBoxOptions)
             height: 100%;
         }
 
+        &:hover .CheckBox-unchecked-rect {
+            background: ${unchecked_hover_color};
+        }
+
         & .CheckBox-checked-rect {
             position: relative;
             background: ${checked_color};
             height: 100%;
+        }
+
+        &:hover .CheckBox-checked-rect {
+            background: ${checked_hover_color};
+        }
+        
+        &: .CheckBox-carret {
+            position: relative;
+            width: ${carret_w}rem;
+            height: ${h + side_length * 2}rem;
+            background: ${theme.colors.foreground};
         }
     `;
 
@@ -95,7 +118,19 @@ export function CheckBox(options: CheckBoxOptions)
 
             <div ref={unchecked_div_ref} className="CheckBox-unchecked-rect">
             </div>
-            <div ref={checked_div_ref} className="CheckBox-checked-rect">
+            <div
+                ref={checked_div_ref}
+                className="CheckBox-checked-rect"
+                style={{
+                    [localeDir == "ltr" ? "right" : "left"]: checked_horizontal_pos + "%",
+                }}>
+            </div>
+            <div
+                ref={carret_ref}
+                className="CheckBox-carret"
+                style={{
+                    left: carret_left + "%",
+                }}>
             </div>
         </button>
     );
