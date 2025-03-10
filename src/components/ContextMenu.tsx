@@ -604,7 +604,7 @@ export function ContextMenuItem(options: ContextMenuItemOptions)
     }
 
     return (
-        <button css={serializedStyles} className={options.className} disabled={options.disabled} onClick={button_onClick} ref={buttonRef}>
+        <button css={serializedStyles} className={"buttonNavigable" + (options.className ? " " + options.className : "")} disabled={options.disabled} onClick={button_onClick} ref={buttonRef}>
             {options.children}
         </button>
     );
@@ -1055,7 +1055,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
     });
 
     return (
-        <button css={serializedStyles} className={submenuItemClassName} ref={buttonRef}>
+        <button css={serializedStyles} className={submenuItemClassName + " " + "buttonNavigable"} ref={buttonRef}>
             {options.children}
         </button>
     );

@@ -96,6 +96,10 @@ The built-in icons may serve as base for designing newer icons. Here are links t
   - [Arrow button "hover" icon](src/icons/arrow-button-hover-white.svg)
   - [Arrow button "pressed" icon](src/icons/arrow-button-pressed-white.svg)
 
+### Input navigation
+
+- Elements that may be navigated with arrow buttons contain the cascading class name `.buttonNavigable`. This is useful for applications like games for avoid duplicating focus handling by detecting that class name.
+
 ### Context menu
 
 ```tsx

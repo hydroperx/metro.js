@@ -571,7 +571,7 @@ export function SelectOption(options: SelectOptionOptions)
     }
 
     return (
-        <button css={serializedStyles} className={options.className} onClick={button_onClick} ref={buttonRef} data-value={options.value}>
+        <button css={serializedStyles} className={"buttonNavigable" + (options.className ? " " + options.className : "")} onClick={button_onClick} ref={buttonRef} data-value={options.value}>
             {options.children}
         </button>
     );
