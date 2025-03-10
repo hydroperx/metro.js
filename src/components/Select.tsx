@@ -8,7 +8,7 @@ import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { UpArrowIcon, DownArrowIcon } from "./Icons";
 import { computePosition, fitViewportPosition, Side } from "../utils/placement";
 import { ThemeContext } from "../theme";
-import { fontFamily, fontSize } from "../utils/common";
+import { fontFamily, fontSize, maximumZIndex } from "../utils/common";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
 import { focusPrevSibling, focusNextSibling } from "../utils/focusability";
 import { RemObserver } from "../utils/RemObserver";
@@ -468,6 +468,7 @@ export function Select(options: SelectOptions)
                 top: y + "px",
                 opacity: opacity.toString(),
                 transition,
+                zIndex: maximumZIndex,
             }}>
                 <div className="up-arrow" style={{display: arrowsVisible ? "flex" : "none", flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
                     <UpArrowIcon size={2.5}/>

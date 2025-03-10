@@ -33,32 +33,43 @@ function App()
     const [theme, setTheme] = useState<Theme>(darkTheme);
     const [localeDirection, setLocaleDirection] = useState<LocaleDirection>("ltr");
 
+    // Change theme
+    function changeTheme(value: string): void
+    {
+        setTheme(value == "light" ? lightTheme : darkTheme);
+    }
+
+    // Change locale direction
+    function changeLocaleDir(value: string): void
+    {
+        setLocaleDirection(value == "ltr" ? "ltr" : "rtl");
+    }
+
     return (
         <LocaleDirectionContext.Provider value={localeDirection}>
             <ThemeContext.Provider value={theme}>
                 <Container full solid selection={false} contextMenu={Container_onContextMenu as any}>
                     <Container padding={5}>
                         <Label variant="heading1">Metro demo</Label>
-                        <div style={{margin: "12rem"}}></div>
+                        <div style={{margin: "7rem"}}></div>
+                        <VGroup gap={7} maxWidth={100}>
+                            <Select default="dark" big change={changeTheme}>
+                                <SelectOption value="dark">Dark</SelectOption>
+                                <SelectOption value="light">Light</SelectOption>
+                            </Select>
+                            <Select default="ltr" big change={changeLocaleDir}>
+                                <SelectOption value="ltr">Left-to-right</SelectOption>
+                                <SelectOption value="rtl">Right-to-left</SelectOption>
+                            </Select>
+                        </VGroup>
                         <HGroup gap={2} style={{float: "right", marginRight: "3rem"}}>
-                            <Button variant="outline-primary" tooltip="An useful description." click={() => { setTheme(lightTheme); }}>Light</Button>
-                            <Button variant="outline"  click={() => { setTheme(darkTheme); }}>Dark</Button>
+                            <Button variant="outline-primary" tooltip="An useful description.">Outline primary</Button>
+                            <Button variant="outline">Outline</Button>
                             <ArrowButton direction="right" size={9}></ArrowButton>
-                        </HGroup>
-                        <HGroup gap={2}>
-                            <Button variant="outline-primary" click={() => { setLocaleDirection("ltr"); }}>LTR</Button>
-                            <Button variant="outline"  click={() => { setLocaleDirection("rtl"); }}>RTL</Button>
                         </HGroup>
                         <VGroup horizontalAlign="center">
                             <LoadingIcon size={9}/>
                         </VGroup>
-                        <div>
-                            <Select default="foo" big>
-                                <SelectOption value="foo">Foo</SelectOption>
-                                <SelectOption value="bar">Bar</SelectOption>
-                                <SelectOption value="qux">Qux</SelectOption>
-                            </Select>
-                        </div>
                         <div>
                             <Select default="qux1">
                                 <SelectOption value="foo">Foo</SelectOption>
@@ -116,7 +127,6 @@ function App()
                                     <ContextMenuRight></ContextMenuRight>
                                 </ContextMenuItem>
                                 <ContextMenuSubmenu>
-                                    <ContextMenuCheck state="none"/>
                                     <ContextMenuIcon></ContextMenuIcon>
                                     <ContextMenuLabel>Submenu A</ContextMenuLabel>
                                     <ContextMenuRight><ContextMenuSubIcon/></ContextMenuRight>

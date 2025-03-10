@@ -9,7 +9,7 @@ import { ArrowIcon, BulletIcon, CheckedIcon, IconOptions } from "./Icons";
 import { LocaleDirection, LocaleDirectionContext } from "../layout/LocaleDirection";
 import { computePosition, fitViewportPosition, Side } from "../utils/placement";
 import { ThemeContext } from "../theme";
-import { fontFamily, fontSize } from "../utils/common";
+import { fontFamily, fontSize, maximumZIndex } from "../utils/common";
 import { pointsToRem } from "../utils/points";
 import { focusPrevSibling, focusNextSibling } from "../utils/focusability";
 
@@ -492,6 +492,7 @@ export function ContextMenu(options: ContextMenuOptions)
             top: y + "px",
             opacity: opacity.toString(),
             transition,
+            zIndex: maximumZIndex,
         }}>
             <div className="up-arrow"></div>
             <div
@@ -1054,6 +1055,7 @@ export function ContextMenuSubmenuList(options: ContextMenuSubmenuListOptions)
                 padding: pointsToRem(2) + " 0",
                 minWidth: "12rem",
                 opacity: "0",
+                zIndex: maximumZIndex,
             }}>
             <div className="up-arrow"></div>
             <div
