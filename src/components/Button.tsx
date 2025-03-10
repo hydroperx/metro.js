@@ -67,7 +67,7 @@ export function Button(options: ButtonOptions)
                 }
 
                 &:focus:not(:disabled) {
-                    outline: 1px dotted ${color};
+                    outline: 0.05rem dotted ${color};
                     outline-offset: -0.4rem;
                 }
 
@@ -100,7 +100,7 @@ export function Button(options: ButtonOptions)
                 }
 
                 &:focus:not(:disabled) {
-                    outline: 1px dotted ${theme.colors.focusDashes};
+                    outline: 0.05rem dotted ${theme.colors.focusDashes};
                     outline-offset: -0.4rem;
                 }
 
@@ -132,7 +132,7 @@ export function Button(options: ButtonOptions)
                 }
 
                 &:focus:not(:disabled) {
-                    outline: 1px dotted ${theme.colors.focusDashes};
+                    outline: 0.05rem dotted ${theme.colors.focusDashes};
                     outline-offset: -0.4rem;
                 }
 
@@ -163,7 +163,7 @@ export function Button(options: ButtonOptions)
                 }
 
                 &:focus:not(:disabled) {
-                    outline: 1px dotted ${theme.colors.focusDashes};
+                    outline: 0.05rem dotted ${theme.colors.focusDashes};
                     outline-offset: -0.4rem;
                 }
 
@@ -194,7 +194,7 @@ export function Button(options: ButtonOptions)
                 }
 
                 &:focus:not(:disabled) {
-                    outline: 1px dotted ${theme.colors.focusDashes};
+                    outline: 0.05rem dotted ${theme.colors.focusDashes};
                     outline-offset: -0.4rem;
                 }
 
@@ -230,7 +230,7 @@ export function Button(options: ButtonOptions)
                 }
 
                 &:focus:not(:disabled) {
-                    outline: 1px dotted ${color};
+                    outline: 0.05rem dotted ${color};
                     outline-offset: -0.4rem;
                 }
 
@@ -267,7 +267,7 @@ export function Button(options: ButtonOptions)
                 }
 
                 &:focus:not(:disabled) {
-                    outline: 1px dotted ${color};
+                    outline: 0.05rem dotted ${color};
                     outline-offset: -0.4rem;
                 }
 
@@ -442,7 +442,7 @@ export function IconButton(options: IconButtonOptions)
         color: ${theme.colors.foreground};
 
         &:focus {
-            outline: 1px dotted ${theme.colors.focusDashes};
+            outline: 0.05rem dotted ${theme.colors.focusDashes};
         }
 
         &:active {

@@ -25,17 +25,24 @@ export function CheckBox(options: CheckBoxOptions)
     // States
     const [value, setValue] = useState<boolean>(!!options.default);
 
+    // Misc.
+    const border_width = 0.15;
+    const padding = 0.15;
+    const s = border_width + padding;
+    const w = 4;
+
     const serializedStyles = css `
         background: none;
-        border: 0.15rem solid  ${theme.colors.inputBorder};
+        border: ${border_width}rem solid  ${theme.colors.inputBorder};
         display: flex;
         flex-direction: row;
-        padding: 0.3rem;
-        width: 5rem;
+        padding: ${padding}rem;
+        width: ${w}rem;
         outline: none;
+        position: absolute;
 
         &:hover:not(:disabled), &:focus:not(:disabled) {
-            outline: 1px dotted ${theme.colors.focusDashes};
+            outline: 0.05rem dotted ${theme.colors.focusDashes};
             outline-offset: 0.3rem;
         }
 
@@ -43,12 +50,38 @@ export function CheckBox(options: CheckBoxOptions)
             opacity: 0.5;
         }
     `;
+
+    useEffect(() => {
+        const button = buttonRef.current!;
+
+        // pass element
+        options.element?.(button);
+    });
+
+    // Handle click
+    function button_onClick()
+    {
+        // Set new value
+        setValue(!value);
+    }
+
+    return (
+        <button
+            ref={buttonRef}
+            id={options.id}
+            css={serializedStyles}
+            data-value={value.toString()}
+            disabled={options.disabled}
+            style={options.style}
+            className={options.className}
+            onClick={button_onClick}>
+        </button>
+    );
 }
 
 export type CheckBoxOptions = {
     id?: string,
 
-    children?: React.ReactNode,
     style?: React.CSSProperties,
     className?: string,
 
