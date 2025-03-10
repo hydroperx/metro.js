@@ -547,6 +547,7 @@ export function SelectOption(options: SelectOptionOptions)
 
     // Build the style class
     const hoverBackground = Color(theme.colors.inputBackground).darken(0.4).toString();
+    const usePrimaryColor = colorsAreSimiliar(Color(theme.colors.background), Color(theme.colors.primaryBackground));
     const serializedStyles = css `
         display: inline-flex;
         flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
@@ -565,8 +566,8 @@ export function SelectOption(options: SelectOptionOptions)
         }
 
         &:active, &[data-selected="true"] {
-            background: ${theme.colors.foreground};
-            color: ${theme.colors.background};
+            background: ${usePrimaryColor ? theme.colors.primaryBackground : theme.colors.foreground};
+            color: ${usePrimaryColor ? theme.colors.primaryForeground : theme.colors.background};
         }
 
         &:disabled {

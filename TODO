@@ -26,7 +26,7 @@ Basic components
 Use primary color in these cases when color delta between primary background and background is less than 35.
 
 - [x] Select (when pressed)
-- [ ] Select option (when chosen)
+- [x] Select option (when chosen)
 - [ ] Heading labels
 - [ ] Context menu item (when pressed)
 - [ ] Context menu submenu (when pressed)
