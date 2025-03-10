@@ -10,8 +10,6 @@
     "@hydroper/colorobserver": "npm:@jsr/hydroper__colorobserver@^1.0.0",
     "@hydroper/inputaction": "npm:@jsr/hydroper__inputaction@^1.0.6",
     "@hydroper/typedeventtarget": "npm:@jsr/hydroper__typedeventtarget@^1.0.0",
-    "@types/delta-e": "^0.0.2",
-    "@types/jquery": "^3.5.32",
     "assert": "^2.1.0",
     "clone": "^2.1.2",
     "color": "^4.2.3",
@@ -35,6 +33,8 @@
     "@types/color": "^4.2.0",
     "@types/extend": "^3.0.4",
     "@types/react": "^18.3.1",
+    "@types/delta-e": "^0.0.2",
+    "@types/jquery": "^3.5.32",
     "typescript": "~5.6.2"
   }
 }

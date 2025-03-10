@@ -2,7 +2,7 @@ import { createRoot } from "react-dom/client";
 import { useEffect, useState } from "react";
 import {
     Button, Container, Label, HGroup, VGroup, ArrowButton, ThemeContext,
-    LoadingIcon, Select, SelectOption,
+    LoadingIcon, Select, SelectOption, TextInput,
     lightTheme, darkTheme,
     LocaleDirectionContext,
 } from "@hydroper/metrocomponents";
@@ -61,6 +61,7 @@ function App()
                                 <SelectOption value="ltr">Left-to-right</SelectOption>
                                 <SelectOption value="rtl">Right-to-left</SelectOption>
                             </Select>
+                            <TextInput placeholder="Type something"/>
                         </VGroup>
                         <HGroup gap={2} style={{float: "right", marginRight: "3rem"}}>
                             <Button variant="outline-primary" tooltip="An useful description.">Outline primary</Button>

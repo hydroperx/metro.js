@@ -17,23 +17,10 @@ export function Button(options: ButtonOptions)
 
     const newStyle: React.CSSProperties = {};
 
-    if (options.minWidth !== undefined)
-    {
-        newStyle.minWidth = pointsToRem(options.minWidth);
-    }
-    if (options.maxWidth !== undefined)
-    {
-        newStyle.maxWidth = pointsToRem(options.maxWidth);
-    }
-    if (options.minHeight !== undefined)
-    {
-        newStyle.minHeight = pointsToRem(options.minHeight);
-    }
-    if (options.maxHeight !== undefined)
-    {
-        newStyle.maxHeight = pointsToRem(options.maxHeight);
-    }
-
+    if (options.minWidth !== undefined) newStyle.minWidth = pointsToRem(options.minWidth);
+    if (options.maxWidth !== undefined) newStyle.maxWidth = pointsToRem(options.maxWidth);
+    if (options.minHeight !== undefined) newStyle.minHeight = pointsToRem(options.minHeight);
+    if (options.maxHeight !== undefined) newStyle.maxHeight = pointsToRem(options.maxHeight);
     if (options.disabled)
     {
         newStyle.opacity = "0.67";

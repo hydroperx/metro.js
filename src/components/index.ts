@@ -6,3 +6,4 @@ export * from "./Container";
 export * from "./ContextMenu";
 export * from "./Icons";
 export * from "./Select";
+export * from "./TextInput";

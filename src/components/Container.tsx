@@ -55,27 +55,11 @@ export function Container(options: ContainerOptions)
     const theme = useContext(ThemeContext);
 
     const newStyle: React.CSSProperties = {};
-
-    if (options.padding !== undefined)
-    {
-        newStyle.padding = pointsToRem(options.padding);
-    }
-    if (options.paddingLeft !== undefined)
-    {
-        newStyle.paddingLeft = pointsToRem(options.paddingLeft);
-    }
-    if (options.paddingRight !== undefined)
-    {
-        newStyle.paddingRight = pointsToRem(options.paddingRight);
-    }
-    if (options.paddingTop !== undefined)
-    {
-        newStyle.paddingTop = pointsToRem(options.paddingTop);
-    }
-    if (options.paddingBottom !== undefined)
-    {
-        newStyle.paddingBottom = pointsToRem(options.paddingBottom);
-    }
+    if (options.padding !== undefined) newStyle.padding = pointsToRem(options.padding);
+    if (options.paddingLeft !== undefined) newStyle.paddingLeft = pointsToRem(options.paddingLeft);
+    if (options.paddingRight !== undefined) newStyle.paddingRight = pointsToRem(options.paddingRight);
+    if (options.paddingTop !== undefined) newStyle.paddingTop = pointsToRem(options.paddingTop);
+    if (options.paddingBottom !== undefined) newStyle.paddingBottom = pointsToRem(options.paddingBottom);
     if (options.solid)
     {
         newStyle.background = theme.colors.background ?? "#fff";
@@ -94,22 +78,10 @@ export function Container(options: ContainerOptions)
     // Set font family
     newStyle.fontFamily = fontFamily;
 
-    if (options.minWidth !== undefined)
-    {
-        newStyle.minWidth = pointsToRem(options.minWidth);
-    }
-    if (options.maxWidth !== undefined)
-    {
-        newStyle.maxWidth = pointsToRem(options.maxWidth);
-    }
-    if (options.minHeight !== undefined)
-    {
-        newStyle.minHeight = pointsToRem(options.minHeight);
-    }
-    if (options.maxHeight !== undefined)
-    {
-        newStyle.maxHeight = pointsToRem(options.maxHeight);
-    }
+    if (options.minWidth !== undefined) newStyle.minWidth = pointsToRem(options.minWidth);
+    if (options.maxWidth !== undefined) newStyle.maxWidth = pointsToRem(options.maxWidth);
+    if (options.minHeight !== undefined) newStyle.minHeight = pointsToRem(options.minHeight);
+    if (options.maxHeight !== undefined) newStyle.maxHeight = pointsToRem(options.maxHeight);
     newStyle.overflow = "auto";
     if (options.full)
     {
@@ -117,10 +89,7 @@ export function Container(options: ContainerOptions)
         newStyle.height = "100%";
     }
 
-    if (options.style)
-    {
-        extend(newStyle, options.style);
-    }
+    if (options.style) extend(newStyle, options.style);
 
     const serializedStyles = css `
         &::-webkit-scrollbar {
@@ -132,6 +101,11 @@ export function Container(options: ContainerOptions)
         &::-webkit-scrollbar-thumb {
             background: ${theme.colors.scrollBarThumb ?? "#CDCDCD"};
             border-radius: 0;
+        }
+
+        &::selection, &::-moz-selection {
+            background: ${theme.colors.foreground};
+            color: ${theme.colors.background};
         }
     `;
 
