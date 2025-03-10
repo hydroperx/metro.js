@@ -3,13 +3,9 @@ import { css, SerializedStyles } from "@emotion/react";
 import Color from "color";
 import $ from "jquery";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
-import { UpArrowIcon, DownArrowIcon } from "./Icons";
-import { computePosition, fitViewportPosition, Side } from "../utils/placement";
 import { ThemeContext } from "../theme";
-import { fontFamily, fontSize, maximumZIndex } from "../utils/common";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
-import { focusPrevSibling, focusNextSibling } from "../utils/focusability";
-import { RemObserver } from "../utils/RemObserver";
+import { colorsAreSimiliar, lighten, darken } from "../utils/color";
 
 export function CheckBox(options: CheckBoxOptions)
 {
