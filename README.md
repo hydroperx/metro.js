@@ -92,9 +92,9 @@ If it is desired to grow or reduce all the user interface together, you may adju
 The built-in icons may serve as base for designing newer icons. Here are links to existing useful icons:
 
 - Round arc icons
-  - [Arrow button icon](src/components/icons/arrow-button-white.svg)
-  - [Arrow button "hover" icon](src/components/icons/arrow-button-hover-white.svg)
-  - [Arrow button "pressed" icon](src/components/icons/arrow-button-pressed-white.svg)
+  - [Arrow button icon](src/icons/arrow-button-white.svg)
+  - [Arrow button "hover" icon](src/icons/arrow-button-hover-white.svg)
+  - [Arrow button "pressed" icon](src/icons/arrow-button-pressed-white.svg)
 
 ### Context menu
 

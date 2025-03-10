@@ -1,25 +1,28 @@
+// Icon resources
+import bullet_black from "../icons/bullet-black.svg";
+import bullet_white from "../icons/bullet-white.svg";
+import checked_black from "../icons/checked-black.svg";
+import checked_white from "../icons/checked-white.svg";
+import arrow_white from "../icons/arrow-white.svg";
+import arrow_black from "../icons/arrow-black.svg";
+import arrow_button_black from "../icons/arrow-button-black.svg";
+import arrow_button_hover_black from "../icons/arrow-button-hover-black.svg";
+import arrow_button_pressed_black from "../icons/arrow-button-pressed-black.svg";
+import arrow_button_white from "../icons/arrow-button-white.svg";
+import arrow_button_hover_white from "../icons/arrow-button-hover-white.svg";
+import arrow_button_pressed_white from "../icons/arrow-button-pressed-white.svg";
+import search_black from "../icons/search-black.svg";
+import search_white from "../icons/search-white.svg";
+import clear_black from "../icons/clear-black.svg";
+import clear_white from "../icons/clear-white.svg";
+
 import { ColorObserver } from "@hydroper/colorobserver";
 import React, { useEffect, useRef, useState, useContext } from "react";
 import Color from "color";
-import { css, SerializedStyles } from "@emotion/react";
+import { css, SerializedStyles, keyframes } from "@emotion/react";
 import extend from "extend";
 import { pointsToRem } from "../utils/points";
 import { RemObserver } from "../utils/RemObserver";
-
-// Icon resources
-import bullet_black from "./icons/bullet-black.svg";
-import bullet_white from "./icons/bullet-white.svg";
-import checked_black from "./icons/checked-black.svg";
-import checked_white from "./icons/checked-white.svg";
-import arrow_white from "./icons/arrow-white.svg";
-import arrow_black from "./icons/arrow-black.svg";
-import arrow_button_black from "./icons/arrow-button-black.svg";
-import arrow_button_hover_black from "./icons/arrow-button-hover-black.svg";
-import arrow_button_pressed_black from "./icons/arrow-button-pressed-black.svg";
-import arrow_button_white from "./icons/arrow-button-white.svg";
-import arrow_button_hover_white from "./icons/arrow-button-hover-white.svg";
-import arrow_button_pressed_white from "./icons/arrow-button-pressed-white.svg";
-import { keyframes } from "@emotion/react";
 
 export type IconOptions = {
     type?: string,
@@ -34,6 +37,8 @@ const iconMap = new Map<string, {black: any, white: any}>([
     ["arrowButton", { black: arrow_button_black, white: arrow_button_white }],
     ["arrowButtonHover", { black: arrow_button_hover_black, white: arrow_button_hover_white }],
     ["arrowButtonPressed", { black: arrow_button_pressed_black, white: arrow_button_pressed_white }],
+    ["search", { black: search_black, white: search_white }],
+    ["clear", { black: clear_black, white: clear_white }],
 ]);
 
 export function registerIcon(type: string, sources: { black: any, white: any }): void
@@ -91,6 +96,16 @@ export function CheckedIcon(options: IconOptions)
 export function BulletIcon(options: IconOptions)
 {
     return <Icon type="bullet" size={options.size} style={options.style}/>;
+}
+
+export function ClearIcon(options: IconOptions)
+{
+    return <Icon type="clear" size={options.size} style={options.style}/>;
+}
+
+export function SearchIcon(options: IconOptions)
+{
+    return <Icon type="search" size={options.size} style={options.style}/>;
 }
 
 export type ArrowIconOptions = {

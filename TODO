@@ -21,9 +21,10 @@ Basic components
     - https://stackoverflow.com/a/29247003/26380963
     - https://www.npmjs.com/package/color-convert
   - [ ] `placeholder?: string`
-  - [ ] `icon?: "search"` (search icon is displayed at the right with a background equals `providedTheme.colors.primaryBackground`)
-  - [ ] A right "clear" icon will appear once the input has got content.
+  - [ ] `icon?: "search"` (search icon is displayed at the right with a background equals `providedTheme.colors.primaryBackground`, if not multiline)
+  - [ ] A right "clear" icon will appear once the input has got content (if not multiline).
   - [ ] `disabled?: boolean`
+  - [ ] `multiline?: boolean`
 - [ ] CheckBox
   - black&white
 - [ ] LoadingBar (consists of horizontally moving dots)

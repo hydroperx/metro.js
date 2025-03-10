@@ -395,6 +395,8 @@ export type ButtonOptions =
 
     visible?: boolean,
 
+    tooltip?: string,
+
     style?: React.CSSProperties,
     className?: string,
     children?: React.ReactNode,
@@ -405,8 +407,6 @@ export type ButtonOptions =
     mouseOver?: React.MouseEventHandler<HTMLButtonElement>,
     mouseOut?: React.MouseEventHandler<HTMLButtonElement>,
     mouseUp?: React.MouseEventHandler<HTMLButtonElement>,
-
-    tooltip?: string,
 };
 
 /**
@@ -484,8 +484,8 @@ export function IconButton(options: IconButtonOptions)
             onMouseOut={options.mouseOut}
             onMouseUp={options.mouseUp}
             onContextMenu={options.contextMenu}
-            disabled={options.disabled ?? false}
-            autoFocus={options.autoFocus ?? false}
+            disabled={options.disabled}
+            autoFocus={options.autoFocus}
             style={options.style}>
 
             <Icon type={type} size={options.size} style={iconStyle}/>
