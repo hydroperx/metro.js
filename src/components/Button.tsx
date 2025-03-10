@@ -4,6 +4,7 @@ import { css, SerializedStyles } from "@emotion/react";
 import React, { Ref, useContext, useRef, useState, useEffect } from "react";
 import Color from "color";
 import { fontFamily, fontSize } from "../utils/common";
+import { lighten, darken } from "../utils/color";
 import { computePosition } from "../utils/placement";
 import { Icon } from "./Icons";
 import { ThemeContext } from "../theme";
@@ -80,7 +81,7 @@ export function Button(options: ButtonOptions)
         case "anchor":
         {
             const color = theme.colors.anchor ?? "#000";
-            const hoverColor = Color(color).lighten(0.3).toString();
+            const hoverColor = lighten(color, 0.3).toString();
 
             serializedStyles = css `
                 background: none;
@@ -206,10 +207,9 @@ export function Button(options: ButtonOptions)
         }
         case "outline":
         {
-            const c = Color(theme.colors.background);
-            const dark = c.isDark();
+            const dark = Color(theme.colors.background).isDark();
             const color = dark ? "#fff" : "#000";
-            const hoverBg = dark ? c.lighten(0.4).toString() : c.darken(0.3).toString();
+            const hoverBg = dark ? lighten(theme.colors.background, 0.4).toString() : darken(theme.colors.background, 0.3).toString();
             const pressedCharColor = dark ? "#000" : "#fff";
 
             serializedStyles = css `
@@ -243,11 +243,10 @@ export function Button(options: ButtonOptions)
         }
         case "outline-primary":
         {
-            const c = Color(theme.colors.background);
-            const dark = c.isDark();
+            const dark = Color(theme.colors.background).isDark();
             const color = dark ? "#fff" : "#000";
-            const bg = dark ? c.lighten(0.5).toString() : c.darken(0.3).toString();
-            const hoverBg = dark ? c.lighten(0.7).toString() : c.darken(0.5).toString();
+            const bg = dark ? lighten(theme.colors.background, 0.5).toString() : darken(theme.colors.background, 0.3).toString();
+            const hoverBg = dark ? lighten(theme.colors.background, 0.7).toString() : darken(theme.colors.background, 0.5).toString();
             const pressedCharColor = dark ? "#000" : "#fff";
 
             serializedStyles = css `

@@ -6,8 +6,10 @@ import convert from "color-convert";
  * Returns a value between 0 and 100 inclusive that determines
  * the difference between the two given colors.
  */
-export function colorDelta(a: Color, b: Color): number
+export function colorDelta(a: any, b: any): number
 {
+    a = to_color_object(a);
+    b = to_color_object(b);
     const aRGB = a.rgb().array() as [number, number, number]
         , bRGB = b.rgb().array() as [number, number, number];
     const aLAB = convert.rgb.lab(aRGB)
@@ -18,15 +20,42 @@ export function colorDelta(a: Color, b: Color): number
     );
 }
 
-export function colorsAreSimiliar(a: Color, b: Color): boolean
+export function colorsAreSimiliar(a: any, b: any): boolean
 {
     return colorDelta(a, b) <= 20;
 }
 
-export function enhanceColorBrightness(background: string, color: string): string
+export function enhanceColorBrightness(background: any, color: any): string
 {
-    const a = Color(background);
-    const b = Color(color);
+    const a = to_color_object(background);
+    const b = to_color_object(color);
     return (a.isDark() ? (b.isDark() ? b.lighten(0.5) : b)
         : (b.isLight() ? b.darken(0.5) : b)).toString();
+}
+
+function to_color_object(a: any): Color
+{
+    return a instanceof Color ? a : Color(a);
+}
+
+export function darken(a: any, ratio: number): string
+{
+    a = to_color_object(a);
+    let r = a.darken(ratio);
+    if (colorDelta(a, r) < 10)
+    {
+        r = r.darken(ratio);
+    }
+    return r.toString();
+}
+
+export function lighten(a: any, ratio: number): string
+{
+    a = to_color_object(a);
+    let r = a.lighten(ratio);
+    if (colorDelta(a, r) < 10)
+    {
+        r = r.lighten(ratio);
+    }
+    return r.toString();
 }
