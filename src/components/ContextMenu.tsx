@@ -5,7 +5,7 @@ import Color from "color";
 import assert from "assert";
 import { Input } from "@hydroper/inputaction";
 import $ from "jquery";
-import { ArrowIcon, BulletIcon, CheckedIcon, IconOptions } from "./Icons";
+import { ArrowIcon, BulletIcon, CheckedIcon, DownArrowIcon, IconOptions, UpArrowIcon } from "./Icons";
 import { LocaleDirection, LocaleDirectionContext } from "../layout/LocaleDirection";
 import { computePosition, fitViewportPosition, Side } from "../utils/placement";
 import { ThemeContext } from "../theme";
@@ -155,6 +155,7 @@ export function ContextMenu(options: ContextMenuOptions)
     const [y, setY] = useState<number>(0);
     const [opacity, setOpacity] = useState<number>(0);
     const [transition, setTransition] = useState<string>("");
+    const [arrowsVisible, setArrowsVisible] = useState<boolean>(false);
 
     // References
     const divRef = useRef<HTMLDivElement | null>(null);
@@ -184,6 +185,13 @@ export function ContextMenu(options: ContextMenuOptions)
 
         // Disable transition
         setTransition("");
+
+        // Turn arrows visible or hidden
+        const listItemDiv = getItemListDiv();
+        const k_scroll = listItemDiv.scrollTop;
+        listItemDiv.scrollTop = 10;
+        setArrowsVisible(listItemDiv.scrollTop != 0);
+        listItemDiv.scrollTop = k_scroll;
 
         // Viewport event listeners
         currentMouseDownListener = viewport_onMouseDown;
@@ -488,22 +496,30 @@ export function ContextMenu(options: ContextMenuOptions)
             border: "0.15rem solid " + theme.colors.inputBorder,
             padding: pointsToRem(2) + " 0",
             minWidth: "12rem",
+            maxHeight: "30rem",
             left: x + "px",
             top: y + "px",
             opacity: opacity.toString(),
             transition,
             zIndex: maximumZIndex,
         }}>
-            <div className="up-arrow"></div>
+            <div className="up-arrow" style={{display: arrowsVisible ? "flex" : "none", flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
+                <UpArrowIcon size={2.5}/>
+            </div>
             <div
                 className="list"
                 style={{
                     display: "flex",
                     flexDirection: "column",
+                    overflowY: "scroll",
+                    scrollbarWidth: "none",
+                    flexGrow: "3",
                 }}>
                 {options.children}
             </div>
-            <div className="down-arrow"></div>
+            <div className="down-arrow" style={{display: arrowsVisible ? "flex" : "none", flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
+                <DownArrowIcon size={2.5}/>
+            </div>
         </div>
     );
 }
@@ -745,6 +761,16 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
         return getDiv().children[1] as HTMLDivElement;
     }
 
+    function getUpArrow(): HTMLDivElement
+    {
+        return getDiv().children[0] as HTMLDivElement;
+    }
+
+    function getDownArrow(): HTMLDivElement
+    {
+        return getDiv().children[2] as HTMLDivElement;
+    }
+
     function show(div: HTMLDivElement): void
     {
         // Hide all context menu's submenus from the parent
@@ -758,6 +784,15 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
 
         // Turn visible
         div.style.visibility = "visible";
+
+        // Turn arrows visible or hidden
+        const listItemDiv = getItemListDiv();
+        const k_scroll = listItemDiv.scrollTop;
+        listItemDiv.scrollTop = 10;
+        const arrowsVisible = listItemDiv.scrollTop != 0;
+        getUpArrow().style.display =
+        getDownArrow().style.display = arrowsVisible ? "flex" : "none";
+        listItemDiv.scrollTop = k_scroll;
 
         // Disable transition
         div.style.transition = "";
@@ -1054,20 +1089,28 @@ export function ContextMenuSubmenuList(options: ContextMenuSubmenuListOptions)
                 border: "0.15rem solid " + theme.colors.inputBorder,
                 padding: pointsToRem(2) + " 0",
                 minWidth: "12rem",
+                maxHeight: "30rem",
                 opacity: "0",
                 zIndex: maximumZIndex,
             }}>
-            <div className="up-arrow"></div>
+            <div className="up-arrow" style={{flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
+                <UpArrowIcon size={2.5}/>
+            </div>
             <div
                 className="list"
                 style={{
                     display: "flex",
                     flexDirection: "column",
+                    overflowY: "scroll",
+                    scrollbarWidth: "none",
+                    flexGrow: "3",
                 }}>
                 
                 {options.children}
             </div>
-            <div className="down-arrow"></div>
+            <div className="down-arrow" style={{flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
+                <DownArrowIcon size={2.5}/>
+            </div>
         </div>
     );
 }

@@ -12,11 +12,13 @@ Basic components
   - [x] Arrow button
 - [x] Container
 - [x] ContextMenu
-  - [ ] Allow scrolling the context menu (`scroll?: boolean`)
 - [x] Select
-  - [ ] Future: a more Metro like transition and positioning that centers the selected option to the input button
-   - [ ] "Open transition" draft: https://github.com/realhydroper/tsmetrocomponents/blob/d18900aad5e94d3429e4a762d1f79015dcf9aef4/src/components/Select.tsx#L161 (in this draft, `base_bottom =` apparently needs to be assigned something else, like `window.innerHeight - baseRect.top - baseRect.height`, to work better).
 - [x] TextInput
 - [ ] CheckBox
   - black&white
 - [ ] LoadingBar (consists of horizontally moving dots)
+
+## Select
+
+- [ ] Future change: a more Metro like transition and positioning that centers the selected option to the input button
+  - [ ] "Open transition" draft: https://github.com/realhydroper/tsmetrocomponents/blob/d18900aad5e94d3429e4a762d1f79015dcf9aef4/src/components/Select.tsx#L161 (in this draft, `base_bottom =` apparently needs to be assigned something else, like `window.innerHeight - baseRect.top - baseRect.height`, to work better).
