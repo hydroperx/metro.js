@@ -15,8 +15,10 @@ Basic components
 - [x] Select
 - [x] TextInput
 - [ ] CheckBox
-  - black&white
 - [ ] LoadingBar (consists of horizontally moving dots)
+- [ ] Tile container
+  - [ ] Live tiles
+  - [ ] Bottom bar (triggered on right click by default; but may also be opened by an input action)
 
 ## Select
 
