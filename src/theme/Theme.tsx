@@ -124,7 +124,7 @@ export const darkTheme: Theme =
         inputBorder: "#555",
         inputBackground: "#232323",
 
-        anchor: "#594C87",
+        anchor: "#695C97",
 
         scrollBarTrack: "rgba(0,0,0,0)",
         scrollBarThumb: "#333",

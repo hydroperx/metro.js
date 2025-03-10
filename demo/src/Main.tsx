@@ -67,6 +67,7 @@ function App()
                         </VGroup>
                         <HGroup gap={2} style={{ margin: "1rem 0" }}>
                             <Button variant="none">None button</Button>
+                            <Button variant="anchor">Anchor button</Button>
                         </HGroup>
                         <HGroup gap={2} style={{float: "right", marginRight: "3rem"}}>
                             <Button variant="outline-primary" tooltip="An useful description.">Outline primary</Button>

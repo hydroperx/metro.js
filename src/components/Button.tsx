@@ -209,7 +209,7 @@ export function Button(options: ButtonOptions)
             const c = Color(theme.colors.background);
             const dark = c.isDark();
             const color = dark ? "#fff" : "#000";
-            const hoverBg = dark ? c.lighten(0.6).toString() : c.darken(0.6).toString();
+            const hoverBg = dark ? c.lighten(1.5).toString() : c.darken(0.3).toString();
             const pressedCharColor = dark ? "#000" : "#fff";
 
             serializedStyles = css `
@@ -246,8 +246,8 @@ export function Button(options: ButtonOptions)
             const c = Color(theme.colors.background);
             const dark = c.isDark();
             const color = dark ? "#fff" : "#000";
-            const bg = dark ? c.lighten(0.7).toString() : c.darken(0.7).toString();
-            const hoverBg = dark ? c.lighten(0.9).toString() : c.darken(0.9).toString();
+            const bg = dark ? c.lighten(1.4).toString() : c.darken(0.3).toString();
+            const hoverBg = dark ? c.lighten(1.9).toString() : c.darken(0.5).toString();
             const pressedCharColor = dark ? "#000" : "#fff";
 
             serializedStyles = css `
