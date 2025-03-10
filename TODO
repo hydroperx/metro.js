@@ -15,6 +15,7 @@ Basic components
 - [x] Select
 - [x] TextInput
 - [ ] CheckBox
+  - [ ] Horizontal drag-n-drop of carret
   - [ ] RTL
 - [ ] LoadingBar (consists of horizontally moving dots)
 - [ ] FormItem

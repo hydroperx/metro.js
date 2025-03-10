@@ -1,9 +1,12 @@
 import { createRoot } from "react-dom/client";
 import { useEffect, useState } from "react";
 import {
-    Button, Container, Label, HGroup, VGroup, ArrowButton, ThemeContext,
+    Button, Container, Label, HGroup, VGroup, ArrowButton,
     LoadingIcon, Select, SelectOption, TextInput,
+    CheckBox,
+
     ThemePresets,
+    ThemeContext,
     LocaleDirectionContext,
 } from "@hydroper/metrocomponents";
 import type { Theme, LocaleDirection } from "@hydroper/metrocomponents";
@@ -33,6 +36,7 @@ function App()
     // States
     const [theme, setTheme] = useState<Theme>(ThemePresets.dark);
     const [localeDirection, setLocaleDirection] = useState<LocaleDirection>("ltr");
+    const [checkbox_value, set_checkbox_value] = useState<boolean>(false);
 
     // Change theme
     function changeTheme(value: string): void
@@ -66,6 +70,10 @@ function App()
                             </Select>
                             <TextInput search placeholder="Type something"/>
                             <TextInput multiline/>
+                            <HGroup gap={3}>
+                                <Label for="checkbox" style={{ minWidth: "5rem" }}><b>{checkbox_value ? "On" : "Off"}</b></Label>
+                                <CheckBox id="checkbox" change={value => { set_checkbox_value(value) }}/>
+                            </HGroup>
                         </VGroup>
                         <HGroup gap={2} style={{ margin: "1rem 0" }}>
                             <Button variant="none">None button</Button>
