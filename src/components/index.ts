@@ -7,3 +7,4 @@ export * from "./ContextMenu";
 export * from "./Icons";
 export * from "./Select";
 export * from "./TextInput";
+export * from "./CheckBox";

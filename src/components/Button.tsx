@@ -43,7 +43,6 @@ export function Button(options: ButtonOptions)
             const dark = Color(theme.colors.background).isDark();
             const color = dark ? "#fff" : "#000";
             const hoverBg = dark ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.4)";
-            const pressedBg = dark ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)";
 
             serializedStyles = css `
                 background: none;
@@ -59,7 +58,12 @@ export function Button(options: ButtonOptions)
                 }
 
                 &:active:not(:disabled) {
-                    background: ${pressedBg};
+                    transform: scale(0.97);
+                }
+
+                &[data-chosen="true"]:not(:disabled) {
+                    background: ${theme.colors.primaryBackground};
+                    color: ${theme.colors.primaryForeground};
                 }
 
                 &:focus:not(:disabled) {
@@ -339,7 +343,8 @@ export function Button(options: ButtonOptions)
                 style={newStyle}
                 type={options.type ?? "button"}
                 disabled={options.disabled ?? false}
-                autoFocus={options.autoFocus ?? false}>
+                autoFocus={options.autoFocus ?? false}
+                data-chosen={!!options.chosen}>
 
                 {options.children}
             </button>
@@ -375,6 +380,8 @@ export type ButtonType =
 export type ButtonOptions =
 {
     variant?: ButtonVariant,
+
+    chosen?: boolean,
 
     type?: ButtonType,
 

@@ -15,6 +15,7 @@ Basic components
 - [x] Select
 - [x] TextInput
 - [ ] CheckBox
+  - [ ] RTL
 - [ ] LoadingBar (consists of horizontally moving dots)
 - [ ] Tile container
   - [ ] Live tiles
