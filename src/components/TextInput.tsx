@@ -1,16 +1,12 @@
-import { TypedEventTarget } from "@hydroper/typedeventtarget";
 import { useContext, useRef, useState, useEffect } from "react";
 import { css, SerializedStyles } from "@emotion/react";
 import Color from "color";
-import { Input } from "@hydroper/inputaction";
 import extend from "extend";
-import { ArrowIcon, BulletIcon, CheckedIcon, getIcon, Icon, IconOptions } from "./Icons";
-import { LocaleDirection, LocaleDirectionContext } from "../layout/LocaleDirection";
-import { computePosition, fitViewportPosition, Side } from "../utils/placement";
+import { getIcon } from "./Icons";
+import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { ThemeContext } from "../theme";
 import { fontFamily, fontSize } from "../utils/common";
 import { pointsToRem } from "../utils/points";
-import { colorDelta } from "../utils/color";
 
 export function TextInput(options: TextInputOptions)
 {
@@ -39,9 +35,9 @@ export function TextInput(options: TextInputOptions)
         font-family: ${fontFamily};
         font-size: ${fontSize};
         padding: ${pointsToRem(2.15)} 0.7rem;
-        ${icon === null || options.multiline ? "" : `padding-right: ${pointsToRem(iconSize + 3)};`}
+        ${icon === null || options.multiline ? "" : `${localeDir == "ltr" ? "padding-right" : "padding-left"}: ${pointsToRem(iconSize + 3)};`}
         ${icon === null || options.multiline ? "" : `background-image: url("${getIcon(icon, dark ? "white" : "black")}");`}
-        background-position: center right 0.5rem;
+        background-position: center ${ localeDir == "ltr" ? "right" : "left" } 0.5rem;
         background-size: ${pointsToRem(iconSize)};
         background-repeat: no-repeat;
         text-align: ${localeDir == "ltr" ? "left" : "right"};
@@ -105,7 +101,8 @@ export function TextInput(options: TextInputOptions)
                 disabled={options.disabled}
                 autoComplete={options.autoComplete}
                 rows={options.rows}
-                cols={options.columns}>
+                cols={options.columns}
+                dir={localeDir == "ltr" ? "ltr" : "rtl"}>
 
                 {options.default}
             </textarea> :
@@ -133,7 +130,8 @@ export function TextInput(options: TextInputOptions)
                 onContextMenu={options.contextMenu}
                 autoFocus={options.autoFocus}
                 disabled={options.disabled}
-                autoComplete={options.autoComplete}/>
+                autoComplete={options.autoComplete}
+                dir={localeDir == "ltr" ? "ltr" : "rtl"}/>
     );
 }
 
