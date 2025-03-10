@@ -347,6 +347,7 @@ export function Select(options: SelectOptions)
         if (Input.input.justPressed("escape"))
         {
             close();
+            buttonRef.current!.focus();
             return;
         }
 
@@ -553,6 +554,7 @@ export function SelectOption(options: SelectOptionOptions)
         border: none;
         outline: none;
         color: ${theme.colors.foreground};
+        font-family: ${fontFamily};
         font-size: ${fontSize};
 
         &:hover, &:focus {

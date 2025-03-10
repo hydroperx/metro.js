@@ -206,9 +206,10 @@ export function Button(options: ButtonOptions)
         }
         case "outline":
         {
-            const dark = Color(theme.colors.background).isDark();
+            const c = Color(theme.colors.background);
+            const dark = c.isDark();
             const color = dark ? "#fff" : "#000";
-            const hoverBg = dark ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.4)";
+            const hoverBg = dark ? c.lighten(0.6).toString() : c.darken(0.6).toString();
             const pressedCharColor = dark ? "#000" : "#fff";
 
             serializedStyles = css `
@@ -242,10 +243,11 @@ export function Button(options: ButtonOptions)
         }
         case "outline-primary":
         {
-            const dark = Color(theme.colors.background).isDark();
+            const c = Color(theme.colors.background);
+            const dark = c.isDark();
             const color = dark ? "#fff" : "#000";
-            const bg = dark ? "rgba(255, 255, 255, 0.3)" : "rgba(0, 0, 0, 0.3)";
-            const hoverBg = dark ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 0.5)";
+            const bg = dark ? c.lighten(0.7).toString() : c.darken(0.7).toString();
+            const hoverBg = dark ? c.lighten(0.9).toString() : c.darken(0.9).toString();
             const pressedCharColor = dark ? "#000" : "#fff";
 
             serializedStyles = css `

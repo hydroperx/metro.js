@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import {
     Button, Container, Label, HGroup, VGroup, ArrowButton, ThemeContext,
     LoadingIcon, Select, SelectOption, TextInput,
-    lightTheme, darkTheme,
+    lightTheme, darkTheme, purpleTheme,
     LocaleDirectionContext,
 } from "@hydroper/metrocomponents";
 import type { Theme, LocaleDirection } from "@hydroper/metrocomponents";
@@ -36,7 +36,7 @@ function App()
     // Change theme
     function changeTheme(value: string): void
     {
-        setTheme(value == "light" ? lightTheme : darkTheme);
+        setTheme(value == "light" ? lightTheme : value == "dark" ? darkTheme : purpleTheme);
     }
 
     // Change locale direction
@@ -56,6 +56,7 @@ function App()
                             <Select default="dark" big change={changeTheme}>
                                 <SelectOption value="dark">Dark</SelectOption>
                                 <SelectOption value="light">Light</SelectOption>
+                                <SelectOption value="purple">Purple</SelectOption>
                             </Select>
                             <Select default="ltr" big change={changeLocaleDir}>
                                 <SelectOption value="ltr">Left-to-right</SelectOption>
