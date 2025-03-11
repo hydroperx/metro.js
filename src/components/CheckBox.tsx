@@ -6,7 +6,7 @@ import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { ThemeContext, PreferPrimaryColorsContext } from "../theme";
 import { RemObserver } from "../utils/RemObserver";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
-import { lighten, enhanceBrightness, contrast } from "../utils/color";
+import { lighten, darken, enhanceBrightness, contrast } from "../utils/color";
 import { clamp } from "../utils/math";
 
 export function CheckBox(options: CheckBoxOptions)
@@ -39,11 +39,16 @@ export function CheckBox(options: CheckBoxOptions)
     const w = pointsToRemValue(14);
     const h = pointsToRemValue(6.1);
     const carret_w = pointsToRemValue(4);
-    const checked_color = enhanceBrightness(theme.colors.background, theme.colors.primaryBackground);
+    let checked_color = enhanceBrightness(theme.colors.background, theme.colors.primaryBackground);
     const checked_hover_color = lighten(checked_color, 0.3);
     const border_color = preferPrimaryColors ? checked_color : contrast(theme.colors.background, 0.4);
-    const unchecked_color = preferPrimaryColors ? lighten(checked_color, 0.3) : border_color;
+    let unchecked_color = preferPrimaryColors ? checked_color : border_color;
     const unchecked_hover_color = lighten(unchecked_color, 0.3);
+    if (preferPrimaryColors || Color(theme.colors.background).isDark())
+    {
+        checked_color = lighten(checked_color, 0.3);
+        unchecked_color = darken(unchecked_color, 0.1);
+    }
 
     // CSS
     const serializedStyles = css `
