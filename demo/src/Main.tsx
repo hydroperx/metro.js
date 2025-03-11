@@ -2,7 +2,8 @@ import { createRoot } from "react-dom/client";
 import { useEffect, useState } from "react";
 import {
     Button, Container, Label, HGroup, VGroup, ArrowButton,
-    ProgressRing, Select, SelectOption, TextInput, FormGroup,
+    ProgressRing, ProgressEllipsis,
+    Select, SelectOption, TextInput, FormGroup,
     CheckBox,
 
     ThemePresets,
@@ -86,6 +87,7 @@ function App()
                         </HGroup>
                         <VGroup horizontalAlign="center">
                             <ProgressRing size={9}/>
+                            <ProgressEllipsis/>
                         </VGroup>
                         <div>
                             <Select default="qux1">
