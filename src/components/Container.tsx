@@ -10,6 +10,7 @@ export type ContainerOptions =
     full?: boolean,
 
     easeOutPosition?: boolean,
+    easeOutTransform?: boolean,
 
     padding?: number,
     paddingLeft?: number,
@@ -56,48 +57,42 @@ export function Container(options: ContainerOptions)
 {
     const theme = useContext(ThemeContext);
 
-    const newStyle: React.CSSProperties = {};
-    if (options.padding !== undefined) newStyle.padding = pointsToRem(options.padding);
-    if (options.paddingLeft !== undefined) newStyle.paddingLeft = pointsToRem(options.paddingLeft);
-    if (options.paddingRight !== undefined) newStyle.paddingRight = pointsToRem(options.paddingRight);
-    if (options.paddingTop !== undefined) newStyle.paddingTop = pointsToRem(options.paddingTop);
-    if (options.paddingBottom !== undefined) newStyle.paddingBottom = pointsToRem(options.paddingBottom);
-    if (options.solid)
-    {
-        newStyle.background = theme.colors.background ?? "#fff";
-    }
-
-    newStyle.color = theme.colors.foreground ?? "#000";
-
     // Enable or disable selection
-    newStyle.userSelect =
-    newStyle.WebkitUserSelect =
-    newStyle.MozUserSelect = (options.selection ?? true) ? "auto" : "none";
+    const user_select = (options.selection ?? true) ? "auto" : "none";
 
-    // Set font size
-    newStyle.fontSize = fontSize;
-
-    // Set font family
-    newStyle.fontFamily = fontFamily;
-
-    if (options.minWidth !== undefined) newStyle.minWidth = pointsToRem(options.minWidth);
-    if (options.maxWidth !== undefined) newStyle.maxWidth = pointsToRem(options.maxWidth);
-    if (options.minHeight !== undefined) newStyle.minHeight = pointsToRem(options.minHeight);
-    if (options.maxHeight !== undefined) newStyle.maxHeight = pointsToRem(options.maxHeight);
-    newStyle.overflow = "auto";
-    if (options.full)
-    {
-        newStyle.width = "100%";
-        newStyle.height = "100%";
-    }
+    // Build transition
+    let transition = "";
     if (options.easeOutPosition)
     {
-        newStyle.transition = "left 200ms ease-out, top 200ms ease-out, right 200ms ease-out, bottom 200ms ease-out";
+        transition = "left 200ms ease-out, top 200ms ease-out, right 200ms ease-out, bottom 200ms ease-out";
+    }
+    if (options.easeOutTransform)
+    {
+        transition = (transition ? transition : ", " + "") + "transform 200ms ease-out";
     }
 
-    if (options.style) extend(newStyle, options.style);
-
+    // CSS
     const serializedStyles = css `
+        ${ options.solid ? "background: " + theme.colors.background + ";" : "" }
+        ${ options.padding !== undefined ? "padding: " + pointsToRem(options.padding) + ";" : "" }
+        ${ options.paddingLeft !== undefined ? "padding-left: " + pointsToRem(options.paddingLeft) + ";" : "" }
+        ${ options.paddingRight !== undefined ? "padding-right: " + pointsToRem(options.paddingRight) + ";" : "" }
+        ${ options.paddingTop !== undefined ? "padding-top: " + pointsToRem(options.paddingTop) + ";" : "" }
+        ${ options.paddingBottom !== undefined ? "padding-bottom: " + pointsToRem(options.paddingBottom) + ";" : "" }
+        color: ${theme.colors.foreground};
+        font-family: ${fontFamily};
+        font-size: ${fontSize};
+        overflow: auto;
+        transition: ${transition};
+        user-select: ${user_select};
+        -moz-user-select: ${user_select};
+        -webkit-user-select: ${user_select};
+        ${ options.minWidth !== undefined ? "min-width: " + pointsToRem(options.minWidth) + ";" : "" }
+        ${ options.minHeight !== undefined ? "min-height: " + pointsToRem(options.minHeight) + ";" : "" }
+        ${ options.maxWidth !== undefined ? "max-width: " + pointsToRem(options.maxWidth) + ";" : "" }
+        ${ options.maxHeight !== undefined ? "max-height: " + pointsToRem(options.maxHeight) + ";" : "" }
+        ${ options.full ? "width: 100%; height: 100%;" : ""}
+
         &::-webkit-scrollbar {
             width: 12px;
             height: 12px;
@@ -118,7 +113,7 @@ export function Container(options: ContainerOptions)
     return <div
         css={serializedStyles}
         className={options.className ? " " + options.className : ""}
-        style={newStyle}
+        style={options.style}
         onClick={options.click}
         onMouseOver={options.mouseOver}
         onMouseOut={options.mouseOut}

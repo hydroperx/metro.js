@@ -1,7 +1,74 @@
+import { css } from "@emotion/react";
+import assert from "assert";
 import { Alignment } from "../layout/Alignment";
 import { pointsToRem } from "../utils/points";
-import assert from "assert";
-import extend from "extend";
+
+export function HGroup(options: HGroupOptions)
+{
+    let overflow = "";
+    if (options.clip)
+    {
+        overflow = "hidden";
+    }
+    let overflowX = "";
+    if (options.clipHorizontal)
+    {
+        overflowX = "hidden";
+    }
+    let overflowY = "";
+    if (options.clipVertical)
+    {
+        overflowY = "hidden";
+    }
+    let justifyContent = "";
+    if (options.horizontalAlign)
+    {
+        const m = horizontalAlignMaps[options.horizontalAlign];
+        assert(!!m, `Unsupported horizontal alignment: ${options.horizontalAlign}`);
+        justifyContent = m;
+    }
+    let alignItems = "";
+    if (options.verticalAlign)
+    {
+        const m = verticalAlignMaps[options.verticalAlign];
+        assert(!!m, `Unsupported vertical alignment: ${options.verticalAlign}`);
+        alignItems = m;
+    }
+
+    // CSS
+    const serializedStyles = css `
+        display: ${(options.visible ?? true) ? (options.inline ? "inline-flex" : "flex") : "none"};
+        flex-direction: row;
+        ${ options.gap !== undefined ? "gap: " + pointsToRem(options.gap) + ";" : "" }
+        ${ options.padding !== undefined ? "padding: " + pointsToRem(options.padding) + ";" : "" }
+        ${ options.paddingLeft !== undefined ? "padding-left: " + pointsToRem(options.paddingLeft) + ";" : "" }
+        ${ options.paddingRight !== undefined ? "padding-right: " + pointsToRem(options.paddingRight) + ";" : "" }
+        ${ options.paddingTop !== undefined ? "padding-top: " + pointsToRem(options.paddingTop) + ";" : "" }
+        ${ options.paddingBottom !== undefined ? "padding-bottom: " + pointsToRem(options.paddingBottom) + ";" : "" }
+        ${ options.minWidth !== undefined ? "min-width: " + pointsToRem(options.minWidth) + ";" : "" }
+        ${ options.minHeight !== undefined ? "min-height: " + pointsToRem(options.minHeight) + ";" : "" }
+        ${ options.maxWidth !== undefined ? "max-width: " + pointsToRem(options.maxWidth) + ";" : "" }
+        ${ options.maxHeight !== undefined ? "max-height: " + pointsToRem(options.maxHeight) + ";" : "" }
+        ${ justifyContent ? "justify-content: " + justifyContent + ";" : "" }
+        ${ alignItems ? "align-items: " + alignItems + ";" : "" }
+        ${ overflow ? "overflow: " + overflow + ";" : "" }
+        ${ overflowX ? "overflow-x: " + overflowX + ";" : "" }
+        ${ overflowY ? "overflow-y: " + overflowY + ";" : "" }
+    `;
+
+    return <div
+        css={serializedStyles}
+        className={options.className}
+        style={options.style}
+        onClick={options.click}
+        onMouseOver={options.mouseOver}
+        onMouseOut={options.mouseOut}
+        onMouseUp={options.mouseUp}
+        onContextMenu={options.contextMenu}>
+            
+        {options.children}
+    </div>;
+}
 
 export type HGroupOptions = {
     padding?: number,
@@ -72,94 +139,3 @@ const verticalAlignMaps: any = {
     "bottom": "end",
     "stretch": "stretch"
 };
-
-export function HGroup(options: HGroupOptions)
-{
-    const newStyle: React.CSSProperties = {};
-
-    newStyle.display = (options.visible ?? true) ? (options.inline ? "inline-flex" : "flex") : "none";
-    newStyle.flexDirection = "row";
-
-    if (options.padding !== undefined)
-    {
-        newStyle.padding = pointsToRem(options.padding);
-    }
-    if (options.paddingLeft !== undefined)
-    {
-        newStyle.paddingLeft = pointsToRem(options.paddingLeft);
-    }
-    if (options.paddingRight !== undefined)
-    {
-        newStyle.paddingRight = pointsToRem(options.paddingRight);
-    }
-    if (options.paddingTop !== undefined)
-    {
-        newStyle.paddingTop = pointsToRem(options.paddingTop);
-    }
-    if (options.paddingBottom !== undefined)
-    {
-        newStyle.paddingBottom = pointsToRem(options.paddingBottom);
-    }
-    if (options.gap !== undefined)
-    {
-        newStyle.gap = pointsToRem(options.gap);
-    }
-    if (options.minWidth !== undefined)
-    {
-        newStyle.minWidth = pointsToRem(options.minWidth);
-    }
-    if (options.maxWidth !== undefined)
-    {
-        newStyle.maxWidth = pointsToRem(options.maxWidth);
-    }
-    if (options.minHeight !== undefined)
-    {
-        newStyle.minHeight = pointsToRem(options.minHeight);
-    }
-    if (options.maxHeight !== undefined)
-    {
-        newStyle.maxHeight = pointsToRem(options.maxHeight);
-    }
-
-    if (options.clip)
-    {
-        newStyle.overflow = "hidden";
-    }
-    if (options.clipHorizontal)
-    {
-        newStyle.overflowX = "hidden";
-    }
-    if (options.clipVertical)
-    {
-        newStyle.overflowY = "hidden";
-    }
-    if (options.horizontalAlign)
-    {
-        const m = horizontalAlignMaps[options.horizontalAlign];
-        assert(!!m, `Unsupported horizontal alignment: ${options.horizontalAlign}`);
-        newStyle.justifyContent = m;
-    }
-    if (options.verticalAlign)
-    {
-        const m = verticalAlignMaps[options.verticalAlign];
-        assert(!!m, `Unsupported vertical alignment: ${options.verticalAlign}`);
-        newStyle.alignItems = m;
-    }
-
-    if (options.style)
-    {
-        extend(newStyle, options.style);
-    }
-
-    return <div
-        className={options.className ?? ""}
-        style={newStyle}
-        onClick={options.click}
-        onMouseOver={options.mouseOver}
-        onMouseOut={options.mouseOut}
-        onMouseUp={options.mouseUp}
-        onContextMenu={options.contextMenu}>
-            
-        {options.children}
-    </div>;
-}
