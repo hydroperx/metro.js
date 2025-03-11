@@ -35,6 +35,7 @@ Basic components
 ## Tiles
 
 - [ ] Tile sizes (4): small ("smallest square"), medium ("medium square"), wide ("wide rectangle"), large ("largest square").
+- [ ] While holding click button at tile, slightly rotate X/Y according to the side.
 - [ ] Drag-n-drop mode
 - [ ] Selection mode (check one or more tiles)
 - [ ] Disabled tiles
