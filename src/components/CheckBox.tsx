@@ -88,10 +88,10 @@ export function CheckBox(options: CheckBoxOptions)
         &:hover .CheckBox-checked-rect {
             background: ${checked_hover_color};
         }
-        
+
         & .CheckBox-carret {
             position: absolute;
-            transition: right 200ms ease-out;
+            transition: transform 200ms ease-out;
             width: ${carret_w}rem;
             height: ${h}rem;
             top: -${side_length / 2}rem;
