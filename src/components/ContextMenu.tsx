@@ -500,44 +500,34 @@ export function ContextMenu(options: ContextMenuOptions)
         left: ${x}px;
         top: ${y}px;
         opacity: ${opacity.toString()};
-        transition: ${transition};
+        ${transition ? `transition: ${transition};` : ""}
         z-index: ${maximumZIndex};
-    `;
 
-    // Up arrow CSS
-    const upArrowSerializedStyles = css `
-        display: ${arrowsVisible ? "flex" : "none"};
-        flex-direction: row;
-        justify-content: center;
-        height: ${pointsToRem(2.5)};
-    `;
+        & > .ContextMenu-up-arrow, & > .ContextMenu-down-arrow {
+            display: ${arrowsVisible ? "flex" : "none"};
+            flex-direction: row;
+            justify-content: center;
+            height: ${pointsToRem(2.5)};
+        }
 
-    // Down arrow CSS
-    const downArrowSerializedStyles = css `
-        display: ${arrowsVisible ? "flex" : "none"};
-        flex-direction: row;
-        justify-content: center;
-        height: ${pointsToRem(2.5)};
-    `;
-
-    // List CSS
-    const listSerializedStlyes = css `
-        display: flex;
-        flex-direction: column;
-        overflow-y: scroll;
-        scrollbar-width: none;
-        flex-grow: 3;
+        & > .ContextMenu-list {
+            display: flex;
+            flex-direction: column;
+            overflow-y: scroll;
+            scrollbar-width: none;
+            flex-grow: 3;
+        }
     `;
 
     return (
         <div ref={divRef} css={serializedStyles}>
-            <div className="up-arrow" css={upArrowSerializedStyles}>
+            <div className="ContextMenu-up-arrow">
                 <UpArrowIcon size={2.5}/>
             </div>
-            <div className="list" css={listSerializedStlyes}>
+            <div className="ContextMenu-list">
                 {options.children}
             </div>
-            <div className="down-arrow" css={downArrowSerializedStyles}>
+            <div className="ContextMenu-down-arrow">
                 <DownArrowIcon size={2.5}/>
             </div>
         </div>
@@ -1139,31 +1129,21 @@ export function ContextMenuSubmenuList(options: ContextMenuSubmenuListOptions)
         max-height: 30rem;
         opacity: 0;
         z-index: ${maximumZIndex};
-    `;
 
-    // Up arrow CSS
-    const upArrowSerializedStyles = css `
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        height: ${pointsToRem(2.5)};
-    `;
+        & > .ContextMenu-up-arrow, & > .ContextMenu-down-arrow {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            height: ${pointsToRem(2.5)};
+        }
 
-    // Down arrow CSS
-    const downArrowSerializedStyles = css `
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        height: ${pointsToRem(2.5)};
-    `;
-
-    // List CSS
-    const listSerializedStlyes = css `
-        display: flex;
-        flex-direction: column;
-        overflow-y: scroll;
-        scrollbar-width: none;
-        flex-grow: 3;
+        & > .ContextMenu-list {
+            display: flex;
+            flex-direction: column;
+            overflow-y: scroll;
+            scrollbar-width: none;
+            flex-grow: 3;
+        }
     `;
 
     return (
@@ -1171,13 +1151,13 @@ export function ContextMenuSubmenuList(options: ContextMenuSubmenuListOptions)
             ref={divRef}
             className={submenuClassName}
             css={serializedStyles}>
-            <div className="up-arrow" css={upArrowSerializedStyles}>
+            <div className="ContextMenu-up-arrow">
                 <UpArrowIcon size={2.5}/>
             </div>
-            <div className="list" css={listSerializedStlyes}>
+            <div className="ContextMenu-list">
                 {options.children}
             </div>
-            <div className="down-arrow" css={downArrowSerializedStyles}>
+            <div className="ContextMenu-down-arrow">
                 <DownArrowIcon size={2.5}/>
             </div>
         </div>

@@ -76,7 +76,58 @@ export function Select(options: SelectOptions)
     // Button CSS
     const hoverBackground = Color(theme.colors.inputBackground).darken(0.4).toString();
     let buttonSerializedStyles: SerializedStyles = null;
-    
+
+    // Button inner CSS
+    const button_inner_css = `
+        & .Select-button-inner {
+            display: inline-flex;
+            flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
+            gap: 0.9rem;
+        }
+    `;
+
+    // Button arrow CSS
+    const button_arrow_css = `
+        & .Select-button-arrow {
+            display: inline-flex;
+            flex-grow: 2;
+            flex-direction: ${localeDir == "ltr" ? "row-reverse" : "row"};
+            opacity: 0.7;
+        }
+    `;
+
+    // Dropdown CSS
+    const dropdown_serialized_styles = css `
+        display: inline-flex;
+        visibility: ${visible ? "visible" : "hidden"};
+        flex-direction: column;
+        position: fixed;
+        min-width: 15rem;
+        max-height: 25rem;
+        background: ${theme.colors.inputBackground};
+        border: ${(options.big || options.medium ? "0.3rem" : "0.15rem") + " solid " + theme.colors.inputBorder};
+        left: ${x}px;
+        top: ${y}px;
+        opacity: ${opacity};
+        ${transition ? `transition: ${transition};` : ""}
+        z-index: ${maximumZIndex};
+
+        & .Select-list {
+            display: flex;
+            flex-direction: column;
+            overflow-y: scroll;
+            scrollbar-width: none;
+            flex-grow: 3;
+        }
+
+        & .Select-up-arrow, & .Select-down-arrow {
+            display: ${arrowsVisible ? "flex" : "none"};
+            flex-direction: row;
+            justify-content: center;
+            height: ${pointsToRem(2.5)};
+        }
+    `;
+
     if (options.big || options.medium)
     {
         buttonSerializedStyles = css `
@@ -102,6 +153,9 @@ export function Select(options: SelectOptions)
             &:disabled {
                 opacity: 0.4;
             }
+
+            ${button_inner_css}
+            ${button_arrow_css}
         `;
     }
     else
@@ -131,6 +185,9 @@ export function Select(options: SelectOptions)
             &:disabled {
                 opacity: 0.5;
             }
+
+            ${button_inner_css}
+            ${button_arrow_css}
         `;
     }
 
@@ -203,12 +260,6 @@ export function Select(options: SelectOptions)
 
         // Stop transition
         setTransition("");
-
-        div.style.height = "";
-        if (y + div.getBoundingClientRect().height > window.innerHeight)
-        {
-            div.style.height = ((window.innerHeight - 10 - y) / rem) + "rem";
-        }
 
         // (x, y) transition
         const timeoutDelay = 45;
@@ -449,53 +500,22 @@ export function Select(options: SelectOptions)
                 disabled={!!options.disabled}
                 onClick={open}>
                 
-                <div style={{
-                    display: "inline-flex",
-                    flexDirection: localeDir == "ltr" ? "row" : "row-reverse",
-                    gap: "0.9rem"
-                }} dangerouslySetInnerHTML={{ __html: valueHyperText }}>
+                <div className="Select-button-inner" dangerouslySetInnerHTML={{ __html: valueHyperText }}>
                 </div>
 
-                <div style={{
-                    display: "inline-flex",
-                    flexGrow: 2,
-                    flexDirection: localeDir == "ltr" ? "row-reverse" : "row",
-                    opacity: "0.7",
-                }}>
+                <div className="Select-button-arrow">
                     <DownArrowIcon size={options.big ? 6 : 3.5}/>
                 </div>
             </button>
             <SelectOptionBigContext.Provider value={!!options.big || !!options.medium}>
-                <div ref={divRef} style={{
-                    display: "inline-flex",
-                    visibility: visible ? "visible" : "hidden",
-                    flexDirection: "column",
-                    position: "fixed",
-                    minWidth: "15rem",
-                    maxHeight: "25rem",
-                    background: theme.colors.inputBackground,
-                    border: (options.big || options.medium ? "0.3rem" : "0.15rem") + " solid " + theme.colors.inputBorder,
-                    left: x + "px",
-                    top: y + "px",
-                    opacity: opacity.toString(),
-                    transition,
-                    zIndex: maximumZIndex,
-                }}>
-                    <div className="up-arrow" style={{display: arrowsVisible ? "flex" : "none", flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
+                <div ref={divRef} css={dropdown_serialized_styles}>
+                    <div className="Select-up-arrow">
                         <UpArrowIcon size={2.5}/>
                     </div>
-                    <div
-                        className="list"
-                        style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            overflowY: "scroll",
-                            scrollbarWidth: "none",
-                            flexGrow: "3",
-                        }}>
+                    <div className="Select-list">
                         {options.children}
                     </div>
-                    <div className="down-arrow" style={{display: arrowsVisible ? "flex" : "none", flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
+                    <div className="Select-down-arrow">
                         <DownArrowIcon size={2.5}/>
                     </div>
                 </div>

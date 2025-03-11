@@ -12,7 +12,7 @@ export function computePosition(referenceElement: HTMLElement, positioningElemen
 
     const prefer = options?.prefer ?? "bottom";
     const margin = options?.margin ?? 0;
-    let resolution: Side = "top";
+    let resolution: Side | null = null;
 
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
@@ -35,14 +35,14 @@ export function computePosition(referenceElement: HTMLElement, positioningElemen
                 {
                     resolution = "right";
                 }
-                else
+                else if (referenceRect.left - margin - positioningRect.width >= 0)
                 {
                     resolution = "left";
                 }
             }
-            else
+            if (resolution === null)
             {
-                resolution = "bottom";
+                resolution = referenceRect.bottom > referenceRect.top ? "top" : "bottom";
             }
             break;
         }
@@ -62,14 +62,14 @@ export function computePosition(referenceElement: HTMLElement, positioningElemen
                 {
                     resolution = "right";
                 }
-                else
+                else if (referenceRect.left - margin - positioningRect.width >= 0)
                 {
                     resolution = "left";
                 }
             }
-            else
+            if (resolution === null)
             {
-                resolution = "top";
+                resolution = referenceRect.bottom > referenceRect.top ? "top" : "bottom";
             }
             break;
         }
@@ -90,14 +90,14 @@ export function computePosition(referenceElement: HTMLElement, positioningElemen
                 {
                     resolution = "top";
                 }
-                else
+                else if (referenceRect.bottom + margin + positioningRect.height < viewportHeight)
                 {
                     resolution = "bottom";
                 }
             }
-            else
+            if (resolution === null)
             {
-                resolution = "left";
+                resolution = referenceRect.right > referenceRect.left ? "left" : "right";
             }
             break;
         }
@@ -118,14 +118,14 @@ export function computePosition(referenceElement: HTMLElement, positioningElemen
                 {
                     resolution = "top";
                 }
-                else
+                else if (referenceRect.bottom + margin + positioningRect.height < viewportHeight)
                 {
                     resolution = "bottom";
                 }
             }
-            else
+            if (resolution === null)
             {
-                resolution = "right";
+                resolution = referenceRect.right > referenceRect.left ? "left" : "right";
             }
         }
     }
