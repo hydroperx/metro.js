@@ -17,9 +17,7 @@ Basic components
 - [x] CheckBox
 - [x] FormGroup
 - [x] ProgressEllipsis (consists of horizontally moving dots)
-- [ ] Tile container
-  - [ ] Live tiles
-  - [ ] Bottom bar (triggered on right click or long touch pressure)
+- [ ] Tiles
 
 ## CheckBox
 
@@ -33,3 +31,11 @@ Basic components
 
 - [ ] Future change: a more Metro like transition and positioning that centers the selected option to the input button
   - [ ] "Open transition" draft: https://github.com/realhydroper/tsmetrocomponents/blob/d18900aad5e94d3429e4a762d1f79015dcf9aef4/src/components/Select.tsx#L161 (in this draft, `base_bottom =` apparently needs to be assigned something else, like `window.innerHeight - baseRect.top - baseRect.height`, to work better).
+
+## Tiles
+
+- [ ] Tile sizes (4): small ("smallest square"), medium ("medium square"), wide ("wide rectangle"), large ("largest square").
+- [ ] Drag-n-drop
+- [ ] Disabled tiles
+- [ ] Live tiles (with roll)
+- [ ] Dispatch context menu event in a title on a long touch pressure
