@@ -21,6 +21,10 @@ Basic components
   - [ ] Live tiles
   - [ ] Bottom bar (triggered on right click or long touch pressure)
 
+## CheckBox
+
+- [ ] Implement dragging of the carret (tried before, but failed)
+
 ## Select
 
 - [ ] Future change: a more Metro like transition and positioning that centers the selected option to the input button
