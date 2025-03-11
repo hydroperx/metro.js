@@ -15,11 +15,8 @@ Basic components
 - [x] Select
 - [x] TextInput
 - [x] CheckBox
+- [x] FormGroup
 - [ ] LoadingBar (consists of horizontally moving dots)
-- [ ] FormGroup
-  - A horizontal group generally containing of a label and a form control.
-  - [ ] Stylize first child directly to size it (min-width).
-  - [ ] RTL
 - [ ] Tile container
   - [ ] Live tiles
   - [ ] Bottom bar (triggered on right click or long touch pressure)

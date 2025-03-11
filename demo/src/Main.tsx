@@ -2,7 +2,7 @@ import { createRoot } from "react-dom/client";
 import { useEffect, useState } from "react";
 import {
     Button, Container, Label, HGroup, VGroup, ArrowButton,
-    LoadingIcon, Select, SelectOption, TextInput,
+    LoadingIcon, Select, SelectOption, TextInput, FormGroup,
     CheckBox,
 
     ThemePresets,
@@ -70,10 +70,10 @@ function App()
                             </Select>
                             <TextInput search placeholder="Type something"/>
                             <TextInput multiline/>
-                            <HGroup gap={3}>
-                                <Label for="checkbox" style={{ minWidth: "5rem" }}><b>{checkbox_value ? "On" : "Off"}</b></Label>
+                            <FormGroup>
+                                <Label for="checkbox"><b>{checkbox_value ? "On" : "Off"}</b></Label>
                                 <CheckBox id="checkbox" change={value => { set_checkbox_value(value) }}/>
-                            </HGroup>
+                            </FormGroup>
                         </VGroup>
                         <HGroup gap={2} style={{ margin: "1rem 0" }}>
                             <Button variant="none">None button</Button>

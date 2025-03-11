@@ -1,11 +1,10 @@
-import assert from "assert";
 import extend from "extend";
-import Color from "color";
 import { css } from "@emotion/react";
 import { useContext } from "react";
 import { ThemeContext, PreferPrimaryColorsContext } from "../theme/Theme";
 import { fontFamily  } from "../utils/common";
 import { enhanceBrightness } from "../utils/color";
+import { pointsToRem } from "../utils/points";
 
 export type LabelVariant = 
     "normal" |
@@ -33,6 +32,13 @@ export function Label(options: LabelOptions)
         extend(newStyle, options.style);
     }
 
+    const sizing = `
+        ${options.minWidth === undefined ? "" : "min-width: " + pointsToRem(options.minWidth) + ";"}
+        ${options.minHeight === undefined ? "" : "min-height: " + pointsToRem(options.minHeight) + ";"}
+        ${options.maxWidth === undefined ? "" : "max-width: " + pointsToRem(options.maxWidth) + ";"}
+        ${options.maxHeight === undefined ? "" : "max-height: " + pointsToRem(options.maxHeight) + ";"}
+    `;
+
     switch (variant)
     {
         case "normal":
@@ -40,6 +46,7 @@ export function Label(options: LabelOptions)
             const serializedStyles = css `
                 font-family: ${fontFamily};
                 font-size: 0.9rem;
+                ${sizing}
             `;
             if (options.for)
             {
@@ -55,6 +62,7 @@ export function Label(options: LabelOptions)
                 font-weight: lighter;
                 font-size: 2.1rem;
                 margin: 0.67em 0;
+                ${sizing}
             `;
             if (options.for)
             {
@@ -70,6 +78,7 @@ export function Label(options: LabelOptions)
                 font-weight: lighter;
                 font-size: 1.7rem;
                 margin: 0.67em 0;
+                ${sizing}
             `;
             if (options.for)
             {
@@ -85,6 +94,7 @@ export function Label(options: LabelOptions)
                 font-size: 1.3rem;
                 font-weight: bold;
                 margin: 0.67em 0;
+                ${sizing}
             `;
             if (options.for)
             {
@@ -100,6 +110,7 @@ export function Label(options: LabelOptions)
                 font-size: 1.1rem;
                 font-weight: bold;
                 margin: 0.67em 0;
+                ${sizing}
             `;
             if (options.for)
             {
@@ -112,6 +123,7 @@ export function Label(options: LabelOptions)
             const serializedStyles = css `
                 font-family: ${fontFamily};
                 font-size: 0.77rem;
+                ${sizing}
             `;
             if (options.for)
             {
@@ -133,6 +145,11 @@ export type LabelOptions = {
     for?: string,
 
     visible?: boolean,
+
+    minWidth?: number,
+    minHeight?: number,
+    maxWidth?: number,
+    maxHeight?: number,
 
     style?: React.CSSProperties,
     className?: string,
