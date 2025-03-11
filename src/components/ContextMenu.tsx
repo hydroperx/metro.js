@@ -1,6 +1,6 @@
 import { TypedEventTarget } from "@hydroper/typedeventtarget";
 import { useContext, useRef, useState, useEffect } from "react";
-import { css } from "@emotion/react";
+import { css, SerializedStyles } from "@emotion/react";
 import Color from "color";
 import assert from "assert";
 import { Input } from "@hydroper/inputaction";
@@ -486,23 +486,26 @@ export function ContextMenu(options: ContextMenuOptions)
         };
     });
 
+    // Main div CSS
+    const serializedStyles = css `
+        display: inline-flex;
+        visibility: ${visible ? "visible" : "hidden"};
+        flex-direction: column;
+        position: fixed;
+        background: ${theme.colors.inputBackground};
+        border: 0.15rem solid ${theme.colors.inputBorder};
+        padding: ${pointsToRem(2)} 0;
+        min-width: 12rem;
+        max-height: 30rem;
+        left: ${x}px;
+        top: ${y}px;
+        opacity: ${opacity.toString()};
+        transition: ${transition};
+        z-index: ${maximumZIndex};
+    `;
+
     return (
-        <div ref={divRef} style={{
-            display: "inline-flex",
-            visibility: visible ? "visible" : "hidden",
-            flexDirection: "column",
-            position: "fixed",
-            background: theme.colors.inputBackground,
-            border: "0.15rem solid " + theme.colors.inputBorder,
-            padding: pointsToRem(2) + " 0",
-            minWidth: "12rem",
-            maxHeight: "30rem",
-            left: x + "px",
-            top: y + "px",
-            opacity: opacity.toString(),
-            transition,
-            zIndex: maximumZIndex,
-        }}>
+        <div ref={divRef} css={serializedStyles}>
             <div className="up-arrow" style={{display: arrowsVisible ? "flex" : "none", flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
                 <UpArrowIcon size={2.5}/>
             </div>
@@ -1078,23 +1081,26 @@ export function ContextMenuSubmenuList(options: ContextMenuSubmenuListOptions)
     // References
     const divRef = useRef<HTMLDivElement | null>(null);
 
+    // Main div CSS
+    const serializedStyles = css `
+        display: inline-flex;
+        visibility: "hidden";
+        flex-direction: column;
+        position: fixed;
+        background: ${theme.colors.inputBackground};
+        border: 0.15rem solid ${theme.colors.inputBorder};
+        padding: ${pointsToRem(2)} 0;
+        min-width: 12rem;
+        max-height: 30rem;
+        opacity: 0;
+        z-index: ${maximumZIndex};
+    `;
+
     return (
         <div
             ref={divRef}
             className={submenuClassName}
-            style={{
-                display: "inline-flex",
-                visibility: "hidden",
-                flexDirection: "column",
-                position: "fixed",
-                background: theme.colors.inputBackground,
-                border: "0.15rem solid " + theme.colors.inputBorder,
-                padding: pointsToRem(2) + " 0",
-                minWidth: "12rem",
-                maxHeight: "30rem",
-                opacity: "0",
-                zIndex: maximumZIndex,
-            }}>
+            css={serializedStyles}>
             <div className="up-arrow" style={{flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
                 <UpArrowIcon size={2.5}/>
             </div>
