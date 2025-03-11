@@ -177,28 +177,14 @@ export function CheckBox(options: CheckBoxOptions)
         if (localeDir == "ltr")
         {
             if (carret_left < 50)
-            {
-                value = false;
-                set_carret_left(0);
-            }
-            else
-            {
-                value = true;
-                set_carret_left(100);
-            }
+                setValue(false), set_carret_left(0);
+            else setValue(true), set_carret_left(100);
         }
         else
         {
             if (carret_left < 50)
-            {
-                value = false;
-                set_carret_left(100);
-            }
-            else
-            {
-                value = true;
-                set_carret_left(0);
-            }
+                setValue(false), set_carret_left(100);
+            else setValue(true), set_carret_left(0);
         }
 
         // Update value
