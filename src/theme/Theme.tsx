@@ -160,4 +160,4 @@ export const ThemePresets = {
 
 export const ThemeContext: React.Context<Theme> = createContext(light);
 
-export const PreferPrimaryColorsContext: React.Context<boolean> = createContext(false);
+export const PreferPrimaryContext: React.Context<boolean> = createContext(false);

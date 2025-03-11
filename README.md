@@ -71,14 +71,14 @@ const direction: LocaleDirection = "ltr";
 
 ### Primary colors
 
-To opt in to using primary colors in certain components such as heading titles and checkboxes, use the `PreferPrimaryColorsContext` context:
+To opt in to using primary colors in certain components such as heading titles and checkboxes, use the `PreferPrimaryContext` context:
 
 ```tsx
-import { PreferPrimaryColorsContext } from "@hydroper/metrocomponents";
+import { PreferPrimaryContext } from "@hydroper/metrocomponents";
 
 // somewhere in React content
-<PreferPrimaryColorsContext.Provider value={true}>
-</PreferPrimaryColorsContext.Provider>
+<PreferPrimaryContext.Provider value={true}>
+</PreferPrimaryContext.Provider>
 ```
 
 ### Registering icons

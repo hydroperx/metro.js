@@ -3,7 +3,7 @@ import { css } from "@emotion/react";
 import Color from "color";
 import Draggable from "react-draggable";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
-import { ThemeContext, PreferPrimaryColorsContext } from "../theme";
+import { ThemeContext, PreferPrimaryContext } from "../theme";
 import { RemObserver } from "../utils/RemObserver";
 import { pointsToRemValue } from "../utils/points";
 import { lighten, darken, enhanceBrightness, contrast } from "../utils/color";
@@ -14,7 +14,7 @@ export function CheckBox(options: CheckBoxOptions)
     const theme = useContext(ThemeContext);
 
     // Determine which coloring is preferred
-    const preferPrimaryColors = useContext(PreferPrimaryColorsContext);
+    const preferPrimaryColors = useContext(PreferPrimaryContext);
 
     // Locale direction
     const localeDir = useContext(LocaleDirectionContext);

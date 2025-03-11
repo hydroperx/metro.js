@@ -1,7 +1,7 @@
 import extend from "extend";
 import { css } from "@emotion/react";
 import { useContext, useState, useRef, Ref } from "react";
-import { ThemeContext, PreferPrimaryColorsContext } from "../theme/Theme";
+import { ThemeContext, PreferPrimaryContext } from "../theme/Theme";
 import { fontFamily  } from "../utils/common";
 import { enhanceBrightness } from "../utils/color";
 import { pointsToRem } from "../utils/points";
@@ -21,7 +21,7 @@ export function Label(options: LabelOptions)
     const theme = useContext(ThemeContext);
 
     // Determine which coloring is preferred
-    const preferPrimaryColors = useContext(PreferPrimaryColorsContext);
+    const preferPrimaryColors = useContext(PreferPrimaryContext);
 
     // Variant
     const variant = options.variant ?? "normal";
