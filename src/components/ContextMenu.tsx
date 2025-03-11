@@ -504,23 +504,40 @@ export function ContextMenu(options: ContextMenuOptions)
         z-index: ${maximumZIndex};
     `;
 
+    // Up arrow CSS
+    const upArrowSerializedStyles = css `
+        display: ${arrowsVisible ? "flex" : "none"};
+        flex-direction: row;
+        justify-content: center;
+        height: ${pointsToRem(2.5)};
+    `;
+
+    // Down arrow CSS
+    const downArrowSerializedStyles = css `
+        display: ${arrowsVisible ? "flex" : "none"};
+        flex-direction: row;
+        justify-content: center;
+        height: ${pointsToRem(2.5)};
+    `;
+
+    // List CSS
+    const listSerializedStlyes = css `
+        display: flex;
+        flex-direction: column;
+        overflow-y: scroll;
+        scrollbar-width: none;
+        flex-grow: 3;
+    `;
+
     return (
         <div ref={divRef} css={serializedStyles}>
-            <div className="up-arrow" style={{display: arrowsVisible ? "flex" : "none", flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
+            <div className="up-arrow" css={upArrowSerializedStyles}>
                 <UpArrowIcon size={2.5}/>
             </div>
-            <div
-                className="list"
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    overflowY: "scroll",
-                    scrollbarWidth: "none",
-                    flexGrow: "3",
-                }}>
+            <div className="list" css={listSerializedStlyes}>
                 {options.children}
             </div>
-            <div className="down-arrow" style={{display: arrowsVisible ? "flex" : "none", flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
+            <div className="down-arrow" css={downArrowSerializedStyles}>
                 <DownArrowIcon size={2.5}/>
             </div>
         </div>
@@ -631,8 +648,14 @@ export function ContextMenuCheck(options: ContextMenuCheckOptions)
     // Size
     const size = pointsToRem(3);
 
+    // CSS
+    const serializedStyles = css `
+        width: ${size};
+        height: ${size};
+    `;
+
     return (
-        <span style={{ width: size, height: size }}>
+        <span css={serializedStyles}>
             {
                 options.state == "none" ? undefined :
                 options.state == "checked" ? <CheckedIcon/> : <BulletIcon/>}
@@ -655,8 +678,14 @@ export function ContextMenuIcon(options: ContextMenuIconOptions)
     // Size
     const size = pointsToRem(3);
 
+    // CSS
+    const serializedStyles = css `
+        width: ${size};
+        height: ${size};
+    `;
+
     return (
-        <span style={{ width: size, height: size }}>
+        <span css={serializedStyles}>
             {options.children}
         </span>
     );
@@ -675,8 +704,13 @@ export function ContextMenuLabel(options: ContextMenuLabelOptions)
     // Locale direction
     const localeDir = useContext(LocaleDirectionContext);
 
+    // CSS
+    const serializedStyles = css `
+        ${localeDir == "ltr" ? "" : "text-align: right;"}
+    `;
+
     return (
-        <span style={{...(localeDir == "ltr" ? {} : { textAlign: "right" })}}>
+        <span css={serializedStyles}>
             {options.children}
         </span>
     );
@@ -698,8 +732,19 @@ export function ContextMenuRight(options: ContextMenuRightOptions)
     // Minimum size for an icon
     const size = pointsToRem(3);
 
+    const serializedStyles = css `
+        flex-grow: 4;
+        ${localeDir == "ltr" ? "margin-left: 2rem;" : ""}
+        ${localeDir == "rtl" ? "margin-right: 2rem;" : ""}
+        text-align: ${localeDir == "ltr" ? "right" : "left"};
+        font-size: 0.8rem;
+        opacity: 0.6;
+        min-width: ${size};
+        min-height: ${size};
+    `;
+
     return (
-        <span style={{flexGrow: 4, marginLeft: localeDir == "ltr" ? "2rem" : "", marginRight: localeDir == "rtl" ? "2rem" : "", textAlign: localeDir == "ltr" ? "right" : "left", fontSize: "0.8rem", opacity: "0.6", minWidth: size, minHeight: size}}>
+        <span css={serializedStyles}>
             {options.children}
         </span>
     );
@@ -1096,27 +1141,43 @@ export function ContextMenuSubmenuList(options: ContextMenuSubmenuListOptions)
         z-index: ${maximumZIndex};
     `;
 
+    // Up arrow CSS
+    const upArrowSerializedStyles = css `
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        height: ${pointsToRem(2.5)};
+    `;
+
+    // Down arrow CSS
+    const downArrowSerializedStyles = css `
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        height: ${pointsToRem(2.5)};
+    `;
+
+    // List CSS
+    const listSerializedStlyes = css `
+        display: flex;
+        flex-direction: column;
+        overflow-y: scroll;
+        scrollbar-width: none;
+        flex-grow: 3;
+    `;
+
     return (
         <div
             ref={divRef}
             className={submenuClassName}
             css={serializedStyles}>
-            <div className="up-arrow" style={{flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
+            <div className="up-arrow" css={upArrowSerializedStyles}>
                 <UpArrowIcon size={2.5}/>
             </div>
-            <div
-                className="list"
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    overflowY: "scroll",
-                    scrollbarWidth: "none",
-                    flexGrow: "3",
-                }}>
-                
+            <div className="list" css={listSerializedStlyes}>
                 {options.children}
             </div>
-            <div className="down-arrow" style={{flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
+            <div className="down-arrow" css={downArrowSerializedStyles}>
                 <DownArrowIcon size={2.5}/>
             </div>
         </div>
@@ -1143,7 +1204,12 @@ export function ContextMenuSubIcon(options: IconOptions)
  */
 export function ContextMenuSeparator()
 {
+    // CSS
+    const serializedStlyes = css `
+        padding: 0.45rem;
+    `;
+
     return (
-        <div style={{padding: "0.45rem"}}></div>
+        <div css={serializedStlyes}></div>
     );
 }
