@@ -88,6 +88,7 @@ export function CheckBox(options: CheckBoxOptions)
         & .CheckBox-checked-rect {
             position: absolute;
             ${localeDir == "ltr" ? "left" : "right"}: ${padding}rem;
+            ${localeDir == "ltr" ? "right" : "left"}: calc(${(checked_horizontal_pos)}% + ${padding}rem);
             top: ${padding}rem;
             bottom: ${padding}rem;
             transition: left 200ms ease-out, right 200ms ease-out;
@@ -164,10 +165,7 @@ export function CheckBox(options: CheckBoxOptions)
             </div>
             <div
                 ref={checked_div_ref}
-                className="CheckBox-checked-rect"
-                style={{
-                    [localeDir == "ltr" ? "right" : "left"]: "calc(" + (checked_horizontal_pos) + `% + ${padding}rem)`,
-                }}>
+                className="CheckBox-checked-rect">
             </div>
             <Draggable
                 nodeRef={carret_ref}
