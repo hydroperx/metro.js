@@ -35,7 +35,9 @@ Basic components
 ## Tiles
 
 - [ ] Tile sizes (4): small ("smallest square"), medium ("medium square"), wide ("wide rectangle"), large ("largest square").
-- [ ] Drag-n-drop
+- [ ] Drag-n-drop mode
+- [ ] Selection mode (check one or more tiles)
 - [ ] Disabled tiles
 - [ ] Live tiles (with roll)
+  - [ ] Bottom-attached title
 - [ ] Dispatch context menu event in a title on a long touch pressure
