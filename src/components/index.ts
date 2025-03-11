@@ -9,4 +9,4 @@ export * from "./Select";
 export * from "./TextInput";
 export * from "./CheckBox";
 export * from "./FormGroup";
-export * from "./LoadingDots";
+export * from "./ProgressEllipsis";

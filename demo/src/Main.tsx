@@ -2,7 +2,7 @@ import { createRoot } from "react-dom/client";
 import { useEffect, useState } from "react";
 import {
     Button, Container, Label, HGroup, VGroup, ArrowButton,
-    LoadingIcon, Select, SelectOption, TextInput, FormGroup,
+    ProgressRing, Select, SelectOption, TextInput, FormGroup,
     CheckBox,
 
     ThemePresets,
@@ -85,7 +85,7 @@ function App()
                             <ArrowButton direction="right" size={9}></ArrowButton>
                         </HGroup>
                         <VGroup horizontalAlign="center">
-                            <LoadingIcon size={9}/>
+                            <ProgressRing size={9}/>
                         </VGroup>
                         <div>
                             <Select default="qux1">

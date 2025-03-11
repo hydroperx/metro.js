@@ -165,7 +165,7 @@ export function RightArrowIcon(options: IconOptions)
     return <ArrowIcon direction="right" size={options.size} style={options.style}/>;
 }
 
-export function LoadingIcon(options: LoadingIconOptions)
+export function ProgressRing(options: ProgressRingOptions)
 {
     // Some of the implementation uses code from
     // https://stackoverflow.com/a/20371835/26380963
@@ -266,13 +266,13 @@ export function LoadingIcon(options: LoadingIconOptions)
             width: ${size * 0.25 * rem}px;
             height: ${size * 0.25 * rem}px;
 
-            .progress-ring__wrap {
+            & .progress-ring__wrap {
                 position: absolute;
                 width: ${(size * 0.25 * rem ) - 2}px;
                 height: ${(size * 0.25 * rem ) - 2}px;
             }
 
-            .progress-ring__circle {
+            & .progress-ring__circle {
                 transform: rotate(225deg);
                 animation-iteration-count: infinite;
                 animation-name: ${orbit};
@@ -283,7 +283,7 @@ export function LoadingIcon(options: LoadingIconOptions)
                 opacity: 0;
             }
 
-            .progress-ring__circle:after {
+            & .progress-ring__circle:after {
                 content: '';
                 position: absolute;
                 width: ${(size * 0.25 * rem) / 8}px;
@@ -293,22 +293,22 @@ export function LoadingIcon(options: LoadingIconOptions)
                 background: ${color};
             }
 
-            .progress-ring__wrap:nth-of-type(2) {
+            & .progress-ring__wrap:nth-of-type(2) {
                 transform: rotate(${r}deg);
-                .progress-ring__circle {    animation-delay: ${time / m}ms; }
             }
-            .progress-ring__wrap:nth-of-type(3) {
+            & .progress-ring__wrap:nth-of-type(2) .progress-ring__circle { animation-delay: ${time / m}ms; }
+            & .progress-ring__wrap:nth-of-type(3) {
                 transform: rotate(${r * 2}deg);
-                .progress-ring__circle {    animation-delay: ${time / m*2}ms; }
             }
-            .progress-ring__wrap:nth-of-type(4) {
+            & .progress-ring__wrap:nth-of-type(3) .progress-ring__circle { animation-delay: ${time / m*2}ms; }
+            & .progress-ring__wrap:nth-of-type(4) {
                 transform: rotate(${r * 3}deg);
-                .progress-ring__circle {    animation-delay: ${time / m*3}ms; }
             }
-            .progress-ring__wrap:nth-of-type(5) {
+            & .progress-ring__wrap:nth-of-type(4) .progress-ring__circle {    animation-delay: ${time / m*3}ms; }
+            & .progress-ring__wrap:nth-of-type(5) {
                 transform: rotate(${r * 4}deg);
-                .progress-ring__circle {    animation-delay: ${time / m*4}ms; }
             }
+            & .progress-ring__wrap:nth-of-type(5) .progress-ring__circle {    animation-delay: ${time / m*4}ms; }
         `);
     }, [color, rem]);
 
@@ -333,7 +333,7 @@ export function LoadingIcon(options: LoadingIconOptions)
     );
 }
 
-export type LoadingIconOptions = {
+export type ProgressRingOptions = {
     size?: number,
     style?: React.CSSProperties,
 };
