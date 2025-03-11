@@ -56,22 +56,18 @@ export function Icon(options: IconOptions)
     const [color, setColor] = useState<string>("white");
 
     // Icon type
-    const type = options.type ?? "bullet";
+    assert(options.type, "Icon type must be specified.");
+    const type = options.type;
 
-    // Set style
-    const newStyle: React.CSSProperties = {};
-    newStyle.width = "100%";
-    newStyle.height = "100%";
-    newStyle.verticalAlign = "middle";
-    if (options.size !== undefined)
-    {
-        newStyle.width = pointsToRem(options.size);
-        newStyle.height = newStyle.width;
-    }
-    if (options.style)
-    {
-        extend(newStyle, options.style);
-    }
+    // Compute size
+    const computed_size = options.size !== undefined ? pointsToRem(options.size) : "100%";
+
+    const serializedStyles = css `
+        width: ${computed_size};
+        height: ${computed_size};
+        height: 100%;
+        vertical-align: middle;
+    `;
 
     // Adjust color
     useEffect(() => {
@@ -87,7 +83,7 @@ export function Icon(options: IconOptions)
     const m = iconMap.get(type);
     assert(m !== undefined, "Icon is not defined: " + type);
     return (
-        <img ref={ref} src={m[color]} draggable={false} alt={type} style={newStyle}></img>
+        <img css={serializedStyles} ref={ref} src={m[color]} draggable={false} alt={type} style={options.style}></img>
     );
 }
 

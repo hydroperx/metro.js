@@ -39,14 +39,14 @@ export function VGroup(options: VGroupOptions)
         overflowY = "hidden";
     }
     let justifyContent = "";
-    if (options.horizontalAlign)
+    if (options.verticalAlign)
     {
         const m = verticalAlignMaps[options.verticalAlign];
         assert(!!m, `Unsupported vertical alignment: ${options.verticalAlign}`);
         justifyContent = m;
     }
     let alignItems = "";
-    if (options.verticalAlign)
+    if (options.horizontalAlign)
     {
         const m = horizontalAlignMaps[options.horizontalAlign];
         assert(!!m, `Unsupported horizontal alignment: ${options.horizontalAlign}`);
