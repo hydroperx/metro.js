@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState, useEffect } from "react";
+import React, { useContext, useRef, useState, useEffect, createContext } from "react";
 import { css, SerializedStyles } from "@emotion/react";
 import Color from "color";
 import { Input } from "@hydroper/inputaction";
@@ -8,6 +8,7 @@ import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { UpArrowIcon, DownArrowIcon } from "./Icons";
 import { computePosition, fitViewportPosition, Side } from "../utils/placement";
 import { ThemeContext } from "../theme";
+import { enhanceBrightness, contrast } from "../utils/color";
 import { fontFamily, fontSize, maximumZIndex } from "../utils/common";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
 import { focusPrevSibling, focusNextSibling } from "../utils/focusability";
@@ -76,13 +77,13 @@ export function Select(options: SelectOptions)
     const hoverBackground = Color(theme.colors.inputBackground).darken(0.4).toString();
     let buttonSerializedStyles: SerializedStyles = null;
     
-    if (options.big)
+    if (options.big || options.medium)
     {
         buttonSerializedStyles = css `
             background: none;
             border: none;
             color: ${theme.colors.foreground};
-            font-size: 2rem;
+            font-size: ${options.big ? 2 : 1.6}rem;
             font-family: ${fontFamily};
             font-weight: lighter;
             outline: none;
@@ -464,39 +465,41 @@ export function Select(options: SelectOptions)
                     <DownArrowIcon size={options.big ? 6 : 3.5}/>
                 </div>
             </button>
-            <div ref={divRef} style={{
-                display: "inline-flex",
-                visibility: visible ? "visible" : "hidden",
-                flexDirection: "column",
-                position: "fixed",
-                minWidth: "15rem",
-                maxHeight: "25rem",
-                background: theme.colors.inputBackground,
-                border: "0.15rem solid " + theme.colors.inputBorder,
-                left: x + "px",
-                top: y + "px",
-                opacity: opacity.toString(),
-                transition,
-                zIndex: maximumZIndex,
-            }}>
-                <div className="up-arrow" style={{display: arrowsVisible ? "flex" : "none", flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
-                    <UpArrowIcon size={2.5}/>
+            <SelectOptionBigContext.Provider value={!!options.big || !!options.medium}>
+                <div ref={divRef} style={{
+                    display: "inline-flex",
+                    visibility: visible ? "visible" : "hidden",
+                    flexDirection: "column",
+                    position: "fixed",
+                    minWidth: "15rem",
+                    maxHeight: "25rem",
+                    background: theme.colors.inputBackground,
+                    border: "0.15rem solid " + theme.colors.inputBorder,
+                    left: x + "px",
+                    top: y + "px",
+                    opacity: opacity.toString(),
+                    transition,
+                    zIndex: maximumZIndex,
+                }}>
+                    <div className="up-arrow" style={{display: arrowsVisible ? "flex" : "none", flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
+                        <UpArrowIcon size={2.5}/>
+                    </div>
+                    <div
+                        className="list"
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            overflowY: "scroll",
+                            scrollbarWidth: "none",
+                            flexGrow: "3",
+                        }}>
+                        {options.children}
+                    </div>
+                    <div className="down-arrow" style={{display: arrowsVisible ? "flex" : "none", flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
+                        <DownArrowIcon size={2.5}/>
+                    </div>
                 </div>
-                <div
-                    className="list"
-                    style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        overflowY: "scroll",
-                        scrollbarWidth: "none",
-                        flexGrow: "3",
-                    }}>
-                    {options.children}
-                </div>
-                <div className="down-arrow" style={{display: arrowsVisible ? "flex" : "none", flexDirection: "row", justifyContent: "center", height: pointsToRem(2.5)}}>
-                    <DownArrowIcon size={2.5}/>
-                </div>
-            </div>
+            </SelectOptionBigContext.Provider>
         </>
     );
 }
@@ -524,6 +527,11 @@ export type SelectOptions = {
     big?: boolean,
 
     /**
+     * Whether the input button is a light medium or not.
+     */
+    medium?: boolean,
+
+    /**
      * Event triggered on value change.
      */
     change?: (value: string) => void,
@@ -539,11 +547,15 @@ export function SelectOption(options: SelectOptionOptions)
     // Use the theme context
     const theme = useContext(ThemeContext);
 
+    // Big
+    const big = useContext(SelectOptionBigContext);
+
     // Button ref
     const buttonRef = useRef<HTMLButtonElement | null>(null);
 
     // Build the style class
-    const hoverBackground = Color(theme.colors.inputBackground).darken(0.4).toString();
+    const hoverBackground = contrast(theme.colors.inputBackground, 0.25);
+    const activeBackground = contrast(theme.colors.inputBackground, 0.35);
     const serializedStyles = css `
         display: inline-flex;
         flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
@@ -555,15 +567,16 @@ export function SelectOption(options: SelectOptionOptions)
         outline: none;
         color: ${theme.colors.foreground};
         font-family: ${fontFamily};
-        font-size: ${fontSize};
+        font-size: ${big ? "1.1rem" : fontSize};
+        ${big ? "font-weight: lighter;" : ""}
 
         &:hover, &:focus {
             background: ${hoverBackground};
         }
 
         &:active, &[data-selected="true"] {
-            background: ${theme.colors.primaryBackground};
-            color: ${theme.colors.primaryForeground};
+            background: ${activeBackground};
+            color: ${enhanceBrightness(activeBackground, theme.colors.primaryBackground)};
         }
 
         &:disabled {
@@ -598,3 +611,5 @@ export type SelectOptionOptions = {
      */
     value: string,
 };
+
+const SelectOptionBigContext = createContext<boolean>(false);

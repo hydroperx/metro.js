@@ -106,27 +106,19 @@ export function ProgressEllipsis(options: ProgressEllipsisOptions)
                 animation: ${move} ${time}ms infinite;
                 width: ${size * 0.25 * rem}px;
                 height: ${size * 0.25 * rem}px;
-                opacity: 0;
-            }
-
-            & .progress-ellipsis__circle:after {
-                content: '';
-                position: absolute;
-                width: ${size * 0.25 * rem}px;
-                height: ${size * 0.25 * rem}px;
-                border-radius: ${size * 0.25 * rem}px;
-                box-shadow: 0px 0px 5% ${color};
                 background: ${color};
+                border-radius: 100%;
+                opacity: 0;
             }
 
             & div:nth-of-type(2) { left: ${r}% }
             & div:nth-of-type(3) { left: ${r * 2}% }
             & div:nth-of-type(4) { left: ${r * 3}% }
             & div:nth-of-type(5) { left: ${r * 4}% }
-            & .progress-ellipsis__circle:nth-of-type(2) { animation-delay: ${time / m}ms }
-            & .progress-ellipsis__circle:nth-of-type(3) { animation-delay: ${time / m*2}ms }
-            & .progress-ellipsis__circle:nth-of-type(4) { animation-delay: ${time / m*3}ms }
-            & .progress-ellipsis__circle:nth-of-type(5) { animation-delay: ${time / m*4}ms }
+            & div:nth-of-type(2) { animation-delay: ${time / m}ms }
+            & div:nth-of-type(3) { animation-delay: ${time / m*2}ms }
+            & div:nth-of-type(4) { animation-delay: ${time / m*3}ms }
+            & div:nth-of-type(5) { animation-delay: ${time / m*4}ms }
         `);
     }, [color, rem]);
 

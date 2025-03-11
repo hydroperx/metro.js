@@ -25,6 +25,10 @@ Basic components
 
 - [ ] Implement dragging of the carret (tried before, but failed)
 
+## ProgressEllipsis
+
+- [ ] Fix the little snailing at the center of the animation.
+
 ## Select
 
 - [ ] Future change: a more Metro like transition and positioning that centers the selected option to the input button

@@ -29,6 +29,10 @@ export function enhanceBrightness(background: any, color: any): string
 {
     const a = to_color_object(background);
     const b = to_color_object(color);
+    if (colorsAreSimiliar(a, b))
+    {
+        return a.isDark() ? lighten(b, 0.5) : darken(b, 0.5);
+    }
     return (a.isDark() ? (b.isDark() ? lighten(b, 0.5) : b)
         : (b.isLight() ? darken(b, 0.5) : b)).toString();
 }
