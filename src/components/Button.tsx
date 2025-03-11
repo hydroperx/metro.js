@@ -286,6 +286,17 @@ export function Button(options: ButtonOptions)
     const [tooltipY, setTooltipY] = useState<number>(0);
     const tooltipElement: Ref<HTMLDivElement> = useRef(null);
     let tooltipTimeout = -1;
+    let tooltipSerializedStyles: SerializedStyles | null = options.tooltip === undefined ? null : css `
+        background: ${theme.colors.inputBackground};
+        border: 0.15rem solid ${theme.colors.inputBorder};
+        display: inline-block;
+        visibility: ${tooltipVisible ? "visible" : "hidden"};
+        position: fixed;
+        left: ${tooltipX}px;
+        top: ${tooltipY}px;
+        padding: 0.4rem;
+        font-size: 0.77rem;
+    `;
 
     // Display tooltip
     const userMouseOver = options.mouseOver;
@@ -351,17 +362,7 @@ export function Button(options: ButtonOptions)
             </button>
             {tooltip === undefined ?
                 undefined :
-                <div ref={tooltipElement} style={{
-                    background: theme.colors.inputBackground,
-                    border: "0.15rem solid " + theme.colors.inputBorder,
-                    display: "inline-block",
-                    visibility: tooltipVisible ? "visible" : "hidden",
-                    position: "fixed",
-                    left: tooltipX + "px",
-                    top: tooltipY + "px",
-                    padding: "0.4rem",
-                    fontSize: "0.77rem",
-                }}>{tooltip}</div>
+                <div ref={tooltipElement} css={tooltipSerializedStyles}>{tooltip}</div>
             }
     </>;
 }

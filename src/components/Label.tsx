@@ -1,5 +1,5 @@
 import extend from "extend";
-import { css } from "@emotion/react";
+import { css, SerializedStyles } from "@emotion/react";
 import { useContext, useState, useRef, Ref } from "react";
 import { ThemeContext, PreferPrimaryContext } from "../theme/Theme";
 import { fontFamily  } from "../utils/common";
@@ -46,6 +46,17 @@ export function Label(options: LabelOptions)
     const [tooltipY, setTooltipY] = useState<number>(0);
     const tooltipElement: Ref<HTMLDivElement> = useRef(null);
     let tooltipTimeout = -1;
+    let tooltipSerializedStyles: SerializedStyles | null = options.tooltip === undefined ? null : css `
+        background: ${theme.colors.inputBackground};
+        border: 0.15rem solid ${theme.colors.inputBorder};
+        display: inline-block;
+        visibility: ${tooltipVisible ? "visible" : "hidden"};
+        position: fixed;
+        left: ${tooltipX}px;
+        top: ${tooltipY}px;
+        padding: 0.4rem;
+        font-size: 0.77rem;
+    `;
 
     // Display tooltip
     const mouseOver = (e: MouseEvent): any => {
@@ -81,17 +92,7 @@ export function Label(options: LabelOptions)
 
     const tooltipRendered = tooltip === undefined ?
         undefined :
-        <div ref={tooltipElement} style={{
-            background: theme.colors.inputBackground,
-            border: "0.15rem solid " + theme.colors.inputBorder,
-            display: "inline-block",
-            visibility: tooltipVisible ? "visible" : "hidden",
-            position: "fixed",
-            left: tooltipX + "px",
-            top: tooltipY + "px",
-            padding: "0.4rem",
-            fontSize: "0.77rem",
-        }}>{tooltip}</div>;
+        <div ref={tooltipElement} css={tooltipSerializedStyles}>{tooltip}</div>;
 
     switch (variant)
     {
