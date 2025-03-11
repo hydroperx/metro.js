@@ -109,6 +109,11 @@ export function CheckBox(options: CheckBoxOptions)
     // Handle click
     function button_onClick()
     {
+        if (dragEffective)
+        {
+            return;
+        }
+
         // Set new value
         value = !value;
         setValue(value);
@@ -125,7 +130,8 @@ export function CheckBox(options: CheckBoxOptions)
 
     // Drag state
     const [dragging, set_dragging] = useState<boolean>(false);
-    let dragTime = 0;
+    let dragEffective = false;
+    let drag_start_x = 0;
 
     // Carret misc.
     const carret_left_px = ((carret_left / 100) * (w * rem));
@@ -133,17 +139,16 @@ export function CheckBox(options: CheckBoxOptions)
     const rightmost_carret_pos = (w * rem) - (side_length * rem) - (carret_w * rem);
 
     // Handle drag start
-    function onDragStart()
+    function onDragStart(e: any, data: DraggableData)
     {
         set_dragging(true);
-        dragTime = Date.now();
+        dragEffective = false;
+        drag_start_x = data.x;
     }
 
     // Handle drag move
     function onDrag(e: any, data: DraggableData)
     {
-        const button = button_ref.current!;
-        const rect = button.getBoundingClientRect();
         carret_left = data.x / (rightmost_carret_pos - leftmost_carret_pos - (side_length / 2) * rem);
         carret_left = clamp(carret_left, 0, 1) * 100;
         carret_left = localeDir == "ltr" ? carret_left : (100 - carret_left);
@@ -152,25 +157,43 @@ export function CheckBox(options: CheckBoxOptions)
     }
 
     // Handle drag stop
-    function onDragStop()
+    function onDragStop(e: any, data: DraggableData)
     {
         set_dragging(false);
 
-        if (dragTime > Date.now() - 100)
+        dragEffective = drag_start_x != data.x;
+        if (!dragEffective)
         {
+            button_onClick();
             return;
         }
 
         // Adjust carret left
-        if (carret_left < 50)
+        if (localeDir == "ltr")
         {
-            value = localeDir != "ltr";
-            set_carret_left(localeDir == "ltr" ? 0 : 100);
+            if (carret_left < 50)
+            {
+                value = false;
+                set_carret_left(0);
+            }
+            else
+            {
+                value = true;
+                set_carret_left(100);
+            }
         }
         else
         {
-            value = localeDir == "ltr";
-            set_carret_left(localeDir == "ltr" ? 100 : 0);
+            if (carret_left < 50)
+            {
+                value = false;
+                set_carret_left(100);
+            }
+            else
+            {
+                value = true;
+                set_carret_left(0);
+            }
         }
 
         // Update value
@@ -209,7 +232,7 @@ export function CheckBox(options: CheckBoxOptions)
             disabled={options.disabled}
             style={options.style}
             className={options.className}
-            onClick={button_onClick}>
+            onClick={_ => { dragEffective = false; button_onClick() }}>
 
             <div ref={unchecked_div_ref} className="CheckBox-unchecked-rect">
             </div>
