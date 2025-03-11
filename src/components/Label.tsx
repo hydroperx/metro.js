@@ -1,10 +1,11 @@
 import extend from "extend";
 import { css } from "@emotion/react";
-import { useContext } from "react";
+import { useContext, useState, useRef, Ref } from "react";
 import { ThemeContext, PreferPrimaryColorsContext } from "../theme/Theme";
 import { fontFamily  } from "../utils/common";
 import { enhanceBrightness } from "../utils/color";
 import { pointsToRem } from "../utils/points";
+import { computePosition } from "../utils/placement";
 
 export type LabelVariant = 
     "normal" |
@@ -39,6 +40,59 @@ export function Label(options: LabelOptions)
         ${options.maxHeight === undefined ? "" : "max-height: " + pointsToRem(options.maxHeight) + ";"}
     `;
 
+    const tooltip = options.tooltip;
+    const [tooltipVisible, setTooltipVisible] = useState<boolean>(false);
+    const [tooltipX, setTooltipX] = useState<number>(0);
+    const [tooltipY, setTooltipY] = useState<number>(0);
+    const tooltipElement: Ref<HTMLDivElement> = useRef(null);
+    let tooltipTimeout = -1;
+
+    // Display tooltip
+    const mouseOver = (e: MouseEvent): any => {
+        if (tooltipElement.current)
+        {
+            const element = e.target as HTMLElement;
+            tooltipTimeout = window.setTimeout(() => {
+                const button = element;
+                if (button.matches(":hover"))
+                {
+                    setTooltipVisible(true);
+                }
+            }, 700);
+
+            // Adjust tooltip position
+            const [x, y] = computePosition(e.target as HTMLElement, tooltipElement.current, {
+                prefer: "bottom",
+                margin: 7,
+            });
+            setTooltipX(x);
+            setTooltipY(y);
+        }
+    };
+
+    // Hide tooltip
+    const mouseOut = (e: MouseEvent): any => {
+        if (tooltipTimeout !== -1) {
+            window.clearTimeout(tooltipTimeout);
+            tooltipTimeout = -1;
+        }
+        setTooltipVisible(false);
+    };
+
+    const tooltipRendered = tooltip === undefined ?
+        undefined :
+        <div ref={tooltipElement} style={{
+            background: theme.colors.inputBackground,
+            border: "0.15rem solid " + theme.colors.inputBorder,
+            display: "inline-block",
+            visibility: tooltipVisible ? "visible" : "hidden",
+            position: "fixed",
+            left: tooltipX + "px",
+            top: tooltipY + "px",
+            padding: "0.4rem",
+            fontSize: "0.77rem",
+        }}>{tooltip}</div>;
+
     switch (variant)
     {
         case "normal":
@@ -50,9 +104,15 @@ export function Label(options: LabelOptions)
             `;
             if (options.for)
             {
-                return <label id={options.id} css={serializedStyles} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>;
+                return <>
+                    <label id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>
+                    {tooltipRendered}
+                </>;
             }
-            return <span id={options.id} css={serializedStyles} className={options.className} style={newStyle}>{options.children}</span>;
+            return <>
+                <span id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle}>{options.children}</span>
+                {tooltipRendered}
+            </>;
         }
         case "heading1":
         {
@@ -66,9 +126,15 @@ export function Label(options: LabelOptions)
             `;
             if (options.for)
             {
-                return <label id={options.id} css={serializedStyles} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>;
+                return <>
+                    <label id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>
+                    {tooltipRendered}
+                </>;
             }
-            return <h1 id={options.id} css={serializedStyles} className={options.className} style={newStyle}>{options.children}</h1>;
+            return <>
+                <h1 id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle}>{options.children}</h1>
+                {tooltipRendered}
+            </>;
         }
         case "heading2":
         {
@@ -82,9 +148,15 @@ export function Label(options: LabelOptions)
             `;
             if (options.for)
             {
-                return <label id={options.id} css={serializedStyles} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>;
+                return <>
+                    <label id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>
+                    {tooltipRendered}
+                </>;
             }
-            return <h2 id={options.id} css={serializedStyles} className={options.className} style={newStyle}>{options.children}</h2>;
+            return <>
+                <h2 id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle}>{options.children}</h2>
+                {tooltipRendered}
+            </>;
         }
         case "heading3":
         {
@@ -98,9 +170,15 @@ export function Label(options: LabelOptions)
             `;
             if (options.for)
             {
-                return <label id={options.id} css={serializedStyles} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>;
+                return <>
+                    <label id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>
+                    {tooltipRendered}
+                </>;
             }
-            return <h3 id={options.id} css={serializedStyles} className={options.className} style={newStyle}>{options.children}</h3>;
+            return <>
+                <h3 id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle}>{options.children}</h3>
+                {tooltipRendered}
+            </>;
         }
         case "heading4":
         {
@@ -114,9 +192,15 @@ export function Label(options: LabelOptions)
             `;
             if (options.for)
             {
-                return <label id={options.id} css={serializedStyles} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>;
+                return <>
+                    <label id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>
+                    {tooltipRendered}
+                </>;
             }
-            return <h4 id={options.id} css={serializedStyles} className={options.className} style={newStyle}>{options.children}</h4>;
+            return <>
+                <h4 id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle}>{options.children}</h4>
+                {tooltipRendered}
+            </>;
         }
         case "legend":
         {
@@ -127,15 +211,23 @@ export function Label(options: LabelOptions)
             `;
             if (options.for)
             {
-                return <label id={options.id} css={serializedStyles} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>;
+                return <>
+                    <label id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>
+                    {tooltipRendered}
+                </>;
             }
-            return <span id={options.id} css={serializedStyles} className={options.className} style={newStyle}>{options.children}</span>;
+            return <>
+                <span id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle}>{options.children}</span>
+                {tooltipRendered}
+            </>;
         }
     }
 }
 
 export type LabelOptions = {
     variant?: LabelVariant,
+
+    tooltip?: string,
 
     id?: string,
 

@@ -55,7 +55,7 @@ function App()
             <ThemeContext.Provider value={theme}>
                 <Container full solid selection={false} contextMenu={Container_onContextMenu as any}>
                     <Container padding={5}>
-                        <Label variant="heading1">Metro demo</Label>
+                        <Label variant="heading1" tooltip="This demonstrates a Metro components library.">Metro demo</Label>
                         <div style={{margin: "7rem"}}></div>
                         <VGroup gap={7} maxWidth={100}>
                             <Select default="dark" big change={changeTheme}>

@@ -16,7 +16,7 @@ Basic components
 - [x] TextInput
 - [x] CheckBox
 - [x] FormGroup
-- [ ] LoadingBar (consists of horizontally moving dots)
+- [ ] LoadingDots (consists of horizontally moving dots)
 - [ ] Tile container
   - [ ] Live tiles
   - [ ] Bottom bar (triggered on right click or long touch pressure)

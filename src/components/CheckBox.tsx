@@ -170,6 +170,7 @@ export function CheckBox(options: CheckBoxOptions)
                 }}>
             </div>
             <Draggable
+                nodeRef={carret_ref}
                 axis="x"
                 bounds="parent"
                 disabled
