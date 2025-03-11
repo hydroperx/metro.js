@@ -1,11 +1,13 @@
 import React, { useContext, useRef, useState, useEffect } from "react";
 import { css, SerializedStyles } from "@emotion/react";
 import Color from "color";
-import $ from "jquery";
+import Draggable, { DraggableData } from "react-draggable";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { ThemeContext, PreferPrimaryColorsContext } from "../theme";
+import { RemObserver } from "../utils/RemObserver";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
 import { lighten, enhanceBrightness, contrast } from "../utils/color";
+import { clamp } from "../utils/math";
 
 export function CheckBox(options: CheckBoxOptions)
 {
@@ -26,8 +28,9 @@ export function CheckBox(options: CheckBoxOptions)
 
     // States
     let [value, setValue] = useState<boolean>(!!options.default);
-    const [checked_horizontal_pos, set_checked_horizontal_pos] = useState<number>(value ? 0 : 100); // percent
-    const [carret_left, set_carret_left] = useState<number>(localeDir == "ltr" ? (value ? 100 : 0) : value ? 0 : 100); // percent
+    let [checked_horizontal_pos, set_checked_horizontal_pos] = useState<number>(value ? 0 : 100); // percent
+    let [carret_left, set_carret_left] = useState<number>(localeDir == "ltr" ? (value ? 100 : 0) : value ? 0 : 100); // percent
+    const [rem, set_rem] = useState<number>(0);
 
     // Misc.
     const border_width = 0.15;
@@ -120,10 +123,80 @@ export function CheckBox(options: CheckBoxOptions)
         options.change?.(value);
     }
 
+    // Drag state
+    const [dragging, set_dragging] = useState<boolean>(false);
+
+    // Handle drag start
+    function onDragStart()
+    {
+        set_dragging(true);
+    }
+
+    // Handle drag move
+    function onDrag(e: any, data: DraggableData)
+    {
+        const button = button_ref.current!;
+        const rect = button.getBoundingClientRect();
+        carret_left = carret_ref.current!.getBoundingClientRect().left - rect.left;
+        carret_left = carret_left / rect.width;
+        carret_left = clamp(carret_left, 0, 1) * 100;
+        carret_left = localeDir == "ltr" ? carret_left : (100 - carret_left);
+        set_carret_left(carret_left);
+        set_checked_horizontal_pos(100 - carret_left);
+    }
+
+    // Handle drag stop
+    function onDragStop()
+    {
+        set_dragging(false);
+
+        const button = button_ref.current!;
+        if (button.matches(":hover"))
+        {
+            return;
+        }
+
+        // Adjust carret left
+        if (carret_left < 50)
+        {
+            value = localeDir != "ltr";
+            set_carret_left(localeDir == "ltr" ? 0 : 100);
+        }
+        else
+        {
+            value = localeDir == "ltr";
+            set_carret_left(localeDir == "ltr" ? 100 : 0);
+        }
+
+        // Update value
+        setValue(value);
+
+        // Position checked rectangle
+        set_checked_horizontal_pos(value ? 0 : 100);
+
+        // Trigger event
+        options.change?.(value);
+    }
+
     useEffect(() => {
         // Update carret
         set_carret_left(localeDir == "ltr" ? (value ? 100 : 0) : value ? 0 : 100);
+
+        // Position checked rectangle
+        set_checked_horizontal_pos(value ? 0 : 100);
     }, [localeDir]);
+
+    useEffect(() => {
+        const remObserver = new RemObserver(value => {
+            set_rem(value);
+        });
+        return () => {
+            remObserver.cleanup();
+        };
+    });
+
+    // Carret left in pixels
+    const carret_left_px = ((carret_left / 100) * (w * rem));
 
     return (
         <button
@@ -145,13 +218,23 @@ export function CheckBox(options: CheckBoxOptions)
                     [localeDir == "ltr" ? "right" : "left"]: "calc(" + (checked_horizontal_pos) + `% + ${padding}rem)`,
                 }}>
             </div>
-            <div
-                ref={carret_ref}
-                className="CheckBox-carret"
-                style={{
-                    right: "calc(" + (100 - carret_left) + `% - ${side_length}rem)`,
-                }}>
-            </div>
+            <Draggable
+                axis="x"
+                onStart={onDragStart}
+                onDrag={onDrag}
+                onStop={onDragStop}
+                bounds="parent"
+                offsetParent={button_ref.current!}
+                defaultPosition={{x: carret_left == 0 ? 0 : w * rem, y: 0}}
+                position={dragging ? undefined :
+                    {
+                        x: carret_left_px <= side_length * rem ? -(side_length / 2) * rem : carret_left_px - (side_length * rem) - (carret_w * rem),
+                        y: 0
+                    }}
+                >
+
+                <div ref={carret_ref} className="CheckBox-carret"></div>
+            </Draggable>
         </button>
     );
 }
