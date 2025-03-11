@@ -125,11 +125,18 @@ export function CheckBox(options: CheckBoxOptions)
 
     // Drag state
     const [dragging, set_dragging] = useState<boolean>(false);
+    let dragTime = 0;
+
+    // Carret misc.
+    const carret_left_px = ((carret_left / 100) * (w * rem));
+    const leftmost_carret_pos = -(side_length / 2) * rem;
+    const rightmost_carret_pos = (w * rem) - (side_length * rem) - (carret_w * rem);
 
     // Handle drag start
     function onDragStart()
     {
         set_dragging(true);
+        dragTime = Date.now();
     }
 
     // Handle drag move
@@ -137,8 +144,7 @@ export function CheckBox(options: CheckBoxOptions)
     {
         const button = button_ref.current!;
         const rect = button.getBoundingClientRect();
-        carret_left = carret_ref.current!.getBoundingClientRect().left - rect.left;
-        carret_left = carret_left / rect.width;
+        carret_left = data.x / (rightmost_carret_pos - leftmost_carret_pos - (side_length / 2) * rem);
         carret_left = clamp(carret_left, 0, 1) * 100;
         carret_left = localeDir == "ltr" ? carret_left : (100 - carret_left);
         set_carret_left(carret_left);
@@ -150,8 +156,7 @@ export function CheckBox(options: CheckBoxOptions)
     {
         set_dragging(false);
 
-        const button = button_ref.current!;
-        if (button.matches(":hover"))
+        if (dragTime > Date.now() - 100)
         {
             return;
         }
@@ -195,9 +200,6 @@ export function CheckBox(options: CheckBoxOptions)
         };
     });
 
-    // Carret left in pixels
-    const carret_left_px = ((carret_left / 100) * (w * rem));
-
     return (
         <button
             ref={button_ref}
@@ -228,7 +230,7 @@ export function CheckBox(options: CheckBoxOptions)
                 defaultPosition={{x: carret_left == 0 ? 0 : w * rem, y: 0}}
                 position={dragging ? undefined :
                     {
-                        x: carret_left_px <= side_length * rem ? -(side_length / 2) * rem : carret_left_px - (side_length * rem) - (carret_w * rem),
+                        x: carret_left_px <= side_length * rem ? leftmost_carret_pos : rightmost_carret_pos,
                         y: 0
                     }}
                 >
