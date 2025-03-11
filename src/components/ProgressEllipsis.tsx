@@ -123,7 +123,7 @@ export function ProgressEllipsis(options: ProgressEllipsisOptions)
     }, [color, rem]);
 
     return (
-        <div className={options.className} style={options.style} css={serializedStyles}>
+        <div ref={ref} className={options.className} style={options.style} css={serializedStyles}>
             <div className='progress-ellipsis__circle'></div>
             <div className='progress-ellipsis__circle'></div>
             <div className='progress-ellipsis__circle'></div>
