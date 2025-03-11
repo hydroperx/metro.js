@@ -15,7 +15,6 @@ Basic components
 - [x] Select
 - [x] TextInput
 - [x] CheckBox
-  - [ ] RTL
 - [ ] LoadingBar (consists of horizontally moving dots)
 - [ ] FormGroup
   - A horizontal group generally containing of a label and a form control.
