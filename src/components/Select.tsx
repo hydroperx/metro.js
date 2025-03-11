@@ -474,7 +474,7 @@ export function Select(options: SelectOptions)
                     minWidth: "15rem",
                     maxHeight: "25rem",
                     background: theme.colors.inputBackground,
-                    border: "0.15rem solid " + theme.colors.inputBorder,
+                    border: (options.big || options.medium ? "0.3rem" : "0.15rem") + " solid " + theme.colors.inputBorder,
                     left: x + "px",
                     top: y + "px",
                     opacity: opacity.toString(),
@@ -554,8 +554,8 @@ export function SelectOption(options: SelectOptionOptions)
     const buttonRef = useRef<HTMLButtonElement | null>(null);
 
     // Build the style class
-    const hoverBackground = contrast(theme.colors.inputBackground, 0.25);
-    const activeBackground = contrast(theme.colors.inputBackground, 0.35);
+    const hoverBackground = contrast(theme.colors.inputBackground, 0.1);
+    const activeBackground = contrast(theme.colors.inputBackground, 0.15);
     const serializedStyles = css `
         display: inline-flex;
         flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
