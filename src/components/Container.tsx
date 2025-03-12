@@ -1,6 +1,6 @@
 import { pointsToRem } from "../utils/points";
 import extend from "extend";
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { css } from "@emotion/react";
 import { ThemeContext } from "../theme";
 import { fontFamily, fontSize } from "../utils/common";
@@ -84,11 +84,28 @@ export function Container(options: ContainerOptions)
         css={serializedStyles}
         className={options.className ? " " + options.className : ""}
         style={options.style}
+
         onClick={options.click}
         onMouseOver={options.mouseOver}
         onMouseOut={options.mouseOut}
         onMouseUp={options.mouseUp}
-        onContextMenu={options.contextMenu}>
+        onContextMenu={options.contextMenu}
+
+        onGotPointerCapture={options.gotPointerCapture}
+        onLostPointerCapture={options.lostPointerCapture}
+        onPointerCancel={options.pointerCancel}
+        onPointerDown={options.pointerDown}
+        onPointerEnter={options.pointerEnter}
+        onPointerLeave={options.pointerLeave}
+        onPointerMove={options.pointerMove}
+        onPointerOut={options.pointerOut}
+        onPointerOver={options.pointerOver}
+        onPointerUp={options.pointerUp}
+
+        onTouchStart={options.touchStart}
+        onTouchEnd={options.touchEnd}
+        onTouchMove={options.touchMove}
+        onTouchCancel={options.touchCancel}>
 
         {options.children}
     </div>;
@@ -137,4 +154,20 @@ export type ContainerOptions =
     mouseOver?: React.MouseEventHandler<HTMLDivElement>,
     mouseOut?: React.MouseEventHandler<HTMLDivElement>,
     mouseUp?: React.MouseEventHandler<HTMLDivElement>,
+
+    gotPointerCapture?: React.PointerEventHandler<HTMLDivElement>,
+    lostPointerCapture?: React.PointerEventHandler<HTMLDivElement>,
+    pointerCancel?: React.PointerEventHandler<HTMLDivElement>,
+    pointerDown?: React.PointerEventHandler<HTMLDivElement>,
+    pointerEnter?: React.PointerEventHandler<HTMLDivElement>,
+    pointerLeave?: React.PointerEventHandler<HTMLDivElement>,
+    pointerMove?: React.PointerEventHandler<HTMLDivElement>,
+    pointerOut?: React.PointerEventHandler<HTMLDivElement>,
+    pointerOver?: React.PointerEventHandler<HTMLDivElement>,
+    pointerUp?: React.PointerEventHandler<HTMLDivElement>,
+
+    touchStart?: React.TouchEventHandler<HTMLDivElement>,
+    touchEnd?: React.TouchEventHandler<HTMLDivElement>,
+    touchMove?: React.TouchEventHandler<HTMLDivElement>,
+    touchCancel?: React.TouchEventHandler<HTMLDivElement>,
 };
