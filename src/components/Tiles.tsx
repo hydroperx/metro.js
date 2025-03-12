@@ -54,6 +54,9 @@ export function Tiles(options: TilesOptions)
     const [forced_invisible, set_forced_invisible] = useState<boolean>(true);
     const [scale, set_scale] = useState<number>(open ? 0 : 1);
 
+    // Rem
+    const [rem, set_rem] = useState<number>(16);
+
     // Modes
     let selection_mode = false;
     let drag_n_drop_mode = false;
@@ -140,14 +143,18 @@ export function Tiles(options: TilesOptions)
             return isNaN(a_pos) ? (isNaN(b_pos) ? 0 : 1) : isNaN(b_pos) ? -1 : a_pos < b_pos ? -1 : a_pos > b_pos ? 1 : 0;
         });
 
-        // Position labels and tiles according to their group
+        // Measurement layout
+        const layout: TilesGroupLayout = options.direction == "horizontal" ?
+            new TilesGroupHorizontalLayout(orthogonal_side_length) :
+            new TilesGroupVerticalLayout(orthogonal_side_length);
+
+        // Retrieve tile buttons
         const tiles = Array.from(div_ref.current!.querySelectorAll(".Tile")) as HTMLButtonElement[];
+
+        // Position labels and tiles
         for (const group_button of group_buttons)
         {
             const group_id = group_button.getAttribute("data-id");
-
-            // Fix group label position
-            fixme();
 
             // Position and size tiles
             for (const tile of tiles)
@@ -172,10 +179,31 @@ export function Tiles(options: TilesOptions)
                     tiles_controller.setSize(tile_id, tile_state.size);
                 }
 
-                fixme();
+                // Position tile
+                const h = Number(tile.getAttribute("data-horizontal"))
+                    , v = Number(tile.getAttribute("data-vertical"))
+                    , size = tile.getAttribute("data-size") as TileSize;
+                const { x, y } = layout.putTile(size, h, v);
+                tile.style.transform = `var(--other-transform) translate(${x}, ${y})`;
             }
+
+            // Position and size group label
+            const { x, y, width } = layout.putLabel();
+            group_button.style.left = `${x / rem}rem`;
+            group_button.style.top = `${y / rem}rem`;
+            group_button.style.width = `${width / rem}rem`;
         }
     }
+
+    // Observe rem
+    useEffect(() => {
+        const rem_observer = new RemObserver(value => {
+            set_rem(value);
+        });
+        return () => {
+            rem_observer.cleanup();
+        };
+    });
 
     // Open/close transition
     let transition_timeout = -1;
@@ -380,11 +408,14 @@ export function TileGroup(options: TileGroupOptions)
     const serializedStyles = css `
         position: absolute;
         font-weight: lighter;
-        font-size: 1.4rem;
+        font-size: 1.2rem;
         opacity: 0.6;
         border: none;
+        border-bottom: 0.25rem solid rgba(0,0,0,0);
         outline: none;
         background: none;
+        overflow: hidden;
+        min-height: 1.3rem;
 
         &:hover:not(:disasbled) {
             border-bottom: 0.25rem solid ${Color(theme.colors.foreground).alpha(0.4).toString()};
@@ -491,21 +522,23 @@ export function Tile(options: TileOptions)
         font-size: ${fontSize};
         color: ${theme.colors.foreground};
         transition: opacity 0.2s ${dragging ? "" : ", transform 0.2s ease-out"};
+        transform: var(--other-transform);
+        --other-transform: translate(0);
 
         &[data-selection-mode="true"] {
             opacity: 0.7;
         }
 
         &[data-drag-n-drop-mode="true"] {
-            transform: scale(0.7);
+            --other-transform: scale(0.7);
         }
 
         &:not([data-dragging="true"]) {
-            transform: ${rotate_3d};
+            --other-transform: ${rotate_3d};
         }
 
         &[data-drag-n-drop-mode="true"]:not([data-dragging="true"]) {
-            transform: scale(0.7), ${rotate_3d};
+            --other-transform: scale(0.7) ${rotate_3d};
         }
 
         &[data-dragging="true"] {
@@ -822,6 +855,11 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
 
 abstract class TilesGroupLayout
 {
+    /**
+     * Puts a label after all tiles of a group have been positioned.
+     */
+    abstract putLabel(): { x: number, y: number, width: number };
+
     abstract putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number };
 }
 
@@ -830,6 +868,11 @@ class TilesGroupHorizontalLayout extends TilesGroupLayout
     constructor(containerHeight: number)
     {
         super();
+        fixme();
+    }
+
+    override putLabel(): { x: number, y: number, width: number }
+    {
         fixme();
     }
 
@@ -844,6 +887,11 @@ class TilesGroupVerticalLayout extends TilesGroupLayout
     constructor(containerWidth: number)
     {
         super();
+        fixme();
+    }
+
+    override putLabel(): { x: number, y: number, width: number }
+    {
         fixme();
     }
 
