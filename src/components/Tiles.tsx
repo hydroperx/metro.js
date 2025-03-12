@@ -44,7 +44,7 @@ window.addEventListener("pointerup", () => {
 export function Tiles(options: TilesOptions)
 {
     // Misc vars
-    const {controller: tilesController, state: tilesState } = options;
+    const {controller: tiles_controller, state: tiles_state } = options;
 
     // Refs
     const div_ref = useRef<HTMLDivElement | null>(null);
@@ -126,8 +126,20 @@ export function Tiles(options: TilesOptions)
         rearrangeTimeout = -1;
         set_forced_invisible(false);
 
-        // Organize groups (unknown groups will be the most last)
-        const groups: HTMLButtonElement[] = Array.from(div_ref.current!.querySelectorAll(".TileGroup")) as HTMLButtonElement[];
+        // Organize groups (untracked groups without specified position will be the most last)
+        const group_buttons: HTMLButtonElement[] = Array.from(div_ref.current!.querySelectorAll(".TileGroup")) as HTMLButtonElement[];
+        group_buttons.sort((a, b) => {
+            const a_id = a.getAttribute("data-id");
+            const b_id = b.getAttribute("data-id");
+
+            let a_pos = tiles_state.groups.get(a_id)?.position ?? a.getAttribute("data-position") ?? NaN;
+            a_pos = typeof a_pos == "string" ? (a_pos == "" ? NaN : Number(a_pos) >>> 0) : a_pos;
+
+            let b_pos = tiles_state.groups.get(b_id)?.position ?? b.getAttribute("data-position") ?? NaN;
+            b_pos = typeof b_pos == "string" ? (b_pos == "" ? NaN : Number(b_pos) >>> 0) : b_pos;
+
+            return isNaN(a_pos) ? (isNaN(b_pos) ? 0 : 1) : isNaN(b_pos) ? -1 : a_pos < b_pos ? -1 : a_pos > b_pos ? 1 : 0;
+        });
 
         fixme();
     }
@@ -155,12 +167,12 @@ export function Tiles(options: TilesOptions)
 
     useEffect(() => {
         return () => {
-            tilesController.removeEventListener("getChecked", tilesController_onGetChecked);
+            tiles_controller.removeEventListener("getChecked", tiles_controller_onGetChecked);
         };
     });
 
     // Handle request to get checked tiles
-    function tilesController_onGetChecked(e: CustomEvent<{ requestId: string }>)
+    function tiles_controller_onGetChecked(e: CustomEvent<{ requestId: string }>)
     {
         const div = div_ref.current;
         let tiles: string[] = [];
@@ -170,14 +182,14 @@ export function Tiles(options: TilesOptions)
                 .filter(div => div.getAttribute("data-checked") == "true")
                 .map(div => div.getAttribute("data-id"));
         }
-        tilesController.dispatchEvent(new CustomEvent("getCheckedResult", {
+        tiles_controller.dispatchEvent(new CustomEvent("getCheckedResult", {
             detail: {
                 requestId: e.detail.requestId,
                 tiles,
             },
         }));
     }
-    tilesController.addEventListener("getChecked", tilesController_onGetChecked);
+    tiles_controller.addEventListener("getChecked", tiles_controller_onGetChecked);
 
     return (
         <div className="Tiles" css={serializedStyles} ref={div_ref}>
@@ -236,7 +248,7 @@ export type TilesOptions = {
  */
 export class TilesState
 {
-    groups: Map<string, { label: string, horizontal: number, vertical: number }> = new Map();
+    groups: Map<string, { label: string, position: number }> = new Map();
     tiles: Map<string, { group: string, horizontal: number, vertical: number }> = new Map();
 
     /**
@@ -252,8 +264,7 @@ export class TilesState
             const o1 = object.groups[id];
             r.groups.set(id, {
                 label: String(o1.label),
-                horizontal: Number(o1.horizontal),
-                vertical: Number(o1.vertical),
+                position: Number(o1.position),
             });
         }
         for (const id in object.tiles)
@@ -278,8 +289,7 @@ export class TilesState
         {
             groups[id] = {
                 label: g.label,
-                horizontal: g.horizontal,
-                vertical: g.vertical,
+                position: g.position,
             };
         }
         const tiles: any = {};
@@ -351,8 +361,7 @@ export function TileGroup(options: TileGroupOptions)
                 css={serializedStyles}
                 data-id={options.id}
                 data-label={options.label ?? ""}
-                data-horizontal={options.horizontal}
-                data-vertical={options.vertical}>
+                data-position={options.position}>
             </button>
         </>
     );
@@ -370,14 +379,9 @@ export type TileGroupOptions = {
     label?: string,
 
     /**
-     * Default horizontal position in group units.
+     * Default zero-based position in group units.
      */
-    horizontal: number,
-
-    /**
-     * Default vertical position in group units.
-     */
-    vertical: number,
+    position: number,
 
     /**
      * Whether to allow renaming the group label or not.
@@ -398,7 +402,7 @@ export function Tile(options: TileOptions)
     const theme = useContext(ThemeContext);
     
     // Signals
-    const tilesController = useContext(TilesControllerContext);
+    const tiles_controller = useContext(TilesControllerContext);
     const modeSignal = useContext(ModeSignalContext);
 
     // Re-arrange function
@@ -514,7 +518,7 @@ export function Tile(options: TileOptions)
         rearrange();
         return () => {
             rearrange();
-            tilesController.removeEventListener("setChecked", tilesController_onSetChecked);
+            tiles_controller.removeEventListener("setChecked", tiles_controller_onSetChecked);
         };
     });
 
@@ -563,7 +567,7 @@ export function Tile(options: TileOptions)
     // Handle context menu
     function on_context_menu(): void
     {
-        tilesController.checked().then(list => {
+        tiles_controller.checked().then(list => {
             const checked = !list.includes(options.id);
             set_checked(checked);
             if (checked || list.length > 1)
@@ -575,10 +579,10 @@ export function Tile(options: TileOptions)
     }
 
     // Handle checking tiles through TilesController
-    function tilesController_onSetChecked(e: CustomEvent<{ id: string, value: boolean }>)
+    function tiles_controller_onSetChecked(e: CustomEvent<{ id: string, value: boolean }>)
     {
         if (e.detail.id !== options.id) return;
-        tilesController.checked().then(list => {
+        tiles_controller.checked().then(list => {
             const checked = e.detail.value;
             set_checked(checked);
             if (checked || list.length > 0)
@@ -587,7 +591,7 @@ export function Tile(options: TileOptions)
                 modeSignal({ selection: false });
         });
     }
-    tilesController.addEventListener("setChecked", tilesController_onSetChecked);
+    tiles_controller.addEventListener("setChecked", tiles_controller_onSetChecked);
 
     return (
         <Draggable nodeRef={button_ref} onStart={on_drag_start} onDrag={on_drag} onStop={on_drag_stop} offsetParent={tiles_div}>

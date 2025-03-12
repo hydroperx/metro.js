@@ -40,6 +40,7 @@ Basic components
   - [ ] Test it
 - [x] Disabled tiles
 - [ ] Drag-n-drop mode
+  - [ ] Moving should be more simple: set position (shifting needed tiles) and `rearrange()`
   - [ ] Trigger "new group" event in TilesController so the user manually creates new groups.
   - [ ] If dragging far beyond in the orthogonal axis of the tiles container, zoom out (scale down) the entire tiles container; when not, revert back to normal scale.
 - [ ] Selection mode (check one or more tiles)
