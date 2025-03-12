@@ -48,8 +48,43 @@ export function Tiles(options: TilesOptions)
     const [forced_invisible, set_forced_invisible] = useState<boolean>(true);
     const [scale, set_scale] = useState<number>(open ? 0 : 1);
 
-    // Mode
-    const [mode, setMode] = useState<TilesMode | null>(options.mode ?? null);
+    // Modes
+    let selection_mode = false;
+    let drag_n_drop_mode = false;
+
+    // Detect a mode change
+    function mode_signal(params: { dragNDrop?: boolean, selection?: boolean }):void
+    {
+        if (params.dragNDrop)
+        {
+            drag_n_drop_mode = true;
+
+            // Set data-drag-n-drop-mode="true" attribute to tiles
+            fixme();
+        }
+        else if (params.dragNDrop !== undefined)
+        {
+            drag_n_drop_mode = false;
+
+            // Remove data-drag-n-drop-mode attribute from tiles
+            fixme();
+        }
+
+        if (params.selection)
+        {
+            selection_mode = true;
+
+            // Set data-selection-mode="true" attribute to tiles
+            fixme();
+        }
+        else if (params.selection !== undefined)
+        {
+            selection_mode = false;
+
+            // Remove data-selection-mode attribute from tiles
+            fixme();
+        }
+    }
 
     // Direction
     if (options.direction == "horizontal")
@@ -68,7 +103,7 @@ export function Tiles(options: TilesOptions)
 
     // Re-arrange groups and tiles
     let rearrangeTimeout = -1;
-    function rearrangeDelayed(): void
+    function rearrange_delayed(): void
     {
         if (rearrangeTimeout !== -1)
         {
@@ -107,13 +142,13 @@ export function Tiles(options: TilesOptions)
 
     return (
         <div className="Tiles" css={serializedStyles}>
-            <ModeContext.Provider value={mode}>
-                <SetModeContext.Provider value={setMode}>
-                    <RearrangeContext.Provider value={rearrangeDelayed}>
+            <TilesControllerContext.Provider value={options.controller}>
+                <ModeSignalContext.Provider value={mode_signal}>
+                    <RearrangeContext.Provider value={rearrange_delayed}>
                         {options.children}
                     </RearrangeContext.Provider>
-                </SetModeContext.Provider>
-            </ModeContext.Provider>
+                </ModeSignalContext.Provider>
+            </TilesControllerContext.Provider>
         </div>
     );
 }
@@ -154,27 +189,16 @@ export type TilesOptions = {
      */
     open?: boolean,
 
-    /**
-     * If set to `selection`, tiles will be checkable.
-     * If set to `drag-n-drop` tiles will be more opaque
-     * and scaled down.
-     */
-    mode?: TilesMode,
-
     children?: React.ReactNode,
 };
 
-export type TilesMode = "selection" | "drag-n-drop";
-
 /**
- * The state of a Tiles component, containing positions and labels.
+ * The state of a `Tiles` component, containing positions and labels.
  */
 export class TilesState
 {
-    /** @private */
-    m_groups: Map<string, { label: string, horizontal: number, vertical: number }> = new Map();
-    /** @private */
-    m_tiles: Map<string, { group: string, horizontal: number, vertical: number }> = new Map();
+    groups: Map<string, { label: string, horizontal: number, vertical: number }> = new Map();
+    tiles: Map<string, { group: string, horizontal: number, vertical: number }> = new Map();
 
     /**
      * Constructs `TilesState` from JSON. The `object` argument
@@ -187,7 +211,7 @@ export class TilesState
         for (const id in object.groups)
         {
             const o1 = object.groups[id];
-            r.m_groups.set(id, {
+            r.groups.set(id, {
                 label: String(o1.label),
                 horizontal: Number(o1.horizontal),
                 vertical: Number(o1.vertical),
@@ -196,7 +220,7 @@ export class TilesState
         for (const id in object.tiles)
         {
             const o1 = object.tiles[id];
-            r.m_tiles.set(id, {
+            r.tiles.set(id, {
                 group: String(o1.group),
                 horizontal: Number(o1.horizontal),
                 vertical: Number(o1.vertical),
@@ -211,7 +235,7 @@ export class TilesState
     toJSON(): any
     {
         const groups: any = {};
-        for (const [id, g] of this.m_groups)
+        for (const [id, g] of this.groups)
         {
             groups[id] = {
                 label: g.label,
@@ -220,7 +244,7 @@ export class TilesState
             };
         }
         const tiles: any = {};
-        for (const [id, t] of this.m_tiles)
+        for (const [id, t] of this.tiles)
         {
             tiles[id] = {
                 group: t.group,
@@ -235,9 +259,9 @@ export class TilesState
     }
 }
 
+const TilesControllerContext = createContext<TilesController | null>(null);
 const RearrangeContext = createContext<Function | null>(null);
-const ModeContext = createContext<string | null>(null);
-const SetModeContext = createContext<Function | null>(null);
+const ModeSignalContext = createContext<((params: { dragNDrop?: boolean, selection?: boolean }) => void) | null>(null);
 
 /**
  * A tile group consisting of a label.
@@ -319,6 +343,10 @@ export function Tile(options: TileOptions)
 {
     // Theme
     const theme = useContext(ThemeContext);
+    
+    // Signals
+    const tilesController = useContext(TilesControllerContext);
+    const modeSignal = useContext(ModeSignalContext);
 
     // Re-arrange function
     const rearrange = useContext(RearrangeContext);
@@ -329,6 +357,9 @@ export function Tile(options: TileOptions)
 
     // Drag vars
     const [dragging, set_dragging] = useState<boolean>(false);
+
+    // Checked
+    const [checked, set_checked] = useState<boolean>(false);
 
     // CSS
     const [rotate_3d, set_rotate_3d] = useState<string>("rotate3d(0)");
@@ -348,8 +379,20 @@ export function Tile(options: TileOptions)
         color: ${theme.colors.foreground};
         transition: transform 0.2s ease-out, opacity 0.2s ${dragging ? "" : ", left 0.2s ease-out, top 0.2s ease-out"};
 
-        &[data-dragging="false"] {
+        &[data-selection-mode="true"] {
+            opacity: 0.7;
+        }
+
+        &[data-drag-n-drop-mode="true"] {
+            transform: scale(0.7);
+        }
+
+        &:not([data-dragging="true"]) {
             transform: ${rotate_3d};
+        }
+
+        &[data-drag-n-drop-mode="true"]:not([data-dragging="true"]) {
+            transform: scale(0.7), ${rotate_3d};
         }
 
         &[data-dragging="true"] {
@@ -448,19 +491,48 @@ export function Tile(options: TileOptions)
             return;
         }
         set_dragging(true);
+        modeSignal({ dragNDrop: true });
 
         // Shift tiles as needed.
         fixme();
     }
 
     // Drag stop
-    function on_drag_stop(_: any, data: DraggableData)
+    function on_drag_stop(_: any, data: DraggableData): void
     {
         set_dragging(false);
+        modeSignal({ dragNDrop: false });
 
-        // Move tile
+        // Move tile properly
         fixme();
     }
+
+    // Handle context menu
+    function on_context_menu(): void
+    {
+        tilesController.checked().then(list => {
+            const checked = !list.includes(options.id);
+            set_checked(checked);
+            if (checked || list.length > 1)
+                modeSignal({ selection: true });
+            else if (!checked && list.length == 1)
+                modeSignal({ selection: false });
+            options.contextMenu?.(options.id);
+        });
+    }
+
+    // Handle checking tiles through TilesController
+    tilesController.addEventListener("setChecked", e => {
+        if (e.detail.id !== options.id) return;
+        tilesController.checked().then(list => {
+            const checked = e.detail.value;
+            set_checked(checked);
+            if (checked || list.length > 0)
+                modeSignal({ selection: true });
+            else if (!checked && (list.length == 0 || (list.length == 1 && list.includes(options.id))))
+                modeSignal({ selection: false });
+        });
+    });
 
     return (
         <Draggable nodeRef={button_ref} onStart={on_drag_start} onDrag={on_drag} onStop={on_drag_stop} offsetParent={tiles_div}>
@@ -472,8 +544,8 @@ export function Tile(options: TileOptions)
                 data-group={options.group ?? ""}
                 data-horizontal={options.horizontal}
                 data-vertical={options.vertical}
-                data-checked="false"
                 data-dragging={dragging}
+                data-checked={checked}
                 onPointerDown={ options.disabled ? undefined : button_onPointerDown as any }
                 onClick={ options.disabled ? undefined : e => { options.click?.(options.id) } }
                 onContextMenu={ options.disabled ? undefined : e => { options.contextMenu?.(options.id) }}
