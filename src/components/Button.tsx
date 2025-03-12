@@ -63,7 +63,7 @@ export function Button(options: ButtonOptions)
                 }
 
                 &[data-chosen="true"]:not(:disabled) {
-                    background: ${theme.colors.primaryBackground};
+                    background: ${theme.colors.primary};
                     color: ${theme.colors.primaryForeground};
                 }
 
@@ -113,9 +113,9 @@ export function Button(options: ButtonOptions)
         }
         case "secondary":
         {
-            // uses providedTheme.colors.foreground as character color
+            const hoveredBackgrund = lighten(theme.colors.secondary, 0.5);
             serializedStyles = css `
-                background: ${theme.colors.secondaryBackground};
+                background: ${theme.colors.secondary};
                 color: ${theme.colors.foreground};
                 padding: ${padding};
                 border: none;
@@ -124,11 +124,11 @@ export function Button(options: ButtonOptions)
                 font-family: ${fontFamily};
 
                 &:hover:not(:disabled) {
-                    background: ${theme.colors.hoveredSecondaryBackground};
+                    background: ${hoveredBackgrund};
                 }
 
                 &:active:not(:disabled) {
-                    background: ${theme.colors.pressedBackground};
+                    background: ${theme.colors.pressed};
                     color: ${theme.colors.pressedForeground};
                 }
 
@@ -145,8 +145,9 @@ export function Button(options: ButtonOptions)
         }
         case "primary":
         {
+            const hoveredBackgrund = lighten(theme.colors.primary, 0.5);
             serializedStyles = css `
-                background: ${theme.colors.primaryBackground};
+                background: ${theme.colors.primary};
                 color: ${theme.colors.primaryForeground};
                 padding: ${padding};
                 border: none;
@@ -155,11 +156,11 @@ export function Button(options: ButtonOptions)
                 font-family: ${fontFamily};
 
                 &:hover:not(:disabled) {
-                    background: ${theme.colors.hoveredPrimaryBackground};
+                    background: ${hoveredBackgrund};
                 }
 
                 &:active:not(:disabled) {
-                    background: ${theme.colors.pressedBackground};
+                    background: ${theme.colors.pressed};
                     color: ${theme.colors.pressedForeground};
                 }
 
@@ -176,8 +177,9 @@ export function Button(options: ButtonOptions)
         }
         case "danger":
         {
+            const hoveredBackgrund = lighten(theme.colors.danger, 0.5);
             serializedStyles = css `
-                background: ${theme.colors.dangerBackground};
+                background: ${theme.colors.danger};
                 color: ${theme.colors.dangerForeground};
                 padding: ${padding};
                 border: none;
@@ -186,11 +188,11 @@ export function Button(options: ButtonOptions)
                 font-family: ${fontFamily};
 
                 &:hover:not(:disabled) {
-                    background: ${theme.colors.hoveredDangerBackground};
+                    background: ${hoveredBackgrund};
                 }
 
                 &:active:not(:disabled) {
-                    background: ${theme.colors.pressedBackground};
+                    background: ${theme.colors.pressed};
                     color: ${theme.colors.pressedForeground};
                 }
 

@@ -178,7 +178,7 @@ export function Select(options: SelectOptions)
             }
 
             &:active:not(:disabled) {
-                background: ${theme.colors.primaryBackground};
+                background: ${theme.colors.primary};
                 color: ${theme.colors.primaryForeground};
             }
 
@@ -596,7 +596,7 @@ export function SelectOption(options: SelectOptionOptions)
 
         &:active, &[data-selected="true"] {
             background: ${activeBackground};
-            color: ${enhanceBrightness(activeBackground, theme.colors.primaryBackground)};
+            color: ${enhanceBrightness(activeBackground, theme.colors.primary)};
         }
 
         &:disabled {

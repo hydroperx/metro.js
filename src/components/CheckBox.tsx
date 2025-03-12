@@ -38,7 +38,7 @@ export function CheckBox(options: CheckBoxOptions)
     const w = pointsToRemValue(14);
     const h = pointsToRemValue(6.1);
     const carret_w = pointsToRemValue(4);
-    let checked_color = enhanceBrightness(theme.colors.background, theme.colors.primaryBackground);
+    let checked_color = enhanceBrightness(theme.colors.background, theme.colors.primary);
     const checked_hover_color = lighten(checked_color, 0.3);
     const border_color = preferPrimaryColors ? checked_color : contrast(theme.colors.background, 0.4);
     let unchecked_color = preferPrimaryColors ? checked_color : border_color;

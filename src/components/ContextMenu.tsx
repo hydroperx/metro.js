@@ -577,7 +577,7 @@ export function ContextMenuItem(options: ContextMenuItemOptions)
         }
 
         &:active:not(:disabled) {
-            background: ${theme.colors.primaryBackground};
+            background: ${theme.colors.primary};
             color: ${theme.colors.primaryForeground};
         }
 
@@ -779,7 +779,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
         }
 
         &:active {
-            background: ${theme.colors.primaryBackground};
+            background: ${theme.colors.primary};
             color: ${theme.colors.primaryForeground};
         }
     `;
