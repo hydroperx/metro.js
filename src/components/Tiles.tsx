@@ -2,7 +2,7 @@ import React, { createContext, useContext, useRef, useState, useEffect } from "r
 import { css } from "@emotion/react";
 import assert from "assert";
 import Color from "color";
-import Draggable from "react-draggable";
+import Draggable, { DraggableData } from "react-draggable";
 import { TypedEventTarget } from "@hydroper/typedeventtarget";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { ThemeContext, PreferPrimaryContext } from "../theme";
@@ -326,6 +326,9 @@ export function Tile(options: TileOptions)
     const button_ref = useRef<HTMLButtonElement | null>(null);
     const [tiles_div, set_tiles_div] = useState<HTMLDivElement | null>(null);
 
+    // Drag vars
+    const [dragging, set_dragging] = useState<boolean>(false);
+
     // CSS
     const [rotate_3d, set_rotate_3d] = useState<string>("rotate3d(0)");
     const tile_color = options.color ?? theme.colors.primary;
@@ -342,7 +345,15 @@ export function Tile(options: TileOptions)
         font-family: ${fontFamily};
         font-size: ${fontSize};
         color: ${theme.colors.foreground};
-        transform: ${rotate_3d};
+        transition: transform 0.2s ease-out, opacity 0.2s ${dragging ? "" : ", left 0.2s ease-out, top 0.2s ease-out"};
+
+        &[data-dragging="false"] {
+            transform: ${rotate_3d};
+        }
+
+        &[data-dragging="true"] {
+            opacity: 0.6;
+        }
 
         &:hover:not(:disabled) {
             outline: 0.17rem solid ${Color(theme.colors.primary).alpha(0.6).toString()};
@@ -410,14 +421,48 @@ export function Tile(options: TileOptions)
         };
     });
 
+    // Get Tiles div
     useEffect(() => {
         const tiles_div = button_ref.current!.parentElement;
-        assert(!!tiles_div && tiles_div.classList.contains("Tile"), "Tile's parent must be a Tiles.");
+        assert(!!tiles_div && tiles_div.classList.contains("Tiles"), "Tile's parent must be a Tiles.");
         set_tiles_div(tiles_div as HTMLDivElement);
     });
 
+    // Drag vars
+    let drag_start = [0, 0];
+
+    // Drag start
+    function on_drag_start(_: any, data: DraggableData)
+    {
+        drag_start = [data.x, data.y];
+    }
+
+    // Drag move
+    function on_drag(_: any, data: DraggableData)
+    {
+        const diff_x = drag_start[0] - data.x
+            , diff_y = drag_start[1] - data.y;
+        if (diff_x > -5 && diff_x <= 5 && diff_y > -5 && diff_y <= 5)
+        {
+            return;
+        }
+        set_dragging(true);
+
+        // Shift tiles as needed.
+        fixme();
+    }
+
+    // Drag stop
+    function on_drag_stop(_: any, data: DraggableData)
+    {
+        set_dragging(false);
+
+        // Move tile
+        fixme();
+    }
+
     return (
-        <Draggable nodeRef={button_ref} bounds="parent" offsetParent={tiles_div}>
+        <Draggable nodeRef={button_ref} onStart={on_drag_start} onDrag={on_drag} onStop={on_drag_stop} offsetParent={tiles_div}>
             <button
                 ref={button_ref}
                 className="Tile"
@@ -427,6 +472,7 @@ export function Tile(options: TileOptions)
                 data-horizontal={options.horizontal}
                 data-vertical={options.vertical}
                 data-checked="false"
+                data-dragging={dragging}
                 onPointerDown={options.disabled ? undefined : button_onPointerDown as any}
                 onContextMenu={options.disabled ? undefined : e => { options.contextMenu?.(options.id) }}
                 disabled={options.disabled}>
