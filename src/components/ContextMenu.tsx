@@ -12,7 +12,7 @@ import { ThemeContext } from "../theme";
 import { fontFamily, fontSize, maximumZIndex } from "../utils/common";
 import { pointsToRem } from "../utils/points";
 import { focusPrevSibling, focusNextSibling } from "../utils/focus";
-import { randomHex } from "../utils/random";
+import { randomHexLarge } from "../utils/random";
 
 class ContextMenuEventDispatcher extends (EventTarget as TypedEventTarget<{
     show: CustomEvent<ContextMenuEvent>;
@@ -67,7 +67,7 @@ window.addEventListener("mousedown", function(): void
  */
 export function useContextMenu(): UseContextMenuHook
 {
-    const id = "cxm$" + [0,0,0,0,0,0,0].map(_ => randomHex()).join("");
+    const id = "cxm$" + randomHexLarge();
 
     return {
         id,

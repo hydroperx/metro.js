@@ -11,7 +11,7 @@ import { RemObserver } from "../utils/RemObserver";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
 import { lighten, darken, enhanceBrightness, contrast } from "../utils/color";
 import { fontFamily, fontSize } from "../utils/common";
-import { randomHex } from "../utils/random";
+import { randomHexLarge } from "../utils/random";
 
 const margin = 0.5; // Margin between tiles
 const group_margin = 3.5; // Margin between groups
@@ -664,8 +664,8 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
      */
     checked(): Promise<string[]>
     {
-        return new Promise((resolve, reject) => {
-            const requestId = randomHex();
+        return new Promise((resolve, _) => {
+            const requestId = randomHexLarge();
             const listener = (e: CustomEvent<{ requestId: string, tiles: string[] }>) => {
                 if (e.detail.requestId !== requestId) return;
                 this.removeEventListener("getCheckedResult", listener)
