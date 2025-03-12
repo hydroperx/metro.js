@@ -141,12 +141,16 @@ export function Tiles(options: TilesOptions)
             return isNaN(a_pos) ? (isNaN(b_pos) ? 0 : 1) : isNaN(b_pos) ? -1 : a_pos < b_pos ? -1 : a_pos > b_pos ? 1 : 0;
         });
 
-        // Position tiles according to their group
+        // Position labels and tiles according to their group
         const tiles = Array.from(div_ref.current!.querySelectorAll(".Tile")) as HTMLButtonElement[];
         for (const group_button of group_buttons)
         {
             const group_id = group_button.getAttribute("data-id");
 
+            // Fix group label position
+            fixme();
+
+            // Position tiles
             for (const tile of tiles)
             {
                 const tile_id = tile.getAttribute("data-id");
