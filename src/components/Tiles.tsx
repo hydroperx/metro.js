@@ -412,7 +412,7 @@ export function Tile(options: TileOptions)
         font-family: ${fontFamily};
         font-size: ${fontSize};
         color: ${theme.colors.foreground};
-        transition: transform 0.2s ease-out, opacity 0.2s ${dragging ? "" : ", left 0.2s ease-out, top 0.2s ease-out"};
+        transition: opacity 0.2s ${dragging ? "" : ", transform 0.2s ease-out"};
 
         &[data-selection-mode="true"] {
             opacity: 0.7;
