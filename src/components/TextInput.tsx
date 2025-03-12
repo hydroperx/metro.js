@@ -41,7 +41,10 @@ export function TextInput(options: TextInputOptions)
         background-size: ${pointsToRem(iconSize)};
         background-repeat: no-repeat;
         text-align: ${localeDir == "ltr" ? "left" : "right"};
-        min-width: 5rem;
+        ${ options.minWidth !== undefined ? "min-width: " + pointsToRem(options.minWidth) + ";" : "min-width: 5rem;" }
+        ${ options.minHeight !== undefined ? "min-height: " + pointsToRem(options.minHeight) + ";" : "" }
+        ${ options.maxWidth !== undefined ? "max-width: " + pointsToRem(options.maxWidth) + ";" : "" }
+        ${ options.maxHeight !== undefined ? "max-height: " + pointsToRem(options.maxHeight) + ";" : "" }
         outline: none;
         vertical-align: middle;
 
@@ -69,17 +72,6 @@ export function TextInput(options: TextInputOptions)
         }
     `;
 
-    // Build style
-    const newStyle: React.CSSProperties = {};
-    if (options.minWidth !== undefined) newStyle.minWidth = pointsToRem(options.minWidth);
-    if (options.maxWidth !== undefined) newStyle.maxWidth = pointsToRem(options.maxWidth);
-    if (options.minHeight !== undefined) newStyle.minHeight = pointsToRem(options.minHeight);
-    if (options.maxHeight !== undefined) newStyle.maxHeight = pointsToRem(options.maxHeight);
-    if (options.style)
-    {
-        extend(newStyle, options.style);
-    }
-
     useEffect(() => {
         const element = options.multiline ? textAreaRef.current! : inputRef.current!;
 
@@ -93,7 +85,7 @@ export function TextInput(options: TextInputOptions)
                 id={options.id}
                 css={serializedStyles}
                 className={options.className}
-                style={newStyle}
+                style={options.style}
                 ref={textAreaRef}
                 placeholder={options.placeholder}
                 onChange={event => { options.change?.(textAreaRef.current.value, event) }}
@@ -117,7 +109,7 @@ export function TextInput(options: TextInputOptions)
                 id={options.id}
                 css={serializedStyles}
                 className={options.className}
-                style={newStyle}
+                style={options.style}
                 ref={inputRef}
                 type={
                     options.email ? "email" :

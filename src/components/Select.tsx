@@ -11,7 +11,7 @@ import { ThemeContext } from "../theme";
 import { enhanceBrightness, contrast } from "../utils/color";
 import { fontFamily, fontSize, maximumZIndex } from "../utils/common";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
-import { focusPrevSibling, focusNextSibling } from "../utils/focusability";
+import { focusPrevSibling, focusNextSibling } from "../utils/focus";
 import { RemObserver } from "../utils/RemObserver";
 
 // Item visible transition

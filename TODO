@@ -35,11 +35,23 @@ Basic components
 ## Tiles
 
 - [ ] Tile sizes (4): small ("smallest square"), medium ("medium square"), wide ("wide rectangle"), large ("largest square").
+- [ ] Tile ID
+- [ ] Display a simple outline for tiles (very discrete)
 - [ ] Default position
+- [ ] Support serializing and deserializing tile data
 - [ ] While holding click button at tile, slightly rotate X/Y according to the side.
 - [ ] Drag-n-drop mode
 - [ ] Selection mode (check one or more tiles)
 - [ ] Disabled tiles
-- [ ] Live tiles (with roll)
-  - [ ] Bottom-attached title
+- [ ] Tile content roll
+  - [ ] Any solid background will be actually a linear gradient with very discrete colosr
+  - [ ] Icon contents
+  - [ ] No-icon text-only contents
+  - [ ] Live tile image contents
+    - [ ] Bottom-attached title like in news
+- [ ] Tile group label
+  - [ ] If renameable, add label to unlabeled group (shows an opaque rect over the group)
+  - [ ] If renameable, rename support
 - [ ] Dispatch context menu event in a title on a long touch pressure
+- [ ] Open transition
+- [ ] Hide transition

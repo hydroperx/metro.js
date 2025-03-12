@@ -114,7 +114,7 @@ This library uses [`@hydroper/inputaction`](https://jsr.io/@hydroper/inputaction
 
 **Important**
 
-- Elements that may be navigated with arrow buttons contain the cascading class name `.buttonNavigable`. This is useful for applications like games for avoid duplicating focus handling by detecting that class name.
+Elements that may be navigated with arrow input contain the cascading class name specified by the `ReservedClasses.BUTTON_NAVIGABLE` constant. This is useful for applications like games for avoid duplicating focus handling by detecting that class name.
 
 ### Context menu
 

@@ -11,7 +11,7 @@ import { computePosition, fitViewportPosition, Side } from "../utils/placement";
 import { ThemeContext } from "../theme";
 import { fontFamily, fontSize, maximumZIndex } from "../utils/common";
 import { pointsToRem } from "../utils/points";
-import { focusPrevSibling, focusNextSibling } from "../utils/focusability";
+import { focusPrevSibling, focusNextSibling } from "../utils/focus";
 
 class ContextMenuEventDispatcher extends (EventTarget as TypedEventTarget<{
     show: CustomEvent<ContextMenuEvent>;
