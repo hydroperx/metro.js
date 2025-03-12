@@ -144,9 +144,9 @@ export function Tiles(options: TilesOptions)
         });
 
         // Measurement layout
-        const layout: TilesGroupLayout = options.direction == "horizontal" ?
-            new TilesGroupHorizontalLayout(orthogonal_side_length) :
-            new TilesGroupVerticalLayout(orthogonal_side_length);
+        const layout: TilesLayout = options.direction == "horizontal" ?
+            new TilesHorizontalLayout(orthogonal_side_length) :
+            new TilesVerticalLayout(orthogonal_side_length);
 
         // Retrieve tile buttons
         const tiles = Array.from(div_ref.current!.querySelectorAll(".Tile")) as HTMLButtonElement[];
@@ -853,7 +853,7 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
     }
 }
 
-abstract class TilesGroupLayout
+abstract class TilesLayout
 {
     /**
      * Puts a label after all tiles of a group have been positioned.
@@ -863,7 +863,7 @@ abstract class TilesGroupLayout
     abstract putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number };
 }
 
-class TilesGroupHorizontalLayout extends TilesGroupLayout
+class TilesHorizontalLayout extends TilesLayout
 {
     constructor(containerHeight: number)
     {
@@ -882,7 +882,7 @@ class TilesGroupHorizontalLayout extends TilesGroupLayout
     }
 }
 
-class TilesGroupVerticalLayout extends TilesGroupLayout
+class TilesVerticalLayout extends TilesLayout
 {
     constructor(containerWidth: number)
     {
