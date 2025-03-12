@@ -109,6 +109,7 @@ export function Tiles(options: TilesOptions)
         ${options.direction == "horizontal" ? `width: 100%; height: ${pointsToRem(options.height)};` : ""};
         ${options.direction == "vertical" ? `width: ${pointsToRem(options.width)}; height: 100%;` : ""};
         position: relative;
+        overflow: hidden;
         opacity: ${forced_invisible ? 0 : scale};
         transform: scale(${scale});
         transition: opacity 0.3s ${open ? "ease-out" : "ease-in"}, transform 0.3s ${open ? "ease-out" : "ease-in"};
@@ -200,6 +201,9 @@ export function Tiles(options: TilesOptions)
             // Update orthogonal side length
             const r = div.getBoundingClientRect();
             orthogonal_side_length = options.direction == "horizontal" ? r.height : r.width;
+
+            // Rearrange
+            rearrange_delayed();
         });
 
         resizeObserver.observe(div);
