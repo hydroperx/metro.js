@@ -126,7 +126,7 @@ export function Tiles(options: TilesOptions)
         rearrangeTimeout = -1;
         set_forced_invisible(false);
 
-        // Organize groups
+        // Organize groups (unknown groups will be the most last)
         const groups: HTMLButtonElement[] = Array.from(div_ref.current!.querySelectorAll(".TileGroup")) as HTMLButtonElement[];
 
         fixme();
