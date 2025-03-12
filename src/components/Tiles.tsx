@@ -58,6 +58,9 @@ export function Tiles(options: TilesOptions)
     let selection_mode = false;
     let drag_n_drop_mode = false;
 
+    // Measurements
+    let orthogonal_side_length = 0;
+
     // Detect a mode change
     function mode_signal(params: { dragNDrop?: boolean, selection?: boolean }):void
     {
@@ -103,8 +106,8 @@ export function Tiles(options: TilesOptions)
 
     // CSS
     const serializedStyles = css `
-        ${options.direction == "horizontal" ? `height: ${pointsToRem(options.height)};` : ""};
-        ${options.direction == "vertical" ? `width: ${pointsToRem(options.width)};` : ""};
+        ${options.direction == "horizontal" ? `width: 100%; height: ${pointsToRem(options.height)};` : ""};
+        ${options.direction == "vertical" ? `width: ${pointsToRem(options.width)}; height: 100%;` : ""};
         position: relative;
         opacity: ${forced_invisible ? 0 : scale};
         transform: scale(${scale});
@@ -187,7 +190,25 @@ export function Tiles(options: TilesOptions)
     }, [open]);
 
     useEffect(() => {
+        const div = div_ref.current!;
+
+        // Initial orthogonal side length
+        const r = div.getBoundingClientRect();
+        orthogonal_side_length = options.direction == "horizontal" ? r.height : r.width;
+
+        const resizeObserver = new ResizeObserver(() => {
+            // Update orthogonal side length
+            const r = div.getBoundingClientRect();
+            orthogonal_side_length = options.direction == "horizontal" ? r.height : r.width;
+        });
+
+        resizeObserver.observe(div);
+
         return () => {
+            // Dispose resize observer
+            resizeObserver.disconnect();
+
+            // Dipose listeners on TilesController
             tiles_controller.removeEventListener("getChecked", tiles_controller_onGetChecked);
         };
     });

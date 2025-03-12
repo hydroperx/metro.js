@@ -61,16 +61,11 @@ export function Container(options: ContainerOptions)
         &::-webkit-scrollbar {
             width: 12px;
             height: 12px;
-            background: ${theme.colors.scrollBarTrack ?? "#E9E9E9"};
-            opacity: 0;
-        }
-
-        &::-webkit-scrollbar:hover {
-            opacity: 1;
+            background: ${theme.colors.scrollBarTrack};
         }
 
         &::-webkit-scrollbar-thumb {
-            background: ${theme.colors.scrollBarThumb ?? "#CDCDCD"};
+            background: ${theme.colors.scrollBarThumb};
             border-radius: 0;
         }
 
