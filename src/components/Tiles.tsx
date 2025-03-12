@@ -8,6 +8,7 @@ import { ThemeContext, PreferPrimaryContext } from "../theme";
 import { RemObserver } from "../utils/RemObserver";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
 import { lighten, darken, enhanceBrightness, contrast } from "../utils/color";
+import { fontFamily, fontSize } from "../utils/common";
 
 const margin = 0.5; // Margin between tiles
 const group_margin = 3.5; // Margin between groups
@@ -26,6 +27,12 @@ const tile_sizes = new Map<TileSize, { width: number, height: number }>([
 function get_tile_size(size: TileSize): { width: number, height: number } { return tile_sizes.get(size); }
 function get_tile_width(size: TileSize): number { return get_tile_size(size).width; }
 function get_tile_height(size: TileSize): number { return get_tile_size(size).height; }
+
+// Viewport mouse up handler
+let viewport_pointerUp: Function | null = null;
+window.addEventListener("pointerup", () => {
+    viewport_pointerUp?.();
+});
 
 /**
  * Represents a container of Metro tiles which are positioned anywhere.
@@ -296,34 +303,83 @@ export type TileGroupOptions = {
  */
 export function Tile(options: TileOptions)
 {
+    // Theme
+    const theme = useContext(ThemeContext);
+
     // Re-arrange function
     const rearrange = useContext(RearrangeContext);
 
-    // Divs
-    const div_ref = useRef<HTMLDivElement | null>(null);
+    // Elements
+    const button_ref = useRef<HTMLButtonElement | null>(null);
     const [tiles_div, set_tiles_div] = useState<HTMLDivElement | null>(null);
 
     // CSS
+    const [rotate_3d, set_rotate_3d] = useState<string>("rotate3d(0)");
+    const tile_color = options.color ?? theme.colors.primary;
+    const tile_color_b1 = Color(tile_color).lighten(0.1).toString();
+    const tile_color_b2 = Color(tile_color).lighten(0.2).toString();
     const serializedStyles = css `
         position: absolute;
         overflow: hidden;
         width: ${get_tile_width(options.size)}rem;
         height: ${get_tile_height(options.size)}rem;
+        outline: 0.11rem solid ${Color(theme.colors.foreground).alpha(0.3).toString()};
+        background: linear-gradient(90deg, ${tile_color} 0%, ${tile_color_b1} %100);
+        border: none;
+        font-family: ${fontFamily};
+        font-size: ${fontSize};
+        color: ${theme.colors.foreground};
+        transform: ${rotate_3d};
+
+        &:hover:not(:disabled) {
+            outline: 0.17rem solid ${Color(theme.colors.foreground).alpha(0.6).toString()};
+            background: linear-gradient(90deg, ${tile_color_b1} 0%, ${tile_color_b2} %100);
+        }
+
+        &:disabled {
+            opacity: 0.5;
+        }
     `;
+
+    // Handle pointer down
+    function button_onPointerDown(e: PointerEvent): void
+    {
+        viewport_pointerUp = local_viewport_pointerUp;
+
+        // Slightly rotate tile depending on where the click occurred.
+        const deg = 20;
+        const rect = button_ref.current!.getBoundingClientRect();
+        const x = e.clientX, y = e.clientY;
+        if (x < rect.left + rect.width / 2 && (y > rect.top + rect.height / 3 && y < rect.bottom - rect.height / 3))
+            set_rotate_3d(`rotate3d(rotate3d(0, -1, 0, ${deg}deg))`);
+        else if (x > rect.right - rect.width / 2 && (y > rect.top + rect.height / 3 && y < rect.bottom - rect.height / 3))
+            set_rotate_3d(`rotate3d(rotate3d(0, 1, 0, ${deg}deg))`);
+        else if (y < rect.top + rect.height / 2)
+            set_rotate_3d(`rotate3d(rotate3d(1, 0, 0, ${deg}deg))`);
+        else
+            set_rotate_3d(`rotate3d(rotate3d(-1, 0, 0, ${deg}deg))`);
+    }
+
+    // Handle pointer up
+    function local_viewport_pointerUp(): void
+    {
+        viewport_pointerUp = null;
+        set_rotate_3d("rotate3d(0)");
+    }
 
     // Re-arrange
     useEffect(() => { rearrange() });
 
-    useState(() => {
-        const tiles_div = div_ref.current!.parentElement;
+    useEffect(() => {
+        const tiles_div = button_ref.current!.parentElement;
         assert(!!tiles_div && tiles_div.classList.contains("Tile"), "Tile's parent must be a Tiles.");
         set_tiles_div(tiles_div as HTMLDivElement);
     });
 
     return (
-        <Draggable nodeRef={div_ref} bounds="parent" offsetParent={tiles_div}>
-            <div
-                ref={div_ref}
+        <Draggable nodeRef={button_ref} bounds="parent" offsetParent={tiles_div}>
+            <button
+                ref={button_ref}
                 className="Tile"
                 css={serializedStyles}
                 data-id={options.id}
@@ -331,10 +387,12 @@ export function Tile(options: TileOptions)
                 data-horizontal={options.horizontal}
                 data-vertical={options.vertical}
                 data-checked={!!options.checked}
-                onContextMenu={e => { options.contextMenu?.(options.id); }}>
+                onPointerDown={options.disabled ? undefined : button_onPointerDown as any}
+                onContextMenu={options.disabled ? undefined : e => { options.contextMenu?.(options.id) }}
+                disabled={options.disabled}>
 
                 {options.children}
-            </div>
+            </button>
         </Draggable>
     );
 }
@@ -346,9 +404,16 @@ export type TileOptions = {
     id: string,
 
     /**
+     * Tile color.
+     */
+    color?: string,
+
+    /**
      * Tile size.
      */
     size: TileSize,
+
+    disabled?: boolean,
 
     /**
      * Determines whether the tile is checked or not.

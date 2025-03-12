@@ -6,60 +6,60 @@ export type Theme =
 {
     colors:
     {
-        background?: string,
-        foreground?: string,
+        background: string,
+        foreground: string,
 
         /**
          * Used in components such as text inputs, tooltips and context menu.
          */
-        inputBackground?: string,
+        inputBackground: string,
 
         /**
          * Used in components such as text inputs, tooltips and context menu.
          */
-        inputBorder?: string,
+        inputBorder: string,
 
-        anchor?: string,
+        anchor: string,
 
-        scrollBarTrack?: string,
-        scrollBarThumb?: string,
+        scrollBarTrack: string,
+        scrollBarThumb: string,
 
         /**
          * Used in buttons for instance.
          */
-        primary?: string,
+        primary: string,
         /**
          * Used in buttons for instance.
          */
-        primaryForeground?: string,
+        primaryForeground: string,
 
         /**
          * Background used in pressed buttons for instance.
          */
-        pressed?: string,
+        pressed: string,
         /**
          * Used in pressed buttons for instance.
          */
-        pressedForeground?: string,
+        pressedForeground: string,
 
         /**
          * Used in buttons for instance.
          */
-        secondary?: string,
+        secondary: string,
 
         /**
          * Used in buttons for instance.
          */
-        danger?: string,
+        danger: string,
         /**
          * Used in buttons for instance.
          */
-        dangerForeground?: string,
+        dangerForeground: string,
 
         /**
          * Used in certain focusable components such as buttons.
          */
-        focusDashes?: string,
+        focusDashes: string,
     },
 };
 
