@@ -183,8 +183,10 @@ export function Tiles(options: TilesOptions)
                 const h = Number(tile.getAttribute("data-horizontal"))
                     , v = Number(tile.getAttribute("data-vertical"))
                     , size = tile.getAttribute("data-size") as TileSize;
-                const { x, y } = layout.putTile(size, h, v);
+                const { x, y, horizontalTiles, verticalTiles } = layout.putTile(size, h, v);
                 tile.style.transform = `var(--other-transform) translate(${x / rem}rem, ${y / rem}rem)`;
+                tile.setAttribute("data-horizontal", horizontalTiles.toString());
+                tile.setAttribute("data-vertical", verticalTiles.toString());
             }
 
             // Position and size group label
@@ -861,7 +863,7 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
 
 abstract class TilesLayout
 {
-    abstract putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number };
+    abstract putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number, horizontalTiles: number, verticalTiles: number };
 
     /**
      * Puts a label after all tiles of a group have been positioned,
@@ -879,7 +881,7 @@ class TilesHorizontalLayout extends TilesLayout
         super();
     }
 
-    override putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number }
+    override putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number, horizontalTiles: number, verticalTiles: number }
     {
         fixme();
     }
@@ -899,7 +901,7 @@ class TilesVerticalLayout extends TilesLayout
         super();
     }
 
-    override putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number }
+    override putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number, horizontalTiles: number, verticalTiles: number }
     {
         fixme();
     }
@@ -914,16 +916,46 @@ class TilesVerticalLayout extends TilesLayout
  * Small tile rows of columns (occupied entries).
  */
 class TilesLayoutTileRows {
-    private rows: boolean[][] = [];
+    private m_rows: boolean[][] = [];
+    private m_width: number = 0;
+    private m_height: number = 0;
 
     /**
-     * Whether a small tile is busy or not.
+     * @param max_width Maximum number of horizontal tiles. May be `Infinity`.
+     * @param max_height Maximum number of vertical tiles. May be `Infinity`.
+     */
+    constructor(private max_width: number, private max_height: number)
+    {
+    }
+
+    /**
+     * Number of horizontal small tiles.
+     */
+    get width(): number
+    {
+        return this.m_width;
+    }
+
+    /**
+     * Number of vertical small tiles.
+     */
+    get height(): number
+    {
+        return this.m_height;
+    }
+
+    /**
+     * Whether a small tile is available or not.
      */
     get(horizontal: number, vertical: number): boolean
     {
-        if (vertical < this.rows.length)
+        if (vertical < 0 || vertical >= this.max_height || horizontal < 0 || horizontal >= this.max_width)
         {
-            const columns = this.rows[vertical];
+            return true;
+        }
+        if (vertical < this.m_rows.length)
+        {
+            const columns = this.m_rows[vertical];
             if (horizontal < columns.length)
             {
                 return columns[horizontal];
@@ -932,28 +964,102 @@ class TilesLayoutTileRows {
         return false;
     }
 
+    sizeFreeAt(horizontal: number, vertical: number, size: TileSize): boolean
+    {
+        switch (size)
+        {
+            case "small":
+                return this.get(horizontal, vertical);
+            case "medium":
+                return this.get(horizontal, vertical)
+                    && this.get(horizontal + 1, vertical)
+                    && this.get(horizontal, vertical + 1)
+                    && this.get(horizontal + 1, vertical + 1);
+            case "wide":
+                return this.sizeFreeAt(horizontal, vertical, "medium")
+                    && this.sizeFreeAt(horizontal + 2, vertical, "medium");
+            case "large":
+                return this.sizeFreeAt(horizontal, vertical, "wide")
+                    && this.sizeFreeAt(horizontal, vertical + 2, "wide");
+        }
+    }
+
     /**
-     * Sets whether a small tile is occupied or not.
+     * Sets whether a small tile is available or not.
      */
     put(horizontal: number, vertical: number, value: boolean)
     {
+        if (vertical < 0 || vertical >= this.max_height || horizontal < 0 || horizontal >= this.max_width)
+        {
+            return;
+        }
         if (value)
         {
-            while (vertical >= this.rows.length)
+            while (vertical >= this.m_rows.length)
             {
-                this.rows.push([]);
+                this.m_rows.push([]);
+                this.m_height = this.m_rows.length;
             }
-            const columns = this.rows[vertical];
+            const columns = this.m_rows[vertical];
             while (horizontal >= columns.length)
             {
                 columns.push(false);
+                this.m_width - columns.length > this.m_width ? columns.length : this.m_width;
             }
             columns[horizontal] = true;
         }
-        else if (vertical < this.rows.length)
+        else if (vertical < this.m_rows.length)
         {
-            const columns = this.rows[vertical];
-            if (horizontal < columns.length) columns[horizontal] = false;
+            const columns = this.m_rows[vertical];
+            if (horizontal < columns.length) {
+                columns[horizontal] = false;
+                // Re-adjust size
+                this.m_width = 0;
+                for (let i = 0, l = this.m_rows.length; i < l; i++)
+                {
+                    const columns = this.m_rows[i];
+                    let j = columns.indexOf(true);
+                    if (j++ !== -1)
+                    {
+                        this.m_width = j < this.m_width ? this.m_width : j;
+                    }
+                }
+                this.m_height = 0;
+                for (let i = this.m_rows.length; --i >= 0;)
+                {
+                    const columns = this.m_rows[i];
+                    const j = columns.indexOf(true);
+                    if (j !== -1)
+                    {
+                        this.m_height = i + 1;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    fillSize(horizontal: number, vertical: number, size: TileSize): void
+    {
+        switch (size)
+        {
+            case "small":
+                this.put(horizontal, vertical, true);
+                break;
+            case "medium":
+                this.put(horizontal, vertical, true);
+                this.put(horizontal + 1, vertical, true);
+                this.put(horizontal, vertical + 1, true);
+                this.put(horizontal + 1, vertical + 1, true);
+                break;
+            case "wide":
+                this.fillSize(horizontal, vertical, "medium");
+                this.fillSize(horizontal + 2, vertical, "medium");
+                break;
+            case "large":
+                this.fillSize(horizontal, vertical, "wide");
+                this.fillSize(horizontal, vertical + 2, "wide");
+                break;
         }
     }
 }
