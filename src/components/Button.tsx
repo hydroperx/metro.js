@@ -286,7 +286,7 @@ export function Button(options: ButtonOptions)
     const [tooltipVisible, setTooltipVisible] = useState<boolean>(false);
     const [tooltipX, setTooltipX] = useState<number>(0);
     const [tooltipY, setTooltipY] = useState<number>(0);
-    const tooltipElement: Ref<HTMLDivElement> = useRef(null);
+    const tooltipElement: Ref<HTMLDivElement | null> = useRef(null);
     let tooltipTimeout = -1;
     let tooltipSerializedStyles: SerializedStyles | null = options.tooltip === undefined ? null : css `
         background: ${theme.colors.inputBackground};
@@ -348,17 +348,34 @@ export function Button(options: ButtonOptions)
                 ref={buttonRef}
                 css={serializedStyles}
                 className={options.className}
+                style={newStyle}
+                type={options.type ?? "button"}
+                disabled={options.disabled ?? false}
+                autoFocus={options.autoFocus ?? false}
+                data-chosen={!!options.chosen}
+
                 onFocus={options.focus}
                 onClick={options.click}
                 onMouseOver={mouseOver as any}
                 onMouseOut={mouseOut as any}
                 onMouseUp={options.mouseUp}
                 onContextMenu={options.contextMenu}
-                style={newStyle}
-                type={options.type ?? "button"}
-                disabled={options.disabled ?? false}
-                autoFocus={options.autoFocus ?? false}
-                data-chosen={!!options.chosen}>
+                
+                onGotPointerCapture={options.gotPointerCapture}
+                onLostPointerCapture={options.lostPointerCapture}
+                onPointerCancel={options.pointerCancel}
+                onPointerDown={options.pointerDown}
+                onPointerEnter={options.pointerEnter}
+                onPointerLeave={options.pointerLeave}
+                onPointerMove={options.pointerMove}
+                onPointerOut={options.pointerOut}
+                onPointerOver={options.pointerOver}
+                onPointerUp={options.pointerUp}
+
+                onTouchStart={options.touchStart}
+                onTouchEnd={options.touchEnd}
+                onTouchMove={options.touchMove}
+                onTouchCancel={options.touchCancel}>
 
                 {options.children}
             </button>
@@ -414,6 +431,22 @@ export type ButtonOptions =
     mouseOver?: React.MouseEventHandler<HTMLButtonElement>,
     mouseOut?: React.MouseEventHandler<HTMLButtonElement>,
     mouseUp?: React.MouseEventHandler<HTMLButtonElement>,
+
+    gotPointerCapture?: React.PointerEventHandler<HTMLButtonElement>,
+    lostPointerCapture?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerCancel?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerDown?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerEnter?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerLeave?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerMove?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerOut?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerOver?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerUp?: React.PointerEventHandler<HTMLButtonElement>,
+
+    touchStart?: React.TouchEventHandler<HTMLButtonElement>,
+    touchEnd?: React.TouchEventHandler<HTMLButtonElement>,
+    touchMove?: React.TouchEventHandler<HTMLButtonElement>,
+    touchCancel?: React.TouchEventHandler<HTMLButtonElement>,
 };
 
 /**
@@ -488,15 +521,32 @@ export function IconButton(options: IconButtonOptions)
             ref={ref}
             css={serializedStyles}
             className={options.className}
+            disabled={options.disabled}
+            autoFocus={options.autoFocus}
+            style={options.style}
+            
             onFocus={options.focus}
             onClick={options.click}
             onMouseOver={options.mouseOver}
             onMouseOut={options.mouseOut}
             onMouseUp={options.mouseUp}
             onContextMenu={options.contextMenu}
-            disabled={options.disabled}
-            autoFocus={options.autoFocus}
-            style={options.style}>
+            
+            onGotPointerCapture={options.gotPointerCapture}
+            onLostPointerCapture={options.lostPointerCapture}
+            onPointerCancel={options.pointerCancel}
+            onPointerDown={options.pointerDown}
+            onPointerEnter={options.pointerEnter}
+            onPointerLeave={options.pointerLeave}
+            onPointerMove={options.pointerMove}
+            onPointerOut={options.pointerOut}
+            onPointerOver={options.pointerOver}
+            onPointerUp={options.pointerUp}
+
+            onTouchStart={options.touchStart}
+            onTouchEnd={options.touchEnd}
+            onTouchMove={options.touchMove}
+            onTouchCancel={options.touchCancel}>
 
             <Icon type={type} size={options.size} style={iconStyle}/>
         </button>
@@ -527,6 +577,22 @@ export type IconButtonOptions = {
     mouseOver?: React.MouseEventHandler<HTMLButtonElement>,
     mouseOut?: React.MouseEventHandler<HTMLButtonElement>,
     mouseUp?: React.MouseEventHandler<HTMLButtonElement>,
+
+    gotPointerCapture?: React.PointerEventHandler<HTMLButtonElement>,
+    lostPointerCapture?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerCancel?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerDown?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerEnter?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerLeave?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerMove?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerOut?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerOver?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerUp?: React.PointerEventHandler<HTMLButtonElement>,
+
+    touchStart?: React.TouchEventHandler<HTMLButtonElement>,
+    touchEnd?: React.TouchEventHandler<HTMLButtonElement>,
+    touchMove?: React.TouchEventHandler<HTMLButtonElement>,
+    touchCancel?: React.TouchEventHandler<HTMLButtonElement>,
 };
 
 /**
@@ -545,16 +611,33 @@ export function ArrowButton(options: ArrowButtonOptions)
             rotation={d == "left" ? 0 : d == "right" ? 180 : d == "up" ? 90 : -90}
             className={options.className}
             element={options.element}
+            disabled={options.disabled ?? false}
+            autoFocus={options.autoFocus ?? false}
+            style={options.style}
+            size={options.size}
+
             focus={options.focus}
             click={options.click}
             mouseOver={options.mouseOver}
             mouseOut={options.mouseOut}
             mouseUp={options.mouseUp}
             contextMenu={options.contextMenu}
-            disabled={options.disabled ?? false}
-            autoFocus={options.autoFocus ?? false}
-            style={options.style}
-            size={options.size}/>
+            
+            gotPointerCapture={options.gotPointerCapture}
+            lostPointerCapture={options.lostPointerCapture}
+            pointerCancel={options.pointerCancel}
+            pointerDown={options.pointerDown}
+            pointerEnter={options.pointerEnter}
+            pointerLeave={options.pointerLeave}
+            pointerMove={options.pointerMove}
+            pointerOut={options.pointerOut}
+            pointerOver={options.pointerOver}
+            pointerUp={options.pointerUp}
+
+            touchStart={options.touchStart}
+            touchEnd={options.touchEnd}
+            touchMove={options.touchMove}
+            touchCancel={options.touchCancel}/>
     );
 }
 
@@ -575,6 +658,22 @@ export type ArrowButtonOptions = {
     mouseOver?: React.MouseEventHandler<HTMLButtonElement>,
     mouseOut?: React.MouseEventHandler<HTMLButtonElement>,
     mouseUp?: React.MouseEventHandler<HTMLButtonElement>,
+
+    gotPointerCapture?: React.PointerEventHandler<HTMLButtonElement>,
+    lostPointerCapture?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerCancel?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerDown?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerEnter?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerLeave?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerMove?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerOut?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerOver?: React.PointerEventHandler<HTMLButtonElement>,
+    pointerUp?: React.PointerEventHandler<HTMLButtonElement>,
+
+    touchStart?: React.TouchEventHandler<HTMLButtonElement>,
+    touchEnd?: React.TouchEventHandler<HTMLButtonElement>,
+    touchMove?: React.TouchEventHandler<HTMLButtonElement>,
+    touchCancel?: React.TouchEventHandler<HTMLButtonElement>,
 };
 
 export type ArrowButtonDirection = "left" | "right" | "up" | "down";

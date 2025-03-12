@@ -3,12 +3,14 @@ import { css } from "@emotion/react";
 import assert from "assert";
 import Color from "color";
 import Draggable from "react-draggable";
+import { TypedEventTarget } from "@hydroper/typedeventtarget";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { ThemeContext, PreferPrimaryContext } from "../theme";
 import { RemObserver } from "../utils/RemObserver";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
 import { lighten, darken, enhanceBrightness, contrast } from "../utils/color";
 import { fontFamily, fontSize } from "../utils/common";
+import { CheckedIcon } from "./Icons";
 
 const margin = 0.5; // Margin between tiles
 const group_margin = 3.5; // Margin between groups
@@ -121,6 +123,11 @@ export type TilesOptions = {
      * positions and labels.
      */
     state: TilesState,
+
+    /**
+     * The tile controller allows controlling which tiles are checked (selected).
+     */
+    controller: TilesController,
  
     /**
      * If `horizontal`, `height` must be specified;
@@ -251,7 +258,13 @@ export function TileGroup(options: TileGroupOptions)
     `;
 
     // Re-arrange
-    useEffect(() => { rearrange() });
+    useEffect(() =>
+    {
+        rearrange();
+        return () => {
+            rearrange();
+        };
+    });
 
     return (
         <>
@@ -323,7 +336,7 @@ export function Tile(options: TileOptions)
         overflow: hidden;
         width: ${get_tile_width(options.size)}rem;
         height: ${get_tile_height(options.size)}rem;
-        outline: 0.11rem solid ${Color(theme.colors.foreground).alpha(0.3).toString()};
+        outline: 0.11rem solid ${Color(theme.colors.primary).alpha(0.6).alpha(0.3).toString()};
         background: linear-gradient(90deg, ${tile_color} 0%, ${tile_color_b1} %100);
         border: none;
         font-family: ${fontFamily};
@@ -332,12 +345,33 @@ export function Tile(options: TileOptions)
         transform: ${rotate_3d};
 
         &:hover:not(:disabled) {
-            outline: 0.17rem solid ${Color(theme.colors.foreground).alpha(0.6).toString()};
+            outline: 0.17rem solid ${Color(theme.colors.primary).alpha(0.6).toString()};
             background: linear-gradient(90deg, ${tile_color_b1} 0%, ${tile_color_b2} %100);
         }
 
         &:disabled {
             opacity: 0.5;
+        }
+
+        & .Tile-checked-tri {
+            position: absolute;
+            right: -1rem;
+            top: -1rem;
+            padding: 0.5rem;
+            width: 2rem;
+            height: 2rem;
+            background: ${theme.colors.primary};
+            color: ${theme.colors.primaryForeground};
+            transform: rotate(45deg);
+            visibility: hidden;
+        }
+
+        &[data-checked="true"] .Tile-checked-tri {
+            visibility: visible;
+        }
+
+        & .Tile-checked-icon {
+            transform: rotate(-45deg);
         }
     `;
 
@@ -368,7 +402,13 @@ export function Tile(options: TileOptions)
     }
 
     // Re-arrange
-    useEffect(() => { rearrange() });
+    useEffect(() =>
+    {
+        rearrange();
+        return () => {
+            rearrange();
+        };
+    });
 
     useEffect(() => {
         const tiles_div = button_ref.current!.parentElement;
@@ -386,12 +426,16 @@ export function Tile(options: TileOptions)
                 data-group={options.group ?? ""}
                 data-horizontal={options.horizontal}
                 data-vertical={options.vertical}
-                data-checked={!!options.checked}
+                data-checked="false"
                 onPointerDown={options.disabled ? undefined : button_onPointerDown as any}
                 onContextMenu={options.disabled ? undefined : e => { options.contextMenu?.(options.id) }}
                 disabled={options.disabled}>
 
                 {options.children}
+
+                <div className="Tile-checked-tri">
+                    <CheckedIcon className="Tile-checked-icon"/>
+                </div>
             </button>
         </Draggable>
     );
@@ -414,11 +458,6 @@ export type TileOptions = {
     size: TileSize,
 
     disabled?: boolean,
-
-    /**
-     * Determines whether the tile is checked or not.
-     */
-    checked?: boolean,
 
     /**
      * Default group by ID.
@@ -452,3 +491,39 @@ export type TileContextMenuHandler = (id: string) => void;
  * Tile size.
  */
 export type TileSize = "small" | "medium" | "wide" | "large";
+
+/**
+ * Provides control over tiles in a `Tiles` container.
+ */
+export class TilesController extends (EventTarget as TypedEventTarget<{
+    getChecked: CustomEvent<{}>;
+    getCheckedsResult: CustomEvent<{ tiles: string[] }>;
+    setChecked: CustomEvent<{ id: string, value: boolean }>;
+}>) {
+    /**
+     * Gets the list of checked tiles.
+     */
+    getChecked(): Promise<string[]>
+    {
+        return new Promise((resolve, reject) => {
+            const listener = (e: CustomEvent<{ tiles: string[] }>) => {
+                this.removeEventListener("getCheckedsResult", listener)
+                resolve(e.detail.tiles);
+            };
+            this.addEventListener("getCheckedsResult", listener);
+            this.dispatchEvent(new CustomEvent("getChecked", {
+                detail: {},
+            }));
+        });
+    }
+
+    /**
+     * Sets whether a tile is checked or not.
+     */
+    setChecked(id: string, value: boolean): void
+    {
+        this.dispatchEvent(new CustomEvent("setChecked", {
+            detail: { id, value },
+        }));
+    }
+}

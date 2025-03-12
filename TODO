@@ -39,18 +39,19 @@ Basic components
 - [x] While holding click button at tile, slightly rotate X/Y according to the side.
   - [ ] Test it
 - [x] Disabled tiles
-- [ ] Default position
 - [ ] Drag-n-drop mode
 - [ ] Selection mode (check one or more tiles)
+  - [ ] Use `TilesController` for resolving `setChecked` and `getChecked` (dispatching `getCheckedResult`) signals
+  - [x] Display the selected bordered check rect inside the tile
+    - [ ] Test it
 - [ ] Tile content roll
-  - [ ] Any solid background will be actually a linear gradient with very discrete colosr
   - [ ] Icon contents
   - [ ] No-icon text-only contents
   - [ ] Live tile image contents
     - [ ] Bottom-attached title like in news
-- [ ] Tile group label
-  - [ ] If renameable, add label to unlabeled group (shows an opaque rect over the group)
-  - [ ] If renameable, rename support
+- [ ] Tile group
+  - [ ] If renameable, allow to add label to unlabeled group (shows an opaque rect over the group)
+  - [ ] If renameable, allow renaming label
 - [ ] Dispatch context menu event in a title on a long touch pressure
 - [x] Open transition
 - [x] Hide transition

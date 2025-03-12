@@ -29,6 +29,7 @@ export type IconOptions = {
     type?: string,
     size?: number,
     style?: React.CSSProperties,
+    className?: string,
 };
 
 const iconMap = new Map<string, {black: any, white: any}>([
@@ -83,7 +84,7 @@ export function Icon(options: IconOptions)
     const m = iconMap.get(type);
     assert(m !== undefined, "Icon is not defined: " + type);
     return (
-        <img css={serializedStyles} ref={ref} src={m[color]} draggable={false} alt={type} style={options.style}></img>
+        <img css={serializedStyles} ref={ref} src={m[color]} draggable={false} alt={type} style={options.style} className={options.className}></img>
     );
 }
 
@@ -99,28 +100,29 @@ export function getIcon(type: string, color: "white" | "black")
 
 export function CheckedIcon(options: IconOptions)
 {
-    return <Icon type="checked" size={options.size} style={options.style}/>;
+    return <Icon type="checked" size={options.size} style={options.style} className={options.className}/>;
 }
 
 export function BulletIcon(options: IconOptions)
 {
-    return <Icon type="bullet" size={options.size} style={options.style}/>;
+    return <Icon type="bullet" size={options.size} style={options.style} className={options.className}/>;
 }
 
 export function ClearIcon(options: IconOptions)
 {
-    return <Icon type="clear" size={options.size} style={options.style}/>;
+    return <Icon type="clear" size={options.size} style={options.style} className={options.className}/>;
 }
 
 export function SearchIcon(options: IconOptions)
 {
-    return <Icon type="search" size={options.size} style={options.style}/>;
+    return <Icon type="search" size={options.size} style={options.style} className={options.className}/>;
 }
 
 export type ArrowIconOptions = {
     direction?: ArrowIconDirection,
     size?: number,
     style?: React.CSSProperties,
+    className?: string,
 };
 
 export type ArrowIconDirection = "left" | "right" | "up" | "down";
@@ -138,27 +140,27 @@ export function ArrowIcon(options: ArrowIconOptions)
         extend(newStyle, options.style);
     }
 
-    return <Icon type="arrow" size={options.size} style={newStyle}/>;
+    return <Icon type="arrow" size={options.size} style={newStyle} className={options.className}/>;
 }
 
 export function UpArrowIcon(options: IconOptions)
 {
-    return <ArrowIcon direction="up" size={options.size} style={options.style}/>;
+    return <ArrowIcon direction="up" size={options.size} style={options.style} className={options.className}/>;
 }
 
 export function DownArrowIcon(options: IconOptions)
 {
-    return <ArrowIcon direction="down" size={options.size} style={options.style}/>;
+    return <ArrowIcon direction="down" size={options.size} style={options.style} className={options.className}/>;
 }
 
 export function LeftArrowIcon(options: IconOptions)
 {
-    return <ArrowIcon direction="left" size={options.size} style={options.style}/>;
+    return <ArrowIcon direction="left" size={options.size} style={options.style} className={options.className}/>;
 }
 
 export function RightArrowIcon(options: IconOptions)
 {
-    return <ArrowIcon direction="right" size={options.size} style={options.style}/>;
+    return <ArrowIcon direction="right" size={options.size} style={options.style} className={options.className}/>;
 }
 
 export function ProgressRing(options: ProgressRingOptions)
@@ -309,7 +311,7 @@ export function ProgressRing(options: ProgressRingOptions)
     }, [color, rem]);
 
     return (
-        <div ref={ref} style={newStyle} css={serializedStyles}>
+        <div ref={ref} style={newStyle} css={serializedStyles} className={options.className}>
             <div className='progress-ring__wrap'>
                 <div className='progress-ring__circle'></div>
             </div>
@@ -332,4 +334,5 @@ export function ProgressRing(options: ProgressRingOptions)
 export type ProgressRingOptions = {
     size?: number,
     style?: React.CSSProperties,
+    className?: string,
 };

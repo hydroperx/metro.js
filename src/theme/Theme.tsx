@@ -129,8 +129,8 @@ purple.colors.background =
 purple.colors.primary = "#180053";
 
 const green = clone(dark);
-green.colors.background =
-green.colors.primary = "#3F8700";
+green.colors.background = "#3F8700";
+green.colors.primary = "#4F970E";
 green.colors.anchor = "#ef7127";
 
 export const ThemePresets = {
