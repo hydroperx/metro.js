@@ -127,7 +127,7 @@ export function Tiles(options: TilesOptions)
         set_forced_invisible(false);
 
         // Organize groups
-        const groups: HTMLDivElement[] = Array.from(div_ref.current!.querySelectorAll(".Tile")) as HTMLDivElement[];
+        const groups: HTMLButtonElement[] = Array.from(div_ref.current!.querySelectorAll(".TileGroup")) as HTMLButtonElement[];
 
         fixme();
     }
@@ -325,6 +325,10 @@ export function TileGroup(options: TileGroupOptions)
         border: none;
         outline: none;
         background: none;
+
+        &:hover:not(:disasbled) {
+            border-bottom: 0.25rem solid ${Color(theme.colors.foreground).alpha(0.4).toString()};
+        }
 
         &:focus:not(:disabled) {
             outline: 0.05rem dotted ${theme.colors.focusDashes};

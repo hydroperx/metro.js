@@ -50,7 +50,6 @@ Basic components
   - [ ] Live tile image contents
     - [ ] Bottom-attached title like in news
 - [ ] Tile group
-  - [ ] Show an opaque bottom border under the group label on hover
   - [ ] Allow to delete group by right clicking (or long touch holding) the label (opening a context menu).
   - [ ] If renameable, allow to add label to unlabeled group
   - [ ] If renameable, allow renaming label
