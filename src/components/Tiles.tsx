@@ -145,8 +145,8 @@ export function Tiles(options: TilesOptions)
 
         // Measurement layout
         const layout: TilesLayout = options.direction == "horizontal" ?
-            new TilesHorizontalLayout(orthogonal_side_length) :
-            new TilesVerticalLayout(orthogonal_side_length);
+            new TilesHorizontalLayout(orthogonal_side_length, (options.innerMargin ?? 3) * rem) :
+            new TilesVerticalLayout(orthogonal_side_length, (options.innerMargin ?? 1) * rem);
 
         // Retrieve tile buttons
         const tiles = Array.from(div_ref.current!.querySelectorAll(".Tile")) as HTMLButtonElement[];
@@ -184,7 +184,7 @@ export function Tiles(options: TilesOptions)
                     , v = Number(tile.getAttribute("data-vertical"))
                     , size = tile.getAttribute("data-size") as TileSize;
                 const { x, y } = layout.putTile(size, h, v);
-                tile.style.transform = `var(--other-transform) translate(${x}, ${y})`;
+                tile.style.transform = `var(--other-transform) translate(${x / rem}rem, ${y / rem}rem)`;
             }
 
             // Position and size group label
@@ -306,6 +306,12 @@ export type TilesOptions = {
      * otherwise, `width` must be specified.
      */
     direction: "horizontal" | "vertical",
+
+    /**
+     * Margin of the side orthogonal to the direction used
+     * for the tiles (**not** the size of the container).
+     */
+    innerMargin?: number,
 
     /**
      * Whether to display open or close transition.
@@ -732,8 +738,8 @@ export function Tile(options: TileOptions)
                 data-id={options.id}
                 data-group={options.group}
                 data-size={size}
-                data-horizontal={options.horizontal}
-                data-vertical={options.vertical}
+                data-horizontal={options.horizontal ?? 0}
+                data-vertical={options.vertical ?? 0}
                 data-dragging={dragging}
                 data-checked={checked}
                 onPointerDown={ options.disabled ? undefined : button_onPointerDown as any }
@@ -777,12 +783,12 @@ export type TileOptions = {
     /**
      * Default horizontal position in small tile units.
      */
-    horizontal: number,
+    horizontal?: number,
 
     /**
      * Default vertical position in small tile units.
      */
-    vertical: number,
+    vertical?: number,
 
     /**
      * Click event.
@@ -855,28 +861,30 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
 
 abstract class TilesLayout
 {
+    abstract putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number };
+
     /**
-     * Puts a label after all tiles of a group have been positioned.
+     * Puts a label after all tiles of a group have been positioned,
+     * moving to the next group.
      */
     abstract putLabel(): { x: number, y: number, width: number };
-
-    abstract putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number };
 }
 
 class TilesHorizontalLayout extends TilesLayout
 {
-    constructor(containerHeight: number)
+    private rows = new TilesLayoutTileRows();
+
+    constructor(private containerHeight: number, private innerMargin: number)
     {
         super();
+    }
+
+    override putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number }
+    {
         fixme();
     }
 
     override putLabel(): { x: number, y: number, width: number }
-    {
-        fixme();
-    }
-
-    override putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number }
     {
         fixme();
     }
@@ -884,9 +892,15 @@ class TilesHorizontalLayout extends TilesLayout
 
 class TilesVerticalLayout extends TilesLayout
 {
-    constructor(containerWidth: number)
+    private rows = new TilesLayoutTileRows();
+
+    constructor(private containerWidth: number, private innerMargin: number)
     {
         super();
+    }
+
+    override putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number }
+    {
         fixme();
     }
 
@@ -894,9 +908,52 @@ class TilesVerticalLayout extends TilesLayout
     {
         fixme();
     }
+}
 
-    override putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number }
+/**
+ * Small tile rows of columns (occupied entries).
+ */
+class TilesLayoutTileRows {
+    private rows: boolean[][] = [];
+
+    /**
+     * Whether a small tile is busy or not.
+     */
+    get(horizontal: number, vertical: number): boolean
     {
-        fixme();
+        if (vertical < this.rows.length)
+        {
+            const columns = this.rows[vertical];
+            if (horizontal < columns.length)
+            {
+                return columns[horizontal];
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Sets whether a small tile is occupied or not.
+     */
+    put(horizontal: number, vertical: number, value: boolean)
+    {
+        if (value)
+        {
+            while (vertical >= this.rows.length)
+            {
+                this.rows.push([]);
+            }
+            const columns = this.rows[vertical];
+            while (horizontal >= columns.length)
+            {
+                columns.push(false);
+            }
+            columns[horizontal] = true;
+        }
+        else if (vertical < this.rows.length)
+        {
+            const columns = this.rows[vertical];
+            if (horizontal < columns.length) columns[horizontal] = false;
+        }
     }
 }
