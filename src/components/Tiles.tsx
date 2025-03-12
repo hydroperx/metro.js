@@ -4,13 +4,14 @@ import assert from "assert";
 import Color from "color";
 import Draggable, { DraggableData } from "react-draggable";
 import { TypedEventTarget } from "@hydroper/typedeventtarget";
+import { CheckedIcon } from "./Icons";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { ThemeContext, PreferPrimaryContext } from "../theme";
 import { RemObserver } from "../utils/RemObserver";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
 import { lighten, darken, enhanceBrightness, contrast } from "../utils/color";
 import { fontFamily, fontSize } from "../utils/common";
-import { CheckedIcon } from "./Icons";
+import { randomHex } from "../utils/random";
 
 const margin = 0.5; // Margin between tiles
 const group_margin = 3.5; // Margin between groups
@@ -473,8 +474,9 @@ export function Tile(options: TileOptions)
                 data-vertical={options.vertical}
                 data-checked="false"
                 data-dragging={dragging}
-                onPointerDown={options.disabled ? undefined : button_onPointerDown as any}
-                onContextMenu={options.disabled ? undefined : e => { options.contextMenu?.(options.id) }}
+                onPointerDown={ options.disabled ? undefined : button_onPointerDown as any }
+                onClick={ options.disabled ? undefined : e => { options.click?.(options.id) } }
+                onContextMenu={ options.disabled ? undefined : e => { options.contextMenu?.(options.id) }}
                 disabled={options.disabled}>
 
                 {options.children}
@@ -521,17 +523,17 @@ export type TileOptions = {
     vertical: number,
 
     /**
+     * Click event.
+     */
+    click?: (id: string) => void,
+
+    /**
      * Context menu event.
      */
-    contextMenu?: TileContextMenuHandler,
+    contextMenu?: (id: string) => void,
 
     children?: React.ReactNode,
 };
-
-/**
- * Context menu handler for tiles.
- */
-export type TileContextMenuHandler = (id: string) => void;
 
 /**
  * Tile size.
@@ -540,25 +542,31 @@ export type TileSize = "small" | "medium" | "wide" | "large";
 
 /**
  * Provides control over tiles in a `Tiles` container.
+ * Allows to retrieve the list of checked tiles and
+ * setting whether a tile is checked or not.
  */
 export class TilesController extends (EventTarget as TypedEventTarget<{
-    getChecked: CustomEvent<{}>;
-    getCheckedsResult: CustomEvent<{ tiles: string[] }>;
+    getChecked: CustomEvent<{ requestId: string }>;
+    getCheckedResult: CustomEvent<{ requestId: string, tiles: string[] }>;
     setChecked: CustomEvent<{ id: string, value: boolean }>;
 }>) {
     /**
      * Gets the list of checked tiles.
      */
-    getChecked(): Promise<string[]>
+    checked(): Promise<string[]>
     {
         return new Promise((resolve, reject) => {
-            const listener = (e: CustomEvent<{ tiles: string[] }>) => {
-                this.removeEventListener("getCheckedsResult", listener)
+            const requestId = randomHex();
+            const listener = (e: CustomEvent<{ requestId: string, tiles: string[] }>) => {
+                if (e.detail.requestId !== requestId) return;
+                this.removeEventListener("getCheckedResult", listener)
                 resolve(e.detail.tiles);
             };
-            this.addEventListener("getCheckedsResult", listener);
+            this.addEventListener("getCheckedResult", listener);
             this.dispatchEvent(new CustomEvent("getChecked", {
-                detail: {},
+                detail: {
+                    requestId,
+                },
             }));
         });
     }

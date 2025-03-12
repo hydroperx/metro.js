@@ -12,6 +12,7 @@ import { ThemeContext } from "../theme";
 import { fontFamily, fontSize, maximumZIndex } from "../utils/common";
 import { pointsToRem } from "../utils/points";
 import { focusPrevSibling, focusNextSibling } from "../utils/focus";
+import { randomHex } from "../utils/random";
 
 class ContextMenuEventDispatcher extends (EventTarget as TypedEventTarget<{
     show: CustomEvent<ContextMenuEvent>;
@@ -126,14 +127,6 @@ export function hideAllContextMenu(): void
     eventDispatcher.dispatchEvent(new CustomEvent("hideAll", {
         detail: { id: "" }
     }));
-}
-
-/**
- * Generates a random 1-5 digits hexadecimal string.
- */
-function randomHex()
-{
-    return Math.floor(Math.random() * 0xF_FF_FF).toString(16);
 }
 
 /**
