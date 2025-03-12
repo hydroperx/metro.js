@@ -40,6 +40,7 @@ Basic components
   - [ ] Test it
 - [x] Disabled tiles
 - [ ] Drag-n-drop mode
+  - [ ] Trigger "new group" event in TilesController so the user manually craetes new groups.
 - [ ] Selection mode (check one or more tiles)
   - [x] Display the selected bordered check rect inside the tile
     - [ ] Test it
@@ -49,10 +50,14 @@ Basic components
   - [ ] Live tile image contents
     - [ ] Bottom-attached title like in news
 - [ ] Tile group
-  - [ ] If renameable, allow to add label to unlabeled group (shows an opaque rect over the group)
+  - [ ] Show an opaque bottom border under the group label on hover
+  - [ ] Allow to delete group by right clicking (or long touch holding) the label (opening a context menu).
+  - [ ] If renameable, allow to add label to unlabeled group
   - [ ] If renameable, allow renaming label
 - [ ] Dispatch context menu event in a title on a long touch pressure
 - [x] Open transition
 - [x] Hide transition
 - In `rearrange`:
+  - [ ] Make sure to use `tilesState`
+  - [ ] Make sure to update `tilesState`
   - [ ] Display label

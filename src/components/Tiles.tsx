@@ -43,7 +43,8 @@ window.addEventListener("pointerup", () => {
  */
 export function Tiles(options: TilesOptions)
 {
-    const tilesController = options.controller;
+    // Misc vars
+    const {controller: tilesController, state: tilesState } = options;
 
     // Refs
     const div_ref = useRef<HTMLDivElement | null>(null);
@@ -124,6 +125,9 @@ export function Tiles(options: TilesOptions)
     {
         rearrangeTimeout = -1;
         set_forced_invisible(false);
+
+        // Organize groups
+        const groups: HTMLDivElement[] = Array.from(div_ref.current!.querySelectorAll(".Tile")) as HTMLDivElement[];
 
         fixme();
     }
@@ -303,6 +307,9 @@ const ModeSignalContext = createContext<((params: { dragNDrop?: boolean, selecti
  */
 export function TileGroup(options: TileGroupOptions)
 {
+    // Theme
+    const theme = useContext(ThemeContext);
+
     // Re-arrange function
     const rearrange = useContext(RearrangeContext);
 
@@ -315,6 +322,13 @@ export function TileGroup(options: TileGroupOptions)
         font-weight: lighter;
         font-size: 1.4rem;
         opacity: 0.6;
+        border: none;
+        outline: none;
+        background: none;
+
+        &:focus:not(:disabled) {
+            outline: 0.05rem dotted ${theme.colors.focusDashes};
+        }
     `;
 
     // Re-arrange
@@ -328,14 +342,14 @@ export function TileGroup(options: TileGroupOptions)
 
     return (
         <>
-            <div
+            <button
                 className="TileGroup"
                 css={serializedStyles}
                 data-id={options.id}
                 data-label={options.label ?? ""}
                 data-horizontal={options.horizontal}
                 data-vertical={options.vertical}>
-            </div>
+            </button>
         </>
     );
 }
@@ -434,7 +448,7 @@ export function Tile(options: TileOptions)
             opacity: 0.6;
         }
 
-        &:hover:not(:disabled) {
+        &:hover:not(:disabled), &:focus:not(:disabled) {
             outline: 0.17rem solid ${Color(theme.colors.primary).alpha(0.6).toString()};
             background: linear-gradient(90deg, ${tile_color_b1} 0%, ${tile_color_b2} %100);
         }
