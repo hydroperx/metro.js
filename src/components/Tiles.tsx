@@ -43,6 +43,11 @@ window.addEventListener("pointerup", () => {
  */
 export function Tiles(options: TilesOptions)
 {
+    const tilesController = options.controller;
+
+    // Refs
+    const div_ref = useRef<HTMLDivElement | null>(null);
+
     // Open/close
     const open = options.open ?? true;
     const [forced_invisible, set_forced_invisible] = useState<boolean>(true);
@@ -60,14 +65,16 @@ export function Tiles(options: TilesOptions)
             drag_n_drop_mode = true;
 
             // Set data-drag-n-drop-mode="true" attribute to tiles
-            fixme();
+            for (const tile_div of div_ref.current!.querySelectorAll(".Tile"))
+                tile_div.setAttribute("data-drag-n-drop-mode", "true");
         }
         else if (params.dragNDrop !== undefined)
         {
             drag_n_drop_mode = false;
 
             // Remove data-drag-n-drop-mode attribute from tiles
-            fixme();
+            for (const tile_div of div_ref.current!.querySelectorAll(".Tile"))
+                tile_div.removeAttribute("data-drag-n-drop-mode");
         }
 
         if (params.selection)
@@ -75,14 +82,16 @@ export function Tiles(options: TilesOptions)
             selection_mode = true;
 
             // Set data-selection-mode="true" attribute to tiles
-            fixme();
+            for (const tile_div of div_ref.current!.querySelectorAll(".Tile"))
+                tile_div.setAttribute("data-selection-mode", "true");
         }
         else if (params.selection !== undefined)
         {
             selection_mode = false;
 
             // Remove data-selection-mode attribute from tiles
-            fixme();
+            for (const tile_div of div_ref.current!.querySelectorAll(".Tile"))
+                tile_div.removeAttribute("data-selection-mode");
         }
     }
 
@@ -115,7 +124,7 @@ export function Tiles(options: TilesOptions)
     {
         rearrangeTimeout = -1;
         set_forced_invisible(false);
-        
+
         fixme();
     }
 
@@ -140,8 +149,34 @@ export function Tiles(options: TilesOptions)
         }
     }, [open]);
 
+    useEffect(() => {
+        return () => {
+            tilesController.removeEventListener("getChecked", tilesController_onGetChecked);
+        };
+    });
+
+    // Handle request to get checked tiles
+    function tilesController_onGetChecked(e: CustomEvent<{ requestId: string }>)
+    {
+        const div = div_ref.current;
+        let tiles: string[] = [];
+        if (div)
+        {
+            tiles = Array.from(div.querySelectorAll(".Tile"))
+                .filter(div => div.getAttribute("data-checked") == "true")
+                .map(div => div.getAttribute("data-id"));
+        }
+        tilesController.dispatchEvent(new CustomEvent("getCheckedResult", {
+            detail: {
+                requestId: e.detail.requestId,
+                tiles,
+            },
+        }));
+    }
+    tilesController.addEventListener("getChecked", tilesController_onGetChecked);
+
     return (
-        <div className="Tiles" css={serializedStyles}>
+        <div className="Tiles" css={serializedStyles} ref={div_ref}>
             <TilesControllerContext.Provider value={options.controller}>
                 <ModeSignalContext.Provider value={mode_signal}>
                     <RearrangeContext.Provider value={rearrange_delayed}>
@@ -456,12 +491,12 @@ export function Tile(options: TileOptions)
         set_rotate_3d("rotate3d(0)");
     }
 
-    // Re-arrange
     useEffect(() =>
     {
         rearrange();
         return () => {
             rearrange();
+            tilesController.removeEventListener("setChecked", tilesController_onSetChecked);
         };
     });
 
@@ -522,7 +557,8 @@ export function Tile(options: TileOptions)
     }
 
     // Handle checking tiles through TilesController
-    tilesController.addEventListener("setChecked", e => {
+    function tilesController_onSetChecked(e: CustomEvent<{ id: string, value: boolean }>)
+    {
         if (e.detail.id !== options.id) return;
         tilesController.checked().then(list => {
             const checked = e.detail.value;
@@ -532,7 +568,8 @@ export function Tile(options: TileOptions)
             else if (!checked && (list.length == 0 || (list.length == 1 && list.includes(options.id))))
                 modeSignal({ selection: false });
         });
-    });
+    }
+    tilesController.addEventListener("setChecked", tilesController_onSetChecked);
 
     return (
         <Draggable nodeRef={button_ref} onStart={on_drag_start} onDrag={on_drag} onStop={on_drag_stop} offsetParent={tiles_div}>
