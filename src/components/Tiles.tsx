@@ -232,22 +232,15 @@ export function TileGroup(options: TileGroupOptions)
     // Re-arrange function
     const rearrange = useContext(RearrangeContext);
 
-    // Label
-    const [label, setLabel] = useState<string>(options.label ?? "");
-
     // Rename
     const rename = options.rename ?? true;
 
     // CSS
     const serializedStyles = css `
         position: absolute;
-
-        .TileLabel {
-            position: absolute;
-            font-weight: lighter;
-            font-size: 1.6rem;
-            opacity: 0.6;
-        }
+        font-weight: lighter;
+        font-size: 1.4rem;
+        opacity: 0.6;
     `;
 
     // Re-arrange
@@ -259,13 +252,9 @@ export function TileGroup(options: TileGroupOptions)
                 className="TileGroup"
                 css={serializedStyles}
                 data-id={options.id}
-                data-label={label}
+                data-label={options.label ?? ""}
                 data-horizontal={options.horizontal}
                 data-vertical={options.vertical}>
-
-                <div className="TileLabel">
-                    {label}
-                </div>
             </div>
         </>
     );
