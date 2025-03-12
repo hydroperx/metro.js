@@ -61,5 +61,6 @@ Basic components
 - In `rearrange`:
   - [ ] Make sure to use `tilesState`
   - [ ] Make sure to update `tilesState`
+  - [ ] Make sure to update tile size
   - [ ] Display label
 - [ ] Fast easy scrolling based in Windows 8.1

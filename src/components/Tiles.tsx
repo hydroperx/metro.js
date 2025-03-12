@@ -149,14 +149,27 @@ export function Tiles(options: TilesOptions)
             // Fix group label position
             fixme();
 
-            // Position tiles
+            // Position and size tiles
             for (const tile of tiles)
             {
                 const tile_id = tile.getAttribute("data-id");
-                const tile_group_id = tiles_state.tiles.get(tile_id)?.group ?? tile.getAttribute("data-group");
+                const tile_state = tiles_state.tiles.get(tile_id);
+                const tile_group_id = tile_state?.group ?? tile.getAttribute("data-group");
                 if (tile_group_id != group_id)
                 {
                     continue;
+                }
+
+                // Update some attributes of the tile
+                tile.setAttribute("data-group", tile_group_id);
+                if (tile_state)
+                    tile.setAttribute("data-horizontal", tile_state.horizontal.toString()),
+                    tile.setAttribute("data-vertical", tile_state.vertical.toString());
+
+                // Update size
+                if (tile_state && tile.getAttribute("data-size") != tile_state.size)
+                {
+                    tiles_controller.setSize(tile_id, tile_state.size);
                 }
 
                 fixme();
@@ -234,12 +247,14 @@ export function Tiles(options: TilesOptions)
 
     return (
         <div className="Tiles" css={serializedStyles} ref={div_ref}>
-            <TilesControllerContext.Provider value={options.controller}>
-                <ModeSignalContext.Provider value={mode_signal}>
-                    <RearrangeContext.Provider value={rearrange_delayed}>
-                        {options.children}
-                    </RearrangeContext.Provider>
-                </ModeSignalContext.Provider>
+            <TilesControllerContext.Provider value={tiles_controller}>
+                <TilesStateContext.Provider value={tiles_state}>
+                    <ModeSignalContext.Provider value={mode_signal}>
+                        <RearrangeContext.Provider value={rearrange_delayed}>
+                            {options.children}
+                        </RearrangeContext.Provider>
+                    </ModeSignalContext.Provider>
+                </TilesStateContext.Provider>
             </TilesControllerContext.Provider>
         </div>
     );
@@ -253,7 +268,8 @@ export type TilesOptions = {
     state: TilesState,
 
     /**
-     * The tile controller allows controlling which tiles are checked (selected).
+     * The tile controller allows controlling which tiles are checked (selected)
+     * and their sizes.
      */
     controller: TilesController,
  
@@ -280,7 +296,7 @@ export type TilesOptions = {
 export class TilesState
 {
     groups: Map<string, { label: string, position: number }> = new Map();
-    tiles: Map<string, { group: string, horizontal: number, vertical: number }> = new Map();
+    tiles: Map<string, { group: string, size: TileSize, horizontal: number, vertical: number }> = new Map();
 
     /**
      * Constructs `TilesState` from JSON. The `object` argument
@@ -303,6 +319,7 @@ export class TilesState
             const o1 = object.tiles[id];
             r.tiles.set(id, {
                 group: String(o1.group),
+                size: String(o1.size) as TileSize,
                 horizontal: Number(o1.horizontal),
                 vertical: Number(o1.vertical),
             });
@@ -328,6 +345,7 @@ export class TilesState
         {
             tiles[id] = {
                 group: t.group,
+                size: t.size,
                 horizontal: t.horizontal,
                 vertical: t.vertical,
             };
@@ -340,6 +358,7 @@ export class TilesState
 }
 
 const TilesControllerContext = createContext<TilesController | null>(null);
+const TilesStateContext = createContext<TilesState | null>(null);
 const RearrangeContext = createContext<Function | null>(null);
 const ModeSignalContext = createContext<((params: { dragNDrop?: boolean, selection?: boolean }) => void) | null>(null);
 
@@ -434,7 +453,10 @@ export function Tile(options: TileOptions)
     
     // Signals
     const tiles_controller = useContext(TilesControllerContext);
-    const modeSignal = useContext(ModeSignalContext);
+    const mode_signal = useContext(ModeSignalContext);
+
+    // Super state
+    const tiles_state = useContext(TilesStateContext);
 
     // Re-arrange function
     const rearrange = useContext(RearrangeContext);
@@ -449,6 +471,9 @@ export function Tile(options: TileOptions)
     // Checked
     const [checked, set_checked] = useState<boolean>(false);
 
+    // Size
+    const [size, set_size] = useState<TileSize>(options.size);
+
     // CSS
     const [rotate_3d, set_rotate_3d] = useState<string>("rotate3d(0)");
     const tile_color = options.color ?? theme.colors.primary;
@@ -457,8 +482,8 @@ export function Tile(options: TileOptions)
     const serializedStyles = css `
         position: absolute;
         overflow: hidden;
-        width: ${get_tile_width(options.size)}rem;
-        height: ${get_tile_height(options.size)}rem;
+        width: ${get_tile_width(size)}rem;
+        height: ${get_tile_height(size)}rem;
         outline: 0.11rem solid ${Color(theme.colors.primary).alpha(0.6).alpha(0.3).toString()};
         background: linear-gradient(90deg, ${tile_color} 0%, ${tile_color_b1} %100);
         border: none;
@@ -548,7 +573,7 @@ export function Tile(options: TileOptions)
     {
         rearrange();
         return () => {
-            rearrange();
+            tiles_controller.removeEventListener("setSize", tiles_controller_onSetSize);
             tiles_controller.removeEventListener("setChecked", tiles_controller_onSetChecked);
         };
     });
@@ -579,20 +604,29 @@ export function Tile(options: TileOptions)
             return;
         }
         set_dragging(true);
-        modeSignal({ dragNDrop: true });
+        mode_signal({ dragNDrop: true });
 
         // Shift tiles as needed.
         fixme();
+
+        if (moved)
+        {
+            // Update state
+            update_state();
+        }
     }
 
     // Drag stop
     function on_drag_stop(_: any, data: DraggableData): void
     {
         set_dragging(false);
-        modeSignal({ dragNDrop: false });
+        mode_signal({ dragNDrop: false });
 
         // Move tile properly
         fixme();
+
+        // Update state
+        update_state();
     }
 
     // Handle context menu
@@ -602,9 +636,9 @@ export function Tile(options: TileOptions)
             const checked = !list.includes(options.id);
             set_checked(checked);
             if (checked || list.length > 1)
-                modeSignal({ selection: true });
+                mode_signal({ selection: true });
             else if (!checked && list.length == 1)
-                modeSignal({ selection: false });
+                mode_signal({ selection: false });
             options.contextMenu?.(options.id);
         });
     }
@@ -617,12 +651,44 @@ export function Tile(options: TileOptions)
             const checked = e.detail.value;
             set_checked(checked);
             if (checked || list.length > 0)
-                modeSignal({ selection: true });
+                mode_signal({ selection: true });
             else if (!checked && (list.length == 0 || (list.length == 1 && list.includes(options.id))))
-                modeSignal({ selection: false });
+                mode_signal({ selection: false });
         });
     }
     tiles_controller.addEventListener("setChecked", tiles_controller_onSetChecked);
+
+    // Handle setting size of tiles through TilesController
+    function tiles_controller_onSetSize(e: CustomEvent<{ id: string, value: TileSize }>)
+    {
+        if (e.detail.id !== options.id) return;
+        set_size(e.detail.value);
+        button_ref.current!.setAttribute("data-size", e.detail.value);
+        update_state();
+        rearrange();
+    }
+    tiles_controller.addEventListener("setSize", tiles_controller_onSetSize);
+
+    // Keep state up-to-date
+    function update_state(): void
+    {
+        const button = button_ref.current!;
+        let t = tiles_state.tiles.get(options.id);
+        if (!t)
+        {
+            t = {
+                group: "",
+                size: "wide",
+                horizontal: 0,
+                vertical: 0,
+            };
+            tiles_state.tiles.set(options.id, t);
+        }
+        t.group = button.getAttribute("data-group");
+        t.size = button.getAttribute("data-size") as TileSize;
+        t.horizontal = Number(button.getAttribute("data-horizontal"));
+        t.vertical = Number(button.getAttribute("data-vertical"));
+    }
 
     return (
         <Draggable nodeRef={button_ref} onStart={on_drag_start} onDrag={on_drag} onStop={on_drag_stop} offsetParent={tiles_div}>
@@ -632,13 +698,14 @@ export function Tile(options: TileOptions)
                 css={serializedStyles}
                 data-id={options.id}
                 data-group={options.group}
+                data-size={size}
                 data-horizontal={options.horizontal}
                 data-vertical={options.vertical}
                 data-dragging={dragging}
                 data-checked={checked}
                 onPointerDown={ options.disabled ? undefined : button_onPointerDown as any }
                 onClick={ options.disabled ? undefined : e => { options.click?.(options.id) } }
-                onContextMenu={ options.disabled ? undefined : e => { options.contextMenu?.(options.id) }}
+                onContextMenu={ options.disabled ? undefined : e => { on_context_menu() }}
                 disabled={options.disabled}>
 
                 {options.children}
@@ -704,13 +771,12 @@ export type TileSize = "small" | "medium" | "wide" | "large";
 
 /**
  * Provides control over tiles in a `Tiles` container.
- * Allows to retrieve the list of checked tiles and
- * setting whether a tile is checked or not.
  */
 export class TilesController extends (EventTarget as TypedEventTarget<{
     getChecked: CustomEvent<{ requestId: string }>;
     getCheckedResult: CustomEvent<{ requestId: string, tiles: string[] }>;
     setChecked: CustomEvent<{ id: string, value: boolean }>;
+    setSize: CustomEvent<{ id: string, value: TileSize }>;
 }>) {
     /**
      * Gets the list of checked tiles.
@@ -741,5 +807,48 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
         this.dispatchEvent(new CustomEvent("setChecked", {
             detail: { id, value },
         }));
+    }
+
+    /**
+     * Sets the size of a tile.
+     */
+    setSize(id: string, value: TileSize): void
+    {
+        this.dispatchEvent(new CustomEvent("setSize", {
+            detail: { id, value },
+        }));
+    }
+}
+
+abstract class TilesGroupLayout
+{
+    abstract putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number };
+}
+
+class TilesGroupHorizontalLayout extends TilesGroupLayout
+{
+    constructor(containerHeight: number)
+    {
+        super();
+        fixme();
+    }
+
+    override putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number }
+    {
+        fixme();
+    }
+}
+
+class TilesGroupVerticalLayout extends TilesGroupLayout
+{
+    constructor(containerWidth: number)
+    {
+        super();
+        fixme();
+    }
+
+    override putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number }
+    {
+        fixme();
     }
 }
