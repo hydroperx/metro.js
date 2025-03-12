@@ -55,7 +55,7 @@ Basic components
   - [ ] Allow to delete group by right clicking (or long touch holding) the label (opening a context menu).
   - [ ] If renameable, allow to add label to unlabeled group
   - [ ] If renameable, allow renaming label
-- [ ] Dispatch context menu event in a title on a long touch pressure
+- [ ] Dispatch context menu event in a title on a long touch pressure (call exactly `on_context_menu`, not directly the user's context menu, since the library auto checks/unchecks for the user)
 - [x] Open transition
 - [x] Hide transition
 - In `rearrange`:

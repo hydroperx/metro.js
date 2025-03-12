@@ -99,15 +99,10 @@ export function Tiles(options: TilesOptions)
         }
     }
 
-    // Direction
-    if (options.direction == "horizontal")
-        assert(options.height !== undefined, "Tiles.height must be specified.");
-    else assert(options.width !== undefined, "Tiles.width must be specified.");
-
     // CSS
     const serializedStyles = css `
-        ${options.direction == "horizontal" ? `width: 100%; height: ${pointsToRem(options.height)};` : ""};
-        ${options.direction == "vertical" ? `width: ${pointsToRem(options.width)}; height: 100%;` : ""};
+        width: 100%;
+        height: 100%;
         position: relative;
         overflow: hidden;
         opacity: ${forced_invisible ? 0 : scale};
@@ -267,16 +262,6 @@ export type TilesOptions = {
      * otherwise, `width` must be specified.
      */
     direction: "horizontal" | "vertical",
-
-    /**
-     * Width of the container; used if container is vertical.
-     */
-    width?: number,
-
-    /**
-     * Height of the container; used if container is horizontal.
-     */
-    height?: number,
 
     /**
      * Whether to display open or close transition.
