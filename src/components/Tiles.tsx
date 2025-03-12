@@ -141,7 +141,24 @@ export function Tiles(options: TilesOptions)
             return isNaN(a_pos) ? (isNaN(b_pos) ? 0 : 1) : isNaN(b_pos) ? -1 : a_pos < b_pos ? -1 : a_pos > b_pos ? 1 : 0;
         });
 
-        fixme();
+        // Position tiles according to their group
+        const tiles = Array.from(div_ref.current!.querySelectorAll(".Tile")) as HTMLButtonElement[];
+        for (const group_button of group_buttons)
+        {
+            const group_id = group_button.getAttribute("data-id");
+
+            for (const tile of tiles)
+            {
+                const tile_id = tile.getAttribute("data-id");
+                const tile_group_id = tiles_state.tiles.get(tile_id)?.group ?? tile.getAttribute("data-group");
+                if (tile_group_id != group_id)
+                {
+                    continue;
+                }
+
+                fixme();
+            }
+        }
     }
 
     // Open/close transition
@@ -600,7 +617,7 @@ export function Tile(options: TileOptions)
                 className="Tile"
                 css={serializedStyles}
                 data-id={options.id}
-                data-group={options.group ?? ""}
+                data-group={options.group}
                 data-horizontal={options.horizontal}
                 data-vertical={options.vertical}
                 data-dragging={dragging}
@@ -641,7 +658,7 @@ export type TileOptions = {
     /**
      * Default group by ID.
      */
-    group?: string,
+    group: string,
 
     /**
      * Default horizontal position in small tile units.
