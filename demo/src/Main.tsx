@@ -5,6 +5,7 @@ import {
     ProgressRing, ProgressEllipsis,
     Select, SelectOption, TextInput, FormGroup,
     CheckBox,
+    Tiles, TileGroup, Tile, TilesController, TilesState,
 
     ThemePresets,
     ThemeContext,
@@ -51,6 +52,10 @@ function App()
     {
         setLocaleDirection(value == "ltr" ? "ltr" : "rtl");
     }
+
+    // Tiles
+    const tiles_controller = new TilesController();
+    const tiles_state = new TilesState();
 
     return (
         <LocaleDirectionContext.Provider value={localeDirection}>
@@ -108,6 +113,13 @@ function App()
                                 <SelectOption value="barF">Bar F</SelectOption>
                                 <SelectOption value="qux1">Qux 1</SelectOption>
                             </Select>
+                        </div>
+                        <div style={{margin: "10rem 0", width: "100%", height: "10rem"}}>
+                            <Tiles controller={tiles_controller} state={tiles_state} direction="horizontal">
+                                <TileGroup id="welcome" label="Welcome" position={0}/>
+                                <Tile id="t1" group="welcome" size="wide" color="#1e4"></Tile>
+                                <Tile id="t2" group="welcome" size="large" color="#e33"></Tile>
+                            </Tiles>
                         </div>
                         <ContextMenu id={contextMenuId}>
                             <ContextMenuItem className="foo" click={() => {alert("clicked item 1")}}>

@@ -447,7 +447,6 @@ export function TileGroup(options: TileGroupOptions)
     {
         rearrange();
         return () => {
-            rearrange();
         };
     });
 
@@ -622,6 +621,7 @@ export function Tile(options: TileOptions)
     {
         rearrange();
         return () => {
+            rearrange();
             tiles_controller.removeEventListener("setSize", tiles_controller_onSetSize);
             tiles_controller.removeEventListener("setChecked", tiles_controller_onSetChecked);
         };
@@ -656,6 +656,7 @@ export function Tile(options: TileOptions)
         mode_signal({ dragNDrop: true });
 
         // Shift tiles as needed.
+        let moved = false;
         fixme();
 
         if (moved)
@@ -899,8 +900,9 @@ abstract class TilesLayout
 class TilesHorizontalLayout extends TilesLayout
 {
     private rows: TilesLayoutTileRows;
+    private group_x: number;
 
-    constructor(private containerHeight: number, private innerMargin: number, pixel_measures: TilesLayoutPixelMeasures)
+    constructor(private container_height: number, private inner_margin: number, pixel_measures: TilesLayoutPixelMeasures)
     {
         super(pixel_measures);
 
@@ -910,11 +912,28 @@ class TilesHorizontalLayout extends TilesLayout
     override putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number, horizontalTiles: number, verticalTiles: number }
     {
         // Measurements
-        const { margin, group_margin } = this.pixel_measures;
-        const get_tile_width = this.get_tile_width.bind(this);
-        const get_tile_height = this.get_tile_height.bind(this);
+        const { margin, small_size } = this.pixel_measures;
 
-        fixme();
+        const { max_height } = this.rows;
+
+        for (;;)
+        {
+            for (; vertical < max_height; vertical++)
+            {
+                if (this.rows.sizeFreeAt(horizontal, vertical, size))
+                {
+                    this.rows.fillSize(horizontal, vertical, size);
+                    return {
+                        x: (horizontal * small_size.width) + (horizontal * margin),
+                        y: (vertical * small_size.height) + (vertical * margin),
+                        horizontalTiles: horizontal, verticalTiles: vertical
+                    };
+                }
+            }
+            vertical = 0;
+            horizontal++;
+            assert(horizontal <= 0x7FFFFF, "Horizontal tiles too large.");
+        }
     }
 
     override putLabel(): { x: number, y: number, width: number }
@@ -922,7 +941,17 @@ class TilesHorizontalLayout extends TilesLayout
         // Measurements
         const { margin, group_margin, small_size } = this.pixel_measures;
 
-        fixme();
+        // Result vars
+        const this_group_x = this.group_x;
+        const this_group_y = this.inner_margin;
+        const width = this.rows.width == 0 ? 0 : (this.rows.width * small_size.width) + ((this.rows.width - 1) * margin);
+
+        // Move to the next group
+        this.group_x = width + group_margin;
+        this.rows = new TilesLayoutTileRows(Infinity, 6);
+
+        // Result
+        return { x: this_group_x, y: this_group_y, width };
     }
 }
 
@@ -930,7 +959,7 @@ class TilesVerticalLayout extends TilesLayout
 {
     private rows: TilesLayoutTileRows;
 
-    constructor(private containerWidth: number, private innerMargin: number, pixel_measures: TilesLayoutPixelMeasures)
+    constructor(private container_width: number, private inner_margin: number, pixel_measures: TilesLayoutPixelMeasures)
     {
         super(pixel_measures);
 
@@ -938,7 +967,7 @@ class TilesVerticalLayout extends TilesLayout
         const { margin, small_size } = this.pixel_measures;
 
         // Max tile columns (this must be run again similarly after putLabel)
-        let w = containerWidth - innerMargin*2;
+        let w = container_width - inner_margin*2;
         let max_width = 1;
         for (let i = 0; i < 256; i++)
         {
@@ -986,7 +1015,7 @@ class TilesLayoutTileRows {
      * @param max_width Maximum number of horizontal tiles. May be `Infinity`.
      * @param max_height Maximum number of vertical tiles. May be `Infinity`.
      */
-    constructor(private max_width: number, private max_height: number)
+    constructor(public readonly max_width: number, public readonly max_height: number)
     {
     }
 
@@ -1007,7 +1036,7 @@ class TilesLayoutTileRows {
     }
 
     /**
-     * Whether a small tile is available or not.
+     * Whether a small tile is occupied or not.
      */
     get(horizontal: number, vertical: number): boolean
     {
@@ -1031,12 +1060,12 @@ class TilesLayoutTileRows {
         switch (size)
         {
             case "small":
-                return this.get(horizontal, vertical);
+                return !this.get(horizontal, vertical);
             case "medium":
-                return this.get(horizontal, vertical)
-                    && this.get(horizontal + 1, vertical)
-                    && this.get(horizontal, vertical + 1)
-                    && this.get(horizontal + 1, vertical + 1);
+                return !this.get(horizontal, vertical)
+                    && !this.get(horizontal + 1, vertical)
+                    && !this.get(horizontal, vertical + 1)
+                    && !this.get(horizontal + 1, vertical + 1);
             case "wide":
                 return this.sizeFreeAt(horizontal, vertical, "medium")
                     && this.sizeFreeAt(horizontal + 2, vertical, "medium");
@@ -1134,3 +1163,7 @@ type TilesLayoutPixelMeasures = {
     wide_size: { width: number, height: number },
     large_size: { width: number, height: number },
 };
+
+function fixme(): never {
+    throw new Error("fixme");
+}
