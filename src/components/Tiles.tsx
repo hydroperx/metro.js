@@ -798,8 +798,8 @@ export function Tile(options: TileOptions)
             dragStart={on_drag_start}
             dragMove={on_drag_move}
             dragStop={on_drag_stop}
-            limit={tiles_div}
             finish="translate"
+            finishParent={tiles_div}
             rem={rem}>
 
             <button
