@@ -39,8 +39,10 @@ Basic components
 - [x] While holding click button at tile, slightly rotate X/Y according to the side.
 - [x] Disabled tiles
 - [ ] Drag-n-drop mode
+  - [ ] Save a copy of the overall tile state in the drag start
   - [ ] Detect dragged tile over another tile using bounding client rect on both for collision check
   - [ ] Moving should shift tiles (or not if the direction to go is free).
+    - [ ] If canceling shift during drag-n-drop, restore state to the initially saved one.
   - [ ] On drag end, reset cascading `inset` to `""` and call `rearrange()` after changing tile position.
   - [ ] Trigger "new group" event in TilesController so the user manually creates new groups.
   - [ ] If dragging far beyond in the orthogonal axis of the tiles container, zoom out (scale down) the entire tiles container; when not, revert back to normal scale.
