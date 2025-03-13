@@ -22,21 +22,25 @@ npm i @emotion/css @emotion/react
 
 Ensure to follow the [steps here](https://stackoverflow.com/a/77162508/26380963) for properly setting up the Emotion engine.
 
-### Installing the required Open Sans font
+### Installing the required fonts
 
 Installation:
 
 ```sh
-npm i @fontsource/open-sans
+npm i @fontsource/open-sans @fontsource/courier-prime
 ```
 
 Import it into your entry point TypeScript as follows:
 
 ```ts
+// Open Sans
 import "@fontsource/open-sans/300.css";
 import "@fontsource/open-sans/400.css";
 import "@fontsource/open-sans/500.css";
 import "@fontsource/open-sans/700.css";
+
+// Courier Prime
+import "@fontsource/courier-prime";
 ```
 
 ## Documentation

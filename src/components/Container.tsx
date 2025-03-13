@@ -3,7 +3,8 @@ import extend from "extend";
 import React, { useContext } from "react";
 import { css } from "@emotion/react";
 import { ThemeContext } from "../theme";
-import { fontFamily, fontSize } from "../utils/common";
+import { fontFamily, monoFontFamily, fontSize, monoFontSize } from "../utils/common";
+import { lighten, contrast } from "../utils/color";
 
 /**
  * Represents a generic container that may have a solid background color and be full-sized.
@@ -34,6 +35,14 @@ export function Container(options: ContainerOptions)
     if (options.easeInTransform)
     {
         transition = (transition ? transition : ", " + "") + "transform 200ms ease-in";
+    }
+    if (options.easeOutOpacity)
+    {
+        transition = (transition ? transition : ", " + "") + "opacity 200ms ease-out";
+    }
+    if (options.easeInOpacity)
+    {
+        transition = (transition ? transition : ", " + "") + "opacity 200ms ease-in";
     }
 
     // CSS
@@ -72,6 +81,46 @@ export function Container(options: ContainerOptions)
         &::selection, &::-moz-selection {
             background: ${theme.colors.foreground};
             color: ${theme.colors.background};
+        }
+
+        & a {
+            color: ${theme.colors.anchor};
+            text-decoration: none;
+        }
+
+        & a:hover {
+            color: ${lighten(theme.colors.anchor, 0.3)};
+        }
+
+        & code, & pre {
+            font-family: ${monoFontFamily};
+            font-size: ${monoFontSize};
+        }
+
+        & table {
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+        & table td {
+            padding: 3px 20px;
+            border: 0.1rem ${contrast(theme.colors.foreground, 0.5)} solid;
+        }
+        & table thead {
+            background: ${contrast(theme.colors.foreground, 0.8)};
+        }
+        & table thead td {
+            font-weight: 700;
+            border: none;
+        }
+        & table td, & table tr {
+            font-size: ${fontSize};
+        }
+        & table thead th {
+            padding: 3px 20px;
+            border: 0.1rem ${contrast(theme.colors.foreground, 0.5)} solid;
+        }
+        & table tbody tr:nth-of-type(2n) {
+            background: ${contrast(theme.colors.foreground, 0.8)};
         }
     `;
 
@@ -112,8 +161,10 @@ export type ContainerOptions =
 
     easeOutPosition?: boolean,
     easeOutTransform?: boolean,
+    easeOutOpacity?: boolean,
     easeInPosition?: boolean,
     easeInTransform?: boolean,
+    easeInOpacity?: boolean,
 
     padding?: number,
     paddingLeft?: number,
