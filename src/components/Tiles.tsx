@@ -503,6 +503,7 @@ type RearrangeOptions = {
      * Tile ID.
      */
     place_taker?: string,
+    place_side?: "left" | "right" | "top" | "bottom",
 };
 
 /**
@@ -766,12 +767,16 @@ export function Tile(options: TileOptions)
     });
 
     // Drag vars
-    let drag_start = [0, 0];
+    let drag_start: [number, number] | null = null;
     let previous_tiles_state: TilesState | null = null;
 
     // Drag start
     function on_drag_start(data: DraggableData)
     {
+        if (button_ref.current!.getAttribute("data-drag-n-drop-mode") == "true")
+        {
+            return;
+        }
         drag_start = [data.x, data.y];
         previous_tiles_state = tiles_state.clone();
         button_ref.current!.style.transform = "";
@@ -780,6 +785,12 @@ export function Tile(options: TileOptions)
     // Drag move
     function on_drag_move(data: DraggableData)
     {
+        if (drag_start === null)
+        {
+            button_ref.current!.style.inset = "";
+            return;
+        }
+
         const diff_x = drag_start[0] - data.x
             , diff_y = drag_start[1] - data.y;
         if (diff_x > -5 && diff_x <= 5 && diff_y > -5 && diff_y <= 5)
@@ -804,6 +815,13 @@ export function Tile(options: TileOptions)
     // Drag stop
     function on_drag_stop(data: DraggableData): void
     {
+        if (drag_start === null)
+        {
+            button_ref.current!.style.inset = "";
+            return;
+        }
+
+        drag_start = null;
         set_dragging(false);
         mode_signal({ dragNDrop: false });
 
