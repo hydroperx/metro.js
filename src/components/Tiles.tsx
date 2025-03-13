@@ -13,6 +13,7 @@ import { lighten, darken, enhanceBrightness, contrast } from "../utils/color";
 import { fontFamily, fontSize } from "../utils/common";
 import { randomHexLarge } from "../utils/random";
 import getOffset from "getoffset";
+import getRectangleOverlap from "rectangle-overlap";
 
 const margin = 0.6; // Margin between tiles
 const group_margin = 3; // Margin between groups
@@ -802,13 +803,10 @@ export function Tile(options: TileOptions)
         mode_signal({ dragNDrop: true });
 
         // Shift tiles as needed.
-        let moved = false;
-        fixme();
-
-        if (moved)
+        const hit = hits_another_tile();
+        if (hit)
         {
-            // Update state
-            update_state();
+            rearrange({ shift: true, to_shift: hit.tile, place_taker: options.id, place_side: hit.side});
         }
     }
 
@@ -835,6 +833,34 @@ export function Tile(options: TileOptions)
     function set_dragging(value: boolean): void
     {
         button_ref.current!.setAttribute("data-dragging", value.toString());
+    }
+
+    function hits_another_tile(): { tile: string, side: "left" | "right" | "top" | "bottom" } | null
+    {
+        const tiles = Array.from(tiles_div.querySelectorAll(".Tile")) as HTMLButtonElement[];
+        const i = tiles.indexOf(button_ref.current!);
+        if (i == -1) return null;
+        tiles.splice(i, 1);
+        const r = button_ref.current!.getBoundingClientRect();
+        for (const tile of tiles)
+        {
+            const rect = tile.getBoundingClientRect();
+            const place_side = getRectHitSide(rect, r);
+            if (place_side === null)
+            {
+                continue;
+            }
+
+            // Only hits if a large enough area overlaps.
+            const overlap = getRectangleOverlap(rect, r);
+            if (overlap.area < ((small_size.width * rem) * 1.5))
+            {
+                continue;
+            }
+
+            return { tile: tile.getAttribute("data-id"), side: place_side };
+        }
+        return null;
     }
 
     // Handle context menu
@@ -1331,6 +1357,33 @@ type TilesLayoutPixelMeasures = {
     large_size: { width: number, height: number },
 };
 
-function fixme(): never {
-    throw new Error("fixme");
+/**
+ * Determines the side a rectangle hits.
+ *
+ * @param a Rectangle to be hitted.
+ * @param b Hitting rectangle.
+ * @returns The side of `a` that `b` hits.
+ */
+function getRectHitSide(
+    a: { x: number, y: number, width: number, height: number },
+    b: { x: number, y: number, width: number, height: number }
+): "top" | "bottom" | "left" | "right" | null {
+    // Based in https://stackoverflow.com/a/29861691
+    const r1 = { x: a.x, y: a.x, w: a.width, h: a.height };
+    const r2 = { x: b.x, y: b.x, w: b.width, h: b.height };
+    const dx = (r1.x+r1.w/2)-(r2.x+r2.w/2);
+    const dy = (r1.y+r1.h/2)-(r2.y+r2.h/2);
+    const width = (r1.w+r2.w)/2;
+    const height = (r1.h+r2.h)/2;
+    const crossWidth = width*dy;
+    const crossHeight = height*dx;
+    let collision = null;
+
+    if (Math.abs(dx) <= width && Math.abs(dy) <= height)
+    {
+        if (crossWidth > crossHeight)
+            collision = (crossWidth > (-crossHeight)) ? "bottom" : "left";
+        else collision = (crossWidth > -(crossHeight)) ? "right" : "top";
+    }
+    return collision;
 }
