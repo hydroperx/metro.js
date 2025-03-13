@@ -186,3 +186,7 @@ If a context menu contains "checked" or "option" items, prepend a `<ContextMenuC
     </ContextMenuItem>
 );
 ```
+
+## License
+
+Apache 2.0

@@ -12,6 +12,7 @@ import { pointsToRem, pointsToRemValue } from "../utils/points";
 import { lighten, darken, enhanceBrightness, contrast } from "../utils/color";
 import { fontFamily, fontSize } from "../utils/common";
 import { randomHexLarge } from "../utils/random";
+import getOffset from "getoffset";
 
 const margin = 0.6; // Margin between tiles
 const group_margin = 3; // Margin between groups
