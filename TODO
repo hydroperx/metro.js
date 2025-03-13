@@ -41,6 +41,7 @@ Basic components
 - [ ] Drag-n-drop mode
   - [ ] Detect dragged tile over another tile using bounding client rect on both for collision check
   - [ ] Moving should be more simple: set position (shifting needed tiles) and `rearrange()`
+    - I think I can just mimmick the rearrange() function as rearrangeWithEmpty() which will free where the drag tile was and occupy the collided tile, and then rearranging tiles except not moving the dragging tile until drag end
   - [ ] On drag end, reset cascading `inset` to `""` and call `rearrange()` after changing tile position.
   - [ ] Trigger "new group" event in TilesController so the user manually creates new groups.
   - [ ] If dragging far beyond in the orthogonal axis of the tiles container, zoom out (scale down) the entire tiles container; when not, revert back to normal scale.
