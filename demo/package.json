@@ -22,7 +22,7 @@
     "@emotion/react": "^11.14.0",
     "@fontsource/courier-prime": "^5.2.5",
     "@fontsource/open-sans": "^5.1.1",
-    "@hydroper/metrocomponents": "file:..",
+    "com.hydroper.metrocomponents": "file:..",
     "@types/node": "^22.13.4",
     "clone": "^2.1.2",
     "react-dom": "^18.3.1"

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useRef, useState, useEffect } from "r
 import { css } from "@emotion/react";
 import assert from "assert";
 import Color from "color";
-import Draggable, { DraggableData } from "@hydroper/draggable";
+import Draggable, { DraggableData } from "com.hydroper.reactdraggable";
 import { TypedEventTarget } from "@hydroper/typedeventtarget";
 import { CheckedIcon } from "./Icons";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
