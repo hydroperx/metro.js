@@ -191,6 +191,14 @@ export function Tiles(options: TilesOptions)
         // Retrieve tile buttons
         const tiles = Array.from(div_ref.current!.querySelectorAll(".Tile")) as HTMLButtonElement[];
 
+        // Shifting parameters
+        const shift_params = rearrange_options.shift ?
+            {
+                to_shift: rearrange_options.to_shift,
+                place_taker: rearrange_options.place_taker,
+                place_side: rearrange_options.place_side,
+            } : null;
+
         // Position labels and tiles
         for (const group_button of group_buttons)
         {

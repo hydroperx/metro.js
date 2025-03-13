@@ -48,6 +48,7 @@ Basic components
     - [ ] If tile is to be put in an empty space (rather than shifting another tile), then use NPM `getoffset` to figure out the position offset into the tiles container (comparing it using a `TilesLayout`).
   - [ ] Trigger "new group" event in TilesController so the user manually creates new groups.
   - [ ] If dragging far beyond in the orthogonal axis of the tiles container, zoom out (scale down) the entire tiles container; when not, revert back to normal scale.
+  - [ ] Clicking out of all tiles should exit drag-n-drop mode (useful in case a tile is deleted while being dragged)
 - [x] Selection mode (check one or more tiles)
   - [ ] Clicking out of all tiles should uncheck all of them
 - [ ] Tile content roll
@@ -63,5 +64,4 @@ Basic components
 - [x] Open transition
 - [x] Hide transition
 - In `rearrange`:
-  - [ ] Fix group label not showing up (width = 0, why?)
 - [ ] Fast easy scrolling based in Windows 8.1
