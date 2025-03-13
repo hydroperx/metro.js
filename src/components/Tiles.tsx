@@ -336,7 +336,9 @@ export function Tiles(options: TilesOptions)
                 <TilesStateContext.Provider value={tiles_state}>
                     <ModeSignalContext.Provider value={mode_signal}>
                         <RearrangeContext.Provider value={rearrange_delayed}>
-                            {options.children}
+                            <RearrangeImmediateContext.Provider value={rearrange}>
+                                {options.children}
+                            </RearrangeImmediateContext.Provider>
                         </RearrangeContext.Provider>
                     </ModeSignalContext.Provider>
                 </TilesStateContext.Provider>
@@ -485,6 +487,7 @@ export class TilesState
 const TilesControllerContext = createContext<TilesController | null>(null);
 const TilesStateContext = createContext<TilesState | null>(null);
 const RearrangeContext = createContext<RearrangeFunction | null>(null);
+const RearrangeImmediateContext = createContext<RearrangeFunction | null>(null);
 const ModeSignalContext = createContext<((params: { dragNDrop?: boolean, selection?: boolean }) => void) | null>(null);
 
 type RearrangeFunction = (options?: RearrangeOptions) => void;
@@ -613,6 +616,7 @@ export function Tile(options: TileOptions)
 
     // Re-arrange function
     const rearrange = useContext(RearrangeContext);
+    const rearrange_immediate = useContext(RearrangeImmediateContext);
 
     // Elements
     const button_ref = useRef<HTMLButtonElement | null>(null);
@@ -806,7 +810,7 @@ export function Tile(options: TileOptions)
         const hit = hits_another_tile();
         if (hit)
         {
-            rearrange({ shift: true, to_shift: hit.tile, place_taker: options.id, place_side: hit.side});
+            rearrange_immediate({ shift: true, to_shift: hit.tile, place_taker: options.id, place_side: hit.side});
         }
     }
 

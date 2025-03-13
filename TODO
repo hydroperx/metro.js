@@ -42,7 +42,7 @@ Basic components
   - [x] Save a copy of the overall tile state in the drag start
   - [x] Detect dragged tile over another tile using bounding client rect on both for collision check (`hits_another_tile`)
   - [ ] Moving a tile over another tile should shift the latter: implement `rearrange({ shift: true, to_shift: string, place_taker: string, place_side: "left" | "right" | "top" | "bottom" })`.
-    - [ ] If canceling shift during drag-n-drop, restore state to the initially saved one, organizing tiles back except without re-positioning the dragging tile (implement `rearrange({ restore: true, restore_except: tile_id })`, remember to occupy the space of the dragging tile in the layout).
+    - [ ] If canceling shift during drag-n-drop, restore state to the initially saved one, organizing tiles back except without re-positioning the dragging tile (use `rearrange_immediate` and implement `rearrange({ restore: true, restore_except: tile_id })`, remember to occupy the space of the dragging tile in the layout).
   - [ ] On drag end, reset cascading `inset` to `""` and call `rearrange()` after changing tile position.
     - [ ] Discard tiles state copy (`previous_tiles_state = null;`)
     - [ ] If tile is to be put in an empty space (rather than shifting another tile), then use NPM `getoffset` to figure out the position offset into the tiles container (comparing it using a `TilesLayout`).
