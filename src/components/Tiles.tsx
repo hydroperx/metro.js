@@ -43,6 +43,9 @@ window.addEventListener("pointerup", () => {
  */
 export function Tiles(options: TilesOptions)
 {
+    // Use theme
+    const theme = useContext(ThemeContext);
+
     // Misc vars
     const {controller: tiles_controller, state: tiles_state } = options;
 
@@ -112,6 +115,17 @@ export function Tiles(options: TilesOptions)
         opacity: ${forced_invisible ? 0 : scale};
         transform: scale(${scale});
         transition: opacity 0.3s ${open ? "ease-out" : "ease-in"}, transform 0.3s ${open ? "ease-out" : "ease-in"};
+
+        &::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+            background: ${theme.colors.scrollBarTrack};
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: ${theme.colors.scrollBarThumb};
+            border-radius: 0;
+        }
     `;
 
     // Re-arrange groups and tiles

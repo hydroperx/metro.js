@@ -124,6 +124,19 @@ function App()
                                 <Tile id="p1" group="productivity" size="medium" color="#008000"></Tile>
                                 <Tile id="p2" group="productivity" size="small" color="#A1193D"></Tile>
                                 <Tile id="p3" group="productivity" size="small" color="#A1193D"></Tile>
+                                <TileGroup id="productivity-1" label="Productivity (1)" position={1}/>
+                                <Tile id="q1" group="productivity-1" size="large" color="#008000"></Tile>
+                                <Tile id="q2" group="productivity-1" size="large" color="#A1193D"></Tile>
+                                <Tile id="q3" group="productivity-1" size="large" color="#A1193D"></Tile>
+                                <Tile id="q4" group="productivity-1" size="large" color="#A1193D"></Tile>
+                                <Tile id="q5" group="productivity-1" size="large" color="#A1193D"></Tile>
+                                <Tile id="q6" group="productivity-1" size="large" color="#A1193D"></Tile>
+                                <Tile id="q7" group="productivity-1" size="large" color="#A1193D"></Tile>
+                                <Tile id="q8" group="productivity-1" size="large" color="#A1193D"></Tile>
+                                <Tile id="q9" group="productivity-1" size="large" color="#A1193D"></Tile>
+                                <Tile id="q10" group="productivity-1" size="large" color="#A1193D"></Tile>
+                                <Tile id="q11" group="productivity-1" size="large" color="#A1193D"></Tile>
+                                <Tile id="q12" group="productivity-1" size="large" color="#A1193D"></Tile>
                             </Tiles>
                         </div>
                         <ContextMenu id={contextMenuId}>

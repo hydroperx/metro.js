@@ -13,6 +13,7 @@ import { lighten, contrast } from "../utils/color";
  */
 export function Container(options: ContainerOptions)
 {
+    // Use theme
     const theme = useContext(ThemeContext);
 
     // Enable or disable selection
