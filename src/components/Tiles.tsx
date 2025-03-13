@@ -130,17 +130,30 @@ export function Tiles(options: TilesOptions)
 
         // Organize groups (untracked groups without specified position will be the most last)
         const group_buttons: HTMLButtonElement[] = Array.from(div_ref.current!.querySelectorAll(".TileGroup")) as HTMLButtonElement[];
+
+        // Initialize group states
+        for (const group_button of group_buttons)
+        {
+            const id = group_button.getAttribute("data-id");
+            let state = tiles_state.groups.get(id);
+            if (!state)
+            {
+                let pos_str = group_button.getAttribute("data-position");
+                let pos = pos_str !== null ? (pos_str == "" ? NaN : Number(pos_str)) : NaN;
+                state = {
+                    position: isNaN(pos) ? tiles_state.groups.size == 0 ? 0 : Math.max.apply(null, Array.from(tiles_state.groups.values()).map(g => g.position)) + 1 : pos,
+                    label: group_button.getAttribute("data-label"),
+                };
+                tiles_state.groups.set(id, state);
+            }
+        }
+
+        // Sort groups
         group_buttons.sort((a, b) => {
-            const a_id = a.getAttribute("data-id");
-            const b_id = b.getAttribute("data-id");
+            const a_pos = tiles_state.groups.get(a.getAttribute("data-id")).position;
+            const b_pos = tiles_state.groups.get(b.getAttribute("data-id")).position;
 
-            let a_pos = tiles_state.groups.get(a_id)?.position ?? a.getAttribute("data-position") ?? NaN;
-            a_pos = typeof a_pos == "string" ? (a_pos == "" ? NaN : Number(a_pos) >>> 0) : a_pos;
-
-            let b_pos = tiles_state.groups.get(b_id)?.position ?? b.getAttribute("data-position") ?? NaN;
-            b_pos = typeof b_pos == "string" ? (b_pos == "" ? NaN : Number(b_pos) >>> 0) : b_pos;
-
-            return isNaN(a_pos) ? (isNaN(b_pos) ? 0 : 1) : isNaN(b_pos) ? -1 : a_pos < b_pos ? -1 : a_pos > b_pos ? 1 : 0;
+            return a_pos < b_pos ? -1 : a_pos > b_pos ? 1 : 0;
         });
 
         // Measurement layout
@@ -202,6 +215,11 @@ export function Tiles(options: TilesOptions)
             group_button.style.left = `${x / rem}rem`;
             group_button.style.top = `${y / rem}rem`;
             group_button.style.width = `${width / rem}rem`;
+
+            const group_state = tiles_state.groups.get(group_id);
+
+            // Enter label text
+            group_button.innerText = group_state.label;
         }
     }
 
