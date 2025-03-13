@@ -443,6 +443,39 @@ export class TilesState
             tiles,
         };
     }
+    
+    clear(): void
+    {
+        this.groups.clear();
+        this.tiles.clear();
+    }
+
+    set(state: TilesState): void
+    {
+        for (const [id, group] of state.groups)
+        {
+            this.groups.set(id, {
+                label: group.label,
+                position: group.position,
+            });
+        }
+        for (const [id, tile] of state.tiles)
+        {
+            this.tiles.set(id, {
+                group: tile.group,
+                size: tile.size,
+                horizontal: tile.horizontal,
+                vertical: tile.vertical,
+            });
+        }
+    }
+
+    clone(): TilesState
+    {
+        const r = new TilesState();
+        r.set(this);
+        return r;
+    }
 }
 
 const TilesControllerContext = createContext<TilesController | null>(null);
