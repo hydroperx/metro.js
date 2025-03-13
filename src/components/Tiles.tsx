@@ -144,7 +144,7 @@ export function Tiles(options: TilesOptions)
         });
 
         // Measurement layout
-        const measuresInPixels: TilesLayoutMeasuresInPixels = {
+        const pixel_measures: TilesLayoutPixelMeasures = {
             margin: margin * rem,
             group_margin: group_margin * rem,
             small_size: { width: small_size.width * rem, height: small_size.height * rem },
@@ -153,8 +153,8 @@ export function Tiles(options: TilesOptions)
             large_size: { width: large_size.width * rem, height: large_size.height * rem },
         };
         const layout: TilesLayout = options.direction == "horizontal" ?
-            new TilesHorizontalLayout(orthogonal_side_length, (options.innerMargin ?? 3) * rem, measuresInPixels) :
-            new TilesVerticalLayout(orthogonal_side_length, (options.innerMargin ?? 1) * rem, measuresInPixels);
+            new TilesHorizontalLayout(orthogonal_side_length, (options.innerMargin ?? 3) * rem, pixel_measures) :
+            new TilesVerticalLayout(orthogonal_side_length, (options.innerMargin ?? 1) * rem, pixel_measures);
 
         // Retrieve tile buttons
         const tiles = Array.from(div_ref.current!.querySelectorAll(".Tile")) as HTMLButtonElement[];
@@ -871,6 +871,22 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
 
 abstract class TilesLayout
 {
+    private tile_sizes: Map<TileSize, { width: number, height: number }>;
+
+    constructor(protected pixel_measures: TilesLayoutPixelMeasures)
+    {
+        this.tile_sizes = new Map<TileSize, { width: number, height: number }>([
+            ["small", small_size],
+            ["medium", medium_size],
+            ["wide", wide_size],
+            ["large", large_size],
+        ]);
+    }
+
+    protected get_tile_size(size: TileSize): { width: number, height: number } { return this.tile_sizes.get(size); }
+    protected get_tile_width(size: TileSize): number { return this.get_tile_size(size).width; }
+    protected get_tile_height(size: TileSize): number { return this.get_tile_size(size).height; }
+
     abstract putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number, horizontalTiles: number, verticalTiles: number };
 
     /**
@@ -884,12 +900,9 @@ class TilesHorizontalLayout extends TilesLayout
 {
     private rows: TilesLayoutTileRows;
 
-    constructor(private containerHeight: number, private innerMargin: number, private measuresInPixels: TilesLayoutMeasuresInPixels)
+    constructor(private containerHeight: number, private innerMargin: number, pixel_measures: TilesLayoutPixelMeasures)
     {
-        super();
-
-        // Measurements
-        const { margin, group_margin, small_size, medium_size, wide_size, large_size } = this.measuresInPixels;
+        super(pixel_measures);
 
         this.rows = new TilesLayoutTileRows(Infinity, 6);
     }
@@ -897,7 +910,9 @@ class TilesHorizontalLayout extends TilesLayout
     override putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number, horizontalTiles: number, verticalTiles: number }
     {
         // Measurements
-        const { margin, group_margin, small_size, medium_size, wide_size, large_size } = this.measuresInPixels;
+        const { margin, group_margin } = this.pixel_measures;
+        const get_tile_width = this.get_tile_width.bind(this);
+        const get_tile_height = this.get_tile_height.bind(this);
 
         fixme();
     }
@@ -905,7 +920,7 @@ class TilesHorizontalLayout extends TilesLayout
     override putLabel(): { x: number, y: number, width: number }
     {
         // Measurements
-        const { margin, group_margin, small_size, medium_size, wide_size, large_size } = this.measuresInPixels;
+        const { margin, group_margin, small_size } = this.pixel_measures;
 
         fixme();
     }
@@ -915,12 +930,12 @@ class TilesVerticalLayout extends TilesLayout
 {
     private rows: TilesLayoutTileRows;
 
-    constructor(private containerWidth: number, private innerMargin: number, private measuresInPixels: TilesLayoutMeasuresInPixels)
+    constructor(private containerWidth: number, private innerMargin: number, pixel_measures: TilesLayoutPixelMeasures)
     {
-        super();
+        super(pixel_measures);
 
         // Measurements
-        const { margin, group_margin, small_size, medium_size, wide_size, large_size } = this.measuresInPixels;
+        const { margin, small_size } = this.pixel_measures;
 
         // Max tile columns (this must be run again similarly after putLabel)
         let w = containerWidth - innerMargin*2;
@@ -940,7 +955,9 @@ class TilesVerticalLayout extends TilesLayout
     override putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number, horizontalTiles: number, verticalTiles: number }
     {
         // Measurements
-        const { margin, group_margin, small_size, medium_size, wide_size, large_size } = this.measuresInPixels;
+        const { margin, group_margin } = this.pixel_measures;
+        const get_tile_width = this.get_tile_width.bind(this);
+        const get_tile_height = this.get_tile_height.bind(this);
 
         fixme();
     }
@@ -948,7 +965,7 @@ class TilesVerticalLayout extends TilesLayout
     override putLabel(): { x: number, y: number, width: number }
     {
         // Measurements
-        const { margin, group_margin, small_size, medium_size, wide_size, large_size } = this.measuresInPixels;
+        const { margin, group_margin, small_size } = this.pixel_measures;
 
         fixme();
 
@@ -1109,7 +1126,7 @@ class TilesLayoutTileRows {
     }
 }
 
-type TilesLayoutMeasuresInPixels = {
+type TilesLayoutPixelMeasures = {
     margin: number,
     group_margin: number,
     small_size: { width: number, height: number },
