@@ -37,15 +37,12 @@ Basic components
 - [x] Display a simple outline for tiles (very discrete)
 - [x] Support serializing and deserializing tile data
 - [x] While holding click button at tile, slightly rotate X/Y according to the side.
-  - [ ] Test it
 - [x] Disabled tiles
 - [ ] Drag-n-drop mode
   - [ ] Moving should be more simple: set position (shifting needed tiles) and `rearrange()`
   - [ ] Trigger "new group" event in TilesController so the user manually creates new groups.
   - [ ] If dragging far beyond in the orthogonal axis of the tiles container, zoom out (scale down) the entire tiles container; when not, revert back to normal scale.
-- [ ] Selection mode (check one or more tiles)
-  - [x] Display the selected bordered check rect inside the tile
-    - [ ] Test it
+- [x] Selection mode (check one or more tiles)
 - [ ] Tile content roll
   - [ ] Icon plus label contents
   - [ ] No-icon text-only contents
@@ -59,8 +56,5 @@ Basic components
 - [x] Open transition
 - [x] Hide transition
 - In `rearrange`:
-  - [ ] Make sure to use `tilesState`
-  - [ ] Make sure to update `tilesState`
-  - [ ] Make sure to update tile size
-  - [ ] Display label
+  - [ ] Fix group label not showing up (width = 0, why?)
 - [ ] Fast easy scrolling based in Windows 8.1

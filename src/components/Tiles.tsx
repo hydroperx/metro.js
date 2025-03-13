@@ -107,7 +107,6 @@ export function Tiles(options: TilesOptions)
         width: 100%;
         height: 100%;
         position: relative;
-        overflow: hidden;
         opacity: ${forced_invisible ? 0 : scale};
         transform: scale(${scale});
         transition: opacity 0.3s ${open ? "ease-out" : "ease-in"}, transform 0.3s ${open ? "ease-out" : "ease-in"};
@@ -937,6 +936,7 @@ class TilesHorizontalLayout extends TilesLayout
     {
         // Measurements
         const { margin, small_size } = this.pixel_measures;
+        const { inner_margin } = this;
 
         const { max_height } = this.rows;
 
@@ -949,7 +949,7 @@ class TilesHorizontalLayout extends TilesLayout
                     this.rows.fillSize(horizontal, vertical, size);
                     return {
                         x: (horizontal * small_size.width) + (horizontal * margin),
-                        y: (vertical * small_size.height) + (vertical * margin),
+                        y: (vertical * small_size.height) + (vertical * margin) + inner_margin,
                         horizontalTiles: horizontal, verticalTiles: vertical
                     };
                 }
