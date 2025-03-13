@@ -129,18 +129,20 @@ export function Tiles(options: TilesOptions)
     `;
 
     // Re-arrange groups and tiles
-    let rearrangeTimeout = -1;
-    function rearrange_delayed(): void
+    let rearrange_timeout = -1;
+    function rearrange_delayed(rearrange_options: RearrangeOptions | undefined = undefined): void
     {
-        if (rearrangeTimeout !== -1)
+        if (rearrange_timeout !== -1)
         {
-            window.clearTimeout(rearrangeTimeout);
+            window.clearTimeout(rearrange_timeout);
         }
-        rearrangeTimeout = window.setTimeout(rearrange, 10);
+        rearrange_timeout = window.setTimeout(() => {
+            rearrange(rearrange_options);
+        }, 10);
     }
-    function rearrange(): void
+    function rearrange(rearrange_options: RearrangeOptions | undefined = undefined): void
     {
-        rearrangeTimeout = -1;
+        rearrange_timeout = -1;
         set_forced_invisible(false);
 
         // Organize groups (untracked groups without specified position will be the most last)
@@ -480,8 +482,27 @@ export class TilesState
 
 const TilesControllerContext = createContext<TilesController | null>(null);
 const TilesStateContext = createContext<TilesState | null>(null);
-const RearrangeContext = createContext<Function | null>(null);
+const RearrangeContext = createContext<RearrangeFunction | null>(null);
 const ModeSignalContext = createContext<((params: { dragNDrop?: boolean, selection?: boolean }) => void) | null>(null);
+
+type RearrangeFunction = (options?: RearrangeOptions) => void;
+type RearrangeOptions = {
+    restore?: boolean,
+    /**
+     * Tile ID.
+     */
+    restore_except?: string,
+
+    shift?: boolean,
+    /**
+     * Tile ID.
+     */
+    to_shift?: string,
+    /**
+     * Tile ID.
+     */
+    place_taker?: string,
+};
 
 /**
  * A tile group consisting of a label.
@@ -745,11 +766,13 @@ export function Tile(options: TileOptions)
 
     // Drag vars
     let drag_start = [0, 0];
+    let previous_tiles_state: TilesState | null = null;
 
     // Drag start
     function on_drag_start(data: DraggableData)
     {
         drag_start = [data.x, data.y];
+        previous_tiles_state = tiles_state.clone();
         button_ref.current!.style.transform = "";
     }
 
