@@ -15,7 +15,7 @@ import { randomHexLarge } from "../utils/random";
 
 const margin = 0.5; // Margin between tiles
 const group_margin = 3.5; // Margin between groups
-const small_size = { width: 58, height: 58 };
+const small_size = { width: 3.625, height: 3.625 };
 const medium_size = { width: small_size.width*2 + margin, height: small_size.height*2 + margin };
 const wide_size = { width: medium_size.width*2 + margin, height: medium_size.height };
 const large_size = { width: wide_size.width, height: wide_size.width };
@@ -523,15 +523,15 @@ export function Tile(options: TileOptions)
     // CSS
     const [rotate_3d, set_rotate_3d] = useState<string>("rotate3d(0)");
     const tile_color = options.color ?? theme.colors.primary;
-    const tile_color_b1 = Color(tile_color).lighten(0.1).toString();
-    const tile_color_b2 = Color(tile_color).lighten(0.2).toString();
+    const tile_color_b1 = Color(tile_color).lighten(0.15).hex().toString();
+    const tile_color_b2 = Color(tile_color).lighten(0.23).hex().toString();
     const serializedStyles = css `
         position: absolute;
         overflow: hidden;
         width: ${get_tile_width(size)}rem;
         height: ${get_tile_height(size)}rem;
         outline: 0.11rem solid ${Color(theme.colors.primary).alpha(0.6).alpha(0.3).toString()};
-        background: linear-gradient(90deg, ${tile_color} 0%, ${tile_color_b1} %100);
+        background: linear-gradient(90deg, ${tile_color} 0%, ${tile_color_b1} 100%);
         border: none;
         font-family: ${fontFamily};
         font-size: ${fontSize};
