@@ -34,7 +34,7 @@ export function ProgressEllipsis(options: ProgressEllipsisOptions)
         return () => {
             colorObserver.cleanup();
         };
-    });
+    }, []);
 
     // Adjust size
     useEffect(() => {
@@ -44,7 +44,7 @@ export function ProgressEllipsis(options: ProgressEllipsisOptions)
         return () => {
             remObserver.cleanup();
         };
-    });
+    }, []);
 
     // Animation time in milliseconds
     let time = 4000;

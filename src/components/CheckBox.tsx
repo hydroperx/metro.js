@@ -148,7 +148,7 @@ export function CheckBox(options: CheckBoxOptions)
         return () => {
             remObserver.cleanup();
         };
-    });
+    }), [];
 
     return (
         <button

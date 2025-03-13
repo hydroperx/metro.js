@@ -480,7 +480,7 @@ export function Select(options: SelectOptions)
         return () => {
             remObserver.cleanup();
         };
-    });
+    }, []);
 
     useEffect(() => {
         const button = buttonRef.current!;

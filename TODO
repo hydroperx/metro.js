@@ -43,6 +43,7 @@ Basic components
   - [ ] Trigger "new group" event in TilesController so the user manually creates new groups.
   - [ ] If dragging far beyond in the orthogonal axis of the tiles container, zoom out (scale down) the entire tiles container; when not, revert back to normal scale.
 - [x] Selection mode (check one or more tiles)
+  - [ ] Clicking out of all tiles should uncheck all of them
 - [ ] Tile content roll
   - [ ] Icon plus label contents
   - [ ] No-icon text-only contents

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useRef, useState, useEffect } from "r
 import { css } from "@emotion/react";
 import assert from "assert";
 import Color from "color";
-import Draggable, { DraggableData } from "react-draggable";
+import Draggable, { DraggableData } from "@hydroper/draggable";
 import { TypedEventTarget } from "@hydroper/typedeventtarget";
 import { CheckedIcon } from "./Icons";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
@@ -14,7 +14,7 @@ import { fontFamily, fontSize } from "../utils/common";
 import { randomHexLarge } from "../utils/random";
 
 const margin = 0.6; // Margin between tiles
-const group_margin = 1; // Margin between groups
+const group_margin = 3; // Margin between groups
 const small_size = { width: 3.625, height: 3.625 };
 const medium_size = { width: small_size.width*2 + margin, height: small_size.height*2 + margin };
 const wide_size = { width: medium_size.width*2 + margin, height: medium_size.height };
@@ -72,16 +72,18 @@ export function Tiles(options: TilesOptions)
             drag_n_drop_mode = true;
 
             // Set data-drag-n-drop-mode="true" attribute to tiles
-            for (const tile_div of div_ref.current!.querySelectorAll(".Tile"))
-                tile_div.setAttribute("data-drag-n-drop-mode", "true");
+            for (const tile_btn of div_ref.current!.querySelectorAll(".Tile"))
+                tile_btn.setAttribute("data-drag-n-drop-mode", "true"),
+                tile_btn.dispatchEvent(new Event("enter-drag-n-drop-mode"));
         }
         else if (params.dragNDrop !== undefined)
         {
             drag_n_drop_mode = false;
 
             // Remove data-drag-n-drop-mode attribute from tiles
-            for (const tile_div of div_ref.current!.querySelectorAll(".Tile"))
-                tile_div.removeAttribute("data-drag-n-drop-mode");
+            for (const tile_btn of div_ref.current!.querySelectorAll(".Tile"))
+                tile_btn.removeAttribute("data-drag-n-drop-mode"),
+                tile_btn.dispatchEvent(new Event("exit-drag-n-drop-mode"));
         }
 
         if (params.selection)
@@ -89,16 +91,16 @@ export function Tiles(options: TilesOptions)
             selection_mode = true;
 
             // Set data-selection-mode="true" attribute to tiles
-            for (const tile_div of div_ref.current!.querySelectorAll(".Tile"))
-                tile_div.setAttribute("data-selection-mode", "true");
+            for (const tile_btn of div_ref.current!.querySelectorAll(".Tile"))
+                tile_btn.setAttribute("data-selection-mode", "true");
         }
         else if (params.selection !== undefined)
         {
             selection_mode = false;
 
             // Remove data-selection-mode attribute from tiles
-            for (const tile_div of div_ref.current!.querySelectorAll(".Tile"))
-                tile_div.removeAttribute("data-selection-mode");
+            for (const tile_btn of div_ref.current!.querySelectorAll(".Tile"))
+                tile_btn.removeAttribute("data-selection-mode");
         }
     }
 
@@ -230,7 +232,7 @@ export function Tiles(options: TilesOptions)
         return () => {
             rem_observer.cleanup();
         };
-    });
+    }, []);
 
     // Open/close transition
     let transition_timeout = -1;
@@ -435,21 +437,27 @@ export function TileGroup(options: TileGroupOptions)
     // Re-arrange function
     const rearrange = useContext(RearrangeContext);
 
+    // Locale direction
+    const localeDir = useContext(LocaleDirectionContext);
+
     // Rename
     const rename = options.rename ?? true;
 
     // CSS
     const serializedStyles = css `
         position: absolute;
+        font-family: ${fontFamily};
         font-weight: lighter;
         font-size: 1.2rem;
         opacity: 0.6;
         border: none;
         border-bottom: 0.25rem solid rgba(0,0,0,0);
+        color: ${theme.colors.foreground};
         outline: none;
         background: none;
         overflow: hidden;
         min-height: 1.3rem;
+        text-align: ${localeDir == "ltr" ? "left" : "right"};
 
         &:hover:not(:disasbled) {
             border-bottom: 0.25rem solid ${Color(theme.colors.foreground).alpha(0.4).toString()};
@@ -538,6 +546,12 @@ export function Tile(options: TileOptions)
     // Size
     const [size, set_size] = useState<TileSize>(options.size);
 
+    // Scale
+    const [scale, set_scale] = useState<number>(1);
+
+    // "rem" unit size
+    const [rem, set_rem] = useState<number>();
+
     // CSS
     const [rotate_3d, set_rotate_3d] = useState<string>("rotate3d(0)");
     const tile_color = options.color ?? theme.colors.primary;
@@ -556,21 +570,14 @@ export function Tile(options: TileOptions)
         color: ${theme.colors.foreground};
         transition: opacity 0.2s ${dragging ? "" : ", transform 0.2s ease-out, scale 0.2s ease-out, translate 0.2s ease-out"};
         transform-style: preserve-3d;
+        scale: ${scale};
 
         &[data-selection-mode="true"] {
             opacity: 0.7;
         }
 
-        &[data-drag-n-drop-mode="true"] {
-            scale: 0.9;
-        }
-
-        &:not([data-dragging="true"]) {
-            transform: ${rotate_3d} !important;
-        }
-
+        &:not([data-dragging="true"]),
         &[data-drag-n-drop-mode="true"]:not([data-dragging="true"]) {
-            scale: 0.9;
             transform: ${rotate_3d} !important;
         }
 
@@ -609,6 +616,19 @@ export function Tile(options: TileOptions)
         }
     `;
 
+    // Drag-n-drop mode events
+    useEffect(() => {
+        const button = button_ref.current!;
+
+        button.addEventListener("enter-drag-n-drop-mode", () => {
+            set_scale(0.7);
+        });
+
+        button.addEventListener("exit-drag-n-drop-mode", () => {
+            set_scale(1);
+        });
+    });
+
     // Handle pointer down
     function button_onPointerDown(e: PointerEvent): void
     {
@@ -638,6 +658,15 @@ export function Tile(options: TileOptions)
         button_ref.current.style.transform = rotate_3d;
     }
 
+    useEffect(() => {
+        const remObserver = new RemObserver(value => {
+            set_rem(value);
+        });
+        return () => {
+            remObserver.cleanup();
+        };
+    }, []);
+
     useEffect(() =>
     {
         rearrange();
@@ -659,13 +688,14 @@ export function Tile(options: TileOptions)
     let drag_start = [0, 0];
 
     // Drag start
-    function on_drag_start(_: any, data: DraggableData)
+    function on_drag_start(data: DraggableData)
     {
         drag_start = [data.x, data.y];
+        button_ref.current!.style.transform = "";
     }
 
     // Drag move
-    function on_drag(_: any, data: DraggableData)
+    function on_drag_move(data: DraggableData)
     {
         const diff_x = drag_start[0] - data.x
             , diff_y = drag_start[1] - data.y;
@@ -675,7 +705,6 @@ export function Tile(options: TileOptions)
             return;
         }
         set_dragging(true);
-        button_ref.current!.style.translate = `${data.x}px ${data.y}px`;
         mode_signal({ dragNDrop: true });
 
         // Shift tiles as needed.
@@ -690,7 +719,7 @@ export function Tile(options: TileOptions)
     }
 
     // Drag stop
-    function on_drag_stop(_: any, data: DraggableData): void
+    function on_drag_stop(data: DraggableData): void
     {
         set_dragging(false);
         mode_signal({ dragNDrop: false });
@@ -764,7 +793,15 @@ export function Tile(options: TileOptions)
     }
 
     return (
-        <Draggable nodeRef={button_ref} onStart={on_drag_start} onDrag={on_drag} onStop={on_drag_stop} offsetParent={tiles_div}>
+        <Draggable
+            element={button_ref}
+            dragStart={on_drag_start}
+            dragMove={on_drag_move}
+            dragStop={on_drag_stop}
+            limit={tiles_div}
+            finish="translate"
+            rem={rem}>
+
             <button
                 ref={button_ref}
                 className="Tile"
@@ -923,7 +960,7 @@ abstract class TilesLayout
 class TilesHorizontalLayout extends TilesLayout
 {
     private rows: TilesLayoutTileRows;
-    private group_x: number;
+    private group_x: number = 0;
 
     constructor(private container_height: number, private inner_margin: number, pixel_measures: TilesLayoutPixelMeasures)
     {
@@ -948,7 +985,7 @@ class TilesHorizontalLayout extends TilesLayout
                 {
                     this.rows.fillSize(horizontal, vertical, size);
                     return {
-                        x: (horizontal * small_size.width) + (horizontal * margin),
+                        x: this.group_x + (horizontal * small_size.width) + (horizontal * margin),
                         y: (vertical * small_size.height) + (vertical * margin) + inner_margin,
                         horizontalTiles: horizontal, verticalTiles: vertical
                     };
@@ -967,11 +1004,11 @@ class TilesHorizontalLayout extends TilesLayout
 
         // Result vars
         const this_group_x = this.group_x;
-        const this_group_y = this.inner_margin;
+        const this_group_y = this.inner_margin / 3;
         const width = this.rows.width == 0 ? 0 : (this.rows.width * small_size.width) + ((this.rows.width - 1) * margin);
 
         // Move to the next group
-        this.group_x = width + group_margin;
+        this.group_x += width + group_margin;
         this.rows = new TilesLayoutTileRows(Infinity, 6);
 
         // Result
@@ -1119,7 +1156,7 @@ class TilesLayoutTileRows {
             while (horizontal >= columns.length)
             {
                 columns.push(false);
-                this.m_width - columns.length > this.m_width ? columns.length : this.m_width;
+                this.m_width = columns.length > this.m_width ? columns.length : this.m_width;
             }
             columns[horizontal] = true;
         }

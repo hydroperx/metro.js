@@ -120,6 +120,10 @@ function App()
                                 <Tile id="t1" group="welcome" size="wide" color="#008000"></Tile>
                                 <Tile id="t2" group="welcome" size="large" color="#A1193D"></Tile>
                                 <Tile id="t3" group="welcome" size="small" color="#A1193D"></Tile>
+                                <TileGroup id="productivity" label="Productivity" position={1}/>
+                                <Tile id="p1" group="productivity" size="medium" color="#008000"></Tile>
+                                <Tile id="p2" group="productivity" size="small" color="#A1193D"></Tile>
+                                <Tile id="p3" group="productivity" size="small" color="#A1193D"></Tile>
                             </Tiles>
                         </div>
                         <ContextMenu id={contextMenuId}>

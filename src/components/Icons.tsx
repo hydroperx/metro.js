@@ -78,7 +78,7 @@ export function Icon(options: IconOptions)
         return () => {
             colorObserver.cleanup();
         };
-    });
+    }, []);
 
     const m = iconMap.get(type);
     assert(m !== undefined, "Icon is not defined: " + type);
@@ -202,7 +202,7 @@ export function ProgressRing(options: ProgressRingOptions)
         return () => {
             remObserver.cleanup();
         };
-    });
+    }, []);
 
     // Animation time in milliseconds
     let time = 4000;
