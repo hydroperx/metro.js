@@ -196,7 +196,7 @@ export function Tiles(options: TilesOptions)
             for (const tile of tiles)
             {
                 const tile_id = tile.getAttribute("data-id");
-                const tile_state = tiles_state.tiles.get(tile_id);
+                let tile_state = tiles_state.tiles.get(tile_id);
                 const tile_group_id = tile_state?.group ?? tile.getAttribute("data-group");
                 if (tile_group_id != group_id)
                 {
@@ -218,11 +218,21 @@ export function Tiles(options: TilesOptions)
                 // Position tile
                 const h = Number(tile.getAttribute("data-horizontal"))
                     , v = Number(tile.getAttribute("data-vertical"))
-                    , size = tile.getAttribute("data-size") as TileSize;
+                    , size = tile_state?.size ?? tile.getAttribute("data-size") as TileSize;
                 const { x, y, horizontalTiles, verticalTiles } = layout.putTile(size, h, v);
                 tile.style.translate = `${x / rem}rem ${y / rem}rem`;
                 tile.setAttribute("data-horizontal", horizontalTiles.toString());
                 tile.setAttribute("data-vertical", verticalTiles.toString());
+
+                if (!tile_state)
+                {
+                    tile_state = { group: "", size: "small", horizontal: 0, vertical: 0 };
+                    tiles_state.tiles.set(tile_id, tile_state);
+                }
+                tile_state.group = tile_group_id;
+                tile_state.size = size;
+                tile_state.horizontal = horizontalTiles;
+                tile_state.vertical = verticalTiles;
             }
 
             // Position and size group label
