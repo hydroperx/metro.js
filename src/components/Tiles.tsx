@@ -105,7 +105,7 @@ export function Tiles(options: TilesOptions)
     }
 
     // CSS
-    const serializedStyles = css `
+    const serialized_styles = css `
         width: 100%;
         height: 100%;
         position: relative;
@@ -280,7 +280,7 @@ export function Tiles(options: TilesOptions)
             // Dipose listeners on TilesController
             tiles_controller.removeEventListener("getChecked", tiles_controller_onGetChecked);
         };
-    });
+    }, []);
 
     // Handle request to get checked tiles
     function tiles_controller_onGetChecked(e: CustomEvent<{ requestId: string }>)
@@ -303,7 +303,7 @@ export function Tiles(options: TilesOptions)
     tiles_controller.addEventListener("getChecked", tiles_controller_onGetChecked);
 
     return (
-        <div className="Tiles" css={serializedStyles} ref={div_ref} style={options.style}>
+        <div className="Tiles" css={serialized_styles} ref={div_ref} style={options.style}>
             <TilesControllerContext.Provider value={tiles_controller}>
                 <TilesStateContext.Provider value={tiles_state}>
                     <ModeSignalContext.Provider value={mode_signal}>
@@ -444,7 +444,7 @@ export function TileGroup(options: TileGroupOptions)
     const rename = options.rename ?? true;
 
     // CSS
-    const serializedStyles = css `
+    const serialized_styles = css `
         position: absolute;
         font-family: ${fontFamily};
         font-weight: lighter;
@@ -480,7 +480,7 @@ export function TileGroup(options: TileGroupOptions)
         <>
             <button
                 className="TileGroup"
-                css={serializedStyles}
+                css={serialized_styles}
                 data-id={options.id}
                 data-label={options.label ?? ""}
                 data-position={options.position}>
@@ -537,9 +537,6 @@ export function Tile(options: TileOptions)
     const button_ref = useRef<HTMLButtonElement | null>(null);
     const [tiles_div, set_tiles_div] = useState<HTMLDivElement | null>(null);
 
-    // Drag vars
-    const [dragging, set_dragging] = useState<boolean>(false);
-
     // Checked
     const [checked, set_checked] = useState<boolean>(false);
 
@@ -557,7 +554,7 @@ export function Tile(options: TileOptions)
     const tile_color = options.color ?? theme.colors.primary;
     const tile_color_b1 = Color(tile_color).lighten(0.15).hex().toString();
     const tile_color_b2 = Color(tile_color).lighten(0.23).hex().toString();
-    const serializedStyles = css `
+    const serialized_styles = css `
         position: absolute;
         overflow: hidden;
         width: ${get_tile_width(size)}rem;
@@ -568,12 +565,16 @@ export function Tile(options: TileOptions)
         font-family: ${fontFamily};
         font-size: ${fontSize};
         color: ${theme.colors.foreground};
-        transition: opacity 0.2s ${dragging ? "" : ", transform 0.2s ease-out, scale 0.2s ease-out, translate 0.2s ease-out"};
+        transition: opacity 0.2s;
         transform-style: preserve-3d;
         scale: ${scale};
 
         &[data-selection-mode="true"] {
             opacity: 0.7;
+        }
+
+        &:not([data-dragging="true"]) {
+            transition: opacity 0.2s, transform 0.2s ease-out, scale 0.2s ease-out, translate 0.2s ease-out;
         }
 
         &:not([data-dragging="true"]),
@@ -664,6 +665,9 @@ export function Tile(options: TileOptions)
         });
         return () => {
             remObserver.cleanup();
+
+            tiles_controller.removeEventListener("setSize", tiles_controller_onSetSize);
+            tiles_controller.removeEventListener("setChecked", tiles_controller_onSetChecked);
         };
     }, []);
 
@@ -672,10 +676,8 @@ export function Tile(options: TileOptions)
         rearrange();
         return () => {
             rearrange();
-            tiles_controller.removeEventListener("setSize", tiles_controller_onSetSize);
-            tiles_controller.removeEventListener("setChecked", tiles_controller_onSetChecked);
         };
-    });
+    }, []);
 
     // Get Tiles div
     useEffect(() => {
@@ -729,6 +731,11 @@ export function Tile(options: TileOptions)
 
         // Update state
         update_state();
+    }
+
+    function set_dragging(value: boolean): void
+    {
+        button_ref.current!.setAttribute("data-dragging", value.toString());
     }
 
     // Handle context menu
@@ -805,13 +812,13 @@ export function Tile(options: TileOptions)
             <button
                 ref={button_ref}
                 className="Tile"
-                css={serializedStyles}
+                css={serialized_styles}
                 data-id={options.id}
                 data-group={options.group}
                 data-size={size}
                 data-horizontal={options.horizontal ?? 0}
                 data-vertical={options.vertical ?? 0}
-                data-dragging={dragging}
+                data-dragging="false"
                 data-checked={checked}
                 onPointerDown={ options.disabled ? undefined : button_onPointerDown as any }
                 onClick={ options.disabled ? undefined : e => { options.click?.(options.id) } }
