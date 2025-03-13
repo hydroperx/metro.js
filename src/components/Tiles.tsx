@@ -13,8 +13,8 @@ import { lighten, darken, enhanceBrightness, contrast } from "../utils/color";
 import { fontFamily, fontSize } from "../utils/common";
 import { randomHexLarge } from "../utils/random";
 
-const margin = 0.5; // Margin between tiles
-const group_margin = 3.5; // Margin between groups
+const margin = 0.6; // Margin between tiles
+const group_margin = 1; // Margin between groups
 const small_size = { width: 3.625, height: 3.625 };
 const medium_size = { width: small_size.width*2 + margin, height: small_size.height*2 + margin };
 const wide_size = { width: medium_size.width*2 + margin, height: medium_size.height };
@@ -192,7 +192,7 @@ export function Tiles(options: TilesOptions)
                     , v = Number(tile.getAttribute("data-vertical"))
                     , size = tile.getAttribute("data-size") as TileSize;
                 const { x, y, horizontalTiles, verticalTiles } = layout.putTile(size, h, v);
-                tile.style.transform = `var(--other-transform) translate(${x / rem}rem, ${y / rem}rem)`;
+                tile.style.translate = `${x / rem}rem ${y / rem}rem`;
                 tile.setAttribute("data-horizontal", horizontalTiles.toString());
                 tile.setAttribute("data-vertical", verticalTiles.toString());
             }
@@ -284,7 +284,7 @@ export function Tiles(options: TilesOptions)
     tiles_controller.addEventListener("getChecked", tiles_controller_onGetChecked);
 
     return (
-        <div className="Tiles" css={serializedStyles} ref={div_ref}>
+        <div className="Tiles" css={serializedStyles} ref={div_ref} style={options.style}>
             <TilesControllerContext.Provider value={tiles_controller}>
                 <TilesStateContext.Provider value={tiles_state}>
                     <ModeSignalContext.Provider value={mode_signal}>
@@ -332,6 +332,7 @@ export type TilesOptions = {
     open?: boolean,
 
     children?: React.ReactNode,
+    style?: React.CSSProperties,
 };
 
 /**
@@ -536,24 +537,24 @@ export function Tile(options: TileOptions)
         font-family: ${fontFamily};
         font-size: ${fontSize};
         color: ${theme.colors.foreground};
-        transition: opacity 0.2s ${dragging ? "" : ", transform 0.2s ease-out"};
-        transform: var(--other-transform);
-        --other-transform: translate(0);
+        transition: opacity 0.2s ${dragging ? "" : ", transform 0.2s ease-out, scale 0.2s ease-out, translate 0.2s ease-out"};
+        transform-style: preserve-3d;
 
         &[data-selection-mode="true"] {
             opacity: 0.7;
         }
 
         &[data-drag-n-drop-mode="true"] {
-            --other-transform: scale(0.7);
+            scale: 0.9;
         }
 
         &:not([data-dragging="true"]) {
-            --other-transform: ${rotate_3d};
+            transform: ${rotate_3d} !important;
         }
 
         &[data-drag-n-drop-mode="true"]:not([data-dragging="true"]) {
-            --other-transform: scale(0.7) ${rotate_3d};
+            scale: 0.9;
+            transform: ${rotate_3d} !important;
         }
 
         &[data-dragging="true"] {
@@ -571,11 +572,11 @@ export function Tile(options: TileOptions)
 
         & .Tile-checked-tri {
             position: absolute;
-            right: -1rem;
-            top: -1rem;
+            right: -7rem;
+            top: -7rem;
             padding: 0.5rem;
-            width: 2rem;
-            height: 2rem;
+            width: 9rem;
+            height: 9rem;
             background: ${theme.colors.primary};
             color: ${theme.colors.primaryForeground};
             transform: rotate(45deg);
@@ -587,7 +588,7 @@ export function Tile(options: TileOptions)
         }
 
         & .Tile-checked-icon {
-            transform: rotate(-45deg);
+            transform: rotate(-45deg) translate(-5.4rem, 5.4rem);
         }
     `;
 
@@ -597,17 +598,19 @@ export function Tile(options: TileOptions)
         viewport_pointerUp = local_viewport_pointerUp;
 
         // Slightly rotate tile depending on where the click occurred.
-        const deg = 20;
+        const deg = 5;
         const rect = button_ref.current!.getBoundingClientRect();
         const x = e.clientX, y = e.clientY;
         if (x < rect.left + rect.width / 2 && (y > rect.top + rect.height / 3 && y < rect.bottom - rect.height / 3))
-            set_rotate_3d(`rotate3d(rotate3d(0, -1, 0, ${deg}deg))`);
+            set_rotate_3d(`perspective(${get_tile_width(size)}rem) rotate3d(0, -1, 0, ${deg}deg)`);
         else if (x > rect.right - rect.width / 2 && (y > rect.top + rect.height / 3 && y < rect.bottom - rect.height / 3))
-            set_rotate_3d(`rotate3d(rotate3d(0, 1, 0, ${deg}deg))`);
+            set_rotate_3d(`perspective(${get_tile_width(size)}rem) rotate3d(0, 1, 0, ${deg}deg)`);
         else if (y < rect.top + rect.height / 2)
-            set_rotate_3d(`rotate3d(rotate3d(1, 0, 0, ${deg}deg))`);
+            set_rotate_3d(`perspective(${get_tile_width(size)}rem) rotate3d(1, 0, 0, ${deg}deg)`);
         else
-            set_rotate_3d(`rotate3d(rotate3d(-1, 0, 0, ${deg}deg))`);
+            set_rotate_3d(`perspective(${get_tile_width(size)}rem) rotate3d(-1, 0, 0, ${deg}deg)`);
+
+        button_ref.current.style.transform = rotate_3d;
     }
 
     // Handle pointer up
@@ -615,6 +618,7 @@ export function Tile(options: TileOptions)
     {
         viewport_pointerUp = null;
         set_rotate_3d("rotate3d(0)");
+        button_ref.current.style.transform = rotate_3d;
     }
 
     useEffect(() =>
@@ -650,9 +654,11 @@ export function Tile(options: TileOptions)
             , diff_y = drag_start[1] - data.y;
         if (diff_x > -5 && diff_x <= 5 && diff_y > -5 && diff_y <= 5)
         {
+            button_ref.current.style.transform = rotate_3d;
             return;
         }
         set_dragging(true);
+        button_ref.current!.style.translate = `${data.x}px ${data.y}px`;
         mode_signal({ dragNDrop: true });
 
         // Shift tiles as needed.
@@ -761,7 +767,7 @@ export function Tile(options: TileOptions)
                 {options.children}
 
                 <div className="Tile-checked-tri">
-                    <CheckedIcon className="Tile-checked-icon"/>
+                    <CheckedIcon className="Tile-checked-icon" size={5}/>
                 </div>
             </button>
         </Draggable>

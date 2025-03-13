@@ -66,7 +66,6 @@ export function Icon(options: IconOptions)
     const serializedStyles = css `
         width: ${computed_size};
         height: ${computed_size};
-        height: 100%;
         vertical-align: middle;
     `;
 

@@ -114,11 +114,12 @@ function App()
                                 <SelectOption value="qux1">Qux 1</SelectOption>
                             </Select>
                         </div>
-                        <div style={{margin: "10rem 0", width: "100%", height: "10rem"}}>
-                            <Tiles controller={tiles_controller} state={tiles_state} direction="horizontal">
+                        <div style={{margin: "5rem 0", width: "100%", height: "30rem"}}>
+                            <Tiles controller={tiles_controller} state={tiles_state} direction="horizontal" style={{overflowX: "auto"}}>
                                 <TileGroup id="welcome" label="Welcome" position={0}/>
                                 <Tile id="t1" group="welcome" size="wide" color="#1e4"></Tile>
                                 <Tile id="t2" group="welcome" size="large" color="#e33"></Tile>
+                                <Tile id="t3" group="welcome" size="small" color="#e33"></Tile>
                             </Tiles>
                         </div>
                         <ContextMenu id={contextMenuId}>
