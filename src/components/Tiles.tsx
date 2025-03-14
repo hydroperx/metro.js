@@ -805,6 +805,7 @@ export function Tile(options: TileOptions)
     // Drag vars
     let drag_start: [number, number] | null = null;
     let previous_tiles_state: TilesState | null = null;
+    let shifted_tiles = false;
 
     // Drag start
     function on_drag_start(data: DraggableData)
@@ -842,11 +843,13 @@ export function Tile(options: TileOptions)
         if (hit)
         {
             rearrange_immediate({ shift: true, to_shift: hit.tile, place_taker: options.id, place_side: hit.side});
+            shifted_tiles = true;
         }
         else
         {
             tiles_state.set(previous_tiles_state);
             rearrange_immediate({ restore: true, restore_except: options.id });
+            shifted_tiles = false;
         }
     }
 
@@ -864,7 +867,18 @@ export function Tile(options: TileOptions)
         mode_signal({ dragNDrop: false });
 
         // Move tile properly
-        fixme();
+        if (shifted_tiles)
+        {
+            button_ref.current!.style.inset = "";
+            rearrange();
+        }
+        else
+        {
+            // Detect at which free space the tile fits.
+            fixme();
+
+            button_ref.current!.style.inset = "";
+        }
 
         // Update state
         update_state();
