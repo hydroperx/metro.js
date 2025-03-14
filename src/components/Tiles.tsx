@@ -248,26 +248,26 @@ export function Tiles(options: TilesOptions)
                 }
 
                 // Position tile
-                const h    = tile_state?.horizontal ?? Number(tile.getAttribute("data-horizontal"))
-                    , v    = tile_state?.vertical ?? Number(tile.getAttribute("data-vertical"))
-                    , size = tile_state?.size ?? tile.getAttribute("data-size") as TileSize;
-                const { x, y, horizontalTiles, verticalTiles } = layout.putTile(size, h, v);
                 if (tile.getAttribute("data-dragging") != "true")
                 {
+                    const h    = tile_state?.horizontal ?? Number(tile.getAttribute("data-horizontal"))
+                        , v    = tile_state?.vertical ?? Number(tile.getAttribute("data-vertical"))
+                        , size = tile_state?.size ?? tile.getAttribute("data-size") as TileSize;
+                    const { x, y, horizontalTiles, verticalTiles } = layout.putTile(size, h, v);
                     tile.style.translate = `${x / rem}rem ${y / rem}rem`;
-                }
-                tile.setAttribute("data-horizontal", horizontalTiles.toString());
-                tile.setAttribute("data-vertical", verticalTiles.toString());
+                    tile.setAttribute("data-horizontal", horizontalTiles.toString());
+                    tile.setAttribute("data-vertical", verticalTiles.toString());
 
-                if (!tile_state)
-                {
-                    tile_state = { group: "", size: "small", horizontal: 0, vertical: 0 };
-                    tiles_state.tiles.set(tile_id, tile_state);
+                    if (!tile_state)
+                    {
+                        tile_state = { group: "", size: "small", horizontal: 0, vertical: 0 };
+                        tiles_state.tiles.set(tile_id, tile_state);
+                    }
+                    tile_state.group = tile_group_id;
+                    tile_state.size = size;
+                    tile_state.horizontal = horizontalTiles;
+                    tile_state.vertical = verticalTiles;
                 }
-                tile_state.group = tile_group_id;
-                tile_state.size = size;
-                tile_state.horizontal = horizontalTiles;
-                tile_state.vertical = verticalTiles;
             }
 
             // Shift tiles
