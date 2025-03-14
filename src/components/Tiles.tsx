@@ -193,7 +193,7 @@ export function Tiles(options: TilesOptions)
         const tiles = Array.from(div_ref.current!.querySelectorAll(".Tile")) as HTMLButtonElement[];
 
         // Shifting parameters
-        const shift_params = rearrange_options.shift ?
+        const shift_params = rearrange_options?.shift ?
             {
                 to_shift: rearrange_options.to_shift,
                 place_taker: rearrange_options.place_taker,
@@ -201,13 +201,13 @@ export function Tiles(options: TilesOptions)
             } : null;
 
         // Restore parameters
-        const restore_params = rearrange_options.restore ?
+        const restore_params = rearrange_options?.restore ?
             {
                 except: rearrange_options.restore_except,
             } : null;
 
         // Grid snap parameters
-        const grid_snap_params = rearrange_options.grid_snap ?
+        const grid_snap_params = rearrange_options?.grid_snap ?
             {
                 tile: rearrange_options.grid_snap_tile,
             } : null;
@@ -700,7 +700,7 @@ export function Tile(options: TileOptions)
 
     // Elements
     const button_ref = useRef<HTMLButtonElement | null>(null);
-    const [tiles_div, set_tiles_div] = useState<HTMLDivElement | null>(null);
+    const tiles_div_ref = useRef<HTMLDivElement | null>(null);
 
     // Checked
     const [checked, set_checked] = useState<boolean>(false);
@@ -835,7 +835,7 @@ export function Tile(options: TileOptions)
     useEffect(() => {
         const tiles_div = button_ref.current!.parentElement;
         assert(!!tiles_div && tiles_div.classList.contains("Tiles"), "Tile's parent must be a Tiles.");
-        set_tiles_div(tiles_div as HTMLDivElement);
+        tiles_div_ref.current = tiles_div as HTMLDivElement;
     });
 
     // Drag vars
@@ -927,7 +927,7 @@ export function Tile(options: TileOptions)
 
     function hits_another_tile(): { tile: string, side: "left" | "right" | "top" | "bottom" } | null
     {
-        const tiles = Array.from(tiles_div.querySelectorAll(".Tile")) as HTMLButtonElement[];
+        const tiles = Array.from(tiles_div_ref.current.querySelectorAll(".Tile")) as HTMLButtonElement[];
         const i = tiles.indexOf(button_ref.current!);
         if (i == -1) return null;
         tiles.splice(i, 1);
@@ -943,12 +943,12 @@ export function Tile(options: TileOptions)
 
             // Only hits if a large enough area overlaps.
             const overlap = getRectangleOverlap(rect, r);
-            if (overlap.area < ((small_size.width * rem) * 1.5))
+            if (overlap && overlap.area < ((small_size.width * rem) * 1.5))
             {
                 continue;
             }
 
-            return { tile: tile.getAttribute("data-id"), side: place_side };
+            if (overlap) return { tile: tile.getAttribute("data-id"), side: place_side };
         }
         return null;
     }
@@ -1020,8 +1020,6 @@ export function Tile(options: TileOptions)
             dragStart={on_drag_start}
             dragMove={on_drag_move}
             dragStop={on_drag_stop}
-            finish="translate"
-            finishParent={tiles_div}
             rem={rem}>
 
             <button
@@ -1270,6 +1268,7 @@ class TilesHorizontalLayout extends TilesLayout
             this.group_x,
             this.start_margin,
             "horizontal");
+        full_pos.contributeTile(place_taker_button, tiles_state);
 
         // Make sure to insert place_taker into the group that
         // the tile to be shifted is part from.
@@ -1349,7 +1348,8 @@ class TilesHorizontalLayout extends TilesLayout
                     to_shift,
                     tiles_state,
                     prev_taken_h,
-                    full_pos
+                    full_pos,
+                    [place_taker]
                 );
                 break;
             }
@@ -1375,7 +1375,8 @@ class TilesHorizontalLayout extends TilesLayout
         t1: string,
         tiles_state: TilesState,
         prev_taken_h: number,
-        full_pos: FullTilesPositionMap
+        full_pos: FullTilesPositionMap,
+        prev: string[]
     ): void {
 
         // vars
@@ -1398,7 +1399,8 @@ class TilesHorizontalLayout extends TilesLayout
                 // find the next tile(s) to shift bottom.
                 // here it may be like a group of small tiles
                 // to shift together, or one large tile.
-                // (do not look for tiles that are being actively dragged.)
+                // (do not look for tiles that are being actively dragged or
+                // tiles that are being shifted already.)
                 const next_tiles: string[] = [];
                 for (const [tile, tile_p] of full_pos.tiles)
                 {
@@ -1406,16 +1408,19 @@ class TilesHorizontalLayout extends TilesLayout
                         { x: t1_new_x, y: t1_new_y, width: t1_w, height: t1_h },
                         { x: tile_p.horizontal, y: tile_p.vertical, width: tile_p.width, height: tile_p.height }
                     );
-                    if (overlap && tile_p.button.getAttribute("data-dragging") != "true")
+                    if (overlap && tile_p.button.getAttribute("data-dragging") != "true" && prev.indexOf(tile) == -1)
                     {
                         next_tiles.push(tile);
                     }
                 }
                 for (const t2 of next_tiles)
                 {
+                    const new_prev = prev.slice(0);
+                    new_prev.push(t1);
                     this.shift_bottom(
                         t2, tiles_state,
                         t1_h, full_pos,
+                        new_prev,
                     );
                 }
             }
@@ -1425,12 +1430,37 @@ class TilesHorizontalLayout extends TilesLayout
 
     override pageXToHorizontal(x: number): number
     {
-        fixme();
+        // return -1 if not fitting
+        const { group_x } = this;
+        const { small_size , margin } = this.pixel_measures;
+        const radius = this.pixel_measures.small_size.width;
+        if (x < group_x - radius) return -1;
+        const w = this.rows.width == 0 ? 0 : (this.rows.width * small_size.width) + ((this.rows.width - 1) * margin);
+        if (x > group_x + w + radius) return -1;
+        for (let gx = group_x, j = 0, lim = group_x + w; gx < lim; j++)
+        {
+            if (x < gx + small_size.width / 2) return j;
+            if (j != 0) gx += margin;
+            gx += small_size.width;
+        }
+        return this.rows.width;
     }
 
     override pageYToVertical(y: number): number
     {
-        fixme();
+        // return -1 if not fitting
+        const { small_size , margin } = this.pixel_measures;
+        const group_y = this.start_margin;
+        if (y < group_y) return -1;
+        const h = this.rows.max_height == 0 ? 0: (this.rows.max_height * small_size.height) * ((this.rows.max_height - 1) * margin);
+        if (y > group_y + h) return -1;
+        for (let gy = group_y, j = 0, lim = group_y + h; gy < lim; j++)
+        {
+            if (y < gy + small_size.height / 2) return j;
+            if (j != 0) gy += margin;
+            gy += small_size.height;
+        }
+        return this.rows.height;
     }
 }
 
@@ -1713,7 +1743,23 @@ class FullTilesPositionMap
             });
         }
     }
-    
+
+    contributeTile(button: HTMLButtonElement, tiles_state: TilesState)
+    {
+        const id = button.getAttribute("data-id");
+        const state = tiles_state.tiles.get(id);
+        assert(state !== undefined, "Invalidated tile state.");
+        const size = state.size;
+        this.tiles.set(id, {
+            button,
+            size,
+            width: get_size_width(size),
+            height: get_size_height(size),
+            horizontal: state.horizontal,
+            vertical: state.vertical,
+        });
+    }
+
     setPosition(id: string, horizontal: number, vertical: number): void
     {
         const { rem } = this;
