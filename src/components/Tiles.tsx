@@ -1217,6 +1217,13 @@ class TilesHorizontalLayout extends TilesLayout
         place_taker_state.group = shifting_tile_button.getAttribute("data-group");
         place_taker_button.setAttribute("data-group", place_taker_state.group);
 
+        // Misc vars
+        const place_taker_w = get_size_width(place_taker_state.size);
+        const place_taker_h = get_size_height(place_taker_state.size);
+        const to_shift_state = tiles_state.tiles.get(to_shift);
+        const to_shift_w = full_pos.tiles.get(to_shift).width;
+        const to_shift_h = full_pos.tiles.get(to_shift).height;
+
         switch (place_side)
         {
             case "left":
@@ -1226,11 +1233,6 @@ class TilesHorizontalLayout extends TilesLayout
                 // space available.
                 let shift_to: "left" | "right" | null = null;
                 let left_available = false, right_available = false;
-                const place_taker_w = get_size_width(place_taker_state.size);
-                const place_taker_h = get_size_height(place_taker_state.size);
-                const to_shift_state = tiles_state.tiles.get(to_shift);
-                const to_shift_w = full_pos.tiles.get(to_shift).width;
-                const to_shift_h = full_pos.tiles.get(to_shift).height;
                 if (!(place_taker_w > to_shift_w || place_taker_h > to_shift_h))
                 {
                     if (
@@ -1252,16 +1254,20 @@ class TilesHorizontalLayout extends TilesLayout
                 if (shift_to == "left")
                 {
                     // shift tile to left
+                    const place_taker_new_horizontal = to_shift_state.horizontal;
                     this.rows.clearSize(to_shift_state.horizontal, to_shift_state.vertical, to_shift_state.size);
                     this.rows.fillSize(to_shift_state.horizontal - to_shift_w, to_shift_state.vertical, to_shift_state.size);
                     full_pos.setPosition(to_shift, to_shift_state.horizontal - to_shift_w, to_shift_state.vertical);
+                    full_pos.setPosition(place_taker, place_taker_new_horizontal, to_shift_state.vertical);
                 }
                 else if (shift_to == "right")
                 {
                     // shift tile to right
+                    const place_taker_new_horizontal = to_shift_state.horizontal;
                     this.rows.clearSize(to_shift_state.horizontal, to_shift_state.vertical, to_shift_state.size);
                     this.rows.fillSize(to_shift_state.horizontal + place_taker_w, to_shift_state.vertical, to_shift_state.size);
                     full_pos.setPosition(to_shift, to_shift_state.horizontal + place_taker_w, to_shift_state.vertical);
+                    full_pos.setPosition(place_taker, place_taker_new_horizontal, to_shift_state.vertical);
                 }
 
                 break;
@@ -1560,8 +1566,11 @@ class FullTilesPositionMap
         tile_state.vertical = vertical;
 
         const t = this.tiles.get(id);
-        t.horizontal = horizontal;
-        t.vertical = vertical;
+        if (t)
+        {
+            t.horizontal = horizontal;
+            t.vertical = vertical;
+        }
 
         const button = this.tiles.get(id).button;
         if (button.getAttribute("data-dragging") != "true")
