@@ -1302,10 +1302,13 @@ class TilesHorizontalLayout extends TilesLayout
             }
             case "bottom":
             {
+                // Ignore bottom-to-top shift for now.
+                //
+                // in case it is implemented in the future:
+                //
                 // detection: here it may be impossible to shift to top
                 // in circumstances where there is no free space
                 // (consequently the take placer may also not take any space).
-                fixme();
                 break;
             }
         }
