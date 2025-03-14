@@ -4,7 +4,7 @@ import assert from "assert";
 import Color from "color";
 import { TypedEventTarget } from "com.hydroper.typedeventtarget";
 import { GridStack, GridStackWidget } from "gridstack";
-import { CheckedIcon } from "./Icons";
+import { CheckedIcon, getIcon } from "./Icons";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { ThemeContext, PreferPrimaryContext } from "../theme";
 import { RemObserver } from "../utils/RemObserver";
@@ -36,8 +36,8 @@ function get_tile_height(size: TileSize): number { return get_tile_size(size).he
 
 // Viewport mouse up handler
 let viewport_pointerUp: Function | null = null;
-window.addEventListener("pointerup", () => {
-    viewport_pointerUp?.();
+window.addEventListener("pointerup", (e) => {
+    viewport_pointerUp?.(e);
 });
 
 /**
@@ -66,7 +66,7 @@ export function Tiles(options: TilesOptions)
     const [rem, set_rem] = useState<number>(16);
     
     // GridStack instance
-    const gridstack: GridStack | null = null;
+    let gridstack: GridStack | null = null;
 
     // Tiles
     const tiles: Tile[] = [];
@@ -83,7 +83,14 @@ export function Tiles(options: TilesOptions)
     {
         set_forced_invisible(false);
 
-        fixme();
+        gridstack = GridStack.init({
+            alwaysShowResizeHandle: false,
+            disableResize: false,
+            margin: `${margin}rem`,
+            maxRow: options.direction == "horizontal" ? 6 : undefined,
+            rtl: localeDir == "rtl",
+            cellHeight: `${small_size.width}rem`,
+        }, div_ref.current!)
     }
 
     // Detect a mode change
@@ -148,7 +155,6 @@ export function Tiles(options: TilesOptions)
             position: absolute;
             overflow: hidden;
             outline: 0.11rem solid ${Color(theme.colors.primary).alpha(0.6).alpha(0.3).toString()};
-            background: linear-gradient(90deg, ${tile_color} 0%, ${tile_color_b1} 100%);
             border: none;
             font-family: ${fontFamily};
             font-size: ${fontSize};
@@ -169,11 +175,6 @@ export function Tiles(options: TilesOptions)
             scale: 0.9;
         }
 
-        & .Tile:not([data-dragging="true"]),
-        & .Tile[data-drag-n-drop-mode="true"]:not([data-dragging="true"]) {
-            transform: ${rotate_3d} !important;
-        }
-
         & .Tile[data-dragging="true"] {
             opacity: 0.6;
         }
@@ -181,7 +182,6 @@ export function Tiles(options: TilesOptions)
         & .Tile:hover:not(:disabled),
         & .Tile:focus:not(:disabled) {
             outline: 0.17rem solid ${Color(theme.colors.primary).alpha(0.6).toString()};
-            background: linear-gradient(90deg, ${tile_color_b1} 0%, ${tile_color_b2} %100);
         }
 
         & .Tile:disabled {
@@ -206,6 +206,11 @@ export function Tiles(options: TilesOptions)
         }
 
         & .Tile .Tile-checked-icon {
+            background: url("${getIcon("checked", "white")}") no-repeat;
+            background-position: center;
+            width: ${pointsToRem(5)};
+            height: ${pointsToRem(5)};
+            vertical-align: middle;
             transform: rotate(-45deg) translate(-5.4rem, 5.4rem);
         }
     `;
@@ -287,6 +292,99 @@ export function Tiles(options: TilesOptions)
         }));
     }
     tiles_controller.addEventListener("getChecked", tiles_controller_onGetChecked);
+
+    // Tilting
+    let tilting_button: HTMLButtonElement | null = null,
+        tilting_pointer_id: number;
+    function tile_onPointerDown(e: PointerEvent): void
+    {
+        if (tilting_button) return;
+        tilting_pointer_id = e.pointerId;
+        tilting_button = e.target as HTMLButtonElement;
+        const size = tilting_button.getAttribute("data-size");
+        viewport_pointerUp = local_viewport_pointerUp;
+
+        // Slightly rotate tile depending on where the click occurred.
+        const deg = 5;
+        const rect = tilting_button.getBoundingClientRect();
+        const x = e.clientX, y = e.clientY;
+        let rotate_3d = "";
+        if (x < rect.left + rect.width / 2 && (y > rect.top + rect.height / 3 && y < rect.bottom - rect.height / 3))
+            rotate_3d = `perspective(${get_tile_width(size as TileSize)}rem) rotate3d(0, -1, 0, ${deg}deg)`;
+        else if (x > rect.right - rect.width / 2 && (y > rect.top + rect.height / 3 && y < rect.bottom - rect.height / 3))
+            rotate_3d = `perspective(${get_tile_width(size as TileSize)}rem) rotate3d(0, 1, 0, ${deg}deg)`;
+        else if (y < rect.top + rect.height / 2)
+            rotate_3d = `perspective(${get_tile_width(size as TileSize)}rem) rotate3d(1, 0, 0, ${deg}deg)`;
+        else
+            rotate_3d = `perspective(${get_tile_width(size as TileSize)}rem) rotate3d(-1, 0, 0, ${deg}deg)`;
+
+            tilting_button.style.transform = rotate_3d;
+    }
+
+    // Handle pointer over tile
+    function tile_onPointerOver(e: PointerEvent): void
+    {
+        const tile_button = e.target as HTMLButtonElement;
+        if (!tile_button.matches(":hover")) return;
+        const tile_color = tile_button.getAttribute("data-color");
+        const tile_color_b1 = Color(tile_color).lighten(0.15).hex().toString();
+        const tile_color_b2 = Color(tile_color).lighten(0.23).hex().toString();
+        tile_button.style.background = `linear-gradient(90deg, ${tile_color_b1} 0%, ${tile_color_b2} 100%)`;
+    }
+
+    // Handle pointer out tile
+    function tile_onPointerOut(e: PointerEvent): void
+    {
+        const tile_button = e.target as HTMLButtonElement;
+        const tile_color = tile_button.getAttribute("data-color");
+        const tile_color_b1 = tile_button.getAttribute("data-color-b1");
+        tile_button.style.background = `linear-gradient(90deg, ${tile_color} 0%, ${tile_color_b1} 100%)`;
+    }
+
+    // Handle pointer up
+    function local_viewport_pointerUp(e: PointerEvent): void
+    {
+        if (!tilting_button || tilting_pointer_id != e.pointerId) return;
+        viewport_pointerUp = null;
+        tilting_button.style.transform = "";
+    }
+
+    // Handle the request to add a tile
+    function tiles_controller_addTile(e: CustomEvent<Tile>)
+    {
+        const grid_div = div_ref.current!;
+        const element = document.createElement("button");
+        element.className = "Tile grid-stack-item";
+
+        // Tile data
+        const tile = e.detail;
+
+        // Misc attributes
+        element.setAttribute("data-id", tile.id);
+        element.setAttribute("data-size", tile.size);
+
+        // Misc logic
+        element.disabled = !!tile.disabled;
+
+        // Color
+        const tile_color_b1 = Color(tile.color).lighten(0.15).hex().toString();
+        element.setAttribute("data-color", tile.color);
+        element.style.background = `linear-gradient(90deg, ${tile.color} 0%, ${tile_color_b1} 100%)`;
+
+        const content_element = document.createElement("div");
+        content_element.className = "grid-stack-item-content";
+        content_element.innerHTML = `
+            <div class="Tile-checked-tri">
+                <div class="Tile-checked-icon"></div>
+            </div>
+        `;
+        content_element.addEventListener("pointerdown", tile_onPointerDown);
+        content_element.addEventListener("pointerover", tile_onPointerOver);
+        content_element.addEventListener("pointerout", tile_onPointerOut);
+        element.appendChild(content_element);
+        grid_div.appendChild(element);
+    }
+    tiles_controller.addEventListener("addTile", tiles_controller_addTile);
 
     return (
         <div className="Tiles" css={serialized_styles} style={options.style}>
@@ -456,6 +554,7 @@ export type TileSize = "small" | "medium" | "wide" | "large";
  * Provides control over tiles in a `Tiles` container.
  */
 export class TilesController extends (EventTarget as TypedEventTarget<{
+    addTile: CustomEvent<Tile>;
     getChecked: CustomEvent<{ requestId: string }>;
     getCheckedResult: CustomEvent<{ requestId: string, tiles: string[] }>;
     setChecked: CustomEvent<{ id: string, value: boolean }>;
@@ -480,6 +579,13 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
                 },
             }));
         });
+    }
+
+    addTile(options: Tile): void
+    {
+        this.dispatchEvent(new CustomEvent("addTile", {
+            detail: options,
+        }));
     }
 
     /**

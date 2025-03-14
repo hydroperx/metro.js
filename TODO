@@ -37,11 +37,12 @@ Basic components
 New tile grids implementation:
 
 - [ ] Controller
-  - [ ] Add tile
+  - [x] Add tile
   - [ ] Remove tile
-  - [ ] Set tile size
-  - [ ] Set tile color
+  - [ ] Set tile size (involves use of `tiles_state` and `load`, and will also alter the `data-size` attr)
+  - [ ] Set tile color (should update `tile_btn.style.background` and `data-color`)
   - [ ] Set tile label
+  - [ ] Set tile icon
   - [ ] Set tile hypertext
   - [ ] Events
     - [ ] `check` (tile)
@@ -51,8 +52,11 @@ New tile grids implementation:
 - [ ] Convert px to rem on tile positions
 - [ ] Handle drag start and drag move to detect drag change and determine whether to reset tilt 3D transformation.
 - [ ] Support tilting on tiles.
-- [ ] Hnadle tile color
-- [ ] Live tiles
+- [x] Hnadle tile color
+- [ ] Tile content
+  - [ ] Icon
+  - [ ] Label
+  - [ ] Live tiles (and rolling)
 - [ ] Enter drag-n-drop mode (when starting dragging)
 - [ ] Exit drag-n-drop mode
 - [ ] Enter selection mode (when checking tiles)
