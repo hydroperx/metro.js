@@ -854,6 +854,11 @@ export function Tile(options: TileOptions)
         {
             rearrange_immediate({ shift: true, to_shift: hit.tile, place_taker: options.id, place_side: hit.side});
         }
+        else
+        {
+            tiles_state.set(previous_tiles_state);
+            rearrange_immediate({ restore: true, restore_except: options.id });
+        }
     }
 
     // Drag stop
