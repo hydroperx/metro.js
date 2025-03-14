@@ -1223,8 +1223,40 @@ class TilesHorizontalLayout extends TilesLayout
             case "right":
                 // Move tile to either left or right if there is
                 // space available.
-                // Prefer space within the group bounds.
-                fixme();
+                let shift_to: "left" | "right" | null = null;
+                let left_available = false, right_available = false;
+                const place_taker_w = get_size_width(place_taker_state.size);
+                const place_taker_h = get_size_height(place_taker_state.size);
+                const to_shift_state = tiles_state.tiles.get(to_shift);
+                const to_shift_w = full_pos.tiles.get(to_shift).width;
+                const to_shift_h = full_pos.tiles.get(to_shift).height;
+                if (!(place_taker_w > to_shift_w || place_taker_h > to_shift_h))
+                {
+                    if (
+                        this.rows.sizeFreeAt(to_shift_state.horizontal + place_taker_w, to_shift_state.vertical, to_shift_state.size) &&
+                        to_shift_state.horizontal + place_taker_w + to_shift_w < this.rows.width
+                    ) {
+                        right_available = true;
+                    }
+                    if (this.rows.sizeFreeAt(to_shift_state.horizontal - to_shift_w, to_shift_state.vertical, to_shift_state.size))
+                    {
+                        left_available = true;
+                    }
+                }
+
+                if (place_side == "left")
+                    shift_to = right_available ? "right" : null;
+                else shift_to = left_available ? "left" : null;
+
+                if (shift_to == "left")
+                {
+                    fixme();
+                }
+                else if (shift_to == "right")
+                {
+                    fixme();
+                }
+
                 break;
             }
             case "top":
@@ -1461,7 +1493,7 @@ class FullTilesPositionMap
 {
     // Tile element, size and position.
     // Width/height are in terms of small tiles (not pixels)
-    private tiles: Map<string, { button: HTMLButtonElement, size: TileSize, width: number, height: number, horizontal: number, vertical: number }> = new Map();
+    tiles: Map<string, { button: HTMLButtonElement, size: TileSize, width: number, height: number, horizontal: number, vertical: number }> = new Map();
 
     constructor(
         private rows: TilesLayoutTileRows,
@@ -1480,21 +1512,25 @@ class FullTilesPositionMap
             this.tiles.set(id, {
                 button,
                 size,
-                width: size == "large" ? 4 : size == "wide" ? 4 : size == "medium" ? 2 : 1,
-                height: size == "large" ? 4 : size == "wide" ? 2 : size == "medium" ? 2 : 1,
+                width: get_size_width(size),
+                height: get_size_height(size),
                 horizontal: state.horizontal,
                 vertical: state.vertical,
             });
         }
     }
     
-    renderTilePosition(id: string, horizontal: number, vertical: number): void
+    setPosition(id: string, horizontal: number, vertical: number): void
     {
         const { rem } = this;
         const tile_state = this.tiles_state.tiles.get(id);
 
         tile_state.horizontal = horizontal;
         tile_state.vertical = vertical;
+
+        const t = this.tiles.get(id);
+        t.horizontal = horizontal;
+        t.vertical = vertical;
 
         const button = this.tiles.get(id).button;
         if (button.getAttribute("data-dragging") != "true")
@@ -1516,3 +1552,19 @@ type TilesLayoutPixelMeasures = {
     wide_size: { width: number, height: number },
     large_size: { width: number, height: number },
 };
+
+/**
+ * Gets width of tile size in small tiles unit.
+ */
+function get_size_width(size: TileSize): number
+{
+    return size == "large" ? 4 : size == "wide" ? 4 : size == "medium" ? 2 : 1;
+}
+
+/**
+ * Gets height of tile size in small tiles unit.
+ */
+function get_size_height(size: TileSize): number
+{
+    return size == "large" ? 4 : size == "wide" ? 2 : size == "medium" ? 2 : 1;
+}
