@@ -1,7 +1,7 @@
 import React, { useContext, useRef, useState, useEffect, createContext } from "react";
 import { css, SerializedStyles } from "@emotion/react";
 import Color from "color";
-import { Input } from "@hydroper/inputaction";
+import { Input } from "com.hydroper.inputaction";
 import $ from "jquery";
 import assert from "assert";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";

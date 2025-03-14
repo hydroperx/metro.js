@@ -7,9 +7,9 @@
   "dependencies": {
     "@emotion/css": "^11.13.5",
     "@emotion/react": "^11.14.0",
-    "@hydroper/colorobserver": "npm:@jsr/hydroper__colorobserver@^1.0.0",
-    "@hydroper/inputaction": "npm:@jsr/hydroper__inputaction@^1.0.6",
-    "@hydroper/typedeventtarget": "npm:@jsr/hydroper__typedeventtarget@^1.0.0",
+    "com.hydroper.colorobserver": "^1.0.0",
+    "com.hydroper.inputaction": "^1.0.0",
+    "com.hydroper.typedeventtarget": "^1.0.0",
     "assert": "^2.1.0",
     "clone": "^2.1.2",
     "color": "^4.2.3",

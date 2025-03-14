@@ -114,7 +114,7 @@ If it is desired to grow or reduce all the user interface together, you may adju
 
 ### Input navigation
 
-This library uses [`@hydroper/inputaction`](https://jsr.io/@hydroper/inputaction) for detecting pressed input such as keyboard arrows. You may customize the global `Input.input` input actions for supporting buttons other than arrow keys.
+This library uses [`com.hydroper.inputaction`](https://jsr.io/com.hydroper.inputaction) for detecting pressed input such as keyboard arrows. You may customize the global `Input.input` input actions for supporting buttons other than arrow keys.
 
 **Important**
 

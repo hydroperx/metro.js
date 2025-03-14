@@ -3,7 +3,7 @@ import { css } from "@emotion/react";
 import assert from "assert";
 import Color from "color";
 import Draggable, { DraggableData } from "com.hydroper.reactdraggable";
-import { TypedEventTarget } from "@hydroper/typedeventtarget";
+import { TypedEventTarget } from "com.hydroper.typedeventtarget";
 import { CheckedIcon } from "./Icons";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { ThemeContext, PreferPrimaryContext } from "../theme";
@@ -199,10 +199,24 @@ export function Tiles(options: TilesOptions)
                 place_side: rearrange_options.place_side,
             } : null;
 
+        // Restore parameters
+        const restore_params = rearrange_options.restore ?
+            {
+                except: rearrange_options.restore_except,
+            } : null;
+
         // Position labels and tiles
         for (const group_button of group_buttons)
         {
             const group_id = group_button.getAttribute("data-id");
+
+            // Determine whether to shift tiles at this group
+            let shifting = false; 
+            if (shift_params && tiles_state.tiles.has(shift_params.to_shift) &&
+                tiles_state.tiles.get(shift_params.to_shift).group == group_id)
+            {
+                shifting = true;
+            }
 
             // Position and size tiles
             for (const tile of tiles)
@@ -228,11 +242,14 @@ export function Tiles(options: TilesOptions)
                 }
 
                 // Position tile
-                const h = Number(tile.getAttribute("data-horizontal"))
-                    , v = Number(tile.getAttribute("data-vertical"))
+                const h    = tile_state?.horizontal ?? Number(tile.getAttribute("data-horizontal"))
+                    , v    = tile_state?.vertical ?? Number(tile.getAttribute("data-vertical"))
                     , size = tile_state?.size ?? tile.getAttribute("data-size") as TileSize;
                 const { x, y, horizontalTiles, verticalTiles } = layout.putTile(size, h, v);
-                tile.style.translate = `${x / rem}rem ${y / rem}rem`;
+                if (tile.getAttribute("data-dragging") != "true")
+                {
+                    tile.style.translate = `${x / rem}rem ${y / rem}rem`;
+                }
                 tile.setAttribute("data-horizontal", horizontalTiles.toString());
                 tile.setAttribute("data-vertical", verticalTiles.toString());
 
@@ -245,6 +262,12 @@ export function Tiles(options: TilesOptions)
                 tile_state.size = size;
                 tile_state.horizontal = horizontalTiles;
                 tile_state.vertical = verticalTiles;
+            }
+
+            // Shift tiles
+            if (shifting)
+            {
+                fixme();
             }
 
             // Position and size group label

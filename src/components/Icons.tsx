@@ -16,7 +16,7 @@ import search_white from "../icons/search-white.svg";
 import clear_black from "../icons/clear-black.svg";
 import clear_white from "../icons/clear-white.svg";
 
-import { ColorObserver } from "@hydroper/colorobserver";
+import { ColorObserver } from "com.hydroper.colorobserver";
 import React, { useEffect, useRef, useState, useContext } from "react";
 import Color from "color";
 import { css, SerializedStyles, keyframes } from "@emotion/react";
