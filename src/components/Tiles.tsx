@@ -186,8 +186,8 @@ export function Tiles(options: TilesOptions)
             large_size: { width: large_size.width * rem, height: large_size.height * rem },
         };
         const layout: TilesLayout = options.direction == "horizontal" ?
-            new TilesHorizontalLayout(orthogonal_side_length, (options.innerMargin ?? 3) * rem, pixel_measures, rem) :
-            new TilesVerticalLayout(orthogonal_side_length, (options.innerMargin ?? 1) * rem, pixel_measures, rem);
+            new TilesHorizontalLayout(orthogonal_side_length, (options.startMargin ?? 3) * rem, pixel_measures, rem) :
+            new TilesVerticalLayout(orthogonal_side_length, (options.startMargin ?? 1) * rem, pixel_measures, rem);
 
         // Retrieve tile buttons
         const tiles = Array.from(div_ref.current!.querySelectorAll(".Tile")) as HTMLButtonElement[];
@@ -411,10 +411,10 @@ export type TilesOptions = {
     direction: "horizontal" | "vertical",
 
     /**
-     * Margin of the side orthogonal to the direction used
-     * for the tiles (**not** the size of the container).
+     * Starting margin of the side orthogonal to the direction used
+     * for the tiles (**not** the margin around the container).
      */
-    innerMargin?: number,
+    startMargin?: number,
 
     /**
      * Whether to display open or close transition.
@@ -1143,7 +1143,7 @@ class TilesHorizontalLayout extends TilesLayout
     private rows: TilesLayoutTileRows;
     private group_x: number = 0;
 
-    constructor(private container_height: number, private inner_margin: number, pixel_measures: TilesLayoutPixelMeasures, rem: number)
+    constructor(private container_height: number, private start_margin: number, pixel_measures: TilesLayoutPixelMeasures, rem: number)
     {
         super(pixel_measures, rem);
 
@@ -1154,7 +1154,7 @@ class TilesHorizontalLayout extends TilesLayout
     {
         // Measurements
         const { margin, small_size } = this.pixel_measures;
-        const { inner_margin } = this;
+        const { start_margin } = this;
 
         const { max_height } = this.rows;
 
@@ -1167,7 +1167,7 @@ class TilesHorizontalLayout extends TilesLayout
                     this.rows.fillSize(horizontal, vertical, size);
                     return {
                         x: this.group_x + (horizontal * small_size.width) + (horizontal * margin),
-                        y: (vertical * small_size.height) + (vertical * margin) + inner_margin,
+                        y: (vertical * small_size.height) + (vertical * margin) + start_margin,
                         horizontalTiles: horizontal, verticalTiles: vertical
                     };
                 }
@@ -1185,7 +1185,7 @@ class TilesHorizontalLayout extends TilesLayout
 
         // Result vars
         const this_group_x = this.group_x;
-        const this_group_y = this.inner_margin / 3;
+        const this_group_y = this.start_margin / 3;
         const width = this.rows.width == 0 ? 0 : (this.rows.width * small_size.width) + ((this.rows.width - 1) * margin);
 
         // Move to the next group
@@ -1209,7 +1209,14 @@ class TilesHorizontalLayout extends TilesLayout
         if (!shifting_tile_button) return;
 
         // Variable used to facilitate manipulating tile positions.
-        const full_pos = new FullTilesPositionMap(this.rows, tiles, tiles_state, this.rem, this.group_x, this.inner_margin);
+        const full_pos = new FullTilesPositionMap(
+            this.rows,
+            tiles,
+            tiles_state,
+            this.rem,
+            this.group_x,
+            this.start_margin,
+            "horizontal");
 
         // Make sure to insert place_taker into the group that
         // the tile to be shifted is part from.
@@ -1290,7 +1297,7 @@ class TilesVerticalLayout extends TilesLayout
 {
     private rows: TilesLayoutTileRows;
 
-    constructor(private container_width: number, private inner_margin: number, pixel_measures: TilesLayoutPixelMeasures, rem: number)
+    constructor(private container_width: number, private start_margin: number, pixel_measures: TilesLayoutPixelMeasures, rem: number)
     {
         super(pixel_measures, rem);
 
@@ -1298,7 +1305,7 @@ class TilesVerticalLayout extends TilesLayout
         const { margin, small_size } = this.pixel_measures;
 
         // Max tile columns (this must be run again similarly after putLabel)
-        let w = container_width - inner_margin*2;
+        let w = container_width - start_margin*2;
         let max_width = 1;
         for (let i = 0; i < 256; i++)
         {
@@ -1538,7 +1545,8 @@ class FullTilesPositionMap
         private tiles_state: TilesState,
         private rem: number,
         private group_x: number,
-        private inner_margin: number
+        private start_margin: number,
+        private direction: "horizontal" | "vertical"
     ) {
         for (const button of tile_buttons)
         {
@@ -1575,8 +1583,10 @@ class FullTilesPositionMap
         const button = this.tiles.get(id).button;
         if (button.getAttribute("data-dragging") != "true")
         {
-            const x = (this.group_x / rem) + (horizontal * small_size.width) + (horizontal * margin);
-            const y = (vertical * small_size.height) + (vertical * margin) + (this.inner_margin / rem);
+            const x_start_margin = this.direction == "horizontal" ? 0 : (this.start_margin / rem);
+            const y_start_margin = this.direction == "horizontal" ? (this.start_margin / rem) : 0;
+            const x = (this.group_x / rem) + (horizontal * small_size.width) + (horizontal * margin) + x_start_margin;
+            const y = (vertical * small_size.height) + (vertical * margin) + y_start_margin;
             button.style.translate = `${x}rem ${y}rem`;
         }
         button.setAttribute("data-horizontal", horizontal.toString());
