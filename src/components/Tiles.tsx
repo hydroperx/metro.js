@@ -4,6 +4,8 @@ import assert from "assert";
 import Color from "color";
 import Draggable, { DraggableData } from "com.hydroper.reactdraggable";
 import { TypedEventTarget } from "com.hydroper.typedeventtarget";
+import getOffset from "getoffset";
+import getRectangleOverlap from "rectangle-overlap";
 import { CheckedIcon } from "./Icons";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { ThemeContext, PreferPrimaryContext } from "../theme";
@@ -12,8 +14,7 @@ import { pointsToRem, pointsToRemValue } from "../utils/points";
 import { lighten, darken, enhanceBrightness, contrast } from "../utils/color";
 import { fontFamily, fontSize } from "../utils/common";
 import { randomHexLarge } from "../utils/random";
-import getOffset from "getoffset";
-import getRectangleOverlap from "rectangle-overlap";
+import { getRectHitSide } from "../utils/rect";
 
 const margin = 0.6; // Margin between tiles
 const group_margin = 3; // Margin between groups
@@ -1192,7 +1193,34 @@ class TilesHorizontalLayout extends TilesLayout
         place_side: "left" | "top" | "right" | "bottom"
     ): void
     {
-        fixme();
+        const shifting_tile = tiles.find(t => t.getAttribute("data-id") == to_shift);
+        if (!shifting_tile) return;
+
+        const full_pos = new FullTilesPositionMap(this.rows, tiles, tiles_state);
+
+        switch (place_side)
+        {
+            case "left":
+            {
+                fixme();
+                break;
+            }
+            case "right":
+            {
+                fixme();
+                break;
+            }
+            case "top":
+            {
+                fixme();
+                break;
+            }
+            case "bottom":
+            {
+                fixme();
+                break;
+            }
+        }
     }
 }
 
@@ -1406,6 +1434,35 @@ class TilesLayoutTileRows {
     }
 }
 
+/**
+ * Synchronization between full tile positions and
+ * small tile rows-of-columns occupid entries.
+ */
+class FullTilesPositionMap
+{
+    // Tile size and positions.
+    // Width/height are in terms of small tiles (not pixels)
+    private tiles: Map<string, { size: TileSize, width: number, height: number, horizontal: number, vertical: number }> = new Map();
+
+    constructor(private rows: TilesLayoutTileRows, tile_buttons: HTMLButtonElement[], private tiles_state: TilesState)
+    {
+        for (const button of tile_buttons)
+        {
+            const id = button.getAttribute("data-id");
+            const state = tiles_state.tiles.get(id);
+            assert(state !== undefined, "Invalidated tile state.");
+            const size = state.size;
+            this.tiles.set(id, {
+                size,
+                width: size == "large" ? 4 : size == "wide" ? 4 : size == "medium" ? 2 : 1,
+                height: size == "large" ? 4 : size == "wide" ? 2 : size == "medium" ? 2 : 1,
+                horizontal: state.horizontal,
+                vertical: state.vertical,
+            });
+        }
+    }
+}
+
 type TilesLayoutPixelMeasures = {
     margin: number,
     group_margin: number,
@@ -1414,34 +1471,3 @@ type TilesLayoutPixelMeasures = {
     wide_size: { width: number, height: number },
     large_size: { width: number, height: number },
 };
-
-/**
- * Determines the side a rectangle hits.
- *
- * @param a Rectangle to be hitted.
- * @param b Hitting rectangle.
- * @returns The side of `a` that `b` hits.
- */
-function getRectHitSide(
-    a: { x: number, y: number, width: number, height: number },
-    b: { x: number, y: number, width: number, height: number }
-): "top" | "bottom" | "left" | "right" | null {
-    // Based in https://stackoverflow.com/a/29861691
-    const r1 = { x: a.x, y: a.x, w: a.width, h: a.height };
-    const r2 = { x: b.x, y: b.x, w: b.width, h: b.height };
-    const dx = (r1.x+r1.w/2)-(r2.x+r2.w/2);
-    const dy = (r1.y+r1.h/2)-(r2.y+r2.h/2);
-    const width = (r1.w+r2.w)/2;
-    const height = (r1.h+r2.h)/2;
-    const crossWidth = width*dy;
-    const crossHeight = height*dx;
-    let collision = null;
-
-    if (Math.abs(dx) <= width && Math.abs(dy) <= height)
-    {
-        if (crossWidth > crossHeight)
-            collision = (crossWidth > (-crossHeight)) ? "bottom" : "left";
-        else collision = (crossWidth > -(crossHeight)) ? "right" : "top";
-    }
-    return collision;
-}
