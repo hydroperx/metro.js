@@ -1221,6 +1221,7 @@ class TilesHorizontalLayout extends TilesLayout
         {
             case "left":
             case "right":
+            {
                 // Move tile to either left or right if there is
                 // space available.
                 let shift_to: "left" | "right" | null = null;
@@ -1250,11 +1251,17 @@ class TilesHorizontalLayout extends TilesLayout
 
                 if (shift_to == "left")
                 {
-                    fixme();
+                    // shift tile to left
+                    this.rows.clearSize(to_shift_state.horizontal, to_shift_state.vertical, to_shift_state.size);
+                    this.rows.fillSize(to_shift_state.horizontal - to_shift_w, to_shift_state.vertical, to_shift_state.size);
+                    full_pos.setPosition(to_shift, to_shift_state.horizontal - to_shift_w, to_shift_state.vertical);
                 }
                 else if (shift_to == "right")
                 {
-                    fixme();
+                    // shift tile to right
+                    this.rows.clearSize(to_shift_state.horizontal, to_shift_state.vertical, to_shift_state.size);
+                    this.rows.fillSize(to_shift_state.horizontal + place_taker_w, to_shift_state.vertical, to_shift_state.size);
+                    full_pos.setPosition(to_shift, to_shift_state.horizontal + place_taker_w, to_shift_state.vertical);
                 }
 
                 break;
@@ -1480,6 +1487,30 @@ class TilesLayoutTileRows {
             case "large":
                 this.fillSize(horizontal, vertical, "wide");
                 this.fillSize(horizontal, vertical + 2, "wide");
+                break;
+        }
+    }
+
+    clearSize(horizontal: number, vertical: number, size: TileSize): void
+    {
+        switch (size)
+        {
+            case "small":
+                this.put(horizontal, vertical, false);
+                break;
+            case "medium":
+                this.put(horizontal, vertical, false);
+                this.put(horizontal + 1, vertical, false);
+                this.put(horizontal, vertical + 1, false);
+                this.put(horizontal + 1, vertical + 1, false);
+                break;
+            case "wide":
+                this.clearSize(horizontal, vertical, "medium");
+                this.clearSize(horizontal + 2, vertical, "medium");
+                break;
+            case "large":
+                this.clearSize(horizontal, vertical, "wide");
+                this.clearSize(horizontal, vertical + 2, "wide");
                 break;
         }
     }
