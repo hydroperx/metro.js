@@ -5,7 +5,7 @@ import {
     ProgressRing, ProgressEllipsis,
     Select, SelectOption, TextInput, FormGroup,
     CheckBox,
-    Tiles, TileGroup, Tile, TilesController, TilesState,
+    Tiles, TilesController, TilesState,
 
     ThemePresets,
     ThemeContext,
@@ -115,29 +115,11 @@ function App()
                             </Select>
                         </div>
                         <div style={{margin: "5rem 0", width: "100%", height: "30rem"}}>
-                            <Tiles controller={tiles_controller} state={tiles_state} direction="horizontal" style={{overflowX: "auto"}}>
-                                <TileGroup id="welcome" label="Welcome" position={0}/>
-                                <Tile id="t1" group="welcome" size="wide" color="#008000"></Tile>
-                                <Tile id="t2" group="welcome" size="large" color="#A1193D"></Tile>
-                                <Tile id="t3" group="welcome" size="small" color="#A1193D"></Tile>
-                                <TileGroup id="productivity" label="Productivity" position={1}/>
-                                <Tile id="p1" group="productivity" size="medium" color="#008000"></Tile>
-                                <Tile id="p2" group="productivity" size="small" color="#A1193D"></Tile>
-                                <Tile id="p3" group="productivity" size="small" color="#A1193D"></Tile>
-                                <TileGroup id="productivity-1" label="Productivity (1)" position={1}/>
-                                <Tile id="q1" group="productivity-1" size="large" color="#008000"></Tile>
-                                <Tile id="q2" group="productivity-1" size="large" color="#A1193D"></Tile>
-                                <Tile id="q3" group="productivity-1" size="large" color="#A1193D"></Tile>
-                                <Tile id="q4" group="productivity-1" size="large" color="#A1193D"></Tile>
-                                <Tile id="q5" group="productivity-1" size="large" color="#A1193D"></Tile>
-                                <Tile id="q6" group="productivity-1" size="large" color="#A1193D"></Tile>
-                                <Tile id="q7" group="productivity-1" size="large" color="#A1193D"></Tile>
-                                <Tile id="q8" group="productivity-1" size="large" color="#A1193D"></Tile>
-                                <Tile id="q9" group="productivity-1" size="large" color="#A1193D"></Tile>
-                                <Tile id="q10" group="productivity-1" size="large" color="#A1193D"></Tile>
-                                <Tile id="q11" group="productivity-1" size="large" color="#A1193D"></Tile>
-                                <Tile id="q12" group="productivity-1" size="large" color="#A1193D"></Tile>
-                            </Tiles>
+                            <Tiles
+                                controller={tiles_controller}
+                                state={tiles_state}
+                                direction="horizontal"
+                                style={{overflowX: "auto"}}/>
                         </div>
                         <ContextMenu id={contextMenuId}>
                             <ContextMenuItem className="foo" click={() => {alert("clicked item 1")}}>

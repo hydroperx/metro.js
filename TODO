@@ -34,6 +34,32 @@ Basic components
 
 ## Tiles
 
+New tile grids implementation:
+
+- [ ] Controller
+  - [ ] Add tile
+  - [ ] Remove tile
+  - [ ] Set tile size
+  - [ ] Set tile color
+  - [ ] Set tile label
+  - [ ] Set tile hypertext
+  - [ ] Events
+    - [ ] `check` (tile)
+    - [ ] `click` (tile)
+    - [ ] `contextMenu` (tile)
+      - [ ] Long touch pressure
+- [ ] Convert px to rem on tile positions
+- [ ] Handle drag start and drag move to detect drag change and determine whether to reset tilt 3D transformation.
+- [ ] Support tilting on tiles.
+- [ ] Hnadle tile color
+- [ ] Live tiles
+- [ ] Enter drag-n-drop mode (when starting dragging)
+- [ ] Exit drag-n-drop mode
+- [ ] Enter selection mode (when checking tiles)
+- [ ] Exit selection mode
+
+Former notes:
+
 - [x] Display a simple outline for tiles (very discrete)
 - [x] Support serializing and deserializing tile data
 - [x] While holding click button at tile, slightly rotate X/Y according to the side.
