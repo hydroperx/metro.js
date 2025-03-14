@@ -45,6 +45,8 @@ window.addEventListener("pointerup", () => {
  */
 export function Tiles(options: TilesOptions)
 {
+    assert(options.direction == "horizontal", "Vertical tiles are not implemented yet.");
+
     // Use theme
     const theme = useContext(ThemeContext);
 
@@ -211,12 +213,14 @@ export function Tiles(options: TilesOptions)
             const group_id = group_button.getAttribute("data-id");
 
             // Determine whether to shift tiles at this group
-            let shifting = false; 
+            let shifting = false;
             if (shift_params && tiles_state.tiles.has(shift_params.to_shift) &&
                 tiles_state.tiles.get(shift_params.to_shift).group == group_id)
             {
                 shifting = true;
             }
+
+            const this_group_tiles: HTMLButtonElement[] = [];
 
             // Position and size tiles
             for (const tile of tiles)
@@ -228,6 +232,8 @@ export function Tiles(options: TilesOptions)
                 {
                     continue;
                 }
+
+                this_group_tiles.push(tile);
 
                 // Update some attributes of the tile
                 tile.setAttribute("data-group", tile_group_id);
@@ -267,7 +273,12 @@ export function Tiles(options: TilesOptions)
             // Shift tiles
             if (shifting)
             {
-                fixme();
+                layout.shift(
+                    this_group_tiles,
+                    tiles_state,
+                    shift_params.to_shift,
+                    shift_params.place_side
+                );
             }
 
             // Position and size group label
@@ -1122,6 +1133,8 @@ abstract class TilesLayout
      * moving to the next group.
      */
     abstract putLabel(): { x: number, y: number, width: number };
+
+    abstract shift(tiles: HTMLButtonElement[], tiles_state: TilesState, to_shift: string, place_side: "left" | "top" | "right" | "bottom"): void;
 }
 
 class TilesHorizontalLayout extends TilesLayout
@@ -1181,6 +1194,16 @@ class TilesHorizontalLayout extends TilesLayout
         // Result
         return { x: this_group_x, y: this_group_y, width };
     }
+
+    override shift(
+        tiles: HTMLButtonElement[],
+        tiles_state: TilesState,
+        to_shift: string,
+        place_side: "left" | "top" | "right" | "bottom"
+    ): void
+    {
+        fixme();
+    }
 }
 
 class TilesVerticalLayout extends TilesLayout
@@ -1216,7 +1239,7 @@ class TilesVerticalLayout extends TilesLayout
         const get_tile_width = this.get_tile_width.bind(this);
         const get_tile_height = this.get_tile_height.bind(this);
 
-        fixme();
+        throw new Error("unimplemented");
     }
 
     override putLabel(): { x: number, y: number, width: number }
@@ -1224,10 +1247,20 @@ class TilesVerticalLayout extends TilesLayout
         // Measurements
         const { margin, group_margin, small_size } = this.pixel_measures;
 
-        fixme();
+        throw new Error("unimplemented");
 
         // Re-assign this.rows (take left width into account)
-        fixme();
+        throw new Error("unimplemented");
+    }
+
+    override shift(
+        tiles: HTMLButtonElement[],
+        tiles_state: TilesState,
+        to_shift: string,
+        place_side: "left" | "top" | "right" | "bottom"
+    ): void
+    {
+        throw new Error("unimplemented");
     }
 }
 
