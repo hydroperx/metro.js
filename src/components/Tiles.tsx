@@ -80,8 +80,7 @@ export function Tiles(options: TilesOptions)
 
             // Set data-drag-n-drop-mode="true" attribute to tiles
             for (const tile_btn of div_ref.current!.querySelectorAll(".Tile"))
-                tile_btn.setAttribute("data-drag-n-drop-mode", "true"),
-                tile_btn.dispatchEvent(new Event("enter-drag-n-drop-mode"));
+                tile_btn.setAttribute("data-drag-n-drop-mode", "true");
         }
         else if (params.dragNDrop !== undefined)
         {
@@ -89,8 +88,7 @@ export function Tiles(options: TilesOptions)
 
             // Remove data-drag-n-drop-mode attribute from tiles
             for (const tile_btn of div_ref.current!.querySelectorAll(".Tile"))
-                tile_btn.removeAttribute("data-drag-n-drop-mode"),
-                tile_btn.dispatchEvent(new Event("exit-drag-n-drop-mode"));
+                tile_btn.removeAttribute("data-drag-n-drop-mode");
         }
 
         if (params.selection)
@@ -670,9 +668,6 @@ export function Tile(options: TileOptions)
     // Size
     const [size, set_size] = useState<TileSize>(options.size);
 
-    // Scale
-    const [scale, set_scale] = useState<number>(1);
-
     // "rem" unit size
     const [rem, set_rem] = useState<number>();
 
@@ -694,7 +689,6 @@ export function Tile(options: TileOptions)
         color: ${theme.colors.foreground};
         transition: opacity 0.2s;
         transform-style: preserve-3d;
-        scale: ${scale};
 
         &[data-selection-mode="true"] {
             opacity: 0.7;
@@ -702,6 +696,10 @@ export function Tile(options: TileOptions)
 
         &:not([data-dragging="true"]) {
             transition: opacity 0.2s, transform 0.2s ease-out, scale 0.2s ease-out, translate 0.2s ease-out;
+        }
+
+        &[data-drag-n-drop-mode="true"] {
+            scale: 0.8;
         }
 
         &:not([data-dragging="true"]),
@@ -743,19 +741,6 @@ export function Tile(options: TileOptions)
             transform: rotate(-45deg) translate(-5.4rem, 5.4rem);
         }
     `;
-
-    // Drag-n-drop mode events
-    useEffect(() => {
-        const button = button_ref.current!;
-
-        button.addEventListener("enter-drag-n-drop-mode", () => {
-            set_scale(0.7);
-        });
-
-        button.addEventListener("exit-drag-n-drop-mode", () => {
-            set_scale(1);
-        });
-    });
 
     // Handle pointer down
     function button_onPointerDown(e: PointerEvent): void
