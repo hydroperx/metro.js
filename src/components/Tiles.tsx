@@ -206,6 +206,19 @@ export function Tiles(options: TilesOptions)
                 except: rearrange_options.restore_except,
             } : null;
 
+        // Grid snap parameters
+        const grid_snap_params = rearrange_options.grid_snap ?
+            {
+                tile: rearrange_options.grid_snap_tile,
+            } : null;
+        let grid_snap_tile_button: HTMLButtonElement | null = null,
+            grid_snap_offset: { x: number, y: number } = null;
+        if (grid_snap_params)
+        {
+            grid_snap_tile_button = tiles.find(t => t.getAttribute("data-id") == grid_snap_params.tile);
+            grid_snap_offset = getOffset(grid_snap_tile_button, div_ref.current!);
+        }
+
         // Position labels and tiles
         for (const group_button of group_buttons)
         {
@@ -281,6 +294,12 @@ export function Tiles(options: TilesOptions)
                     place_taker_button,
                     shift_params.place_side
                 );
+            }
+
+            // Grid snapping
+            if (grid_snap_offset)
+            {
+                fixme();
             }
 
             // Position and size group label
@@ -537,21 +556,19 @@ const ModeSignalContext = createContext<((params: { dragNDrop?: boolean, selecti
 type RearrangeFunction = (options?: RearrangeOptions) => void;
 type RearrangeOptions = {
     restore?: boolean,
-    /**
-     * Tile ID.
-     */
+    /** Tile ID. */
     restore_except?: string,
 
     shift?: boolean,
-    /**
-     * Tile ID.
-     */
+    /** Tile ID. */
     to_shift?: string,
-    /**
-     * Tile ID.
-     */
+    /** Tile ID. */
     place_taker?: string,
     place_side?: "left" | "right" | "top" | "bottom",
+
+    grid_snap?: boolean,
+    /** Tile ID. */
+    grid_snap_tile?: string,
 };
 
 /**
@@ -870,12 +887,12 @@ export function Tile(options: TileOptions)
         if (shifted_tiles)
         {
             button_ref.current!.style.inset = "";
-            rearrange();
+            rearrange_immediate();
         }
         else
         {
-            // Detect at which free space the tile fits.
-            fixme();
+            // Snap tile to free space.
+            rearrange_immediate({ grid_snap: true, grid_snap_tile: options.id });
 
             button_ref.current!.style.inset = "";
         }
