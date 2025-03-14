@@ -1209,7 +1209,7 @@ class TilesHorizontalLayout extends TilesLayout
         if (!shifting_tile_button) return;
 
         // Variable used to facilitate manipulating tile positions.
-        const full_pos = new FullTilesPositionMap(this.rows, tiles, tiles_state, this.rem);
+        const full_pos = new FullTilesPositionMap(this.rows, tiles, tiles_state, this.rem, this.group_x, this.inner_margin);
 
         // Make sure to insert place_taker into the group that
         // the tile to be shifted is part from.
@@ -1463,8 +1463,14 @@ class FullTilesPositionMap
     // Width/height are in terms of small tiles (not pixels)
     private tiles: Map<string, { button: HTMLButtonElement, size: TileSize, width: number, height: number, horizontal: number, vertical: number }> = new Map();
 
-    constructor(private rows: TilesLayoutTileRows, tile_buttons: HTMLButtonElement[], private tiles_state: TilesState, private rem: number)
-    {
+    constructor(
+        private rows: TilesLayoutTileRows,
+        tile_buttons: HTMLButtonElement[],
+        private tiles_state: TilesState,
+        private rem: number,
+        private group_x: number,
+        private inner_margin: number
+    ) {
         for (const button of tile_buttons)
         {
             const id = button.getAttribute("data-id");
@@ -1482,7 +1488,7 @@ class FullTilesPositionMap
         }
     }
     
-    private renderTilePosition(id: string, horizontal: number, vertical: number, x: number, y: number)
+    renderTilePosition(id: string, horizontal: number, vertical: number): void
     {
         const { rem } = this;
         const tile_state = this.tiles_state.tiles.get(id);
@@ -1493,7 +1499,9 @@ class FullTilesPositionMap
         const button = this.tiles.get(id).button;
         if (button.getAttribute("data-dragging") != "true")
         {
-            button.style.translate = `${x / rem}rem ${y / rem}rem`;
+            const x = (this.group_x / rem) + (horizontal * small_size.width) + (horizontal * margin);
+            const y = (vertical * small_size.height) + (vertical * margin) + (this.inner_margin / rem);
+            button.style.translate = `${x}rem ${y}rem`;
         }
         button.setAttribute("data-horizontal", horizontal.toString());
         button.setAttribute("data-vertical", vertical.toString());
