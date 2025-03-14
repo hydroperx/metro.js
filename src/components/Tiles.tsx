@@ -186,8 +186,8 @@ export function Tiles(options: TilesOptions)
             large_size: { width: large_size.width * rem, height: large_size.height * rem },
         };
         const layout: TilesLayout = options.direction == "horizontal" ?
-            new TilesHorizontalLayout(orthogonal_side_length, (options.innerMargin ?? 3) * rem, pixel_measures) :
-            new TilesVerticalLayout(orthogonal_side_length, (options.innerMargin ?? 1) * rem, pixel_measures);
+            new TilesHorizontalLayout(orthogonal_side_length, (options.innerMargin ?? 3) * rem, pixel_measures, rem) :
+            new TilesVerticalLayout(orthogonal_side_length, (options.innerMargin ?? 1) * rem, pixel_measures, rem);
 
         // Retrieve tile buttons
         const tiles = Array.from(div_ref.current!.querySelectorAll(".Tile")) as HTMLButtonElement[];
@@ -272,10 +272,13 @@ export function Tiles(options: TilesOptions)
             // Shift tiles
             if (shifting)
             {
+                const place_taker_button = tiles.find(t => t.getAttribute("data-id") == shift_params.place_taker);
                 layout.shift(
                     this_group_tiles,
                     tiles_state,
                     shift_params.to_shift,
+                    shift_params.place_taker,
+                    place_taker_button,
                     shift_params.place_side
                 );
             }
@@ -1103,7 +1106,7 @@ abstract class TilesLayout
 {
     private tile_sizes: Map<TileSize, { width: number, height: number }>;
 
-    constructor(protected pixel_measures: TilesLayoutPixelMeasures)
+    constructor(protected pixel_measures: TilesLayoutPixelMeasures, protected rem: number)
     {
         this.tile_sizes = new Map<TileSize, { width: number, height: number }>([
             ["small", small_size],
@@ -1125,7 +1128,14 @@ abstract class TilesLayout
      */
     abstract putLabel(): { x: number, y: number, width: number };
 
-    abstract shift(tiles: HTMLButtonElement[], tiles_state: TilesState, to_shift: string, place_side: "left" | "top" | "right" | "bottom"): void;
+    abstract shift(
+        tiles: HTMLButtonElement[],
+        tiles_state: TilesState,
+        to_shift: string,
+        place_taker: string,
+        place_taker_button: HTMLButtonElement,
+        place_side: "left" | "top" | "right" | "bottom"
+    ): void;
 }
 
 class TilesHorizontalLayout extends TilesLayout
@@ -1133,9 +1143,9 @@ class TilesHorizontalLayout extends TilesLayout
     private rows: TilesLayoutTileRows;
     private group_x: number = 0;
 
-    constructor(private container_height: number, private inner_margin: number, pixel_measures: TilesLayoutPixelMeasures)
+    constructor(private container_height: number, private inner_margin: number, pixel_measures: TilesLayoutPixelMeasures, rem: number)
     {
-        super(pixel_measures);
+        super(pixel_measures, rem);
 
         this.rows = new TilesLayoutTileRows(Infinity, 6);
     }
@@ -1190,13 +1200,22 @@ class TilesHorizontalLayout extends TilesLayout
         tiles: HTMLButtonElement[],
         tiles_state: TilesState,
         to_shift: string,
+        place_taker: string,
+        place_taker_button: HTMLButtonElement,
         place_side: "left" | "top" | "right" | "bottom"
     ): void
     {
-        const shifting_tile = tiles.find(t => t.getAttribute("data-id") == to_shift);
-        if (!shifting_tile) return;
+        const shifting_tile_button = tiles.find(t => t.getAttribute("data-id") == to_shift);
+        if (!shifting_tile_button) return;
 
-        const full_pos = new FullTilesPositionMap(this.rows, tiles, tiles_state);
+        // Variable used to facilitate manipulating tile positions.
+        const full_pos = new FullTilesPositionMap(this.rows, tiles, tiles_state, this.rem);
+
+        // Make sure to insert place_taker into the group that
+        // the tile to be shifted is part from.
+        const place_taker_state = tiles_state.tiles.get(place_taker);
+        place_taker_state.group = shifting_tile_button.getAttribute("data-group");
+        place_taker_button.setAttribute("data-group", place_taker_state.group);
 
         switch (place_side)
         {
@@ -1228,9 +1247,9 @@ class TilesVerticalLayout extends TilesLayout
 {
     private rows: TilesLayoutTileRows;
 
-    constructor(private container_width: number, private inner_margin: number, pixel_measures: TilesLayoutPixelMeasures)
+    constructor(private container_width: number, private inner_margin: number, pixel_measures: TilesLayoutPixelMeasures, rem: number)
     {
-        super(pixel_measures);
+        super(pixel_measures, rem);
 
         // Measurements
         const { margin, small_size } = this.pixel_measures;
@@ -1275,6 +1294,8 @@ class TilesVerticalLayout extends TilesLayout
         tiles: HTMLButtonElement[],
         tiles_state: TilesState,
         to_shift: string,
+        place_taker: string,
+        place_taker_button: HTMLButtonElement,
         place_side: "left" | "top" | "right" | "bottom"
     ): void
     {
@@ -1440,11 +1461,11 @@ class TilesLayoutTileRows {
  */
 class FullTilesPositionMap
 {
-    // Tile size and positions.
+    // Tile element, size and position.
     // Width/height are in terms of small tiles (not pixels)
-    private tiles: Map<string, { size: TileSize, width: number, height: number, horizontal: number, vertical: number }> = new Map();
+    private tiles: Map<string, { button: HTMLButtonElement, size: TileSize, width: number, height: number, horizontal: number, vertical: number }> = new Map();
 
-    constructor(private rows: TilesLayoutTileRows, tile_buttons: HTMLButtonElement[], private tiles_state: TilesState)
+    constructor(private rows: TilesLayoutTileRows, tile_buttons: HTMLButtonElement[], private tiles_state: TilesState, private rem: number)
     {
         for (const button of tile_buttons)
         {
@@ -1453,6 +1474,7 @@ class FullTilesPositionMap
             assert(state !== undefined, "Invalidated tile state.");
             const size = state.size;
             this.tiles.set(id, {
+                button,
                 size,
                 width: size == "large" ? 4 : size == "wide" ? 4 : size == "medium" ? 2 : 1,
                 height: size == "large" ? 4 : size == "wide" ? 2 : size == "medium" ? 2 : 1,
@@ -1460,6 +1482,23 @@ class FullTilesPositionMap
                 vertical: state.vertical,
             });
         }
+    }
+    
+    private renderTilePosition(id: string, horizontal: number, vertical: number, x: number, y: number)
+    {
+        const { rem } = this;
+        const tile_state = this.tiles_state.tiles.get(id);
+
+        tile_state.horizontal = horizontal;
+        tile_state.vertical = vertical;
+
+        const button = this.tiles.get(id).button;
+        if (button.getAttribute("data-dragging") != "true")
+        {
+            button.style.translate = `${x / rem}rem ${y / rem}rem`;
+        }
+        button.setAttribute("data-horizontal", horizontal.toString());
+        button.setAttribute("data-vertical", vertical.toString());
     }
 }
 
