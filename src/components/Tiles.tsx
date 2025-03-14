@@ -1220,12 +1220,10 @@ class TilesHorizontalLayout extends TilesLayout
         switch (place_side)
         {
             case "left":
-            {
-                fixme();
-                break;
-            }
             case "right":
-            {
+                // Move tile to either left or right if there is
+                // space available.
+                // Prefer space within the group bounds.
                 fixme();
                 break;
             }
