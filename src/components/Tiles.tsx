@@ -3,7 +3,7 @@ import { css } from "@emotion/react";
 import assert from "assert";
 import Color from "color";
 import { TypedEventTarget } from "com.hydroper.typedeventtarget";
-import { GridStack, GridStackWidget } from "gridstack";
+import { GridItemHTMLElement, GridStack, GridStackWidget } from "gridstack";
 import { CheckedIcon, getIcon } from "./Icons";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { ThemeContext, PreferPrimaryContext } from "../theme";
@@ -91,6 +91,41 @@ export function Tiles(options: TilesOptions)
             rtl: localeDir == "rtl",
             cellHeight: `${small_size.width}rem`,
         }, div_ref.current!)
+
+        // Drag vars
+        const drag_start: WeakMap<GridItemHTMLElement, [number, number]> = new WeakMap();
+
+        gridstack.on("dragstart", (event, el) => {
+            if (el.getAttribute("data-drag-n-drop-mode") == "true") return;
+            drag_start.set(el, [el.gridstackNode.x, el.gridstackNode.y]);
+        });
+
+        gridstack.on("drag", (event, el) => {
+            const this_drag_start = drag_start.get(el);
+            if (!this_drag_start) return;
+
+            const diff_x = drag_start[0] - el.gridstackNode.x
+                , diff_y = drag_start[1] - el.gridstackNode.y;
+            if (diff_x > -1 && diff_x <= 1 && diff_y > -1 && diff_y <= 1)
+            {
+                el.style.transform = el.getAttribute("data-transform-3d");
+                return;
+            }
+
+            el.style.transform = "";
+            el.setAttribute("data-dragging", "true");
+            if (!drag_n_drop_mode)
+                mode_signal({ dragNDrop: true });
+        });
+
+        gridstack.on("dragstop", (event, el) => {
+            const this_drag_start = drag_start.get(el);
+            if (!this_drag_start) return;
+
+            el.setAttribute("data-dragging", "false");
+            drag_start.delete(el);
+            mode_signal({ dragNDrop: false });
+        });
     }
 
     // Detect a mode change
@@ -265,6 +300,9 @@ export function Tiles(options: TilesOptions)
         resizeObserver.observe(div);
 
         return () => {
+            // Destroy GridStack
+            gridstack.destroy();
+
             // Dispose resize observer
             resizeObserver.disconnect();
 
@@ -318,7 +356,8 @@ export function Tiles(options: TilesOptions)
         else
             rotate_3d = `perspective(${get_tile_width(size as TileSize)}rem) rotate3d(-1, 0, 0, ${deg}deg)`;
 
-            tilting_button.style.transform = rotate_3d;
+        tilting_button.style.transform = rotate_3d;
+        tilting_button.setAttribute("data-transform-3d", rotate_3d);
     }
 
     // Handle pointer over tile
@@ -347,6 +386,7 @@ export function Tiles(options: TilesOptions)
         if (!tilting_button || tilting_pointer_id != e.pointerId) return;
         viewport_pointerUp = null;
         tilting_button.style.transform = "";
+        tilting_button.removeAttribute("data-transform-3d");
     }
 
     // Handle the request to add a tile
@@ -383,6 +423,13 @@ export function Tiles(options: TilesOptions)
         content_element.addEventListener("pointerout", tile_onPointerOut);
         element.appendChild(content_element);
         grid_div.appendChild(element);
+
+        tiles.push(tile);
+        tiles_state.tiles.set(tile.id, {
+            x: tile.x,
+            y: tile.y,
+            size: tile.size,
+        });
     }
     tiles_controller.addEventListener("addTile", tiles_controller_addTile);
 

@@ -38,6 +38,7 @@ New tile grids implementation:
 
 - [ ] Controller
   - [x] Add tile
+    - [ ] Handle tile collision
   - [ ] Remove tile
   - [ ] Set tile size (involves use of `tiles_state` and `load`, and will also alter the `data-size` attr)
   - [ ] Set tile color (should update `tile_btn.style.background` and `data-color`)
@@ -50,7 +51,8 @@ New tile grids implementation:
     - [ ] `contextMenu` (tile)
       - [ ] Long touch pressure
 - [ ] Convert px to rem on tile positions
-- [ ] Handle drag start and drag move to detect drag change and determine whether to reset tilt 3D transformation.
+- [x] Handle drag start and drag move to detect drag change and determine whether to reset tilt 3D transformation.
+- [ ] Handle drag stop to synchronize state
 - [ ] Support tilting on tiles.
 - [x] Hnadle tile color
 - [ ] Tile content
