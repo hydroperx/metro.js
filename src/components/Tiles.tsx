@@ -1228,8 +1228,7 @@ class TilesHorizontalLayout extends TilesLayout
         const place_taker_w = get_size_width(place_taker_state.size);
         const place_taker_h = get_size_height(place_taker_state.size);
         const to_shift_state = tiles_state.tiles.get(to_shift);
-        const to_shift_w = full_pos.tiles.get(to_shift).width;
-        const to_shift_h = full_pos.tiles.get(to_shift).height;
+        const { width: to_shift_w, height: to_shift_h } = full_pos.tiles.get(to_shift);
 
         switch (place_side)
         {
@@ -1281,15 +1280,91 @@ class TilesHorizontalLayout extends TilesLayout
             }
             case "top":
             {
-                fixme();
+                // shift tiles to bottom recursively.
+                let x = to_shift_state.horizontal,
+                    y = to_shift_state.vertical;
+                if (y + place_taker_h >= this.rows.max_height)
+                {
+                    return;
+                }
+                full_pos.setPosition(place_taker, x, y);
+
+                // Set previously taken size to that of place_taker
+                const prev_taken_h = place_taker_h;
+
+                this.shift_bottom(
+                    to_shift,
+                    tiles_state,
+                    prev_taken_h,
+                    full_pos
+                );
                 break;
             }
             case "bottom":
             {
+                // detection: here it may be impossible to shift to top
+                // in circumstances where there is no free space
+                // (consequently the take placer may also not take any space).
                 fixme();
                 break;
             }
         }
+    }
+
+    /**
+     * @param t1 Tile to shift.
+     * @param prev_taken_h Previously taken height
+     */
+    private shift_bottom(
+        t1: string,
+        tiles_state: TilesState,
+        prev_taken_h: number,
+        full_pos: FullTilesPositionMap
+    ): void {
+
+        // vars
+        const t1_s = tiles_state.tiles.get(t1);
+        const { width: t1_w, height: t1_h } = full_pos.tiles.get(t1);
+
+        // shift t1 (x, y)
+        let t1_new_x = t1_s.horizontal,
+            t1_new_y = t1_s.vertical + prev_taken_h;
+
+        if (!this.rows.sizeFreeAt(t1_new_x, t1_new_y, t1_s.size))
+        {
+            if (t1_new_y + t1_h >= this.rows.max_height)
+            {
+                t1_new_x += t1_w;
+                t1_new_y = 0;
+            }
+            if (!this.rows.sizeFreeAt(t1_new_x, t1_new_y, t1_s.size))
+            {
+                // find the next tile(s) to shift bottom.
+                // here it may be like a group of small tiles
+                // to shift together, or one large tile.
+                // (do not look for tiles that are being actively dragged.)
+                const next_tiles: string[] = [];
+                for (const [tile, tile_p] of full_pos.tiles)
+                {
+                    const overlap = getRectangleOverlap(
+                        { x: t1_new_x, y: t1_new_y, width: t1_w, height: t1_h },
+                        { x: tile_p.horizontal, y: tile_p.vertical, width: tile_p.width, height: tile_p.height }
+                    );
+                    if (overlap && tile_p.button.getAttribute("data-dragging") != "true")
+                    {
+                        next_tiles.push(tile);
+                    }
+                }
+                for (const t2 of next_tiles)
+                {
+                    this.shift_bottom(
+                        t2, tiles_state,
+                        t1_h, full_pos,
+                    );
+                }
+            }
+        }
+        full_pos.setPosition(t1, t1_new_x, t1_new_y);
     }
 }
 
