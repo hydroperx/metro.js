@@ -248,7 +248,6 @@ export function Tiles(options: TilesOptions)
                 this_group_tiles.push(tile);
 
                 // Update some attributes of the tile
-                tile.setAttribute("data-group", tile_group_id);
                 if (tile_state)
                     tile.setAttribute("data-horizontal", tile_state.horizontal.toString()),
                     tile.setAttribute("data-vertical", tile_state.vertical.toString());
@@ -265,10 +264,11 @@ export function Tiles(options: TilesOptions)
                     const h    = tile_state?.horizontal ?? Number(tile.getAttribute("data-horizontal"))
                         , v    = tile_state?.vertical ?? Number(tile.getAttribute("data-vertical"))
                         , size = tile_state?.size ?? tile.getAttribute("data-size") as TileSize;
-                    const { x, y, horizontalTiles, verticalTiles } = layout.putTile(size, h, v);
+                    const { x, y, new_horizontal, new_vertical } = layout.putTile(size, h, v);
                     tile.style.translate = `${x / rem}rem ${y / rem}rem`;
-                    tile.setAttribute("data-horizontal", horizontalTiles.toString());
-                    tile.setAttribute("data-vertical", verticalTiles.toString());
+                    tile.setAttribute("data-horizontal", new_horizontal.toString());
+                    tile.setAttribute("data-vertical", new_vertical.toString());
+                    tile.setAttribute("data-group", tile_group_id);
 
                     if (!tile_state)
                     {
@@ -277,8 +277,8 @@ export function Tiles(options: TilesOptions)
                     }
                     tile_state.group = tile_group_id;
                     tile_state.size = size;
-                    tile_state.horizontal = horizontalTiles;
-                    tile_state.vertical = verticalTiles;
+                    tile_state.horizontal = new_horizontal;
+                    tile_state.vertical = new_vertical;
                 }
             }
 
@@ -299,7 +299,26 @@ export function Tiles(options: TilesOptions)
             // Grid snapping
             if (grid_snap_offset)
             {
-                fixme();
+                const horizontal: number = layout.pageXToHorizontal(grid_snap_offset.x)
+                    , vertical: number = layout.pageYToVertical(grid_snap_offset.y);
+                if (horizontal !== -1 && vertical !== -1)
+                {
+                    const state = tiles_state.tiles.get(grid_snap_params.tile);
+                    if (layout.rows.sizeFreeAt(horizontal, vertical, state.size))
+                    {
+                        const btn = grid_snap_tile_button;
+                        const { x, y, new_horizontal, new_vertical } = layout.putTile(state.size, horizontal, vertical);
+                        btn.style.translate = `${x / rem}rem ${y / rem}rem`;
+                        btn.setAttribute("data-group", group_id);
+                        btn.setAttribute("data-horizontal", new_horizontal.toString());
+                        btn.setAttribute("data-vertical", new_vertical.toString());
+
+                        state.group = group_id;
+                        state.horizontal = new_horizontal;
+                        state.vertical = new_vertical;
+                    }
+                    grid_snap_offset = null;
+                }
             }
 
             // Position and size group label
@@ -822,7 +841,7 @@ export function Tile(options: TileOptions)
     // Drag vars
     let drag_start: [number, number] | null = null;
     let previous_tiles_state: TilesState | null = null;
-    let shifted_tiles = false;
+    let active_tiles_hit = false;
 
     // Drag start
     function on_drag_start(data: DraggableData)
@@ -860,13 +879,13 @@ export function Tile(options: TileOptions)
         if (hit)
         {
             rearrange_immediate({ shift: true, to_shift: hit.tile, place_taker: options.id, place_side: hit.side});
-            shifted_tiles = true;
+            active_tiles_hit = true;
         }
         else
         {
             tiles_state.set(previous_tiles_state);
             rearrange_immediate({ restore: true, restore_except: options.id });
-            shifted_tiles = false;
+            active_tiles_hit = false;
         }
     }
 
@@ -884,7 +903,7 @@ export function Tile(options: TileOptions)
         mode_signal({ dragNDrop: false });
 
         // Move tile properly
-        if (shifted_tiles)
+        if (active_tiles_hit)
         {
             button_ref.current!.style.inset = "";
             rearrange_immediate();
@@ -1135,6 +1154,7 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
 
 abstract class TilesLayout
 {
+    rows: TilesLayoutTileRows;
     private tile_sizes: Map<TileSize, { width: number, height: number }>;
 
     constructor(protected pixel_measures: TilesLayoutPixelMeasures, protected rem: number)
@@ -1151,7 +1171,7 @@ abstract class TilesLayout
     protected get_tile_width(size: TileSize): number { return this.get_tile_size(size).width; }
     protected get_tile_height(size: TileSize): number { return this.get_tile_size(size).height; }
 
-    abstract putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number, horizontalTiles: number, verticalTiles: number };
+    abstract putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number, new_horizontal: number, new_vertical: number };
 
     /**
      * Puts a label after all tiles of a group have been positioned,
@@ -1167,11 +1187,13 @@ abstract class TilesLayout
         place_taker_button: HTMLButtonElement,
         place_side: "left" | "top" | "right" | "bottom"
     ): void;
+
+    abstract pageXToHorizontal(x: number): number;
+    abstract pageYToVertical(y: number): number;
 }
 
 class TilesHorizontalLayout extends TilesLayout
 {
-    private rows: TilesLayoutTileRows;
     private group_x: number = 0;
 
     constructor(private container_height: number, private start_margin: number, pixel_measures: TilesLayoutPixelMeasures, rem: number)
@@ -1181,7 +1203,7 @@ class TilesHorizontalLayout extends TilesLayout
         this.rows = new TilesLayoutTileRows(Infinity, 6);
     }
 
-    override putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number, horizontalTiles: number, verticalTiles: number }
+    override putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number, new_horizontal: number, new_vertical: number }
     {
         // Measurements
         const { margin, small_size } = this.pixel_measures;
@@ -1199,7 +1221,7 @@ class TilesHorizontalLayout extends TilesLayout
                     return {
                         x: this.group_x + (horizontal * small_size.width) + (horizontal * margin),
                         y: (vertical * small_size.height) + (vertical * margin) + start_margin,
-                        horizontalTiles: horizontal, verticalTiles: vertical
+                        new_horizontal: horizontal, new_vertical: vertical
                     };
                 }
             }
@@ -1400,12 +1422,20 @@ class TilesHorizontalLayout extends TilesLayout
         }
         full_pos.setPosition(t1, t1_new_x, t1_new_y);
     }
+
+    override pageXToHorizontal(x: number): number
+    {
+        fixme();
+    }
+
+    override pageYToVertical(y: number): number
+    {
+        fixme();
+    }
 }
 
 class TilesVerticalLayout extends TilesLayout
 {
-    private rows: TilesLayoutTileRows;
-
     constructor(private container_width: number, private start_margin: number, pixel_measures: TilesLayoutPixelMeasures, rem: number)
     {
         super(pixel_measures, rem);
@@ -1428,7 +1458,7 @@ class TilesVerticalLayout extends TilesLayout
         this.rows = new TilesLayoutTileRows(max_width, Infinity);
     }
 
-    override putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number, horizontalTiles: number, verticalTiles: number }
+    override putTile(size: TileSize, horizontal: number, vertical: number): { x: number, y: number, new_horizontal: number, new_vertical: number }
     {
         // Measurements
         const { margin, group_margin } = this.pixel_measures;
@@ -1457,6 +1487,16 @@ class TilesVerticalLayout extends TilesLayout
         place_taker_button: HTMLButtonElement,
         place_side: "left" | "top" | "right" | "bottom"
     ): void
+    {
+        throw new Error("unimplemented");
+    }
+
+    override pageXToHorizontal(x: number): number
+    {
+        throw new Error("unimplemented");
+    }
+
+    override pageYToVertical(y: number): number
     {
         throw new Error("unimplemented");
     }
