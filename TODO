@@ -44,13 +44,13 @@ New tile grids implementation:
   - [ ] Set tile label
   - [ ] Set tile icon
   - [ ] Set tile hypertext
-  - [ ] Events
-    - [ ] `check` (tile)
-    - [ ] `click` (tile)
-    - [ ] `contextMenu` (tile)
-      - [ ] Long touch pressure
   - [x] Add group
   - [x] Remove group (simply call `remove_group`)
+- [ ] Events
+  - [ ] `check` (tile)
+  - [ ] `click` (tile)
+  - [ ] `contextMenu` (tile)
+    - [ ] Long touch pressure
 - [ ] Convert px to rem on tile positions
 - [x] Handle drag start and drag move to detect drag change and determine whether to reset tilt 3D transformation.
 - [ ] Maximize group length orthogonal to the direction
