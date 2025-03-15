@@ -450,9 +450,9 @@ export type ButtonOptions =
 };
 
 /**
- * Represents an arrow button.
+ * Represents a circle bordered icon button.
  */
-export function IconButton(options: IconButtonOptions)
+export function CircleIconButton(options: CircleIconButtonOptions)
 {
     // Take the theme context
     const theme = useContext(ThemeContext);
@@ -460,8 +460,9 @@ export function IconButton(options: IconButtonOptions)
     // Button ref
     const ref = useRef<HTMLButtonElement | null>(null);
 
-    // Icon type
-    const [type, setType] = useState<string>(options.normalIcon);
+    // State
+    const [color, set_color] = useState<string>("white");
+    const [pressed_state, set_pressed_state] = useState<string>("normal");
 
     // Stylize
     const iconStyle: React.CSSProperties = {};
@@ -470,20 +471,43 @@ export function IconButton(options: IconButtonOptions)
         iconStyle.transform = `rotate(${options.rotation}deg)`;
     }
 
+    // Misc
+    const fg = Color(theme.colors.foreground).isDark() ? "#000" : "#fff";
+    const normal_color = options.filled ? (Color(fg).isDark() ? "#fff" : "#000") : fg;
+    const hover_color = fg;
+    const active_color = options.filled ? fg : (Color(fg).isDark() ? "#fff" : "#000");
+    const size_rem = pointsToRem(options.size ?? 9);
+
     // Build style class
     const serializedStyles = css `
         background: none;
-        border: none;
-        border-radius: 0;
+        border: 0.17rem solid ${fg};
+        border-radius: 100%;
         outline: none;
-        color: ${theme.colors.foreground};
+        color: ${normal_color};
+        ${options.filled ? `background: ${fg};` : ""}
+        width: ${size_rem};
+        height: ${size_rem};
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+
+        &:hover {
+            color: ${hover_color};
+            background: ${Color(fg).alpha(0.3).toString()};
+        }
 
         &:focus {
             outline: 0.05rem dotted ${theme.colors.focusDashes};
+            outline-offset: 0.3rem;
         }
 
         &:active {
             outline: none;
+            color: ${active_color};
+            ${options.filled ?
+                `background: ${Color(fg).alpha(0.5).toString()};` : `background: ${fg};`}
         }
 
         &:disabled {
@@ -491,30 +515,27 @@ export function IconButton(options: IconButtonOptions)
         }
     `;
 
-    const mouseDownListener = () => { setType(options.pressedIcon); };
-    const mouseUpListener = () => { setType(options.hoverIcon); };
-    const mouseOverListener = () => { setType(options.hoverIcon); };
-    const mouseOutListener = () => { setType(options.normalIcon); };
-
     useEffect(() => {
         // Obtain button
         const button = ref.current!;
 
         // Pass element
         options.element?.(button);
+    },[]);
 
-        button.addEventListener("mousedown", mouseDownListener);
-        button.addEventListener("mouseup", mouseUpListener);
-        button.addEventListener("mouseover", mouseOverListener);
-        button.addEventListener("mouseout", mouseOutListener);
-
-        return () => {
-            button.removeEventListener("mousedown", mouseDownListener);
-            button.removeEventListener("mouseup", mouseUpListener);
-            button.removeEventListener("mouseover", mouseOverListener);
-            button.removeEventListener("mouseout", mouseOutListener);
-        };
-    });
+    useEffect(() => {
+        const fg = theme.colors.foreground;
+        switch (fg)
+        {
+            case "normal":
+                break;
+            case "hover":
+                break;
+            case "pressed":
+                set_color(fg);
+                break;
+        }
+    }, [theme]);
 
     return (
         <button
@@ -548,15 +569,18 @@ export function IconButton(options: IconButtonOptions)
             onTouchMove={options.touchMove}
             onTouchCancel={options.touchCancel}>
 
-            <Icon type={type} size={options.size} style={iconStyle}/>
+            <Icon type={options.icon} size={options.size} style={iconStyle}/>
         </button>
     );
 }
 
-export type IconButtonOptions = {
-    normalIcon: string,
-    hoverIcon: string,
-    pressedIcon: string,
+export type CircleIconButtonOptions = {
+    icon: string,
+
+    /**
+     * Whether the icon is initially filled or not.
+     */
+    filled?: boolean,
 
     /**
      * Rotation degrees.
@@ -604,10 +628,8 @@ export function ArrowButton(options: ArrowButtonOptions)
     const d = options.direction;
 
     return (
-        <IconButton
-            normalIcon="arrowButton"
-            hoverIcon="arrowButtonHover"
-            pressedIcon="arrowButtonPressed"
+        <CircleIconButton
+            icon="arrowButton"
             rotation={d == "left" ? 0 : d == "right" ? 180 : d == "up" ? 90 : -90}
             className={options.className}
             element={options.element}

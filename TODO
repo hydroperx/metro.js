@@ -8,7 +8,7 @@ Basic components
 - [x] VGroup
 - [x] Label
 - [x] Button
-- [x] Icon button
+- [x] Circle icon button
   - [x] Arrow button
 - [x] Container
 - [x] ContextMenu

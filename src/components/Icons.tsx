@@ -6,11 +6,7 @@ import checked_white from "../icons/checked-white.svg";
 import arrow_white from "../icons/arrow-white.svg";
 import arrow_black from "../icons/arrow-black.svg";
 import arrow_button_black from "../icons/arrow-button-black.svg";
-import arrow_button_hover_black from "../icons/arrow-button-hover-black.svg";
-import arrow_button_pressed_black from "../icons/arrow-button-pressed-black.svg";
 import arrow_button_white from "../icons/arrow-button-white.svg";
-import arrow_button_hover_white from "../icons/arrow-button-hover-white.svg";
-import arrow_button_pressed_white from "../icons/arrow-button-pressed-white.svg";
 import search_black from "../icons/search-black.svg";
 import search_white from "../icons/search-white.svg";
 import clear_black from "../icons/clear-black.svg";
@@ -37,8 +33,6 @@ const iconMap = new Map<string, {black: any, white: any}>([
     ["checked", { black: checked_black, white: checked_white }],
     ["arrow", { black: arrow_black, white: arrow_white }],
     ["arrowButton", { black: arrow_button_black, white: arrow_button_white }],
-    ["arrowButtonHover", { black: arrow_button_hover_black, white: arrow_button_hover_white }],
-    ["arrowButtonPressed", { black: arrow_button_pressed_black, white: arrow_button_pressed_white }],
     ["search", { black: search_black, white: search_white }],
     ["clear", { black: clear_black, white: clear_white }],
 ]);
