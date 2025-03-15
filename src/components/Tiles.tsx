@@ -648,9 +648,12 @@ export function Tiles(options: TilesOptions)
             }
         }
         const gridstack = gridstacks.find(g => g.el.getAttribute("data-id") == group_id);
-        gridstack.destroy();
-        const i = gridstacks.indexOf(gridstack);
-        gridstacks.splice(i, 1);
+        if (gridstack)
+        {
+            gridstack.destroy();
+            const i = gridstacks.indexOf(gridstack);
+            gridstacks.splice(i, 1);
+        }
         tiles_state.groups.delete(group_id);
 
         sort_groups();
