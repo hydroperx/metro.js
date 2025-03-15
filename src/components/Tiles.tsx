@@ -413,13 +413,13 @@ export function Tiles(options: TilesOptions)
         }
         if (open)
         {
-            transition_timeout = setTimeout(() => {
+            transition_timeout = window.setTimeout(() => {
                 set_scale(1);
             }, 300);
         }
         else
         {
-            transition_timeout = setTimeout(() => {
+            transition_timeout = window.setTimeout(() => {
                 set_scale(0);
             }, 300);
         }
@@ -597,6 +597,9 @@ export function Tiles(options: TilesOptions)
             size: tile.size,
             group: tile.group,
         });
+
+        // Render reserve group
+        create_rest_group();
     }
     tiles_controller.addEventListener("addTile", tiles_controller_addTile);
 
@@ -608,6 +611,13 @@ export function Tiles(options: TilesOptions)
     function add_group(group: TileGroup): void
     {
         assert(!groups.find(g => g.id == group.id), "Duplicate group.");
+
+        // Remove last group if empty
+        const last_group = groups[groups.length - 1].id;
+        const last_gridstack = gridstacks.find(g => g.el.getAttribute("data-id") == last_group)
+        if (!last_gridstack.el.querySelector(".Tile"))
+            remove_group(last_group);
+
         groups.push(group);
         tiles_state.groups.set(group.id, { index: groups.length });
 
@@ -635,7 +645,6 @@ export function Tiles(options: TilesOptions)
             }
         }
         const gridstack = gridstacks.find(g => g.el.getAttribute("data-id") == group_id);
-        gridstack.el.remove();
         gridstack.destroy();
         const i = gridstacks.indexOf(gridstack);
         gridstacks.splice(i, 1);

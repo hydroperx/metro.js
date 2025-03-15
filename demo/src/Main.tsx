@@ -59,7 +59,6 @@ function App()
 
     useEffect(() => {
         tiles_controller.addGroup({ id: "g1" });
-        tiles_controller.addGroup({ id: "g2" });
         tiles_controller.addTile({
             id: "a", color: "#008100", size: "large",
             label: "Tile A",
@@ -70,6 +69,7 @@ function App()
             label: "Tile B",
             x: 0, y: 4, group: "g1",
         });
+        tiles_controller.addGroup({ id: "g2" });
         tiles_controller.addTile({
             id: "c", color: "#2773E1", size: "small",
             label: "Tile C",
