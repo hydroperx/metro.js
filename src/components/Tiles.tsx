@@ -327,8 +327,8 @@ export function Tiles(options: TilesOptions)
 
         & .TileGroup {
             position: relative;
-            ${options.direction == "horizontal" ? `height: 100%;` : ""}
-            ${options.direction == "vertical" ? `width: 100%;` : ""}
+            ${options.direction == "horizontal" ? `min-width: ${wide_size.width}rem; height: 100%;` : ""}
+            ${options.direction == "vertical" ? `width: 100%; min-height: ${medium_size.height}rem;` : ""}
         }
 
         & .Tile {
