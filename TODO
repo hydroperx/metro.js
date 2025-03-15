@@ -53,6 +53,7 @@ New tile grids implementation:
   - [x] Remove group (simply call `remove_group`)
 - [ ] Convert px to rem on tile positions
 - [x] Handle drag start and drag move to detect drag change and determine whether to reset tilt 3D transformation.
+- [ ] Maximize group height for horizontal direction
 - [ ] Handle drag stop to synchronize state
 - [ ] Support tilting on tiles.
 - [x] Handle tile color
