@@ -5,7 +5,7 @@ import {
     ProgressRing, ProgressEllipsis,
     Select, SelectOption, TextInput, FormGroup,
     CheckBox,
-    Tiles, TilesController, TilesState, Tile, TileGroup,
+    Tiles, TilesController, TilesState,
 
     ThemePresets,
     ThemeContext,
@@ -56,6 +56,26 @@ function App()
     // Tiles
     const tiles_controller = new TilesController();
     const tiles_state = new TilesState();
+
+    useEffect(() => {
+        tiles_controller.addGroup({ id: "g1" });
+        tiles_controller.addTile({
+            id: "a", color: "#008100", size: "large",
+            label: "Tile A",
+            x: 0, y: 0, group: "g1",
+        });
+        tiles_controller.addTile({
+            id: "b", color: "#A2193E", size: "wide",
+            label: "Tile B",
+            x: 0, y: 4, group: "g1",
+        });
+        tiles_controller.addGroup({ id: "g2" });
+        tiles_controller.addTile({
+            id: "c", color: "#2773E1", size: "small",
+            label: "Tile C",
+            x: 0, y: 0, group: "g2",
+        });
+    }, []);
 
     return (
         <LocaleDirectionContext.Provider value={localeDirection}>
@@ -119,14 +139,7 @@ function App()
                                 controller={tiles_controller}
                                 state={tiles_state}
                                 direction="horizontal"
-                                style={{overflowX: "auto"}}>
-                                
-                                <TileGroup id="g1" position={0} label="Group 1"/>
-                                <TileGroup id="g2" position={1} label="Group 2"/>
-                                <Tile id="t1" size="large" group="g1" color="#008100"></Tile>
-                                <Tile id="t2" size="wide" group="g1" color="#A2193E"></Tile>
-                                <Tile id="t3" size="small" group="g2" color="#2773E1"></Tile>
-                            </Tiles>
+                                style={{overflowX: "auto"}}/>
                         </div>
                         <ContextMenu id={contextMenuId}>
                             <ContextMenuItem className="foo" click={() => {alert("clicked item 1")}}>
