@@ -480,12 +480,11 @@ export function CircleIconButton(options: CircleIconButtonOptions)
 
     // Build style class
     const serializedStyles = css `
-        background: none;
         border: 0.17rem solid ${fg};
         border-radius: 100%;
         outline: none;
         color: ${normal_color};
-        ${options.filled ? `background: ${fg};` : ""}
+        ${options.filled ? `background: ${fg};` : "background: none;"}
         width: ${size_rem};
         height: ${size_rem};
         display: flex;
