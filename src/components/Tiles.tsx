@@ -326,7 +326,7 @@ export function Tiles(options: TilesOptions)
         }
 
         & .TileGroup {
-            /* position: relative; */
+            position: relative;
         }
 
         & .Tile {
