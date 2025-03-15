@@ -74,6 +74,7 @@ export function Label(options: LabelOptions)
             // Adjust tooltip position
             const [x, y] = computePosition(e.target as HTMLElement, tooltipElement.current, {
                 prefer: "bottom",
+                orthogonal: true,
                 margin: 7,
             });
             setTooltipX(x);

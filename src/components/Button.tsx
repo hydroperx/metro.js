@@ -316,6 +316,7 @@ export function Button(options: ButtonOptions)
             // Adjust tooltip position
             const [x, y] = computePosition(buttonRef.current, tooltipElement.current, {
                 prefer: "bottom",
+                orthogonal: true,
                 margin: 7,
             });
             setTooltipX(x);
@@ -555,6 +556,7 @@ export function CircleIconButton(options: CircleIconButtonOptions)
             // Adjust tooltip position
             const [x, y] = computePosition(ref.current, tooltipElement.current, {
                 prefer: "bottom",
+                orthogonal: true,
                 margin: 7,
             });
             setTooltipX(x);
