@@ -315,7 +315,7 @@ export function Tiles(options: TilesOptions)
 
         & .TileGroupList {
             display: flex;
-            flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
+            flex-direction: ${options.direction == "horizontal" ? (localeDir == "ltr" ? "row" : "row-reverse") : "column"};
             gap: ${group_margin}rem;
             ${options.direction == "horizontal" ? `margin: ${options.orthogonalMargin ?? 3}rem 0;` : ""}
             ${options.direction == "vertical" ? `margin: 0 ${options.orthogonalMargin ?? 3}rem;` : ""}
@@ -327,6 +327,8 @@ export function Tiles(options: TilesOptions)
 
         & .TileGroup {
             position: relative;
+            ${options.direction == "horizontal" ? `height: 100%;` : ""}
+            ${options.direction == "vertical" ? `width: 100%;` : ""}
         }
 
         & .Tile {
