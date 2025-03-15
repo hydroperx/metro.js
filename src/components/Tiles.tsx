@@ -508,7 +508,6 @@ export function Tiles(options: TilesOptions)
 
         tilting_button.style.transform = rotate_3d;
         tilting_button.setAttribute("data-transform-3d", rotate_3d);
-        console.log("here")
     }
 
     // Handle pointer over tile
