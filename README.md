@@ -1,10 +1,5 @@
 # Metro components
 
-<p align="center">
-  <a href="https://jsr.io/@hydroper/metrocomponents"><img src="https://img.shields.io/jsr/v/@hydroper/metrocomponents"></a>
-  <a href="https://jsr.io/@hydroper/metrocomponents/doc"><img src="https://img.shields.io/badge/API%20Documentation-gray"></a>
-</p>
-
 Set of React components using the Metro design.
 
 ## Getting started
@@ -14,7 +9,7 @@ Set of React components using the Metro design.
 Installation:
 
 ```sh
-npx jsr add @hydroper/metrocomponents
+npx jsr add com.hydroper.metrocomponents
 npm i @emotion/css @emotion/react
 ```
 
@@ -50,7 +45,7 @@ import "@fontsource/courier-prime";
 By default, the `light` theme preset is used. Theme presets can be referenced in `ThemePresets`. You can provide a specific theme for a React section using:
 
 ```tsx
-import { ThemeContext, ThemePresets } from "@hydroper/metrocomponents";
+import { ThemeContext, ThemePresets } from "com.hydroper.metrocomponents";
 
 // somewhere in React content
 <ThemeContext.Provider value={ThemePresets.green}>
@@ -64,7 +59,7 @@ You can nest it as well.
 Indicate whether a LTR layout or RTL layout is preferred through `LocaleDirectionContext`:
 
 ```tsx
-import { LocaleDirectionContext, LocaleDirection } from "@hydroper/metrocomponents";
+import { LocaleDirectionContext, LocaleDirection } from "com.hydroper.metrocomponents";
 
 const direction: LocaleDirection = "ltr";
 
@@ -78,19 +73,25 @@ const direction: LocaleDirection = "ltr";
 To opt in to using primary colors in certain components such as heading titles and checkboxes, use the `PreferPrimaryContext` context:
 
 ```tsx
-import { PreferPrimaryContext } from "@hydroper/metrocomponents";
+import { PreferPrimaryContext } from "com.hydroper.metrocomponents";
 
 // somewhere in React content
 <PreferPrimaryContext.Provider value={true}>
 </PreferPrimaryContext.Provider>
 ```
 
+### Icons
+
+The `Icon` component is colored automatically at every state (hover, pressed) according to the computed cascading `color` property.
+
+The `CircleIconButton` component represents a circle button consisting of an icon. For example, `ArrowButton` is an alias to `<CircleIconButton icon="arrowButton" {...rest}/>`, where the `arrowButton` icon fits into a square circle.
+
 ### Registering icons
 
 Register custom icons with:
 
 ```tsx
-import { registerIcon } from "@hydroper/metrocomponents";
+import { registerIcon } from "com.hydroper.metrocomponents";
 
 registerIcon("iconX", { black: source, white: source });
 ```
@@ -119,7 +120,7 @@ import {
     ContextMenuItem, ContextMenuIcon, ContextMenuLabel, ContextMenuRight,
     ContextMenuSeparator, ContextMenuSubmenu, ContextMenuSubmenuList,
     ContextMenuSubIcon,
-} from "@hydroper/metrocomponents";
+} from "com.hydroper.metrocomponents";
 
 function MyComp()
 {
