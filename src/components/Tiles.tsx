@@ -94,8 +94,8 @@ export function Tiles(options: TilesOptions)
         sort_groups();
 
         // Delete every existing render
-        for (const el of Array.from(div_ref.current!.querySelectorAll(".TileGroup")))
-            el.remove();
+        // for (const el of Array.from(div_ref.current!.querySelectorAll(".TileGroup")))
+        //     el.remove();
         for (const gridstack of gridstacks)
             gridstack.destroy();
         gridstacks.length = 0;
@@ -613,10 +613,13 @@ export function Tiles(options: TilesOptions)
         assert(!groups.find(g => g.id == group.id), "Duplicate group.");
 
         // Remove last group if empty
-        const last_group = groups[groups.length - 1].id;
-        const last_gridstack = gridstacks.find(g => g.el.getAttribute("data-id") == last_group)
-        if (!last_gridstack.el.querySelector(".Tile"))
-            remove_group(last_group);
+        const last_group = groups.length == 0 ? null : groups[groups.length - 1].id;
+        if (last_group)
+        {
+            const last_gridstack = gridstacks.find(g => g.el.getAttribute("data-id") == last_group)
+            if (!last_gridstack.el.querySelector(".Tile"))
+                remove_group(last_group);
+        }
 
         groups.push(group);
         tiles_state.groups.set(group.id, { index: groups.length });
@@ -674,10 +677,6 @@ export type TilesOptions = {
      */
     controller: TilesController,
  
-    /**
-     * If `horizontal`, `height` must be specified;
-     * otherwise, `width` must be specified.
-     */
     direction: "horizontal" | "vertical",
 
     /**
