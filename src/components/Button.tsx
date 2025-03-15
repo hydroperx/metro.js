@@ -460,10 +460,6 @@ export function CircleIconButton(options: CircleIconButtonOptions)
     // Button ref
     const ref = useRef<HTMLButtonElement | null>(null);
 
-    // State
-    const [color, set_color] = useState<string>("white");
-    const [pressed_state, set_pressed_state] = useState<string>("normal");
-
     // Stylize
     const iconStyle: React.CSSProperties = {};
     if (options.rotation !== undefined)
@@ -522,20 +518,6 @@ export function CircleIconButton(options: CircleIconButtonOptions)
         // Pass element
         options.element?.(button);
     },[]);
-
-    useEffect(() => {
-        const fg = theme.colors.foreground;
-        switch (fg)
-        {
-            case "normal":
-                break;
-            case "hover":
-                break;
-            case "pressed":
-                set_color(fg);
-                break;
-        }
-    }, [theme]);
 
     return (
         <button
