@@ -3,7 +3,7 @@ import { css } from "@emotion/react";
 import assert from "assert";
 import Color from "color";
 import { TypedEventTarget } from "com.hydroper.typedeventtarget";
-import { GridItemHTMLElement, GridStack, GridStackWidget } from "gridstack";
+import { GridHTMLElement, GridItemHTMLElement, GridStack, GridStackWidget } from "gridstack";
 import { CheckedIcon, getIcon } from "./Icons";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { ThemeContext, PreferPrimaryContext } from "../theme";
@@ -12,7 +12,6 @@ import { pointsToRem, pointsToRemValue } from "../utils/points";
 import { lighten, darken, enhanceBrightness, contrast } from "../utils/color";
 import { fontFamily, fontSize } from "../utils/common";
 import { randomHexLarge } from "../utils/random";
-import { getRectHitSide } from "../utils/rect";
 
 // We use Gridstack.js for implementing tile grids.
 
@@ -63,13 +62,16 @@ export function Tiles(options: TilesOptions)
     const [scale, set_scale] = useState<number>(open ? 0 : 1);
 
     // Rem
-    const [rem, set_rem] = useState<number>(16);
+    const rem = useRef<number>(16);
     
-    // GridStack instance
-    let gridstack: GridStack | null = null;
+    // GridStack instances
+    const gridstacks: GridStack[] = [];
 
     // Tiles
-    const tiles: Tile[] = [];
+    const tiles: Map<string, Tile> = new Map();
+
+    // Groups
+    const groups: TileGroup[] = [];
 
     // Modes
     let selection_mode = false;
@@ -78,19 +80,141 @@ export function Tiles(options: TilesOptions)
     // Measurements
     let orthogonal_side_length = 0;
 
-    // Initialize gridstack
-    function init_gridstack(): void
+    // Render
+    let renderTimeout = -1;
+    function render(): void
     {
+        if (renderTimeout !== -1) window.clearTimeout(renderTimeout);
+        renderTimeout = window.setTimeout(render_immediate, 10);
+    }
+    function render_immediate(): void
+    {
+        renderTimeout = -1;
         set_forced_invisible(false);
+        sort_groups();
 
-        gridstack = GridStack.init({
+        // Delete every existing render
+        for (const el of Array.from(div_ref.current!.querySelectorAll(".TileGroup")))
+            el.remove();
+        for (const gridstack of gridstacks)
+            gridstack.destroy();
+        gridstacks.length = 0;
+
+        // Render groups
+        for (const group of groups)
+            create_group(group.id);
+
+        // Insert tiles
+        for (const [,tile] of tiles)
+        {
+            add_tile(tile);
+        }
+
+        // Render reserve group
+        create_rest_group();
+    }
+
+    // Sort groups and keep their indices sequential.
+    function sort_groups(): void
+    {
+        // Initialize group states
+        for (const group of groups)
+        {
+            const { id } = group;
+            let state = tiles_state.groups.get(id);
+            if (!state)
+            {
+                state = {
+                    index: groups.length,
+                };
+                tiles_state.groups.set(id, state);
+            }
+        }
+
+        // Sort groups
+        groups.sort((a, b) => {
+            const a_pos = tiles_state.groups.get(a.id).index;
+            const b_pos = tiles_state.groups.get(b.id).index;
+
+            return a_pos < b_pos ? -1 : a_pos > b_pos ? 1 : 0;
+        });
+
+        // Keep group indices sequential
+        for (let i = 0; i < groups.length; i++)
+            tiles_state.groups.get(groups[i].id).index = i;
+    }
+
+    // There must always be a last empty group as a reserve
+    function create_rest_group(): GridStack | null
+    {
+        const last_group = div_ref.current!.querySelector(".TileGroup:last-child");
+        if (!last_group || !!last_group.querySelector(".Tile"))
+        {
+            return create_group(randomHexLarge());
+        }
+        return null;
+    }
+
+    // Create group gridstack and div
+    function create_group(id: string): GridStack
+    {
+        const group_element = document.createElement("div");
+        group_element.className = "TileGroup grid-stack";
+        group_element.setAttribute("data-id", id);
+        div_ref.current!.appendChild(group_element);
+
+        let group = groups.find(g => g.id == id);
+        if (!group)
+            group = { id: id },
+            groups.push(group),
+            tiles_state.groups.set(id, { index: groups.length });
+
+        const gridstack = GridStack.init({
             alwaysShowResizeHandle: false,
             disableResize: false,
             margin: `${margin}rem`,
             maxRow: options.direction == "horizontal" ? 6 : undefined,
             rtl: localeDir == "rtl",
             cellHeight: `${small_size.width}rem`,
-        }, div_ref.current!)
+            acceptWidgets(el) {
+                return div_ref.current!.contains(el);
+            },
+        }, group_element);
+
+        // On tile add
+        gridstack.on("added", (e, items) => {
+            if (items.length == 0) return;
+
+            // Create resting group if necessary
+            create_rest_group();
+        });
+
+        // On tile removal
+        gridstack.on("removed", (e, items) => {
+            // remove group if empty and not last
+            if (!gridstack.el.querySelector(".Tile") && !gridstack.el.matches(":last-child"))
+            {
+                remove_group(gridstack.el.getAttribute("data-id"));
+            }
+        });
+
+        // On tile change
+        gridstack.on("change", (e, items) => {
+            for (const item of items)
+            {
+                if (!item.el.classList.contains("Tile")) continue;
+                
+                const tile = item.el.getAttribute("data-id");
+                
+                const tile_data = tiles.get(tile);
+                tile_data.x = item.x;
+                tile_data.y = item.y;
+                
+                const state = tiles_state.tiles.get(tile);
+                state.x = item.x;
+                state.y = item.y;
+            }
+        });
 
         // Drag vars
         const drag_start: WeakMap<GridItemHTMLElement, [number, number]> = new WeakMap();
@@ -126,6 +250,9 @@ export function Tiles(options: TilesOptions)
             drag_start.delete(el);
             mode_signal({ dragNDrop: false });
         });
+
+        gridstacks.push(gridstack);
+        return gridstack;
     }
 
     // Detect a mode change
@@ -170,7 +297,6 @@ export function Tiles(options: TilesOptions)
     const serialized_styles = css `
         width: 100%;
         height: 100%;
-        position: relative;
         opacity: ${forced_invisible ? 0 : scale};
         transform: scale(${scale});
         transition: opacity 0.3s ${open ? "ease-out" : "ease-in"}, transform 0.3s ${open ? "ease-out" : "ease-in"};
@@ -184,6 +310,22 @@ export function Tiles(options: TilesOptions)
         &::-webkit-scrollbar-thumb {
             background: ${theme.colors.scrollBarThumb};
             border-radius: 0;
+        }
+
+        & .TileGroupList {
+            display: flex;
+            flex-direction: row;
+            gap: ${group_margin}rem;
+            ${options.direction == "horizontal" ? `margin: ${options.orthogonalMargin ?? 3}rem 0;` : ""}
+            ${options.direction == "vertical" ? `margin: 0 ${options.orthogonalMargin ?? 3}rem;` : ""}
+        }
+
+        & .TileGroupList > .TileGroup:last-child {
+            flex-grow: 9999;
+        }
+
+        & .TileGroup {
+            position: relative;
         }
 
         & .Tile {
@@ -253,7 +395,7 @@ export function Tiles(options: TilesOptions)
     // Observe rem
     useEffect(() => {
         const rem_observer = new RemObserver(value => {
-            set_rem(value);
+            rem.current = value;
         });
         return () => {
             rem_observer.cleanup();
@@ -288,9 +430,6 @@ export function Tiles(options: TilesOptions)
         const r = div.getBoundingClientRect();
         orthogonal_side_length = options.direction == "horizontal" ? r.height : r.width;
 
-        // Initialize gridstack
-        init_gridstack();
-
         const resizeObserver = new ResizeObserver(() => {
             // Update orthogonal side length
             const r = div.getBoundingClientRect();
@@ -300,16 +439,24 @@ export function Tiles(options: TilesOptions)
         resizeObserver.observe(div);
 
         return () => {
-            // Destroy GridStack
-            gridstack.destroy();
+            // Destroy GridStacks
+            for (const gridstack of gridstacks)
+                gridstack.destroy();
 
             // Dispose resize observer
             resizeObserver.disconnect();
 
             // Dipose listeners on TilesController
             tiles_controller.removeEventListener("getChecked", tiles_controller_onGetChecked);
+            tiles_controller.removeEventListener("addTile", tiles_controller_addTile);
+            tiles_controller.removeEventListener("addGroup", tiles_controller_addGroup);
+            tiles_controller.removeEventListener("removeGroup", tiles_controller_removeGroup);
         };
     }, []);
+
+    useEffect(() => {
+        render_immediate();
+    }, [localeDir, rem]);
 
     // Handle request to get checked tiles
     function tiles_controller_onGetChecked(e: CustomEvent<{ requestId: string }>)
@@ -392,16 +539,19 @@ export function Tiles(options: TilesOptions)
     // Handle the request to add a tile
     function tiles_controller_addTile(e: CustomEvent<Tile>)
     {
-        const grid_div = div_ref.current!;
+        add_tile(e.detail);
+    }
+    function add_tile(tile: Tile): void
+    {
+        assert(!tiles.has(tile.id), "Duplicate tile.");
+
         const element = document.createElement("button");
         element.className = "Tile grid-stack-item";
-
-        // Tile data
-        const tile = e.detail;
 
         // Misc attributes
         element.setAttribute("data-id", tile.id);
         element.setAttribute("data-size", tile.size);
+        element.setAttribute("data-group", tile.group);
 
         // Misc logic
         element.disabled = !!tile.disabled;
@@ -422,20 +572,78 @@ export function Tiles(options: TilesOptions)
         content_element.addEventListener("pointerover", tile_onPointerOver);
         content_element.addEventListener("pointerout", tile_onPointerOut);
         element.appendChild(content_element);
-        grid_div.appendChild(element);
 
-        tiles.push(tile);
+        const group_div = Array.from(div_ref.current!.querySelectorAll(".TileGroup"))
+            .find(g => g.getAttribute("data-id") == tile.group);
+        assert(!!group_div, "Could not find tile's group.");
+        group_div.appendChild(element);
+
+        const gridstack = (group_div as GridHTMLElement).gridstack;
+        gridstack.update(element, {
+            x: tile.x,
+            y: tile.y,
+            w: get_tile_columns(tile.size),
+            h: get_tile_rows(tile.size),
+        });
+
+        tiles.set(tile.id, tile);
         tiles_state.tiles.set(tile.id, {
             x: tile.x,
             y: tile.y,
             size: tile.size,
+            group: tile.group,
         });
     }
     tiles_controller.addEventListener("addTile", tiles_controller_addTile);
 
+    // Handle adding groups
+    function tiles_controller_addGroup(e: CustomEvent<TileGroup>): void
+    {
+        add_group(e.detail);
+    }
+    function add_group(group: TileGroup): void
+    {
+        assert(!groups.find(g => g.id == group.id), "Duplicate group.");
+        groups.push(group);
+        tiles_state.groups.set(group.id, { index: groups.length });
+
+        // Render this group
+        create_group(group.id);
+
+        // Render reserve group
+        create_rest_group();
+    }
+    tiles_controller.addEventListener("addGroup", tiles_controller_addGroup);
+
+    // Remove group
+    function tiles_controller_removeGroup(e: CustomEvent<string>): void
+    {
+        remove_group(e.detail);
+    }
+    function remove_group(group_id: string): void
+    {
+        for (let i = 0; i < groups.length; i++)
+        {
+            if (groups[i].id == group_id)
+            {
+                groups.splice(i, 1);
+                break;
+            }
+        }
+        const gridstack = gridstacks.find(g => g.el.getAttribute("data-id") == group_id);
+        gridstack.el.remove();
+        gridstack.destroy();
+        const i = gridstacks.indexOf(gridstack);
+        gridstacks.splice(i, 1);
+        tiles_state.groups.delete(group_id);
+
+        sort_groups();
+    }
+    tiles_controller.addEventListener("removeGroup", tiles_controller_removeGroup);
+
     return (
         <div className="Tiles" css={serialized_styles} style={options.style}>
-            <div className="TileGridStack grid-stack" ref={div_ref}></div>
+            <div className="TileGroupList" ref={div_ref}></div>
         </div>
     );
 }
@@ -460,10 +668,10 @@ export type TilesOptions = {
     direction: "horizontal" | "vertical",
 
     /**
-     * Starting margin of the side orthogonal to the direction used
+     * Margin of the sides orthogonal to the direction used
      * for the tiles (**not** the margin around the container).
      */
-    startMargin?: number,
+    orthogonalMargin?: number,
 
     /**
      * Whether to display open or close transition.
@@ -504,6 +712,8 @@ export type Tile = {
      */
     y: number,
 
+    group: string,
+
     /**
      * Label.
      */
@@ -521,12 +731,17 @@ export type Tile = {
     liveHypertext?: string[],
 };
 
+export type TileGroup = {
+    id: string,
+};
+
 /**
  * The state of a `Tiles` component, containing positions and labels.
  */
 export class TilesState
 {
-    tiles: Map<string, { size: TileSize, x: number, y: number }> = new Map();
+    groups: Map<string, { index: number }> = new Map();
+    tiles: Map<string, { size: TileSize, x: number, y: number, group: string }> = new Map();
 
     /**
      * Constructs `TilesState` from JSON. The `object` argument
@@ -536,6 +751,13 @@ export class TilesState
     {
         object = typeof object === "string" ? JSON.parse(object) : object;
         const r = new TilesState();
+        for (const id in object.groups)
+        {
+            const o1 = object.groups[id];
+            r.groups.set(id, {
+                index: Number(o1.index),
+            });
+        }
         for (const id in object.tiles)
         {
             const o1 = object.tiles[id];
@@ -543,6 +765,7 @@ export class TilesState
                 size: String(o1.size) as TileSize,
                 x: Number(o1.x),
                 y: Number(o1.y),
+                group: String(o1.group),
             });
         }
         return r;
@@ -553,6 +776,13 @@ export class TilesState
      */
     toJSON(): any
     {
+        const groups: any = {};
+        for (const [id, g] of this.groups)
+        {
+            groups[id] = {
+                index: g.index,
+            };
+        }
         const tiles: any = {};
         for (const [id, t] of this.tiles)
         {
@@ -560,26 +790,36 @@ export class TilesState
                 size: t.size,
                 x: t.x,
                 y: t.y,
+                group: t.group,
             };
         }
         return {
+            groups,
             tiles,
         };
     }
     
     clear(): void
     {
+        this.groups.clear();
         this.tiles.clear();
     }
 
     set(state: TilesState): void
     {
+        for (const [id, group] of state.groups)
+        {
+            this.groups.set(id, {
+                index: group.index,
+            });
+        }
         for (const [id, tile] of state.tiles)
         {
             this.tiles.set(id, {
                 size: tile.size,
                 x: tile.x,
                 y: tile.y,
+                group: tile.group,
             });
         }
     }
@@ -602,6 +842,8 @@ export type TileSize = "small" | "medium" | "wide" | "large";
  */
 export class TilesController extends (EventTarget as TypedEventTarget<{
     addTile: CustomEvent<Tile>;
+    addGroup: CustomEvent<TileGroup>;
+    removeGroup: CustomEvent<string>;
     getChecked: CustomEvent<{ requestId: string }>;
     getCheckedResult: CustomEvent<{ requestId: string, tiles: string[] }>;
     setChecked: CustomEvent<{ id: string, value: boolean }>;
@@ -635,6 +877,20 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
         }));
     }
 
+    addGroup(options: TileGroup): void
+    {
+        this.dispatchEvent(new CustomEvent("addGroup", {
+            detail: options,
+        }));
+    }
+
+    removeGroup(id: string): void
+    {
+        this.dispatchEvent(new CustomEvent("removeGroup", {
+            detail: id,
+        }));
+    }
+
     /**
      * Sets whether a tile is checked or not.
      */
@@ -654,4 +910,20 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
             detail: { id, value },
         }));
     }
+}
+
+/**
+ * Gets width of tile size in small tiles unit.
+ */
+function get_tile_columns(size: TileSize): number
+{
+    return size == "large" ? 4 : size == "wide" ? 4 : size == "medium" ? 2 : 1;
+}
+
+/**
+ * Gets height of tile size in small tiles unit.
+ */
+function get_tile_rows(size: TileSize): number
+{
+    return size == "large" ? 4 : size == "wide" ? 2 : size == "medium" ? 2 : 1;
 }
