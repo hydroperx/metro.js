@@ -172,6 +172,7 @@ export function Tiles(options: TilesOptions)
         const gridstack = GridStack.init({
             alwaysShowResizeHandle: false,
             disableResize: false,
+            float: true,
             margin: `${margin}rem`,
             maxRow: options.direction == "horizontal" ? 6 : undefined,
             rtl: localeDir == "rtl",
