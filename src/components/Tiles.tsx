@@ -326,7 +326,7 @@ export function Tiles(options: TilesOptions)
         }
 
         & .TileGroup {
-            position: relative;
+            /* position: relative; */
         }
 
         & .Tile {
@@ -488,7 +488,7 @@ export function Tiles(options: TilesOptions)
     {
         if (tilting_button) return;
         tilting_pointer_id = e.pointerId;
-        tilting_button = e.target as HTMLButtonElement;
+        tilting_button = e.currentTarget as HTMLButtonElement;
         const size = tilting_button.getAttribute("data-size");
         viewport_pointerUp = local_viewport_pointerUp;
 
@@ -508,12 +508,13 @@ export function Tiles(options: TilesOptions)
 
         tilting_button.style.transform = rotate_3d;
         tilting_button.setAttribute("data-transform-3d", rotate_3d);
+        console.log("here")
     }
 
     // Handle pointer over tile
     function tile_onPointerOver(e: PointerEvent): void
     {
-        const tile_button = e.target as HTMLButtonElement;
+        const tile_button = e.currentTarget as HTMLButtonElement;
         if (!tile_button.matches(":hover")) return;
         const tile_color = tile_button.getAttribute("data-color");
         const tile_color_b1 = Color(tile_color).lighten(0.15).hex().toString();
@@ -524,9 +525,9 @@ export function Tiles(options: TilesOptions)
     // Handle pointer out tile
     function tile_onPointerOut(e: PointerEvent): void
     {
-        const tile_button = e.target as HTMLButtonElement;
+        const tile_button = e.currentTarget as HTMLButtonElement;
         const tile_color = tile_button.getAttribute("data-color");
-        const tile_color_b1 = tile_button.getAttribute("data-color-b1");
+        const tile_color_b1 = Color(tile_color).lighten(0.15).hex().toString();
         tile_button.style.background = `linear-gradient(90deg, ${tile_color} 0%, ${tile_color_b1} 100%)`;
     }
 
@@ -537,6 +538,7 @@ export function Tiles(options: TilesOptions)
         viewport_pointerUp = null;
         tilting_button.style.transform = "";
         tilting_button.removeAttribute("data-transform-3d");
+        tilting_button = null;
     }
 
     // Handle the request to add a tile
