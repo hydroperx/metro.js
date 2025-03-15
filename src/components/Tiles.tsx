@@ -175,7 +175,7 @@ export function Tiles(options: TilesOptions)
             margin: `${margin}rem`,
             maxRow: options.direction == "horizontal" ? 6 : undefined,
             rtl: localeDir == "rtl",
-            cellHeight: `${small_size.width}rem`,
+            cellHeight: `${small_size.height}rem`,
             acceptWidgets(el) {
                 return div_ref.current!.contains(el);
             },
@@ -314,7 +314,7 @@ export function Tiles(options: TilesOptions)
 
         & .TileGroupList {
             display: flex;
-            flex-direction: row;
+            flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
             gap: ${group_margin}rem;
             ${options.direction == "horizontal" ? `margin: ${options.orthogonalMargin ?? 3}rem 0;` : ""}
             ${options.direction == "vertical" ? `margin: 0 ${options.orthogonalMargin ?? 3}rem;` : ""}
@@ -338,6 +338,8 @@ export function Tiles(options: TilesOptions)
             color: ${theme.colors.foreground};
             transition: opacity 0.2s;
             transform-style: preserve-3d;
+            width: 100%;
+            height: 100%;
         }
 
         & .Tile[data-selection-mode="true"] {
@@ -546,45 +548,47 @@ export function Tiles(options: TilesOptions)
         assert(!tiles.has(tile.id), "Duplicate tile.");
 
         const element = document.createElement("button");
-        element.className = "Tile grid-stack-item";
+        element.className = "Tile";
 
         // Misc attributes
         element.setAttribute("data-id", tile.id);
         element.setAttribute("data-size", tile.size);
         element.setAttribute("data-group", tile.group);
+        element.addEventListener("pointerdown", tile_onPointerDown);
+        element.addEventListener("pointerover", tile_onPointerOver);
+        element.addEventListener("pointerout", tile_onPointerOut);
 
         // Misc logic
         element.disabled = !!tile.disabled;
+
+        element.innerHTML = `
+            <div class="Tile-checked-tri">
+                <div class="Tile-checked-icon"></div>
+            </div>
+        `;
 
         // Color
         const tile_color_b1 = Color(tile.color).lighten(0.15).hex().toString();
         element.setAttribute("data-color", tile.color);
         element.style.background = `linear-gradient(90deg, ${tile.color} 0%, ${tile_color_b1} 100%)`;
 
-        const content_element = document.createElement("div");
-        content_element.className = "grid-stack-item-content";
-        content_element.innerHTML = `
-            <div class="Tile-checked-tri">
-                <div class="Tile-checked-icon"></div>
-            </div>
-        `;
-        content_element.addEventListener("pointerdown", tile_onPointerDown);
-        content_element.addEventListener("pointerover", tile_onPointerOver);
-        content_element.addEventListener("pointerout", tile_onPointerOut);
-        element.appendChild(content_element);
-
+        // Group div (.grid-stack/.TileGroup)
         const group_div = Array.from(div_ref.current!.querySelectorAll(".TileGroup"))
             .find(g => g.getAttribute("data-id") == tile.group);
         assert(!!group_div, "Could not find tile's group.");
-        group_div.appendChild(element);
 
+        // GridStack
         const gridstack = (group_div as GridHTMLElement).gridstack;
-        gridstack.update(element, {
+
+        // Add gridstack widget
+        const widget_element = gridstack.addWidget({
             x: tile.x,
             y: tile.y,
             w: get_tile_columns(tile.size),
             h: get_tile_rows(tile.size),
         });
+        const content_element = widget_element.querySelector(".grid-stack-item-content");
+        content_element.appendChild(element);
 
         tiles.set(tile.id, tile);
         tiles_state.tiles.set(tile.id, {
