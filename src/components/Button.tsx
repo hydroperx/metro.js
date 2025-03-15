@@ -343,7 +343,8 @@ export function Button(options: ButtonOptions)
         options.element?.(button);
     });
 
-    return <>
+    return (
+        <>
             <button
                 ref={buttonRef}
                 css={serializedStyles}
@@ -383,7 +384,8 @@ export function Button(options: ButtonOptions)
                 undefined :
                 <div ref={tooltipElement} css={tooltipSerializedStyles}>{tooltip}</div>
             }
-    </>;
+        </>
+    );
 }
 
 export type ButtonVariant =
@@ -519,40 +521,101 @@ export function CircleIconButton(options: CircleIconButtonOptions)
         options.element?.(button);
     },[]);
 
+    const tooltip = options.tooltip;
+    const [tooltipVisible, setTooltipVisible] = useState<boolean>(false);
+    const [tooltipX, setTooltipX] = useState<number>(0);
+    const [tooltipY, setTooltipY] = useState<number>(0);
+    const tooltipElement: Ref<HTMLDivElement | null> = useRef(null);
+    let tooltipTimeout = -1;
+    let tooltipSerializedStyles: SerializedStyles | null = options.tooltip === undefined ? null : css `
+        background: ${theme.colors.inputBackground};
+        border: 0.15rem solid ${theme.colors.inputBorder};
+        display: inline-block;
+        visibility: ${tooltipVisible ? "visible" : "hidden"};
+        position: fixed;
+        left: ${tooltipX}px;
+        top: ${tooltipY}px;
+        padding: 0.4rem;
+        font-size: 0.77rem;
+    `;
+
+    // Display tooltip
+    const userMouseOver = options.mouseOver;
+    const mouseOver = (e: MouseEvent): any => {
+        if (tooltipElement.current)
+        {
+            tooltipTimeout = window.setTimeout(() => {
+                const button = ref.current;
+                if (button.matches(":hover"))
+                {
+                    setTooltipVisible(true);
+                }
+            }, 700);
+
+            // Adjust tooltip position
+            const [x, y] = computePosition(ref.current, tooltipElement.current, {
+                prefer: "bottom",
+                margin: 7,
+            });
+            setTooltipX(x);
+            setTooltipY(y);
+        }
+
+        return userMouseOver?.(e as any);
+    };
+
+    // Hide tooltip
+    const userMouseOut = options.mouseOut;
+    const mouseOut = (e: MouseEvent): any => {
+        if (tooltipTimeout !== -1) {
+            window.clearTimeout(tooltipTimeout);
+            tooltipTimeout = -1;
+        }
+        setTooltipVisible(false);
+        return userMouseOut?.(e as any);
+    };
+
     return (
-        <button
-            ref={ref}
-            css={serializedStyles}
-            className={options.className}
-            disabled={options.disabled}
-            autoFocus={options.autoFocus}
-            style={options.style}
-            
-            onFocus={options.focus}
-            onClick={options.click}
-            onMouseOver={options.mouseOver}
-            onMouseOut={options.mouseOut}
-            onMouseUp={options.mouseUp}
-            onContextMenu={options.contextMenu}
-            
-            onGotPointerCapture={options.gotPointerCapture}
-            onLostPointerCapture={options.lostPointerCapture}
-            onPointerCancel={options.pointerCancel}
-            onPointerDown={options.pointerDown}
-            onPointerEnter={options.pointerEnter}
-            onPointerLeave={options.pointerLeave}
-            onPointerMove={options.pointerMove}
-            onPointerOut={options.pointerOut}
-            onPointerOver={options.pointerOver}
-            onPointerUp={options.pointerUp}
+        <>
+            <button
+                ref={ref}
+                css={serializedStyles}
+                className={options.className}
+                disabled={options.disabled}
+                autoFocus={options.autoFocus}
+                style={options.style}
+                
+                onFocus={options.focus}
+                onClick={options.click}
+                onMouseOver={mouseOver as any}
+                onMouseOut={mouseOut as any}
+                onMouseUp={options.mouseUp}
+                onContextMenu={options.contextMenu}
+                
+                onGotPointerCapture={options.gotPointerCapture}
+                onLostPointerCapture={options.lostPointerCapture}
+                onPointerCancel={options.pointerCancel}
+                onPointerDown={options.pointerDown}
+                onPointerEnter={options.pointerEnter}
+                onPointerLeave={options.pointerLeave}
+                onPointerMove={options.pointerMove}
+                onPointerOut={options.pointerOut}
+                onPointerOver={options.pointerOver}
+                onPointerUp={options.pointerUp}
 
-            onTouchStart={options.touchStart}
-            onTouchEnd={options.touchEnd}
-            onTouchMove={options.touchMove}
-            onTouchCancel={options.touchCancel}>
+                onTouchStart={options.touchStart}
+                onTouchEnd={options.touchEnd}
+                onTouchMove={options.touchMove}
+                onTouchCancel={options.touchCancel}>
 
-            <Icon type={options.icon} size={options.size} style={iconStyle}/>
-        </button>
+                <Icon type={options.icon} size={options.size} style={iconStyle}/>
+            </button>
+
+            {tooltip === undefined ?
+                undefined :
+                <div ref={tooltipElement} css={tooltipSerializedStyles}>{tooltip}</div>
+            }
+        </>
     );
 }
 
@@ -563,6 +626,8 @@ export type CircleIconButtonOptions = {
      * Whether the icon is initially filled or not.
      */
     filled?: boolean,
+
+    tooltip?: string,
 
     /**
      * Rotation degrees.
@@ -619,6 +684,7 @@ export function ArrowButton(options: ArrowButtonOptions)
             autoFocus={options.autoFocus ?? false}
             style={options.style}
             size={options.size}
+            tooltip={options.tooltip}
 
             focus={options.focus}
             click={options.click}
@@ -648,6 +714,7 @@ export function ArrowButton(options: ArrowButtonOptions)
 export type ArrowButtonOptions = {
     direction: ArrowButtonDirection,
     size?: number,
+    tooltip?: string,
     disabled?: boolean,
     autoFocus?: boolean,
 
