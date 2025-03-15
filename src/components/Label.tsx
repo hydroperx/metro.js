@@ -46,7 +46,7 @@ export function Label(options: LabelOptions)
     const [tooltipY, setTooltipY] = useState<number>(0);
     const tooltipElement: Ref<HTMLDivElement> = useRef(null);
     let tooltipTimeout = -1;
-    let tooltipSerializedStyles: SerializedStyles | null = options.tooltip === undefined ? null : css `
+    let tooltip_serialized_styles: SerializedStyles | null = options.tooltip === undefined ? null : css `
         background: ${theme.colors.inputBackground};
         border: 0.15rem solid ${theme.colors.inputBorder};
         display: inline-block;
@@ -93,7 +93,7 @@ export function Label(options: LabelOptions)
 
     const tooltipRendered = tooltip === undefined ?
         undefined :
-        <div ref={tooltipElement} css={tooltipSerializedStyles}>{tooltip}</div>;
+        <div ref={tooltipElement} css={tooltip_serialized_styles}>{tooltip}</div>;
 
     switch (variant)
     {

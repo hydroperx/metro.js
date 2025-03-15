@@ -288,7 +288,7 @@ export function Button(options: ButtonOptions)
     const [tooltipY, setTooltipY] = useState<number>(0);
     const tooltipElement: Ref<HTMLDivElement | null> = useRef(null);
     let tooltipTimeout = -1;
-    let tooltipSerializedStyles: SerializedStyles | null = options.tooltip === undefined ? null : css `
+    let tooltip_serialized_styles: SerializedStyles | null = options.tooltip === undefined ? null : css `
         background: ${theme.colors.inputBackground};
         border: 0.15rem solid ${theme.colors.inputBorder};
         display: inline-block;
@@ -383,7 +383,7 @@ export function Button(options: ButtonOptions)
             </button>
             {tooltip === undefined ?
                 undefined :
-                <div ref={tooltipElement} css={tooltipSerializedStyles}>{tooltip}</div>
+                <div ref={tooltipElement} css={tooltip_serialized_styles}>{tooltip}</div>
             }
         </>
     );
@@ -475,7 +475,8 @@ export function CircleIconButton(options: CircleIconButtonOptions)
     const normal_color = options.filled ? (Color(fg).isDark() ? "#fff" : "#000") : fg;
     const hover_color = fg;
     const active_color = options.filled ? fg : (Color(fg).isDark() ? "#fff" : "#000");
-    const size_rem = pointsToRem(options.size ?? 9);
+    const size = options.size ?? 9;
+    const size_rem = pointsToRem(size);
 
     // Build style class
     const serializedStyles = css `
@@ -528,7 +529,7 @@ export function CircleIconButton(options: CircleIconButtonOptions)
     const [tooltipY, setTooltipY] = useState<number>(0);
     const tooltipElement: Ref<HTMLDivElement | null> = useRef(null);
     let tooltipTimeout = -1;
-    let tooltipSerializedStyles: SerializedStyles | null = options.tooltip === undefined ? null : css `
+    let tooltip_serialized_styles: SerializedStyles | null = options.tooltip === undefined ? null : css `
         background: ${theme.colors.inputBackground};
         border: 0.15rem solid ${theme.colors.inputBorder};
         display: inline-block;
@@ -610,12 +611,12 @@ export function CircleIconButton(options: CircleIconButtonOptions)
                 onTouchMove={options.touchMove}
                 onTouchCancel={options.touchCancel}>
 
-                <Icon type={options.icon} size={options.size} style={iconStyle}/>
+                <Icon type={options.icon} size={size} style={iconStyle}/>
             </button>
 
             {tooltip === undefined ?
                 undefined :
-                <div ref={tooltipElement} css={tooltipSerializedStyles}>{tooltip}</div>
+                <div ref={tooltipElement} css={tooltip_serialized_styles}>{tooltip}</div>
             }
         </>
     );
