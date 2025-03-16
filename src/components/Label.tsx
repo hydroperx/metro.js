@@ -64,8 +64,7 @@ export function Label(options: LabelOptions)
         {
             const element = e.target as HTMLElement;
             tooltipTimeout = window.setTimeout(() => {
-                const button = element;
-                if (button.matches(":hover"))
+                if (element.matches(":hover"))
                 {
                     setTooltipVisible(true);
                 }

@@ -307,7 +307,7 @@ export function Button(options: ButtonOptions)
         {
             tooltipTimeout = window.setTimeout(() => {
                 const button = buttonRef.current;
-                if (button.matches(":hover"))
+                if (button?.matches(":hover"))
                 {
                     setTooltipVisible(true);
                 }
@@ -547,7 +547,7 @@ export function CircleIconButton(options: CircleIconButtonOptions)
         {
             tooltipTimeout = window.setTimeout(() => {
                 const button = ref.current;
-                if (button.matches(":hover"))
+                if (button?.matches(":hover"))
                 {
                     setTooltipVisible(true);
                 }
