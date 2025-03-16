@@ -158,7 +158,7 @@ export function Select(options: SelectOptions)
             ${button_arrow_css}
         `;
     }
-    else if (options.borderless)
+    else if (options.small)
     {
         const normal_color = options.primary ? Color(enhanceBrightness(theme.colors.background, theme.colors.primary)).alpha(0.67) : Color(theme.colors.foreground).alpha(0.67);
 
@@ -170,10 +170,11 @@ export function Select(options: SelectOptions)
             font-weight: lighter;
             font-size: 0.87rem;
             display: flex;
+            gap: 0.5rem;
             flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
             align-items: center;
             padding: ${pointsToRemValue(1)}rem 0.7rem;
-            min-width: 5rem;
+            min-width: 3rem;
             outline: none;
 
             &:hover:not(:disabled), &:focus:not(:disabled) {
@@ -538,7 +539,7 @@ export function Select(options: SelectOptions)
                 </div>
 
                 <div className="Select-button-arrow">
-                    <DownArrowIcon size={options.big ? 6 : options.borderless ? 3.1 : 3.5}/>
+                    <DownArrowIcon size={options.big ? 6 : options.small ? 3.1 : 3.5}/>
                 </div>
             </button>
             <SelectOptionBigContext.Provider value={!!options.big || !!options.medium}>
@@ -565,7 +566,7 @@ export type SelectOptions = {
     style?: React.CSSProperties,
     className?: string,
 
-    borderless?: boolean,
+    small?: boolean,
 
     /**
      * Effective for bordeless non-big selects.

@@ -136,16 +136,22 @@ function App()
                         </div>
                         <div>
                             <HGroup gap={5}>
-                                <Select default="foo" borderless primary>
+                                <Select default="foo" small primary>
                                     <SelectOption value="foo">Foo</SelectOption>
                                     <SelectOption value="bar">Bar</SelectOption>
                                     <SelectOption value="qux">Qux</SelectOption>
                                 </Select>
-                                <Select default="foo" borderless>
+                                <Select default="foo" small>
                                     <SelectOption value="foo">Foo</SelectOption>
                                     <SelectOption value="bar">Bar</SelectOption>
                                     <SelectOption value="qux">Qux</SelectOption>
                                 </Select>
+                                <Button variant="small-dropdown-primary">
+                                    Click me
+                                </Button>
+                                <Button variant="small-dropdown">
+                                    Click me
+                                </Button>
                             </HGroup>
                         </div>
                         <div style={{margin: "5rem 0", width: "100%", height: "30rem"}}>

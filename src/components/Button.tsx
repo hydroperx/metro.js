@@ -2,17 +2,21 @@ import extend from "extend";
 import { css, SerializedStyles } from "@emotion/react";
 import React, { Ref, useContext, useRef, useState, useEffect } from "react";
 import Color from "color";
-import { pointsToRem } from "../utils/points";
+import { pointsToRem, pointsToRemValue } from "../utils/points";
 import { fontFamily, fontSize } from "../utils/common";
-import { lighten, darken } from "../utils/color";
+import { lighten, darken, enhanceBrightness } from "../utils/color";
 import { computePosition } from "../utils/placement";
-import { Icon } from "./Icons";
+import { DownArrowIcon, Icon } from "./Icons";
 import { ThemeContext } from "../theme";
+import { LocaleDirectionContext } from "../layout";
 
 export function Button(options: ButtonOptions)
 {
     // Take the theme context
     const theme = useContext(ThemeContext);
+
+    // Locale direction
+    const localeDir = useContext(LocaleDirectionContext);
 
     const buttonRef: Ref<HTMLButtonElement> = useRef(null);
 
@@ -33,7 +37,7 @@ export function Button(options: ButtonOptions)
     }
 
     // Emotion CSS
-    let serializedStyles: SerializedStyles = null;
+    let serialized_styles: SerializedStyles = null;
     
     const padding = "0.6rem 1rem";
 
@@ -45,7 +49,7 @@ export function Button(options: ButtonOptions)
             const color = dark ? "#fff" : "#000";
             const hoverBg = dark ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.4)";
 
-            serializedStyles = css `
+            serialized_styles = css `
                 background: none;
                 color: ${color};
                 padding: ${padding};
@@ -78,12 +82,59 @@ export function Button(options: ButtonOptions)
             `;
             break;
         }
+        case "small-dropdown":
+        case "small-dropdown-primary":
+        {
+            const normal_color = options.variant == "small-dropdown-primary" ? Color(enhanceBrightness(theme.colors.background, theme.colors.primary)).alpha(0.67) : Color(theme.colors.foreground).alpha(0.67);
+
+            serialized_styles = css `
+                background: none;
+                border: none;
+                color: ${normal_color.toString()};
+                font-family: ${fontFamily};
+                font-weight: lighter;
+                font-size: 0.87rem;
+                display: flex;
+                gap: 0.5rem;
+                flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
+                align-items: center;
+                padding: ${pointsToRemValue(1)}rem 0.7rem;
+                min-width: 5rem;
+                outline: none;
+    
+                &:hover:not(:disabled), &:focus:not(:disabled) {
+                    color: ${normal_color.alpha(0.8).toString()};
+                }
+    
+                &:active:not(:disabled) {
+                    color: ${normal_color.alpha(1).toString()};
+                }
+    
+                &:disabled {
+                    opacity: 0.4;
+                }
+
+                & .Button-small-inner {
+                    display: inline-flex;
+                    flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
+                    gap: 0.9rem;
+                }
+
+                & .Button-small-arrow {
+                    display: inline-flex;
+                    flex-grow: 2;
+                    flex-direction: ${localeDir == "ltr" ? "row-reverse" : "row"};
+                    opacity: 0.7;
+                }
+            `;
+            break;
+        }
         case "anchor":
         {
             const color = theme.colors.anchor ?? "#000";
             const hoverColor = lighten(color, 0.3).toString();
 
-            serializedStyles = css `
+            serialized_styles = css `
                 background: none;
                 color: ${color};
                 padding: ${padding};
@@ -114,7 +165,7 @@ export function Button(options: ButtonOptions)
         case "secondary":
         {
             const hoveredBackgrund = lighten(theme.colors.secondary, 0.5);
-            serializedStyles = css `
+            serialized_styles = css `
                 background: ${theme.colors.secondary};
                 color: ${theme.colors.foreground};
                 padding: ${padding};
@@ -146,7 +197,7 @@ export function Button(options: ButtonOptions)
         case "primary":
         {
             const hoveredBackgrund = lighten(theme.colors.primary, 0.5);
-            serializedStyles = css `
+            serialized_styles = css `
                 background: ${theme.colors.primary};
                 color: ${theme.colors.primaryForeground};
                 padding: ${padding};
@@ -178,7 +229,7 @@ export function Button(options: ButtonOptions)
         case "danger":
         {
             const hoveredBackgrund = lighten(theme.colors.danger, 0.5);
-            serializedStyles = css `
+            serialized_styles = css `
                 background: ${theme.colors.danger};
                 color: ${theme.colors.dangerForeground};
                 padding: ${padding};
@@ -214,7 +265,7 @@ export function Button(options: ButtonOptions)
             const hoverBg = dark ? lighten(theme.colors.background, 0.4).toString() : darken(theme.colors.background, 0.3).toString();
             const pressedCharColor = dark ? "#000" : "#fff";
 
-            serializedStyles = css `
+            serialized_styles = css `
                 background: none;
                 color: ${color};
                 padding: ${padding};
@@ -251,7 +302,7 @@ export function Button(options: ButtonOptions)
             const hoverBg = dark ? lighten(theme.colors.background, 0.7).toString() : darken(theme.colors.background, 0.5).toString();
             const pressedCharColor = dark ? "#000" : "#fff";
 
-            serializedStyles = css `
+            serialized_styles = css `
                 background: ${bg};
                 color: ${color};
                 padding: ${padding};
@@ -348,7 +399,7 @@ export function Button(options: ButtonOptions)
         <>
             <button
                 ref={buttonRef}
-                css={serializedStyles}
+                css={serialized_styles}
                 className={options.className}
                 style={newStyle}
                 type={options.type ?? "button"}
@@ -379,7 +430,18 @@ export function Button(options: ButtonOptions)
                 onTouchMove={options.touchMove}
                 onTouchCancel={options.touchCancel}>
 
-                {options.children}
+                {
+                    options.variant == "small-dropdown" || options.variant == "small-dropdown-primary" ?
+                        <>
+                            <div className="Button-small-inner">
+                                {options.children}
+                            </div>
+                            <div className="Button-small-arrow">
+                                <DownArrowIcon size={3.1}/>
+                            </div>
+                        </>:
+                        options.children
+                }
             </button>
             {tooltip === undefined ?
                 undefined :
@@ -391,6 +453,8 @@ export function Button(options: ButtonOptions)
 
 export type ButtonVariant =
     "none" |
+    "small-dropdown" |
+    "small-dropdown-primary" |
     "anchor" |
     "primary" |
     "secondary" |
@@ -477,7 +541,7 @@ export function CircleIconButton(options: CircleIconButtonOptions)
     const size_rem = pointsToRem(size);
 
     // Build style class
-    const serializedStyles = css `
+    const serialized_styles = css `
         border: 0.17rem solid ${fg};
         border-radius: 100%;
         outline: none;
@@ -579,7 +643,7 @@ export function CircleIconButton(options: CircleIconButtonOptions)
         <>
             <button
                 ref={ref}
-                css={serializedStyles}
+                css={serialized_styles}
                 className={options.className}
                 disabled={options.disabled}
                 autoFocus={options.autoFocus}
