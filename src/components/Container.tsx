@@ -57,7 +57,7 @@ export function Container(options: ContainerOptions)
         ${ options.paddingRight !== undefined ? "padding-right: " + pointsToRem(options.paddingRight) + ";" : "" }
         ${ options.paddingTop !== undefined ? "padding-top: " + pointsToRem(options.paddingTop) + ";" : "" }
         ${ options.paddingBottom !== undefined ? "padding-bottom: " + pointsToRem(options.paddingBottom) + ";" : "" }
-        ${ options.visible ? "" : "display: none;" }
+        ${ (options.visible ?? true) ? "" : "display: none;" }
         color: ${theme.colors.foreground};
         font-family: ${fontFamily};
         font-size: ${fontSize};
