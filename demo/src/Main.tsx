@@ -134,6 +134,20 @@ function App()
                                 <SelectOption value="qux1">Qux 1</SelectOption>
                             </Select>
                         </div>
+                        <div>
+                            <HGroup gap={5}>
+                                <Select default="foo" borderless primary>
+                                    <SelectOption value="foo">Foo</SelectOption>
+                                    <SelectOption value="bar">Bar</SelectOption>
+                                    <SelectOption value="qux">Qux</SelectOption>
+                                </Select>
+                                <Select default="foo" borderless>
+                                    <SelectOption value="foo">Foo</SelectOption>
+                                    <SelectOption value="bar">Bar</SelectOption>
+                                    <SelectOption value="qux">Qux</SelectOption>
+                                </Select>
+                            </HGroup>
+                        </div>
                         <div style={{margin: "5rem 0", width: "100%", height: "30rem"}}>
                             <Tiles
                                 controller={tiles_controller}

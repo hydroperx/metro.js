@@ -31,10 +31,13 @@ export function enhanceBrightness(background: any, color: any): string
     const b = to_color_object(color);
     if (colorsAreSimiliar(a, b))
     {
-        return a.isDark() ? lighten(b, 0.5) : darken(b, 0.5);
+        let r = a.isDark() ? lighten(b, 0.6) : darken(b, 0.6);
+        r = a.isDark() ? (Color(r).isDark() ? lighten(r, 0.4) : r) : Color(r).isLight() ? darken(r, 0.4) : r;
+        return r;
     }
-    return (a.isDark() ? (b.isDark() ? lighten(b, 0.5) : b)
-        : (b.isLight() ? darken(b, 0.5) : b)).toString();
+    let r = (a.isDark() ? (b.isDark() ? lighten(b, 0.6) : b) : (b.isLight() ? darken(b, 0.6) : b)).toString();
+    r = (a.isDark() ? (Color(r).isDark() ? lighten(r, 0.4) : r) : (Color(r).isLight() ? darken(r, 0.4) : r)).toString();
+    return r;
 }
 
 function to_color_object(a: any): Color

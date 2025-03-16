@@ -158,6 +158,40 @@ export function Select(options: SelectOptions)
             ${button_arrow_css}
         `;
     }
+    else if (options.borderless)
+    {
+        const normal_color = options.primary ? Color(enhanceBrightness(theme.colors.background, theme.colors.primary)).alpha(0.67) : Color(theme.colors.foreground).alpha(0.67);
+
+        buttonSerializedStyles = css `
+            background: none;
+            border: none;
+            color: ${normal_color.toString()};
+            font-family: ${fontFamily};
+            font-weight: lighter;
+            font-size: 0.87rem;
+            display: flex;
+            flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
+            align-items: center;
+            padding: ${pointsToRemValue(1)}rem 0.7rem;
+            min-width: 5rem;
+            outline: none;
+
+            &:hover:not(:disabled), &:focus:not(:disabled) {
+                color: ${normal_color.alpha(0.8).toString()};
+            }
+
+            &:active:not(:disabled) {
+                color: ${normal_color.alpha(1).toString()};
+            }
+
+            &:disabled {
+                opacity: 0.4;
+            }
+
+            ${button_inner_css}
+            ${button_arrow_css}
+        `;
+    }
     else
     {
         buttonSerializedStyles = css `
@@ -504,7 +538,7 @@ export function Select(options: SelectOptions)
                 </div>
 
                 <div className="Select-button-arrow">
-                    <DownArrowIcon size={options.big ? 6 : 3.5}/>
+                    <DownArrowIcon size={options.big ? 6 : options.borderless ? 3.1 : 3.5}/>
                 </div>
             </button>
             <SelectOptionBigContext.Provider value={!!options.big || !!options.medium}>
@@ -530,6 +564,14 @@ export type SelectOptions = {
     children?: React.ReactNode,
     style?: React.CSSProperties,
     className?: string,
+
+    borderless?: boolean,
+
+    /**
+     * Effective for bordeless non-big selects.
+     * When `true` the button color will be the primary one.
+     */
+    primary?: boolean,
 
     /**
      * Default value.
