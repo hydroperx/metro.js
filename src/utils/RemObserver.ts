@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 /**
  * Observes the value of the CSS `rem` unit.
  */
