@@ -1,10 +1,13 @@
 import { css } from "@emotion/react";
+import { useEffect, useRef } from "react";
 import assert from "assert";
 import { Alignment } from "../layout/Alignment";
 import { pointsToRem } from "../utils/points";
 
 export function HGroup(options: HGroupOptions)
 {
+    let div_ref = useRef<HTMLDivElement | null>(null);
+
     let overflow = "";
     if (options.clip)
     {
@@ -56,7 +59,12 @@ export function HGroup(options: HGroupOptions)
         ${ overflowY ? "overflow-y: " + overflowY + ";" : "" }
     `;
 
+    useEffect(() => {
+        options.element?.(div_ref.current!);
+    }, []);
+
     return <div
+        ref={div_ref}
         css={serializedStyles}
         className={options.className}
         style={options.style}
@@ -131,6 +139,8 @@ export type HGroupOptions = {
     style?: React.CSSProperties,
     className?: string,
     children?: React.ReactNode,
+
+    element?: (element: HTMLDivElement) => void,
 
     contextMenu?: React.MouseEventHandler<HTMLDivElement>,
     click?: React.MouseEventHandler<HTMLDivElement>,

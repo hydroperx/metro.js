@@ -1,6 +1,6 @@
 import { pointsToRem } from "../utils/points";
 import extend from "extend";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { css } from "@emotion/react";
 import { ThemeContext } from "../theme";
 import { fontFamily, monoFontFamily, fontSize, monoFontSize } from "../utils/common";
@@ -15,6 +15,9 @@ export function Container(options: ContainerOptions)
 {
     // Use theme
     const theme = useContext(ThemeContext);
+
+    // Ref
+    const div_ref = useRef<HTMLDivElement | null>(null);
 
     // Enable or disable selection
     const user_select = (options.selection ?? true) ? "auto" : "none";
@@ -125,7 +128,12 @@ export function Container(options: ContainerOptions)
         }
     `;
 
+    useEffect(() => {
+        options.element?.(div_ref.current!);
+    }, []);
+
     return <div
+        ref={div_ref}
         css={serializedStyles}
         className={options.className ? " " + options.className : ""}
         style={options.style}
@@ -195,6 +203,8 @@ export type ContainerOptions =
     style?: React.CSSProperties,
     className?: string,
     children?: React.ReactNode,
+
+    element?: (element: HTMLDivElement) => void,
 
     contextMenu?: React.MouseEventHandler<HTMLDivElement>,
     click?: React.MouseEventHandler<HTMLDivElement>,
