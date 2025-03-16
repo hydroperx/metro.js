@@ -171,12 +171,13 @@ export function Tiles(options: TilesOptions)
 
         const gridstack = GridStack.init({
             alwaysShowResizeHandle: false,
-            disableResize: false,
+            disableResize: true,
             float: true,
             margin: `${margin}rem`,
             maxRow: options.direction == "horizontal" ? 6 : undefined,
             rtl: localeDir == "rtl",
             cellHeight: `${small_size.height}rem`,
+            cellHeightUnit: "rem",
             acceptWidgets(el) {
                 return div_ref.current!.contains(el);
             },
