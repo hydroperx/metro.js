@@ -418,8 +418,6 @@ export type ButtonOptions =
     maxWidth?: number,
     maxHeight?: number,
 
-    visible?: boolean,
-
     tooltip?: string,
 
     style?: React.CSSProperties,
