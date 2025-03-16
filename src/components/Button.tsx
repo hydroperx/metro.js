@@ -492,17 +492,17 @@ export function CircleIconButton(options: CircleIconButtonOptions)
         justify-content: center;
         align-items: center;
 
-        &:hover {
+        &:hover:not(:disabled) {
             color: ${hover_color};
             background: ${Color(fg).alpha(0.3).toString()};
         }
 
-        &:focus {
+        &:focus:not(:disabled) {
             outline: 0.05rem dotted ${theme.colors.focusDashes};
             outline-offset: 0.3rem;
         }
 
-        &:active {
+        &:active:not(:disabled) {
             outline: none;
             color: ${active_color};
             ${options.filled ?
@@ -610,7 +610,7 @@ export function CircleIconButton(options: CircleIconButtonOptions)
                 onTouchMove={options.touchMove}
                 onTouchCancel={options.touchCancel}>
 
-                <Icon type={options.icon} size={size} style={iconStyle}/>
+                <Icon type={options.icon} size={size - (size <= 4.5 ? 0 : 4.5)} style={iconStyle}/>
             </button>
 
             {tooltip === undefined ?
