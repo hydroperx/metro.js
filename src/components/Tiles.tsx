@@ -3,7 +3,7 @@ import { css } from "@emotion/react";
 import assert from "assert";
 import Color from "color";
 import { TypedEventTarget } from "com.hydroper.typedeventtarget";
-import { GridHTMLElement, GridItemHTMLElement, GridStack, GridStackWidget } from "gridstack";
+import { GridHTMLElement, GridItemHTMLElement, GridStack, GridStackWidget } from "com.hydroper.gridstack/src/gridstack";
 import { CheckedIcon, getIcon } from "./Icons";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { ThemeContext, PreferPrimaryContext } from "../theme";
@@ -315,6 +315,13 @@ export function Tiles(options: TilesOptions)
             border-radius: 0;
         }
 
+        & .grid-stack-item,
+        & .grid-stack-item-content {
+            overflow: hidden !important;
+            overflow-x: hidden !important;
+            overflow-y: hidden !important;
+        }
+
         & .gs-12>.grid-stack-item {
             width: ${small_size.width}rem !important;
         }
@@ -346,7 +353,6 @@ export function Tiles(options: TilesOptions)
         }
 
         & .Tile {
-            position: absolute;
             overflow: hidden;
             outline: 0.11rem solid ${Color(theme.colors.primary).alpha(0.6).alpha(0.3).toString()};
             border: none;
