@@ -184,6 +184,14 @@ export function Tiles(options: TilesOptions)
             },
         }, group_element);
 
+        GridStack.setupDragIn(".grid-stack-item", {
+            helper(el)
+            {
+                el.remove();
+                return el;
+            }
+        }, undefined);
+
         // On tile add
         gridstack.on("added", (e, items) => {
             if (items.length == 0) return;
@@ -348,8 +356,8 @@ export function Tiles(options: TilesOptions)
 
         & .TileGroup {
             position: relative;
-            ${options.direction == "horizontal" ? `min-width: ${wide_size.width}rem; height: 100%;` : ""}
-            ${options.direction == "vertical" ? `width: 100%; min-height: ${medium_size.height}rem;` : ""}
+            ${options.direction == "horizontal" ? `min-width: ${wide_size.width}rem; min-height: ${large_size.height}rem;` : ""}
+            ${options.direction == "vertical" ? `min-width: ${medium_size.height}rem; min-height: ${medium_size.height}rem;` : ""}
         }
 
         & .Tile {

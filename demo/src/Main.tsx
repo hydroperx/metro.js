@@ -154,7 +154,7 @@ function App()
                                 </Button>
                             </HGroup>
                         </div>
-                        <div style={{margin: "5rem 0", width: "100%", height: "30rem"}}>
+                        <div style={{margin: "5rem 0", width: "100%", height: "37rem"}}>
                             <Tiles
                                 controller={tiles_controller}
                                 state={tiles_state}
