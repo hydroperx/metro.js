@@ -15,9 +15,9 @@ import { randomHexLarge } from "../utils/random";
 
 // We use Gridstack.js for implementing tile grids.
 
-const margin = 0.6; // Margin between tiles
+const margin = 0.4; // Margin between tiles
 const group_margin = 3; // Margin between groups
-const small_size = { width: 3.625, height: 3.625 };
+const small_size = { width: 4.625, height: 4.625 };
 const medium_size = { width: small_size.width*2 + margin, height: small_size.height*2 + margin };
 const wide_size = { width: medium_size.width*2 + margin, height: medium_size.height };
 const large_size = { width: wide_size.width, height: wide_size.width };
@@ -178,6 +178,7 @@ export function Tiles(options: TilesOptions)
             rtl: localeDir == "rtl",
             cellHeight: `${small_size.height}rem`,
             cellHeightUnit: "rem",
+            handle: ".Tile",
             acceptWidgets(el) {
                 return div_ref.current!.contains(el);
             },
@@ -312,6 +313,18 @@ export function Tiles(options: TilesOptions)
         &::-webkit-scrollbar-thumb {
             background: ${theme.colors.scrollBarThumb};
             border-radius: 0;
+        }
+
+        & .gs-12>.grid-stack-item {
+            width: ${small_size.width}rem !important;
+        }
+
+        & .gs-12>.grid-stack-item[gs-w="2"] {
+            width: ${medium_size.width}rem !important;
+        }
+
+        & .gs-12>.grid-stack-item[gs-w="4"] {
+            width: ${large_size.width}rem !important;
         }
 
         & .TileGroupList {
