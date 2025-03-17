@@ -2,7 +2,7 @@ import extend from "extend";
 import { css, SerializedStyles } from "@emotion/react";
 import { useContext, useState, useRef, Ref } from "react";
 import { ThemeContext, PreferPrimaryContext } from "../theme/Theme";
-import { fontFamily  } from "../utils/common";
+import { fontFamily, maximumZIndex  } from "../utils/common";
 import { enhanceBrightness } from "../utils/color";
 import { pointsToRem } from "../utils/points";
 import { computePosition } from "../utils/placement";
@@ -56,6 +56,7 @@ export function Label(options: LabelOptions)
         top: ${tooltipY}px;
         padding: 0.4rem;
         font-size: 0.77rem;
+        z-index: ${maximumZIndex};
     `;
 
     // Display tooltip

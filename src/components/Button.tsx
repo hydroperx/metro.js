@@ -3,7 +3,7 @@ import { css, SerializedStyles } from "@emotion/react";
 import React, { Ref, useContext, useRef, useState, useEffect } from "react";
 import Color from "color";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
-import { fontFamily, fontSize } from "../utils/common";
+import { fontFamily, fontSize, maximumZIndex } from "../utils/common";
 import { lighten, darken, enhanceBrightness } from "../utils/color";
 import { computePosition } from "../utils/placement";
 import { DownArrowIcon, Icon } from "./Icons";
@@ -349,6 +349,7 @@ export function Button(options: ButtonOptions)
         top: ${tooltipY}px;
         padding: 0.4rem;
         font-size: 0.77rem;
+        z-index: ${maximumZIndex};
     `;
 
     // Display tooltip
@@ -600,6 +601,7 @@ export function CircleIconButton(options: CircleIconButtonOptions)
         top: ${tooltipY}px;
         padding: 0.4rem;
         font-size: 0.77rem;
+        z-index: ${maximumZIndex};
     `;
 
     // Display tooltip
