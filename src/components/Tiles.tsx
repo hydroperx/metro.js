@@ -184,20 +184,15 @@ export function Tiles(options: TilesOptions)
             },
         }, group_element);
 
-        GridStack.setupDragIn(".grid-stack-item", {
-            helper(el)
-            {
-                el.remove();
-                return el;
-            }
-        }, undefined);
-
         // On tile add
         gridstack.on("added", (e, items) => {
             if (items.length == 0) return;
 
             // Create resting group if necessary
             create_rest_group();
+
+            gridstack.batchUpdate();
+            gridstack.commit();
         });
 
         // On tile removal
