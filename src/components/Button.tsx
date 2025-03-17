@@ -93,7 +93,7 @@ export function Button(options: ButtonOptions)
                 color: ${normal_color.toString()};
                 font-family: ${fontFamily};
                 font-weight: lighter;
-                font-size: 0.87rem;
+                font-size: 0.79rem;
                 display: flex;
                 gap: 0.5rem;
                 flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
