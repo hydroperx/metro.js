@@ -1,8 +1,8 @@
 import { pointsToRem } from "../utils/points";
 import extend from "extend";
 import React, { useContext, useEffect, useRef } from "react";
-import { css } from "@emotion/react";
-import { ThemeContext } from "../theme";
+import { styled } from "styled-components";
+import { Theme, ThemeContext } from "../theme";
 import { fontFamily, monoFontFamily, fontSize, monoFontSize } from "../utils/common";
 import { lighten, contrast } from "../utils/color";
 
@@ -49,95 +49,30 @@ export function Container(options: ContainerOptions)
         transition = (transition ? transition : ", " + "") + "opacity 200ms ease-in";
     }
 
-    // CSS
-    const serializedStyles = css `
-        ${ options.solid ? "background: " + theme.colors.background + ";" : "" }
-        ${ options.padding !== undefined ? "padding: " + pointsToRem(options.padding) + ";" : "" }
-        ${ options.paddingLeft !== undefined ? "padding-left: " + pointsToRem(options.paddingLeft) + ";" : "" }
-        ${ options.paddingRight !== undefined ? "padding-right: " + pointsToRem(options.paddingRight) + ";" : "" }
-        ${ options.paddingTop !== undefined ? "padding-top: " + pointsToRem(options.paddingTop) + ";" : "" }
-        ${ options.paddingBottom !== undefined ? "padding-bottom: " + pointsToRem(options.paddingBottom) + ";" : "" }
-        ${ (options.visible ?? true) ? "" : "display: none;" }
-        color: ${theme.colors.foreground};
-        font-family: ${fontFamily};
-        font-size: ${fontSize};
-        overflow: auto;
-        transition: ${transition};
-        user-select: ${user_select};
-        -moz-user-select: ${user_select};
-        -webkit-user-select: ${user_select};
-        ${ options.minWidth !== undefined ? "min-width: " + pointsToRem(options.minWidth) + ";" : "" }
-        ${ options.minHeight !== undefined ? "min-height: " + pointsToRem(options.minHeight) + ";" : "" }
-        ${ options.maxWidth !== undefined ? "max-width: " + pointsToRem(options.maxWidth) + ";" : "" }
-        ${ options.maxHeight !== undefined ? "max-height: " + pointsToRem(options.maxHeight) + ";" : "" }
-        ${ options.full ? "width: 100%; height: 100%;" : ""}
-
-        &::-webkit-scrollbar {
-            width: 12px;
-            height: 12px;
-            background: ${theme.colors.scrollBarTrack};
-        }
-
-        &::-webkit-scrollbar-thumb {
-            background: ${theme.colors.scrollBarThumb};
-            border-radius: 0;
-        }
-
-        &::selection, &::-moz-selection {
-            background: ${theme.colors.foreground};
-            color: ${theme.colors.background};
-        }
-
-        & a {
-            color: ${theme.colors.anchor};
-            text-decoration: none;
-        }
-
-        & a:hover {
-            color: ${lighten(theme.colors.anchor, 0.3)};
-        }
-
-        & code, & pre {
-            font-family: ${monoFontFamily};
-            font-size: ${monoFontSize};
-        }
-
-        & table {
-            margin: 0 auto;
-            border-collapse: collapse;
-        }
-        & table td {
-            padding: 3px 20px;
-            border: 0.1rem ${contrast(theme.colors.foreground, 0.5)} solid;
-        }
-        & table thead {
-            background: ${contrast(theme.colors.foreground, 0.8)};
-        }
-        & table thead td {
-            font-weight: 700;
-            border: none;
-        }
-        & table td, & table tr {
-            font-size: ${fontSize};
-        }
-        & table thead th {
-            padding: 3px 20px;
-            border: 0.1rem ${contrast(theme.colors.foreground, 0.5)} solid;
-        }
-        & table tbody tr:nth-of-type(2n) {
-            background: ${contrast(theme.colors.foreground, 0.8)};
-        }
-    `;
-
     useEffect(() => {
         options.element?.(div_ref.current!);
     }, []);
 
-    return <div
+    return <Div
         ref={div_ref}
-        css={serializedStyles}
         className={options.className ? " " + options.className : ""}
         style={options.style}
+
+        $theme={theme}
+        $visible={options.visible ?? true}
+        $transition={transition}
+        $padding={options.padding}
+        $paddingLeft={options.paddingLeft}
+        $paddingRight={options.paddingRight}
+        $paddingTop={options.paddingTop}
+        $paddingBottom={options.paddingBottom}
+        $minWidth={options.minWidth}
+        $minHeight={options.minHeight}
+        $maxWidth={options.maxWidth}
+        $maxHeight={options.maxHeight}
+        $full={!!options.full}
+        $user_select={user_select}
+        $solid={!!options.solid}
 
         onClick={options.click}
         onMouseOver={options.mouseOver}
@@ -162,7 +97,7 @@ export function Container(options: ContainerOptions)
         onTouchCancel={options.touchCancel}>
 
         {options.children}
-    </div>;
+    </Div>;
 }
 
 export type ContainerOptions =
@@ -229,3 +164,98 @@ export type ContainerOptions =
     touchMove?: React.TouchEventHandler<HTMLDivElement>,
     touchCancel?: React.TouchEventHandler<HTMLDivElement>,
 };
+
+const Div = styled.div<{
+    $theme: Theme,
+    $visible: boolean;
+    $transition: string;
+    $padding?: number;
+    $paddingLeft?: number;
+    $paddingRight?: number;
+    $paddingTop?: number;
+    $paddingBottom?: number;
+    $minWidth?: number;
+    $minHeight?: number;
+    $maxWidth?: number;
+    $maxHeight?: number;
+    $full: boolean,
+    $user_select: string;
+    $solid: boolean,
+}> `
+    ${ $ => $.$solid ? "background: " + $.$theme.colors.background + ";" : "" }
+    ${ $ => $.$padding !== undefined ? "padding: " + pointsToRem($.$padding) + ";" : "" }
+    ${ $ => $.$paddingLeft !== undefined ? "padding-left: " + pointsToRem($.$paddingLeft) + ";" : "" }
+    ${ $ => $.$paddingRight !== undefined ? "padding-right: " + pointsToRem($.$paddingRight) + ";" : "" }
+    ${ $ => $.$paddingTop !== undefined ? "padding-top: " + pointsToRem($.$paddingTop) + ";" : "" }
+    ${ $ => $.$paddingBottom !== undefined ? "padding-bottom: " + pointsToRem($.$paddingBottom) + ";" : "" }
+    ${ $ => ($.$visible ?? true) ? "" : "display: none;" }
+    color: ${$ => $.$theme.colors.foreground};
+    font-family: ${fontFamily};
+    font-size: ${fontSize};
+    overflow: auto;
+    transition: ${$ => $.$transition};
+    user-select: ${$ => $.$user_select};
+    -moz-user-select: ${$ => $.$user_select};
+    -webkit-user-select: ${$ => $.$user_select};
+    ${ $ => $.$minWidth !== undefined ? "min-width: " + pointsToRem($.$minWidth) + ";" : "" }
+    ${ $ => $.$minHeight !== undefined ? "min-height: " + pointsToRem($.$minHeight) + ";" : "" }
+    ${ $ => $.$maxWidth !== undefined ? "max-width: " + pointsToRem($.$maxWidth) + ";" : "" }
+    ${ $ => $.$maxHeight !== undefined ? "max-height: " + pointsToRem($.$maxHeight) + ";" : "" }
+    ${ $ => $.$full ? "width: 100%; height: 100%;" : ""}
+
+    &::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+        background: ${$ => $.$theme.colors.scrollBarTrack};
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: ${$ => $.$theme.colors.scrollBarThumb};
+        border-radius: 0;
+    }
+
+    &::selection, &::-moz-selection {
+        background: ${$ => $.$theme.colors.foreground};
+        color: ${$ => $.$theme.colors.background};
+    }
+
+    & a {
+        color: ${$ => $.$theme.colors.anchor};
+        text-decoration: none;
+    }
+
+    & a:hover {
+        color: ${$ => lighten($.$theme.colors.anchor, 0.3)};
+    }
+
+    & code, & pre {
+        font-family: ${monoFontFamily};
+        font-size: ${monoFontSize};
+    }
+
+    & table {
+        margin: 0 auto;
+        border-collapse: collapse;
+    }
+    & table td {
+        padding: 3px 20px;
+        border: 0.1rem ${$ => contrast($.$theme.colors.foreground, 0.5)} solid;
+    }
+    & table thead {
+        background: ${$ => contrast($.$theme.colors.foreground, 0.8)};
+    }
+    & table thead td {
+        font-weight: 700;
+        border: none;
+    }
+    & table td, & table tr {
+        font-size: ${fontSize};
+    }
+    & table thead th {
+        padding: 3px 20px;
+        border: 0.1rem ${$ => contrast($.$theme.colors.foreground, 0.5)} solid;
+    }
+    & table tbody tr:nth-of-type(2n) {
+        background: ${$ => contrast($.$theme.colors.foreground, 0.8)};
+    }
+`;

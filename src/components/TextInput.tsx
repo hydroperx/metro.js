@@ -1,5 +1,5 @@
 import { useContext, useRef, useState, useEffect } from "react";
-import { css, SerializedStyles } from "@emotion/react";
+import { styled } from "styled-components";
 import Color from "color";
 import extend from "extend";
 import { getIcon } from "./Icons";
@@ -7,6 +7,14 @@ import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { ThemeContext } from "../theme";
 import { fontFamily, fontSize } from "../utils/common";
 import { pointsToRem } from "../utils/points";
+
+const TextArea = styled.textarea<{
+    $css: string,
+}> `${$ => $.$css}`;
+
+const Input = styled.input<{
+    $css: string,
+}> `${$ => $.$css}`;
 
 export function TextInput(options: TextInputOptions)
 {
@@ -28,7 +36,7 @@ export function TextInput(options: TextInputOptions)
     const dark = Color(theme.colors.inputBackground).isDark();
 
     // CSS
-    const serializedStyles = css `
+    const css = `
         background: ${theme.colors.inputBackground};
         border: 0.15rem solid  ${theme.colors.inputBorder};
         color: ${theme.colors.foreground};
@@ -81,10 +89,10 @@ export function TextInput(options: TextInputOptions)
 
     return (
         options.multiline ?
-            <textarea
+            <TextArea
                 id={options.id}
-                css={serializedStyles}
                 className={options.className}
+                $css={css}
                 style={options.style}
                 ref={textAreaRef}
                 placeholder={options.placeholder}
@@ -104,11 +112,11 @@ export function TextInput(options: TextInputOptions)
                 dir={localeDir == "ltr" ? "ltr" : "rtl"}>
 
                 {options.default}
-            </textarea> :
-            <input
+            </TextArea> :
+            <Input
                 id={options.id}
-                css={serializedStyles}
                 className={options.className}
+                $css={css}
                 style={options.style}
                 ref={inputRef}
                 type={

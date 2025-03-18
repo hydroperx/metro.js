@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useRef, useState, useEffect } from "react";
-import { css } from "@emotion/react";
+import { styled } from "styled-components";
 import assert from "assert";
 import Color from "color";
 import { TypedEventTarget } from "com.hydroper.typedeventtarget";
 import { GridHTMLElement, GridItemHTMLElement, GridStack, GridStackWidget } from "com.hydroper.gridstack/src/gridstack";
 import { CheckedIcon, getIcon } from "./Icons";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
-import { ThemeContext, PreferPrimaryContext } from "../theme";
+import { ThemeContext, PreferPrimaryContext, Theme } from "../theme";
 import { RemObserver } from "../utils/RemObserver";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
 import { lighten, darken, enhanceBrightness, contrast } from "../utils/color";
@@ -38,6 +38,134 @@ let viewport_pointerUp: Function | null = null;
 window.addEventListener("pointerup", (e) => {
     viewport_pointerUp?.(e);
 });
+
+// CSS
+const Div = styled.div<{
+    $forced_invisible: boolean,
+    $scale: number,
+    $theme: Theme,
+    $direction: "horizontal" | "vertical",
+    $localeDir: "ltr" | "rtl",
+    $orthogonalMargin: number,
+}> `
+    width: 100%;
+    height: 100%;
+    opacity: ${$ => $.$forced_invisible ? 0 : $.$scale};
+    transform: scale(${$ => $.$scale});
+    transition: opacity 0.3s ${open ? "ease-out" : "ease-in"}, transform 0.3s ${open ? "ease-out" : "ease-in"};
+
+    &::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+        background: ${$ => $.$theme.colors.scrollBarTrack};
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: ${$ => $.$theme.colors.scrollBarThumb};
+        border-radius: 0;
+    }
+
+    & .grid-stack-item,
+    & .grid-stack-item-content {
+        overflow: hidden !important;
+        overflow-x: hidden !important;
+        overflow-y: hidden !important;
+    }
+
+    & .gs-12>.grid-stack-item {
+        width: ${small_size.width}rem !important;
+    }
+
+    & .gs-12>.grid-stack-item[gs-w="2"] {
+        width: ${medium_size.width}rem !important;
+    }
+
+    & .gs-12>.grid-stack-item[gs-w="4"] {
+        width: ${large_size.width}rem !important;
+    }
+
+    & .TileGroupList {
+        display: flex;
+        flex-direction: ${$ => $.$direction == "horizontal" ? ($.$localeDir == "ltr" ? "row" : "row-reverse") : "column"};
+        gap: ${group_margin}rem;
+        ${$ => $.$direction == "horizontal" ? `margin: ${$.$orthogonalMargin ?? 3}rem 0;` : ""}
+        ${$ => $.$direction == "vertical" ? `margin: 0 ${$.$orthogonalMargin ?? 3}rem;` : ""}
+    }
+
+    & .TileGroupList > .TileGroup:last-child {
+        flex-grow: 9999;
+    }
+
+    & .TileGroup {
+        position: relative;
+        ${$ => $.$direction == "horizontal" ? `min-width: ${wide_size.width}rem; min-height: ${large_size.height}rem;` : ""}
+        ${$ => $.$direction == "vertical" ? `min-width: ${medium_size.height}rem; min-height: ${medium_size.height}rem;` : ""}
+    }
+
+    & .Tile {
+        overflow: hidden;
+        outline: 0.11rem solid ${$ => Color($.$theme.colors.primary).alpha(0.6).alpha(0.3).toString()};
+        border: none;
+        font-family: ${fontFamily};
+        font-size: ${fontSize};
+        color: ${$ => $.$theme.colors.foreground};
+        transition: opacity 0.2s;
+        transform-style: preserve-3d;
+        width: 100%;
+        height: 100%;
+    }
+
+    & .Tile[data-selection-mode="true"] {
+        opacity: 0.7;
+    }
+
+    & .Tile:not([data-dragging="true"]) {
+        transition: opacity 0.2s, transform 0.2s ease-out, scale 0.2s ease-out, translate 0.2s ease-out;
+    }
+
+    & .Tile[data-drag-n-drop-mode="true"] {
+        scale: 0.9;
+    }
+
+    & .Tile[data-dragging="true"] {
+        opacity: 0.6;
+    }
+
+    & .Tile:hover:not(:disabled),
+    & .Tile:focus:not(:disabled) {
+        outline: 0.17rem solid ${$ => Color($.$theme.colors.primary).alpha(0.6).toString()};
+    }
+
+    & .Tile:disabled {
+        opacity: 0.5;
+    }
+
+    & .Tile .Tile-checked-tri {
+        position: absolute;
+        right: -7rem;
+        top: -7rem;
+        padding: 0.5rem;
+        width: 9rem;
+        height: 9rem;
+        background: ${$ => $.$theme.colors.primary};
+        color: ${$ => $.$theme.colors.primaryForeground};
+        transform: rotate(45deg);
+        visibility: hidden;
+    }
+
+    & .Tile[data-checked="true"] .Tile-checked-tri {
+        visibility: visible;
+    }
+
+    & .Tile .Tile-checked-icon {
+        background: url("${getIcon("checked", "white")}") no-repeat;
+        background-position: center;
+        width: ${pointsToRem(5)};
+        height: ${pointsToRem(5)};
+        vertical-align: middle;
+        transform: rotate(-45deg) translate(-5.4rem, 5.4rem);
+    }
+`;
 
 /**
  * Represents a container of Metro tiles.
@@ -298,127 +426,6 @@ export function Tiles(options: TilesOptions)
                 tile_btn.removeAttribute("data-selection-mode");
         }
     }
-
-    // CSS
-    const serialized_styles = css `
-        width: 100%;
-        height: 100%;
-        opacity: ${forced_invisible ? 0 : scale};
-        transform: scale(${scale});
-        transition: opacity 0.3s ${open ? "ease-out" : "ease-in"}, transform 0.3s ${open ? "ease-out" : "ease-in"};
-
-        &::-webkit-scrollbar {
-            width: 12px;
-            height: 12px;
-            background: ${theme.colors.scrollBarTrack};
-        }
-
-        &::-webkit-scrollbar-thumb {
-            background: ${theme.colors.scrollBarThumb};
-            border-radius: 0;
-        }
-
-        & .grid-stack-item,
-        & .grid-stack-item-content {
-            overflow: hidden !important;
-            overflow-x: hidden !important;
-            overflow-y: hidden !important;
-        }
-
-        & .gs-12>.grid-stack-item {
-            width: ${small_size.width}rem !important;
-        }
-
-        & .gs-12>.grid-stack-item[gs-w="2"] {
-            width: ${medium_size.width}rem !important;
-        }
-
-        & .gs-12>.grid-stack-item[gs-w="4"] {
-            width: ${large_size.width}rem !important;
-        }
-
-        & .TileGroupList {
-            display: flex;
-            flex-direction: ${options.direction == "horizontal" ? (localeDir == "ltr" ? "row" : "row-reverse") : "column"};
-            gap: ${group_margin}rem;
-            ${options.direction == "horizontal" ? `margin: ${options.orthogonalMargin ?? 3}rem 0;` : ""}
-            ${options.direction == "vertical" ? `margin: 0 ${options.orthogonalMargin ?? 3}rem;` : ""}
-        }
-
-        & .TileGroupList > .TileGroup:last-child {
-            flex-grow: 9999;
-        }
-
-        & .TileGroup {
-            position: relative;
-            ${options.direction == "horizontal" ? `min-width: ${wide_size.width}rem; min-height: ${large_size.height}rem;` : ""}
-            ${options.direction == "vertical" ? `min-width: ${medium_size.height}rem; min-height: ${medium_size.height}rem;` : ""}
-        }
-
-        & .Tile {
-            overflow: hidden;
-            outline: 0.11rem solid ${Color(theme.colors.primary).alpha(0.6).alpha(0.3).toString()};
-            border: none;
-            font-family: ${fontFamily};
-            font-size: ${fontSize};
-            color: ${theme.colors.foreground};
-            transition: opacity 0.2s;
-            transform-style: preserve-3d;
-            width: 100%;
-            height: 100%;
-        }
-
-        & .Tile[data-selection-mode="true"] {
-            opacity: 0.7;
-        }
-
-        & .Tile:not([data-dragging="true"]) {
-            transition: opacity 0.2s, transform 0.2s ease-out, scale 0.2s ease-out, translate 0.2s ease-out;
-        }
-
-        & .Tile[data-drag-n-drop-mode="true"] {
-            scale: 0.9;
-        }
-
-        & .Tile[data-dragging="true"] {
-            opacity: 0.6;
-        }
-
-        & .Tile:hover:not(:disabled),
-        & .Tile:focus:not(:disabled) {
-            outline: 0.17rem solid ${Color(theme.colors.primary).alpha(0.6).toString()};
-        }
-
-        & .Tile:disabled {
-            opacity: 0.5;
-        }
-
-        & .Tile .Tile-checked-tri {
-            position: absolute;
-            right: -7rem;
-            top: -7rem;
-            padding: 0.5rem;
-            width: 9rem;
-            height: 9rem;
-            background: ${theme.colors.primary};
-            color: ${theme.colors.primaryForeground};
-            transform: rotate(45deg);
-            visibility: hidden;
-        }
-
-        & .Tile[data-checked="true"] .Tile-checked-tri {
-            visibility: visible;
-        }
-
-        & .Tile .Tile-checked-icon {
-            background: url("${getIcon("checked", "white")}") no-repeat;
-            background-position: center;
-            width: ${pointsToRem(5)};
-            height: ${pointsToRem(5)};
-            vertical-align: middle;
-            transform: rotate(-45deg) translate(-5.4rem, 5.4rem);
-        }
-    `;
 
     // Observe rem
     useEffect(() => {
@@ -688,9 +695,18 @@ export function Tiles(options: TilesOptions)
     tiles_controller.addEventListener("removeGroup", tiles_controller_removeGroup);
 
     return (
-        <div className="Tiles" css={serialized_styles} style={options.style}>
+        <Div
+            className="Tiles"
+            style={options.style}
+            $forced_invisible={forced_invisible}
+            $scale={scale}
+            $theme={theme}
+            $direction={options.direction}
+            $localeDir={localeDir}
+            $orthogonalMargin={options.orthogonalMargin}>
+
             <div className="TileGroupList" ref={div_ref}></div>
-        </div>
+        </Div>
     );
 }
 

@@ -1,6 +1,6 @@
 import { TypedEventTarget } from "com.hydroper.typedeventtarget";
 import { useContext, useRef, useState, useEffect } from "react";
-import { css, SerializedStyles } from "@emotion/react";
+import { styled } from "styled-components";
 import Color from "color";
 import assert from "assert";
 import { Input } from "com.hydroper.inputaction";
@@ -8,7 +8,7 @@ import $ from "jquery";
 import { ArrowIcon, BulletIcon, CheckedIcon, DownArrowIcon, IconOptions, UpArrowIcon } from "./Icons";
 import { LocaleDirection, LocaleDirectionContext } from "../layout/LocaleDirection";
 import { computePosition, fitViewportPosition, Side } from "../utils/placement";
-import { ThemeContext } from "../theme";
+import { Theme, ThemeContext } from "../theme";
 import { fontFamily, fontSize, maximumZIndex } from "../utils/common";
 import { pointsToRem } from "../utils/points";
 import { focusPrevSibling, focusNextSibling } from "../utils/focus";
@@ -479,41 +479,17 @@ export function ContextMenu(options: ContextMenuOptions)
         };
     });
 
-    // Main div CSS
-    const serializedStyles = css `
-        display: inline-flex;
-        visibility: ${visible ? "visible" : "hidden"};
-        flex-direction: column;
-        position: fixed;
-        background: ${theme.colors.inputBackground};
-        border: 0.15rem solid ${theme.colors.inputBorder};
-        padding: ${pointsToRem(2)} 0;
-        min-width: 12rem;
-        max-height: 30rem;
-        left: ${x}px;
-        top: ${y}px;
-        opacity: ${opacity.toString()};
-        ${transition ? `transition: ${transition};` : ""}
-        z-index: ${maximumZIndex};
-
-        & > .ContextMenu-up-arrow, & > .ContextMenu-down-arrow {
-            display: ${arrowsVisible ? "flex" : "none"};
-            flex-direction: row;
-            justify-content: center;
-            height: ${pointsToRem(2.5)};
-        }
-
-        & > .ContextMenu-list {
-            display: flex;
-            flex-direction: column;
-            overflow-y: scroll;
-            scrollbar-width: none;
-            flex-grow: 3;
-        }
-    `;
-
     return (
-        <div ref={divRef} css={serializedStyles}>
+        <MainDiv
+            ref={divRef}
+            $visible={visible}
+            $theme={theme}
+            $opacity={opacity}
+            $transition={transition}
+            $arrowsVisible={arrowsVisible}
+            $x={x}
+            $y={y}>
+
             <div className="ContextMenu-up-arrow">
                 <UpArrowIcon size={2.5}/>
             </div>
@@ -523,7 +499,7 @@ export function ContextMenu(options: ContextMenuOptions)
             <div className="ContextMenu-down-arrow">
                 <DownArrowIcon size={2.5}/>
             </div>
-        </div>
+        </MainDiv>
     );
 }
 
@@ -536,6 +512,47 @@ export type ContextMenuOptions = {
 
     children?: React.ReactNode,
 };
+
+// Main div CSS
+const MainDiv = styled.div<{
+    $visible: boolean,
+    $theme: Theme,
+    $opacity: number,
+    $transition: string | undefined,
+    $arrowsVisible: boolean,
+    $x: number,
+    $y: number,
+}> `
+    display: inline-flex;
+    visibility: ${$ => $.$visible ? "visible" : "hidden"};
+    flex-direction: column;
+    position: fixed;
+    background: ${$ => $.$theme.colors.inputBackground};
+    border: 0.15rem solid ${$ => $.$theme.colors.inputBorder};
+    padding: ${pointsToRem(2)} 0;
+    min-width: 12rem;
+    max-height: 30rem;
+    left: ${$ => $.$x}px;
+    top: ${$ => $.$y}px;
+    opacity: ${$ => $.$opacity.toString()};
+    ${$ => $.$transition ? `transition: ${$.$transition};` : ""}
+    z-index: ${maximumZIndex};
+
+    & > .ContextMenu-up-arrow, & > .ContextMenu-down-arrow {
+        display: ${$ => $.$arrowsVisible ? "flex" : "none"};
+        flex-direction: row;
+        justify-content: center;
+        height: ${pointsToRem(2.5)};
+    }
+
+    & > .ContextMenu-list {
+        display: flex;
+        flex-direction: column;
+        overflow-y: scroll;
+        scrollbar-width: none;
+        flex-grow: 3;
+    }
+`;
 
 /**
  * A context menu item.
@@ -553,31 +570,6 @@ export function ContextMenuItem(options: ContextMenuItemOptions)
 
     // Build the style class
     const hoverBackground = Color(theme.colors.inputBackground).darken(0.4).toString();
-    const serializedStyles = css `
-        display: inline-flex;
-        flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
-        gap: 0.9rem;
-        padding: 0.5rem 0.7rem;
-        background: none;
-        border: none;
-        outline: none;
-        color: ${theme.colors.foreground};
-        font-size: ${fontSize};
-        font-family: ${fontFamily};
-
-        &:hover:not(:disabled), &:focus:not(:disabled) {
-            background: ${hoverBackground};
-        }
-
-        &:active:not(:disabled) {
-            background: ${theme.colors.primary};
-            color: ${theme.colors.primaryForeground};
-        }
-
-        &:disabled {
-            opacity: 0.5;
-        }
-    `;
 
     function hideAllFromParent(element: HTMLElement): void
     {
@@ -608,9 +600,17 @@ export function ContextMenuItem(options: ContextMenuItemOptions)
     }
 
     return (
-        <button css={serializedStyles} className={"buttonNavigable" + (options.className ? " " + options.className : "")} disabled={options.disabled} onClick={button_onClick} ref={buttonRef}>
+        <ItemButton
+            className={"buttonNavigable" + (options.className ? " " + options.className : "")}
+            disabled={options.disabled}
+            onClick={button_onClick}
+            ref={buttonRef}
+            $localeDir={localeDir}
+            $theme={theme}
+            $hoverBackground={hoverBackground}>
+
             {options.children}
-        </button>
+        </ItemButton>
     );
 }
 
@@ -622,6 +622,36 @@ export type ContextMenuItemOptions = {
     click?: () => void,
 };
 
+const ItemButton = styled.button<{
+    $localeDir: "ltr" | "rtl",
+    $theme: Theme,
+    $hoverBackground: string,
+}> `
+    display: inline-flex;
+    flex-direction: ${$ => $.$localeDir == "ltr" ? "row" : "row-reverse"};
+    gap: 0.9rem;
+    padding: 0.5rem 0.7rem;
+    background: none;
+    border: none;
+    outline: none;
+    color: ${$ => $.$theme.colors.foreground};
+    font-size: ${fontSize};
+    font-family: ${fontFamily};
+
+    &:hover:not(:disabled), &:focus:not(:disabled) {
+        background: ${$ => $.$hoverBackground};
+    }
+
+    &:active:not(:disabled) {
+        background: ${$ => $.$theme.colors.primary};
+        color: ${$ => $.$theme.colors.primaryForeground};
+    }
+
+    &:disabled {
+        opacity: 0.5;
+    }
+`;
+
 /**
  * A column in a context menu item for reserving space
  * for "checked" and "selected option" signs.
@@ -631,18 +661,11 @@ export function ContextMenuCheck(options: ContextMenuCheckOptions)
     // Size
     const size = pointsToRem(3);
 
-    // CSS
-    const serializedStyles = css `
-        width: ${size};
-        height: ${size};
-    `;
-
     return (
-        <span css={serializedStyles}>
-            {
-                options.state == "none" ? undefined :
-                options.state == "checked" ? <CheckedIcon/> : <BulletIcon/>}
-        </span>
+        <CheckSpan $size={size}>
+            {   options.state == "none" ? undefined :
+                options.state == "checked" ? <CheckedIcon/> : <BulletIcon/> }
+        </CheckSpan>
     );
 }
 
@@ -651,6 +674,14 @@ export type ContextMenuCheckOptions = {
 };
 
 export type ContextMenuCheckState = "none" | "checked" | "option";
+
+// CSS
+const CheckSpan = styled.span<{
+    $size: string,
+}> `
+    width: ${$ => $.$size};
+    height: ${$ => $.$size};
+`;
 
 /**
  * A column in a context menu item for reserving space
@@ -661,22 +692,24 @@ export function ContextMenuIcon(options: ContextMenuIconOptions)
     // Size
     const size = pointsToRem(3);
 
-    // CSS
-    const serializedStyles = css `
-        width: ${size};
-        height: ${size};
-    `;
-
     return (
-        <span css={serializedStyles}>
+        <IconSpan $size={size}>
             {options.children}
-        </span>
+        </IconSpan>
     );
 }
 
 export type ContextMenuIconOptions = {
     children?: React.ReactNode,
 };
+
+// CSS
+const IconSpan = styled.span<{
+    $size: string,
+}> `
+    width: ${$ => $.$size};
+    height: ${$ => $.$size};
+`;
 
 /**
  * A column in a context menu item for reserving space
@@ -687,21 +720,23 @@ export function ContextMenuLabel(options: ContextMenuLabelOptions)
     // Locale direction
     const localeDir = useContext(LocaleDirectionContext);
 
-    // CSS
-    const serializedStyles = css `
-        ${localeDir == "ltr" ? "" : "text-align: right;"}
-    `;
-
     return (
-        <span css={serializedStyles}>
+        <LabelSpan $localeDir={localeDir}>
             {options.children}
-        </span>
+        </LabelSpan>
     );
 }
 
 export type ContextMenuLabelOptions = {
     children?: React.ReactNode,
 };
+
+// CSS
+const LabelSpan = styled.span<{
+    $localeDir: "ltr" | "rtl",
+}> `
+    ${$ => $.$localeDir == "ltr" ? "" : "text-align: right;"}
+`;
 
 /**
  * A column in a context menu item for reserving space
@@ -715,27 +750,30 @@ export function ContextMenuRight(options: ContextMenuRightOptions)
     // Minimum size for an icon
     const size = pointsToRem(3);
 
-    const serializedStyles = css `
-        flex-grow: 4;
-        ${localeDir == "ltr" ? "margin-left: 2rem;" : ""}
-        ${localeDir == "rtl" ? "margin-right: 2rem;" : ""}
-        text-align: ${localeDir == "ltr" ? "right" : "left"};
-        font-size: 0.8rem;
-        opacity: 0.6;
-        min-width: ${size};
-        min-height: ${size};
-    `;
-
     return (
-        <span css={serializedStyles}>
+        <RightSpan $size={size} $localeDir={localeDir}>
             {options.children}
-        </span>
+        </RightSpan>
     );
 }
 
 export type ContextMenuRightOptions = {
     children?: React.ReactNode,
 };
+
+const RightSpan = styled.span<{
+    $localeDir: "ltr" | "rtl",
+    $size: string,
+}> `
+    flex-grow: 4;
+    ${$ => $.$localeDir == "ltr" ? "margin-left: 2rem;" : ""}
+    ${$ => $.$localeDir == "rtl" ? "margin-right: 2rem;" : ""}
+    text-align: ${$ => $.$localeDir == "ltr" ? "right" : "left"};
+    font-size: 0.8rem;
+    opacity: 0.6;
+    min-width: ${$ => $.$size};
+    min-height: ${$ => $.$size};
+`;
 
 /**
  * A submenu of a context menu.
@@ -755,27 +793,6 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
 
     // Build the style class
     const hoverBackground = Color(theme.colors.inputBackground).darken(0.4).toString();
-    const serializedStyles = css `
-        display: inline-flex;
-        flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
-        gap: 0.9rem;
-        padding: 0.5rem 0.7rem;
-        background: none;
-        border: none;
-        outline: none;
-        color: ${theme.colors.foreground};
-        font-size: ${fontSize};
-        font-family: ${fontFamily};
-
-        &:hover, &:focus {
-            background: ${hoverBackground};
-        }
-
-        &:active {
-            background: ${theme.colors.primary};
-            color: ${theme.colors.primaryForeground};
-        }
-    `;
 
     // Transition timeout
     let transitionTimeout = -1;
@@ -1088,15 +1105,47 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
     });
 
     return (
-        <button css={serializedStyles} className={submenuItemClassName + " " + "buttonNavigable"} ref={buttonRef}>
+        <SubmenuButton
+            className={submenuItemClassName + " " + "buttonNavigable"}
+            ref={buttonRef}
+            $localeDir={localeDir}
+            $theme={theme}
+            $hoverBackground={hoverBackground}>
+
             {options.children}
-        </button>
+        </SubmenuButton>
     );
 }
 
 export type ContextMenuSubmenuOptions = {
     children?: React.ReactNode,
 };
+
+const SubmenuButton = styled.button<{
+    $localeDir: "ltr" | "rtl",
+    $theme: Theme,
+    $hoverBackground: string,
+}> `
+    display: inline-flex;
+    flex-direction: ${$ => $.$localeDir == "ltr" ? "row" : "row-reverse"};
+    gap: 0.9rem;
+    padding: 0.5rem 0.7rem;
+    background: none;
+    border: none;
+    outline: none;
+    color: ${$ => $.$theme.colors.foreground};
+    font-size: ${fontSize};
+    font-family: ${fontFamily};
+
+    &:hover, &:focus {
+        background: ${$ => $.$hoverBackground};
+    }
+
+    &:active {
+        background: ${$ => $.$theme.colors.primary};
+        color: ${$ => $.$theme.colors.primaryForeground};
+    }
+`;
 
 /**
  * List of menu items under a submenu of a context menu.
@@ -1109,41 +1158,12 @@ export function ContextMenuSubmenuList(options: ContextMenuSubmenuListOptions)
     // References
     const divRef = useRef<HTMLDivElement | null>(null);
 
-    // Main div CSS
-    const serializedStyles = css `
-        display: inline-flex;
-        visibility: "hidden";
-        flex-direction: column;
-        position: fixed;
-        background: ${theme.colors.inputBackground};
-        border: 0.15rem solid ${theme.colors.inputBorder};
-        padding: ${pointsToRem(2)} 0;
-        min-width: 12rem;
-        max-height: 30rem;
-        opacity: 0;
-        z-index: ${maximumZIndex};
-
-        & > .ContextMenu-up-arrow, & > .ContextMenu-down-arrow {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            height: ${pointsToRem(2.5)};
-        }
-
-        & > .ContextMenu-list {
-            display: flex;
-            flex-direction: column;
-            overflow-y: scroll;
-            scrollbar-width: none;
-            flex-grow: 3;
-        }
-    `;
-
     return (
-        <div
+        <SubmenuMainDiv
             ref={divRef}
             className={submenuClassName}
-            css={serializedStyles}>
+            $theme={theme}>
+
             <div className="ContextMenu-up-arrow">
                 <UpArrowIcon size={2.5}/>
             </div>
@@ -1153,13 +1173,45 @@ export function ContextMenuSubmenuList(options: ContextMenuSubmenuListOptions)
             <div className="ContextMenu-down-arrow">
                 <DownArrowIcon size={2.5}/>
             </div>
-        </div>
+        </SubmenuMainDiv>
     );
 }
 
 export type ContextMenuSubmenuListOptions = {
     children?: React.ReactNode,
 };
+
+// Main div CSS
+const SubmenuMainDiv = styled.div<{
+    $theme: Theme,
+}> `
+    display: inline-flex;
+    visibility: "hidden";
+    flex-direction: column;
+    position: fixed;
+    background: ${$ => $.$theme.colors.inputBackground};
+    border: 0.15rem solid ${$ => $.$theme.colors.inputBorder};
+    padding: ${pointsToRem(2)} 0;
+    min-width: 12rem;
+    max-height: 30rem;
+    opacity: 0;
+    z-index: ${maximumZIndex};
+
+    & > .ContextMenu-up-arrow, & > .ContextMenu-down-arrow {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        height: ${pointsToRem(2.5)};
+    }
+
+    & > .ContextMenu-list {
+        display: flex;
+        flex-direction: column;
+        overflow-y: scroll;
+        scrollbar-width: none;
+        flex-grow: 3;
+    }
+`;
 
 /**
  * Context menu submenu arrow icon (left or right depending on locale).
@@ -1177,12 +1229,11 @@ export function ContextMenuSubIcon(options: IconOptions)
  */
 export function ContextMenuSeparator()
 {
-    // CSS
-    const serializedStlyes = css `
-        padding: 0.45rem;
-    `;
-
     return (
-        <div css={serializedStlyes}></div>
+        <SeparatorDiv></SeparatorDiv>
     );
 }
+
+const SeparatorDiv = styled.div `
+    padding: 0.45rem;
+`;

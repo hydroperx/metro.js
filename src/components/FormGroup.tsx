@@ -1,7 +1,27 @@
-import { css } from "@emotion/react";
+import { styled } from "styled-components";
 import { useContext } from "react";
 import { pointsToRem } from "../utils/points";
 import { LocaleDirectionContext } from "../layout";
+
+// CSS
+const Div = styled.div<{
+    $vertical: boolean,
+    $localeDir: "ltr" | "rtl",
+}> `
+display: flex;
+flex-direction: ${$ => $.$vertical ? "column" : $.$localeDir == "ltr" ? "row" : "row-reverse"};
+gap: 1rem;
+
+${
+    $ => $.$vertical ? "" :
+    `
+    & > label, & > span, & > h1, & > h2, & > h3, & > h4, & > h5 {
+        min-width: 12rem;
+        ${$.$localeDir == "rtl" ? "text-align: right;" : ""}
+    }
+    `
+}
+`;
 
 /**
  * A form group more commonly contains a label
@@ -12,26 +32,15 @@ export function FormGroup(options: FormGroupOptions)
     // Locale direction
     const localeDir = useContext(LocaleDirectionContext);
 
-    // CSS
-    const serializedStyles = css `
-        display: flex;
-        flex-direction: ${options.vertical ? "column" : localeDir == "ltr" ? "row" : "row-reverse"};
-        gap: 1rem;
-
-        ${
-            options.vertical ? "" :
-            `
-            & > label, & > span, & > h1, & > h2, & > h3, & > h4, & > h5 {
-                min-width: 12rem;
-                ${localeDir == "rtl" ? "text-align: right;" : ""}
-            }
-            `
-        }
-    `;
     return (
-        <div css={serializedStyles} style={options.style} className={options.className}>
+        <Div
+            $vertical={!!options.vertical}
+            $localeDir={localeDir}
+            style={options.style}
+            className={options.className}>
+
             {options.children}
-        </div>
+        </Div>
     );
 }
 

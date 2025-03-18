@@ -1,5 +1,6 @@
 import extend from "extend";
-import { css, SerializedStyles } from "@emotion/react";
+import { styled } from "styled-components";
+import { IStyledComponentBase, Substitute } from "styled-components/dist/types";
 import React, { Ref, useContext, useRef, useState, useEffect } from "react";
 import Color from "color";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
@@ -7,8 +8,26 @@ import { fontFamily, fontSize, maximumZIndex } from "../utils/common";
 import { lighten, darken, enhanceBrightness } from "../utils/color";
 import { computePosition } from "../utils/placement";
 import { DownArrowIcon, Icon } from "./Icons";
-import { ThemeContext } from "../theme";
+import { Theme, ThemeContext } from "../theme";
 import { LocaleDirectionContext } from "../layout";
+
+const TooltipDiv = styled.div<{
+    $theme: Theme,
+    $tooltipVisible: boolean,
+    $tooltipX: number,
+    $tooltipY: number,
+}> `
+    background: ${$ => $.$theme.colors.inputBackground};
+    border: 0.15rem solid ${$ => $.$theme.colors.inputBorder};
+    display: inline-block;
+    visibility: ${$ => $.$tooltipVisible ? "visible" : "hidden"};
+    position: fixed;
+    left: ${$ => $.$tooltipX}px;
+    top: ${$ => $.$tooltipY}px;
+    padding: 0.4rem;
+    font-size: 0.77rem;
+    z-index: ${maximumZIndex};
+`;
 
 export function Button(options: ButtonOptions)
 {
@@ -37,298 +56,79 @@ export function Button(options: ButtonOptions)
     }
 
     // Emotion CSS
-    let serialized_styles: SerializedStyles = null;
+    let Button_comp: (IStyledComponentBase<"web", Substitute<React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>, ButtonCSSProps>> & string) | null = null;
     
     const padding = "0.6rem 1rem";
+    let color: Color | string = "",
+        bg = "",
+        hover_bg = "",
+        hover_color = "",
+        pressed_color = "";
 
     switch (options.variant ?? "secondary")
     {
         case "none":
         {
             const dark = Color(theme.colors.background).isDark();
-            const color = dark ? "#fff" : "#000";
-            const hoverBg = dark ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.4)";
+            color = dark ? "#fff" : "#000";
+            hover_bg = dark ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.4)";
 
-            serialized_styles = css `
-                background: none;
-                color: ${color};
-                padding: ${padding};
-                border: none;
-                border-radius: 0;
-                font-size: ${fontSize};
-                font-family: ${fontFamily};
-
-                &:hover:not(:disabled) {
-                    background: ${hoverBg};
-                }
-
-                &:active:not(:disabled) {
-                    transform: scale(0.97);
-                }
-
-                &[data-chosen="true"]:not(:disabled) {
-                    background: ${theme.colors.primary};
-                    color: ${theme.colors.primaryForeground};
-                }
-
-                &:focus:not(:disabled) {
-                    outline: 0.05rem dotted ${color};
-                    outline-offset: -0.4rem;
-                }
-
-                &:disabled {
-                    opacity: 0.6;
-                }
-            `;
+            Button_comp = NoneButton;
             break;
         }
         case "small-dropdown":
         case "small-dropdown-primary":
         {
-            const normal_color = options.variant == "small-dropdown-primary" ? Color(enhanceBrightness(theme.colors.background, theme.colors.primary)).alpha(0.67) : Color(theme.colors.foreground).alpha(0.67);
+            color = options.variant == "small-dropdown-primary" ? Color(enhanceBrightness(theme.colors.background, theme.colors.primary)).alpha(0.67) : Color(theme.colors.foreground).alpha(0.67);
 
-            serialized_styles = css `
-                background: none;
-                border: none;
-                color: ${normal_color.toString()};
-                font-family: ${fontFamily};
-                font-weight: lighter;
-                font-size: 0.79rem;
-                display: flex;
-                gap: 0.5rem;
-                flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
-                align-items: center;
-                padding: ${pointsToRemValue(1)}rem 0.7rem;
-                min-width: 5rem;
-                outline: none;
-    
-                &:hover:not(:disabled), &:focus:not(:disabled) {
-                    color: ${normal_color.alpha(0.8).toString()};
-                }
-    
-                &:active:not(:disabled) {
-                    color: ${normal_color.alpha(1).toString()};
-                }
-    
-                &:disabled {
-                    opacity: 0.4;
-                }
-
-                & .Button-small-inner {
-                    display: inline-flex;
-                    flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
-                    gap: 0.9rem;
-                }
-
-                & .Button-small-arrow {
-                    display: inline-flex;
-                    flex-grow: 2;
-                    flex-direction: ${localeDir == "ltr" ? "row-reverse" : "row"};
-                    opacity: 0.7;
-                }
-            `;
+            Button_comp = SmallDropdownButton;
             break;
         }
         case "anchor":
         {
-            const color = theme.colors.anchor ?? "#000";
-            const hoverColor = lighten(color, 0.3).toString();
+            color = theme.colors.anchor ?? "#000";
+            hover_color = lighten(color, 0.3).toString();
 
-            serialized_styles = css `
-                background: none;
-                color: ${color};
-                padding: ${padding};
-                border: none;
-                border-radius: 0;
-                font-size: ${fontSize};
-                font-family: ${fontFamily};
-
-                &:hover:not(:disabled) {
-                    color: ${hoverColor};
-                }
-
-                &:active:not(:disabled) {
-                    color: ${hoverColor};
-                }
-
-                &:focus:not(:disabled) {
-                    outline: 0.05rem dotted ${theme.colors.focusDashes};
-                    outline-offset: -0.4rem;
-                }
-
-                &:disabled {
-                    opacity: 0.6;
-                }
-            `;
+            Button_comp = AnchorButton;
             break;
         }
         case "secondary":
         {
-            const hoveredBackgrund = lighten(theme.colors.secondary, 0.5);
-            serialized_styles = css `
-                background: ${theme.colors.secondary};
-                color: ${theme.colors.foreground};
-                padding: ${padding};
-                border: none;
-                border-radius: 0;
-                font-size: ${fontSize};
-                font-family: ${fontFamily};
-
-                &:hover:not(:disabled) {
-                    background: ${hoveredBackgrund};
-                }
-
-                &:active:not(:disabled) {
-                    background: ${theme.colors.pressed};
-                    color: ${theme.colors.pressedForeground};
-                }
-
-                &:focus:not(:disabled) {
-                    outline: 0.05rem dotted ${theme.colors.focusDashes};
-                    outline-offset: -0.4rem;
-                }
-
-                &:disabled {
-                    opacity: 0.6;
-                }
-            `;
+            hover_bg = lighten(theme.colors.secondary, 0.5);
+            Button_comp = SecondaryButton;
             break;
         }
         case "primary":
         {
-            const hoveredBackgrund = lighten(theme.colors.primary, 0.5);
-            serialized_styles = css `
-                background: ${theme.colors.primary};
-                color: ${theme.colors.primaryForeground};
-                padding: ${padding};
-                border: none;
-                border-radius: 0;
-                font-size: ${fontSize};
-                font-family: ${fontFamily};
-
-                &:hover:not(:disabled) {
-                    background: ${hoveredBackgrund};
-                }
-
-                &:active:not(:disabled) {
-                    background: ${theme.colors.pressed};
-                    color: ${theme.colors.pressedForeground};
-                }
-
-                &:focus:not(:disabled) {
-                    outline: 0.05rem dotted ${theme.colors.focusDashes};
-                    outline-offset: -0.4rem;
-                }
-
-                &:disabled {
-                    opacity: 0.6;
-                }
-            `;
+            hover_bg = lighten(theme.colors.primary, 0.5);
+            Button_comp = PrimaryButton;
             break;
         }
         case "danger":
         {
-            const hoveredBackgrund = lighten(theme.colors.danger, 0.5);
-            serialized_styles = css `
-                background: ${theme.colors.danger};
-                color: ${theme.colors.dangerForeground};
-                padding: ${padding};
-                border: none;
-                border-radius: 0;
-                font-size: ${fontSize};
-                font-family: ${fontFamily};
-
-                &:hover:not(:disabled) {
-                    background: ${hoveredBackgrund};
-                }
-
-                &:active:not(:disabled) {
-                    background: ${theme.colors.pressed};
-                    color: ${theme.colors.pressedForeground};
-                }
-
-                &:focus:not(:disabled) {
-                    outline: 0.05rem dotted ${theme.colors.focusDashes};
-                    outline-offset: -0.4rem;
-                }
-
-                &:disabled {
-                    opacity: 0.6;
-                }
-            `;
+            hover_bg = lighten(theme.colors.danger, 0.5);
+            Button_comp = DangerButton;
             break;
         }
         case "outline":
         {
             const dark = Color(theme.colors.background).isDark();
-            const color = dark ? "#fff" : "#000";
-            const hoverBg = dark ? lighten(theme.colors.background, 0.4).toString() : darken(theme.colors.background, 0.3).toString();
-            const pressedCharColor = dark ? "#000" : "#fff";
+            color = dark ? "#fff" : "#000";
+            hover_bg = dark ? lighten(theme.colors.background, 0.4).toString() : darken(theme.colors.background, 0.3).toString();
+            pressed_color = dark ? "#000" : "#fff";
 
-            serialized_styles = css `
-                background: none;
-                color: ${color};
-                padding: ${padding};
-                border: 0.15rem solid ${color};
-                border-radius: 0;
-                font-size: ${fontSize};
-                font-family: ${fontFamily};
-
-                &:hover:not(:disabled) {
-                    background: ${hoverBg};
-                }
-
-                &:active:not(:disabled) {
-                    background: ${color};
-                    color: ${pressedCharColor};
-                }
-
-                &:focus:not(:disabled) {
-                    outline: 0.05rem dotted ${color};
-                    outline-offset: -0.4rem;
-                }
-
-                &:disabled {
-                    opacity: 0.6;
-                }
-            `;
+            Button_comp = OutlineButton;
             break;
         }
         case "outline-primary":
         {
             const dark = Color(theme.colors.background).isDark();
-            const color = dark ? "#fff" : "#000";
-            const bg = dark ? lighten(theme.colors.background, 0.5).toString() : darken(theme.colors.background, 0.3).toString();
-            const hoverBg = dark ? lighten(theme.colors.background, 0.7).toString() : darken(theme.colors.background, 0.5).toString();
-            const pressedCharColor = dark ? "#000" : "#fff";
+            color = dark ? "#fff" : "#000";
+            bg = dark ? lighten(theme.colors.background, 0.5).toString() : darken(theme.colors.background, 0.3).toString();
+            hover_bg = dark ? lighten(theme.colors.background, 0.7).toString() : darken(theme.colors.background, 0.5).toString();
+            pressed_color = dark ? "#000" : "#fff";
 
-            serialized_styles = css `
-                background: ${bg};
-                color: ${color};
-                padding: ${padding};
-                border: 0.15rem solid ${color};
-                border-radius: 0;
-                font-size: ${fontSize};
-                font-family: ${fontFamily};
-
-                &:hover:not(:disabled) {
-                    background: ${hoverBg};
-                }
-
-                &:active:not(:disabled) {
-                    background: ${color};
-                    color: ${pressedCharColor};
-                }
-
-                &:focus:not(:disabled) {
-                    outline: 0.05rem dotted ${color};
-                    outline-offset: -0.4rem;
-                }
-
-                &:disabled {
-                    opacity: 0.6;
-                }
-            `;
+            Button_comp = OutlinePrimaryButton;
             break;
         }
     }
@@ -339,18 +139,6 @@ export function Button(options: ButtonOptions)
     const [tooltipY, setTooltipY] = useState<number>(0);
     const tooltipElement: Ref<HTMLDivElement | null> = useRef(null);
     let tooltipTimeout = -1;
-    let tooltip_serialized_styles: SerializedStyles | null = options.tooltip === undefined ? null : css `
-        background: ${theme.colors.inputBackground};
-        border: 0.15rem solid ${theme.colors.inputBorder};
-        display: inline-block;
-        visibility: ${tooltipVisible ? "visible" : "hidden"};
-        position: fixed;
-        left: ${tooltipX}px;
-        top: ${tooltipY}px;
-        padding: 0.4rem;
-        font-size: 0.77rem;
-        z-index: ${maximumZIndex};
-    `;
 
     // Display tooltip
     const userMouseOver = options.mouseOver;
@@ -396,17 +184,27 @@ export function Button(options: ButtonOptions)
         options.element?.(button);
     });
 
+    const Button = Button_comp!;
+
     return (
         <>
-            <button
+            <Button
                 ref={buttonRef}
-                css={serialized_styles}
                 className={options.className}
                 style={newStyle}
                 type={options.type ?? "button"}
                 disabled={options.disabled ?? false}
                 autoFocus={options.autoFocus ?? false}
                 data-chosen={!!options.chosen}
+
+                $color={color}
+                $padding={padding}
+                $bg={bg}
+                $hover_bg={hover_bg}
+                $hover_color={hover_color}
+                $pressed_color={pressed_color}
+                $theme={theme}
+                $localeDir={localeDir}
 
                 onFocus={options.focus}
                 onClick={options.click}
@@ -443,10 +241,18 @@ export function Button(options: ButtonOptions)
                         </>:
                         options.children
                 }
-            </button>
+            </Button>
             {tooltip === undefined ?
                 undefined :
-                <div ref={tooltipElement} css={tooltip_serialized_styles}>{tooltip}</div>
+                <TooltipDiv
+                    ref={tooltipElement}
+                    $theme={theme}
+                    $tooltipVisible={tooltipVisible}
+                    $tooltipX={tooltipX}
+                    $tooltipY={tooltipY}>
+            
+                    {tooltip}
+                </TooltipDiv>
             }
         </>
     );
@@ -515,6 +321,273 @@ export type ButtonOptions =
     touchCancel?: React.TouchEventHandler<HTMLButtonElement>,
 };
 
+type ButtonCSSProps = {
+    $color: Color | string,
+    $padding: string,
+    $bg: string,
+    $hover_bg: string,
+    $hover_color: string,
+    $pressed_color: string,
+    $theme: Theme,
+    $localeDir: "ltr" | "rtl",
+};
+
+// none
+
+const NoneButton = styled.button<ButtonCSSProps> `
+    background: none;
+    color: ${$ => $.$color as string};
+    padding: ${$ => $.$padding};
+    border: none;
+    border-radius: 0;
+    font-size: ${fontSize};
+    font-family: ${fontFamily};
+
+    &:hover:not(:disabled) {
+        background: ${$ => $.$hover_bg};
+    }
+
+    &:active:not(:disabled) {
+        transform: scale(0.97);
+    }
+
+    &[data-chosen="true"]:not(:disabled) {
+        background: ${$ => $.$theme.colors.primary};
+        color: ${$ => $.$theme.colors.primaryForeground};
+    }
+
+    &:focus:not(:disabled) {
+        outline: 0.05rem dotted ${$ => $.$color as string};
+        outline-offset: -0.4rem;
+    }
+
+    &:disabled {
+        opacity: 0.6;
+    }
+`;
+
+// small dropdown
+
+const SmallDropdownButton = styled.button<ButtonCSSProps> `
+    background: none;
+    border: none;
+    color: ${$ => $.$color.toString()};
+    font-family: ${fontFamily};
+    font-weight: lighter;
+    font-size: 0.79rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-direction: ${$ => $.$localeDir == "ltr" ? "row" : "row-reverse"};
+    align-items: center;
+    padding: ${pointsToRemValue(1)}rem 0.7rem;
+    min-width: 5rem;
+    outline: none;
+
+    &:hover:not(:disabled), &:focus:not(:disabled) {
+        color: ${$ => ($.$color as Color).alpha(0.8).toString()};
+    }
+
+    &:active:not(:disabled) {
+        color: ${$ => ($.$color as Color).alpha(1).toString()};
+    }
+
+    &:disabled {
+        opacity: 0.4;
+    }
+
+    & .Button-small-inner {
+        display: inline-flex;
+        flex-direction: ${$ => $.$localeDir == "ltr" ? "row" : "row-reverse"};
+        gap: 0.9rem;
+    }
+
+    & .Button-small-arrow {
+        display: inline-flex;
+        flex-grow: 2;
+        flex-direction: ${$ => $.$localeDir == "ltr" ? "row-reverse" : "row"};
+        opacity: 0.7;
+    }
+`;
+
+// anchor
+
+const AnchorButton = styled.button<ButtonCSSProps> `
+    background: none;
+    color: ${$ => ($.$color as string)};
+    padding: ${$ => $.$padding};
+    border: none;
+    border-radius: 0;
+    font-size: ${fontSize};
+    font-family: ${fontFamily};
+
+    &:hover:not(:disabled) {
+        color: ${$ => $.$hover_color};
+    }
+
+    &:active:not(:disabled) {
+        color: ${$ => $.$hover_color};
+    }
+
+    &:focus:not(:disabled) {
+        outline: 0.05rem dotted ${$ => $.$theme.colors.focusDashes};
+        outline-offset: -0.4rem;
+    }
+
+    &:disabled {
+        opacity: 0.6;
+    }
+`;
+
+// secondary
+
+const SecondaryButton = styled.button<ButtonCSSProps> `
+    background: ${$ => $.$theme.colors.secondary};
+    color: ${$ => $.$theme.colors.foreground};
+    padding: ${$ => $.$padding};
+    border: none;
+    border-radius: 0;
+    font-size: ${fontSize};
+    font-family: ${fontFamily};
+
+    &:hover:not(:disabled) {
+        background: ${$ => $.$hover_bg};
+    }
+
+    &:active:not(:disabled) {
+        background: ${$ => $.$theme.colors.pressed};
+        color: ${$ => $.$theme.colors.pressedForeground};
+    }
+
+    &:focus:not(:disabled) {
+        outline: 0.05rem dotted ${$ => $.$theme.colors.focusDashes};
+        outline-offset: -0.4rem;
+    }
+
+    &:disabled {
+        opacity: 0.6;
+    }
+`;
+
+// primary
+
+const PrimaryButton = styled.button<ButtonCSSProps> `
+    background: ${$ => $.$theme.colors.primary};
+    color: ${$ => $.$theme.colors.primaryForeground};
+    padding: ${$ => $.$padding};
+    border: none;
+    border-radius: 0;
+    font-size: ${fontSize};
+    font-family: ${fontFamily};
+
+    &:hover:not(:disabled) {
+        background: ${$ => $.$hover_bg};
+    }
+
+    &:active:not(:disabled) {
+        background: ${$ => $.$theme.colors.pressed};
+        color: ${$ => $.$theme.colors.pressedForeground};
+    }
+
+    &:focus:not(:disabled) {
+        outline: 0.05rem dotted ${$ => $.$theme.colors.focusDashes};
+        outline-offset: -0.4rem;
+    }
+
+    &:disabled {
+        opacity: 0.6;
+    }
+`;
+
+// danger
+
+const DangerButton = styled.button<ButtonCSSProps> `
+    background: ${$ => $.$theme.colors.danger};
+    color: ${$ => $.$theme.colors.dangerForeground};
+    padding: ${$ => $.$padding};
+    border: none;
+    border-radius: 0;
+    font-size: ${fontSize};
+    font-family: ${fontFamily};
+
+    &:hover:not(:disabled) {
+        background: ${$ => $.$hover_bg};
+    }
+
+    &:active:not(:disabled) {
+        background: ${$ => $.$theme.colors.pressed};
+        color: ${$ => $.$theme.colors.pressedForeground};
+    }
+
+    &:focus:not(:disabled) {
+        outline: 0.05rem dotted ${$ => $.$theme.colors.focusDashes};
+        outline-offset: -0.4rem;
+    }
+
+    &:disabled {
+        opacity: 0.6;
+    }
+`;
+
+// outline
+
+const OutlineButton = styled.button<ButtonCSSProps> `
+    background: none;
+    color: ${$ => ($.$color as string)};
+    padding: ${$ => $.$padding};
+    border: 0.15rem solid ${$ => ($.$color as string)};
+    border-radius: 0;
+    font-size: ${fontSize};
+    font-family: ${fontFamily};
+
+    &:hover:not(:disabled) {
+        background: ${$ => $.$hover_bg};
+    }
+
+    &:active:not(:disabled) {
+        background: ${$ => $.$color as string};
+        color: ${$ => $.$pressed_color};
+    }
+
+    &:focus:not(:disabled) {
+        outline: 0.05rem dotted ${$ => $.$color as string};
+        outline-offset: -0.4rem;
+    }
+
+    &:disabled {
+        opacity: 0.6;
+    }
+`;
+
+// outline primary
+
+const OutlinePrimaryButton = styled.button<ButtonCSSProps> `
+    background: ${$ => $.$bg};
+    color: ${$ => $.$color as string};
+    padding: ${$ => $.$padding};
+    border: 0.15rem solid ${$ => $.$color as string};
+    border-radius: 0;
+    font-size: ${fontSize};
+    font-family: ${fontFamily};
+
+    &:hover:not(:disabled) {
+        background: ${$ => $.$hover_bg};
+    }
+
+    &:active:not(:disabled) {
+        background: ${$ => $.$color as string};
+        color: ${$ => $.$pressed_color};
+    }
+
+    &:focus:not(:disabled) {
+        outline: 0.05rem dotted ${$ => $.$color as string};
+        outline-offset: -0.4rem;
+    }
+
+    &:disabled {
+        opacity: 0.6;
+    }
+`;
+
 /**
  * Represents a circle bordered icon button.
  */
@@ -541,42 +614,6 @@ export function CircleIconButton(options: CircleIconButtonOptions)
     const size = options.size ?? 9;
     const size_rem = pointsToRem(size);
 
-    // Build style class
-    const serialized_styles = css `
-        border: 0.17rem solid ${fg};
-        border-radius: 100%;
-        outline: none;
-        color: ${normal_color};
-        ${options.filled ? `background: ${fg};` : "background: none;"}
-        width: ${size_rem};
-        height: ${size_rem};
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-
-        &:hover:not(:disabled) {
-            color: ${hover_color};
-            background: ${Color(fg).alpha(0.3).toString()};
-        }
-
-        &:focus:not(:disabled) {
-            outline: 0.05rem dotted ${theme.colors.focusDashes};
-            outline-offset: 0.3rem;
-        }
-
-        &:active:not(:disabled) {
-            outline: none;
-            color: ${active_color};
-            ${options.filled ?
-                `background: ${Color(fg).alpha(0.5).toString()};` : `background: ${fg};`}
-        }
-
-        &:disabled {
-            opacity: 0.6;
-        }
-    `;
-
     useEffect(() => {
         // Obtain button
         const button = ref.current!;
@@ -591,18 +628,6 @@ export function CircleIconButton(options: CircleIconButtonOptions)
     const [tooltipY, setTooltipY] = useState<number>(0);
     const tooltipElement: Ref<HTMLDivElement | null> = useRef(null);
     let tooltipTimeout = -1;
-    let tooltip_serialized_styles: SerializedStyles | null = options.tooltip === undefined ? null : css `
-        background: ${theme.colors.inputBackground};
-        border: 0.15rem solid ${theme.colors.inputBorder};
-        display: inline-block;
-        visibility: ${tooltipVisible ? "visible" : "hidden"};
-        position: fixed;
-        left: ${tooltipX}px;
-        top: ${tooltipY}px;
-        padding: 0.4rem;
-        font-size: 0.77rem;
-        z-index: ${maximumZIndex};
-    `;
 
     // Display tooltip
     const userMouseOver = options.mouseOver;
@@ -643,13 +668,20 @@ export function CircleIconButton(options: CircleIconButtonOptions)
 
     return (
         <>
-            <button
+            <CircleIconButtonButton
                 ref={ref}
-                css={serialized_styles}
                 className={options.className}
                 disabled={options.disabled}
                 autoFocus={options.autoFocus}
                 style={options.style}
+
+                $normal_color={normal_color}
+                $hover_color={hover_color}
+                $active_color={active_color}
+                $fg={fg}
+                $theme={theme}
+                $filled={!!options.filled}
+                $size_rem={size_rem}
                 
                 onFocus={options.focus}
                 onClick={options.click}
@@ -675,11 +707,19 @@ export function CircleIconButton(options: CircleIconButtonOptions)
                 onTouchCancel={options.touchCancel}>
 
                 <Icon type={options.icon} size={size - (size <= 4.5 ? 0 : 4.5)} style={iconStyle}/>
-            </button>
+            </CircleIconButtonButton>
 
             {tooltip === undefined ?
                 undefined :
-                <div ref={tooltipElement} css={tooltip_serialized_styles}>{tooltip}</div>
+                <TooltipDiv
+                    ref={tooltipElement}
+                    $theme={theme}
+                    $tooltipVisible={tooltipVisible}
+                    $tooltipX={tooltipX}
+                    $tooltipY={tooltipY}>
+            
+                    {tooltip}
+                </TooltipDiv>
             }
         </>
     );
@@ -731,6 +771,49 @@ export type CircleIconButtonOptions = {
     touchMove?: React.TouchEventHandler<HTMLButtonElement>,
     touchCancel?: React.TouchEventHandler<HTMLButtonElement>,
 };
+
+const CircleIconButtonButton = styled.button<{
+    $normal_color: string,
+    $hover_color: string,
+    $active_color: string,
+    $fg: string,
+    $theme: Theme,
+    $filled: boolean,
+    $size_rem: string,
+}> `
+    border: 0.17rem solid ${$ => $.$fg};
+    border-radius: 100%;
+    outline: none;
+    color: ${$ => $.$normal_color};
+    ${$ => $.$filled ? `background: ${$.$fg};` : "background: none;"}
+    width: ${$ => $.$size_rem};
+    height: ${$ => $.$size_rem};
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    &:hover:not(:disabled) {
+        color: ${$ => $.$hover_color};
+        background: ${$ => Color($.$fg).alpha(0.3).toString()};
+    }
+
+    &:focus:not(:disabled) {
+        outline: 0.05rem dotted ${$ => $.$theme.colors.focusDashes};
+        outline-offset: 0.3rem;
+    }
+
+    &:active:not(:disabled) {
+        outline: none;
+        color: ${$ => $.$active_color};
+        ${$ => $.$filled ?
+            `background: ${Color($.$fg).alpha(0.5).toString()};` : `background: ${$.$fg};`}
+    }
+
+    &:disabled {
+        opacity: 0.6;
+    }
+    `;
 
 /**
  * Represents an arrow button.

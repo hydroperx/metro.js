@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 
 // https://vite.dev/config/
 export default defineConfig({
-    plugins: [react({ jsxImportSource: "@emotion/react" })],
+    plugins: [react()],
     define: {
         "process.platform": JSON.stringify(process.platform),
         "process.env.IS_PREACT": JSON.stringify("true"),

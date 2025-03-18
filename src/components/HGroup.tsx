@@ -1,8 +1,47 @@
-import { css } from "@emotion/react";
+import { styled } from "styled-components";
 import { useEffect, useRef } from "react";
 import assert from "assert";
 import { Alignment } from "../layout/Alignment";
 import { pointsToRem } from "../utils/points";
+
+// CSS
+const Div = styled.div<{
+    $visible?: boolean;
+    $inline?: boolean;
+    $gap?: number;
+    $padding?: number;
+    $paddingLeft?: number;
+    $paddingRight?: number;
+    $paddingTop?: number;
+    $paddingBottom?: number;
+    $minWidth?: number;
+    $minHeight?: number;
+    $maxWidth?: number;
+    $maxHeight?: number;
+    $justifyContent?: string;
+    $alignItems?: string;
+    $overflow?: string;
+    $overflowX?: string;
+    $overflowY?: string;
+}> `
+    display: ${$ => ($.$visible ?? true) ? ($.$inline ? "inline-flex" : "flex") : "none"};
+    flex-direction: row;
+    ${ $ => $.$gap !== undefined ? "gap: " + pointsToRem($.$gap) + ";" : "" }
+    ${ $ => $.$padding !== undefined ? "padding: " + pointsToRem($.$padding) + ";" : "" }
+    ${ $ => $.$paddingLeft !== undefined ? "padding-left: " + pointsToRem($.$paddingLeft) + ";" : "" }
+    ${ $ => $.$paddingRight !== undefined ? "padding-right: " + pointsToRem($.$paddingRight) + ";" : "" }
+    ${ $ => $.$paddingTop !== undefined ? "padding-top: " + pointsToRem($.$paddingTop) + ";" : "" }
+    ${ $ => $.$paddingBottom !== undefined ? "padding-bottom: " + pointsToRem($.$paddingBottom) + ";" : "" }
+    ${ $ => $.$minWidth !== undefined ? "min-width: " + pointsToRem($.$minWidth) + ";" : "" }
+    ${ $ => $.$minHeight !== undefined ? "min-height: " + pointsToRem($.$minHeight) + ";" : "" }
+    ${ $ => $.$maxWidth !== undefined ? "max-width: " + pointsToRem($.$maxWidth) + ";" : "" }
+    ${ $ => $.$maxHeight !== undefined ? "max-height: " + pointsToRem($.$maxHeight) + ";" : "" }
+    ${ $ => $.$justifyContent ? "justify-content: " + $.$justifyContent + ";" : "" }
+    ${ $ => $.$alignItems ? "align-items: " + $.$alignItems + ";" : "" }
+    ${ $ => $.$overflow ? "overflow: " + $.$overflow + ";" : "" }
+    ${ $ => $.$overflowX ? "overflow-x: " + $.$overflowX + ";" : "" }
+    ${ $ => $.$overflowY ? "overflow-y: " + $.$overflowY + ";" : "" }
+`;
 
 export function HGroup(options: HGroupOptions)
 {
@@ -38,36 +77,32 @@ export function HGroup(options: HGroupOptions)
         alignItems = m;
     }
 
-    // CSS
-    const serializedStyles = css `
-        display: ${(options.visible ?? true) ? (options.inline ? "inline-flex" : "flex") : "none"};
-        flex-direction: row;
-        ${ options.gap !== undefined ? "gap: " + pointsToRem(options.gap) + ";" : "" }
-        ${ options.padding !== undefined ? "padding: " + pointsToRem(options.padding) + ";" : "" }
-        ${ options.paddingLeft !== undefined ? "padding-left: " + pointsToRem(options.paddingLeft) + ";" : "" }
-        ${ options.paddingRight !== undefined ? "padding-right: " + pointsToRem(options.paddingRight) + ";" : "" }
-        ${ options.paddingTop !== undefined ? "padding-top: " + pointsToRem(options.paddingTop) + ";" : "" }
-        ${ options.paddingBottom !== undefined ? "padding-bottom: " + pointsToRem(options.paddingBottom) + ";" : "" }
-        ${ options.minWidth !== undefined ? "min-width: " + pointsToRem(options.minWidth) + ";" : "" }
-        ${ options.minHeight !== undefined ? "min-height: " + pointsToRem(options.minHeight) + ";" : "" }
-        ${ options.maxWidth !== undefined ? "max-width: " + pointsToRem(options.maxWidth) + ";" : "" }
-        ${ options.maxHeight !== undefined ? "max-height: " + pointsToRem(options.maxHeight) + ";" : "" }
-        ${ justifyContent ? "justify-content: " + justifyContent + ";" : "" }
-        ${ alignItems ? "align-items: " + alignItems + ";" : "" }
-        ${ overflow ? "overflow: " + overflow + ";" : "" }
-        ${ overflowX ? "overflow-x: " + overflowX + ";" : "" }
-        ${ overflowY ? "overflow-y: " + overflowY + ";" : "" }
-    `;
-
     useEffect(() => {
         options.element?.(div_ref.current!);
     }, []);
 
-    return <div
+    return <Div
         ref={div_ref}
-        css={serializedStyles}
         className={options.className}
         style={options.style}
+
+        $visible={options.visible}
+        $inline={options.inline}
+        $gap={options.gap}
+        $padding={options.padding}
+        $paddingLeft={options.paddingLeft}
+        $paddingRight={options.paddingRight}
+        $paddingTop={options.paddingTop}
+        $paddingBottom={options.paddingBottom}
+        $minWidth={options.minWidth}
+        $minHeight={options.minHeight}
+        $maxWidth={options.maxWidth}
+        $maxHeight={options.maxHeight}
+        $justifyContent={justifyContent}
+        $alignItems={alignItems}
+        $overflow={overflow}
+        $overflowX={overflowX}
+        $overflowY={overflowY}
 
         onClick={options.click}
         onMouseOver={options.mouseOver}
@@ -92,7 +127,7 @@ export function HGroup(options: HGroupOptions)
         onTouchCancel={options.touchCancel}>
 
         {options.children}
-    </div>;
+    </Div>;
 }
 
 export type HGroupOptions = {

@@ -1,13 +1,15 @@
 import React, { useContext, useRef, useState, useEffect, createContext } from "react";
-import { css, SerializedStyles } from "@emotion/react";
+import { styled } from "styled-components";
+import { IStyledComponentBase, Substitute } from "styled-components/dist/types";
 import Color from "color";
 import { Input } from "com.hydroper.inputaction";
 import $ from "jquery";
 import assert from "assert";
+
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { UpArrowIcon, DownArrowIcon } from "./Icons";
 import { computePosition, fitViewportPosition, Side } from "../utils/placement";
-import { ThemeContext } from "../theme";
+import { Theme, ThemeContext } from "../theme";
 import { enhanceBrightness, contrast } from "../utils/color";
 import { fontFamily, fontSize, maximumZIndex } from "../utils/common";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
@@ -44,6 +46,148 @@ window.addEventListener("mousedown", function(): void
 // Cooldown when clicking options
 let cooldown = 0;
 
+// Dropdown CSS
+const DropdownDiv = styled.div<{
+    $visible: boolean,
+    $theme: Theme,
+    $big: boolean,
+    $medium: boolean,
+    $opacity: number,
+    $transition: string,
+    $arrowsVisible: boolean,
+    $x: number,
+    $y: number,
+}> `
+    display: inline-flex;
+    visibility: ${$ => $.$visible ? "visible" : "hidden"};
+    flex-direction: column;
+    position: fixed;
+    min-width: 15rem;
+    max-height: 25rem;
+    background: ${$ => $.$theme.colors.inputBackground};
+    border: ${$ => ($.$big || $.$medium ? "0.3rem" : "0.15rem") + " solid " + $.$theme.colors.inputBorder};
+    left: ${$ => $.$x}px;
+    top: ${$ => $.$y}px;
+    opacity: ${$ => $.$opacity};
+    ${$ => $.$transition ? `transition: ${$.$transition};` : ""}
+    z-index: ${maximumZIndex};
+
+    & .Select-list {
+        display: flex;
+        flex-direction: column;
+        overflow-y: scroll;
+        scrollbar-width: none;
+        flex-grow: 3;
+    }
+
+    & .Select-up-arrow, & .Select-down-arrow {
+        display: ${$ => $.$arrowsVisible ? "flex" : "none"};
+        flex-direction: row;
+        justify-content: center;
+        height: ${pointsToRem(2.5)};
+    }
+`;
+
+const BigOrMediumButton = styled.button<ButtonCSSProps> `
+    background: none;
+    border: none;
+    color: ${$ => $.$theme.colors.foreground};
+    font-size: ${$ => $.$big ? 2 : 1.6}rem;
+    font-family: ${fontFamily};
+    font-weight: lighter;
+    outline: none;
+    display: flex;
+    gap: 1rem;
+    flex-direction: ${$ => $.$localeDir == "ltr" ? "row" : "row-reverse"};
+    align-items: center;
+    padding: ${pointsToRemValue(2)}rem 0.7rem;
+    min-width: 10rem;
+    opacity: 0.7;
+
+    &:hover:not(:disabled), &:focus:not(:disabled), &:active:not(:disabled) {
+        opacity: 1;
+    }
+
+    &:disabled {
+        opacity: 0.4;
+    }
+
+    ${$ => $.$button_inner_css}
+    ${$ => $.$button_arrow_css}
+`;
+
+const SmallButton = styled.button<ButtonCSSProps> `
+    background: none;
+    border: none;
+    color: ${$ => $.$small_normal_color.toString()};
+    font-family: ${fontFamily};
+    font-weight: lighter;
+    font-size: 0.79rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-direction: ${$ => $.$localeDir == "ltr" ? "row" : "row-reverse"};
+    align-items: center;
+    padding: ${pointsToRemValue(1)}rem 0.7rem;
+    min-width: 3rem;
+    outline: none;
+
+    &:hover:not(:disabled), &:focus:not(:disabled) {
+        color: ${$ => $.$small_normal_color!.alpha(0.8).toString()};
+    }
+
+    &:active:not(:disabled) {
+        color: ${$ => $.$small_normal_color!.alpha(1).toString()};
+    }
+
+    &:disabled {
+        opacity: 0.4;
+    }
+
+    ${$ => $.$button_inner_css}
+    ${$ => $.$button_arrow_css}
+`;
+
+const NormalButton = styled.button<ButtonCSSProps> `
+    background: ${$ => $.$theme.colors.inputBackground};
+    border: 0.15rem solid  ${$ => $.$theme.colors.inputBorder};
+    color: ${$ => $.$theme.colors.foreground};
+    font-family: ${fontFamily};
+    font-size: ${fontSize};
+    display: flex;
+    flex-direction: ${$ => $.$localeDir == "ltr" ? "row" : "row-reverse"};
+    align-items: center;
+    padding: ${pointsToRemValue(2) + 0.15}rem 0.7rem;
+    min-width: 15rem;
+    outline: none;
+
+    &:hover:not(:disabled), &:focus:not(:disabled) {
+        background: ${$ => $.$hoverBackground};
+    }
+
+    &:active:not(:disabled) {
+        background: ${$ => $.$theme.colors.primary};
+        color: ${$ => $.$theme.colors.primaryForeground};
+    }
+
+    &:disabled {
+        opacity: 0.5;
+    }
+
+    ${$ => $.$button_inner_css}
+    ${$ => $.$button_arrow_css}
+    `;
+
+type ButtonCSSProps = {
+    $theme: Theme,
+    $big: boolean,
+    $medium: boolean,
+    $localeDir: "ltr" | "rtl",
+    $button_inner_css: string,
+    $button_arrow_css: string,
+    $small_normal_color: Color | undefined,
+    $hoverBackground: string,
+};
+
 /**
  * Represents a list of selectable values.
  */
@@ -75,7 +219,9 @@ export function Select(options: SelectOptions)
 
     // Button CSS
     const hoverBackground = Color(theme.colors.inputBackground).darken(0.4).toString();
-    let buttonSerializedStyles: SerializedStyles = null;
+    const Button: IStyledComponentBase<"web", Substitute<React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>, ButtonCSSProps>> & string =
+        options.big || options.medium ? BigOrMediumButton :
+        options.small ? SmallButton : NormalButton;
 
     // Button inner CSS
     const button_inner_css = `
@@ -96,135 +242,7 @@ export function Select(options: SelectOptions)
         }
     `;
 
-    // Dropdown CSS
-    const dropdown_serialized_styles = css `
-        display: inline-flex;
-        visibility: ${visible ? "visible" : "hidden"};
-        flex-direction: column;
-        position: fixed;
-        min-width: 15rem;
-        max-height: 25rem;
-        background: ${theme.colors.inputBackground};
-        border: ${(options.big || options.medium ? "0.3rem" : "0.15rem") + " solid " + theme.colors.inputBorder};
-        left: ${x}px;
-        top: ${y}px;
-        opacity: ${opacity};
-        ${transition ? `transition: ${transition};` : ""}
-        z-index: ${maximumZIndex};
-
-        & .Select-list {
-            display: flex;
-            flex-direction: column;
-            overflow-y: scroll;
-            scrollbar-width: none;
-            flex-grow: 3;
-        }
-
-        & .Select-up-arrow, & .Select-down-arrow {
-            display: ${arrowsVisible ? "flex" : "none"};
-            flex-direction: row;
-            justify-content: center;
-            height: ${pointsToRem(2.5)};
-        }
-    `;
-
-    if (options.big || options.medium)
-    {
-        buttonSerializedStyles = css `
-            background: none;
-            border: none;
-            color: ${theme.colors.foreground};
-            font-size: ${options.big ? 2 : 1.6}rem;
-            font-family: ${fontFamily};
-            font-weight: lighter;
-            outline: none;
-            display: flex;
-            gap: 1rem;
-            flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
-            align-items: center;
-            padding: ${pointsToRemValue(2)}rem 0.7rem;
-            min-width: 10rem;
-            opacity: 0.7;
-
-            &:hover:not(:disabled), &:focus:not(:disabled), &:active:not(:disabled) {
-                opacity: 1;
-            }
-
-            &:disabled {
-                opacity: 0.4;
-            }
-
-            ${button_inner_css}
-            ${button_arrow_css}
-        `;
-    }
-    else if (options.small)
-    {
-        const normal_color = options.primary ? Color(enhanceBrightness(theme.colors.background, theme.colors.primary)).alpha(0.67) : Color(theme.colors.foreground).alpha(0.67);
-
-        buttonSerializedStyles = css `
-            background: none;
-            border: none;
-            color: ${normal_color.toString()};
-            font-family: ${fontFamily};
-            font-weight: lighter;
-            font-size: 0.79rem;
-            display: flex;
-            gap: 0.5rem;
-            flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
-            align-items: center;
-            padding: ${pointsToRemValue(1)}rem 0.7rem;
-            min-width: 3rem;
-            outline: none;
-
-            &:hover:not(:disabled), &:focus:not(:disabled) {
-                color: ${normal_color.alpha(0.8).toString()};
-            }
-
-            &:active:not(:disabled) {
-                color: ${normal_color.alpha(1).toString()};
-            }
-
-            &:disabled {
-                opacity: 0.4;
-            }
-
-            ${button_inner_css}
-            ${button_arrow_css}
-        `;
-    }
-    else
-    {
-        buttonSerializedStyles = css `
-            background: ${theme.colors.inputBackground};
-            border: 0.15rem solid  ${theme.colors.inputBorder};
-            color: ${theme.colors.foreground};
-            font-family: ${fontFamily};
-            font-size: ${fontSize};
-            display: flex;
-            flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
-            align-items: center;
-            padding: ${pointsToRemValue(2) + 0.15}rem 0.7rem;
-            min-width: 15rem;
-            outline: none;
-
-            &:hover:not(:disabled), &:focus:not(:disabled) {
-                background: ${hoverBackground};
-            }
-
-            &:active:not(:disabled) {
-                background: ${theme.colors.primary};
-                color: ${theme.colors.primaryForeground};
-            }
-
-            &:disabled {
-                opacity: 0.5;
-            }
-
-            ${button_inner_css}
-            ${button_arrow_css}
-        `;
-    }
+    let small_normal_color: Color = options.small ? (options.primary ? Color(enhanceBrightness(theme.colors.background, theme.colors.primary)).alpha(0.67) : Color(theme.colors.foreground).alpha(0.67)) : undefined;
 
     // Open the list
     function open(): void
@@ -526,24 +544,42 @@ export function Select(options: SelectOptions)
 
     return (
         <>
-            <button
+            <Button
                 id={options.id}
                 ref={buttonRef}
-                css={buttonSerializedStyles}
                 style={options.style}
                 className={options.className}
                 disabled={!!options.disabled}
-                onClick={open}>
-                
+                onClick={open}
+                $theme={theme}
+                $big={!!options.big}
+                $medium={!!options.medium}
+                $localeDir={localeDir}
+                $button_inner_css={button_inner_css}
+                $button_arrow_css={button_arrow_css}
+                $small_normal_color={small_normal_color}
+                $hoverBackground={hoverBackground}>
+
                 <div className="Select-button-inner" dangerouslySetInnerHTML={{ __html: valueHyperText }}>
                 </div>
 
                 <div className="Select-button-arrow">
                     <DownArrowIcon size={options.big ? 6 : options.small ? 3.1 : 3.5}/>
                 </div>
-            </button>
+            </Button>
             <SelectOptionBigContext.Provider value={!!options.big || !!options.medium}>
-                <div ref={divRef} css={dropdown_serialized_styles}>
+                <DropdownDiv
+                    ref={divRef}
+                    $visible={visible}
+                    $theme={theme}
+                    $big={!!options.big}
+                    $medium={!!options.medium}
+                    $opacity={opacity}
+                    $transition={transition}
+                    $arrowsVisible={arrowsVisible}
+                    $x={x}
+                    $y={y}>
+
                     <div className="Select-up-arrow">
                         <UpArrowIcon size={2.5}/>
                     </div>
@@ -553,7 +589,7 @@ export function Select(options: SelectOptions)
                     <div className="Select-down-arrow">
                         <DownArrowIcon size={2.5}/>
                     </div>
-                </div>
+                </DropdownDiv>
             </SelectOptionBigContext.Provider>
         </>
     );
@@ -602,6 +638,40 @@ export type SelectOptions = {
     element?: (element: HTMLButtonElement) => void,
 };
 
+const SelectOptionButton = styled.button<{
+    $localeDir: "ltr" | "rtl",
+    $theme: Theme,
+    $big: boolean,
+    $hoverBackground: string,
+    $activeBackground: string,
+}> `
+    display: inline-flex;
+    flex-direction: ${$ => $.$localeDir == "ltr" ? "row" : "row-reverse"};
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    padding: 0.5rem 0.7rem;
+    background: none;
+    border: none;
+    outline: none;
+    color: ${$ => $.$theme.colors.foreground};
+    font-family: ${fontFamily};
+    font-size: ${$ => $.$big ? "1.1rem" : fontSize};
+    ${$ => $.$big ? "font-weight: lighter;" : ""}
+
+    &:hover, &:focus {
+        background: ${$ => $.$hoverBackground};
+    }
+
+    &:active, &[data-selected="true"] {
+        background: ${$ => $.$activeBackground};
+        color: ${$ => enhanceBrightness($.$activeBackground, $.$theme.colors.primary)};
+    }
+
+    &:disabled {
+        opacity: 0.5;
+    }
+`;
+
 export function SelectOption(options: SelectOptionOptions)
 {
     // Locale direction
@@ -619,33 +689,6 @@ export function SelectOption(options: SelectOptionOptions)
     // Build the style class
     const hoverBackground = contrast(theme.colors.inputBackground, 0.1);
     const activeBackground = contrast(theme.colors.inputBackground, 0.15);
-    const serializedStyles = css `
-        display: inline-flex;
-        flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
-        flex-wrap: wrap;
-        gap: 0.9rem;
-        padding: 0.5rem 0.7rem;
-        background: none;
-        border: none;
-        outline: none;
-        color: ${theme.colors.foreground};
-        font-family: ${fontFamily};
-        font-size: ${big ? "1.1rem" : fontSize};
-        ${big ? "font-weight: lighter;" : ""}
-
-        &:hover, &:focus {
-            background: ${hoverBackground};
-        }
-
-        &:active, &[data-selected="true"] {
-            background: ${activeBackground};
-            color: ${enhanceBrightness(activeBackground, theme.colors.primary)};
-        }
-
-        &:disabled {
-            opacity: 0.5;
-        }
-    `;
 
     function button_onClick(): void
     {
@@ -658,9 +701,19 @@ export function SelectOption(options: SelectOptionOptions)
     }
 
     return (
-        <button css={serializedStyles} className={"buttonNavigable" + (options.className ? " " + options.className : "")} onClick={button_onClick} ref={buttonRef} data-value={options.value}>
+        <SelectOptionButton
+            className={"buttonNavigable" + (options.className ? " " + options.className : "")}
+            onClick={button_onClick}
+            ref={buttonRef}
+            data-value={options.value}
+            $localeDir={localeDir}
+            $theme={theme}
+            $big={big}
+            $hoverBackground={hoverBackground}
+            $activeBackground={activeBackground}>
+
             {options.children}
-        </button>
+        </SelectOptionButton>
     );
 }
 

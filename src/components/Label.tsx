@@ -1,7 +1,7 @@
 import extend from "extend";
-import { css, SerializedStyles } from "@emotion/react";
+import { styled } from "styled-components";
 import { useContext, useState, useRef, Ref } from "react";
-import { ThemeContext, PreferPrimaryContext } from "../theme/Theme";
+import { ThemeContext, PreferPrimaryContext, Theme } from "../theme/Theme";
 import { fontFamily, maximumZIndex  } from "../utils/common";
 import { enhanceBrightness } from "../utils/color";
 import { pointsToRem } from "../utils/points";
@@ -14,6 +14,138 @@ export type LabelVariant =
     "heading3" |
     "heading4" |
     "legend";
+
+const TooltipDiv = styled.div<{
+    $theme: Theme,
+    $tooltipVisible: boolean,
+    $tooltipX: number,
+    $tooltipY: number,
+}> `
+    background: ${$ => $.$theme.colors.inputBackground};
+    border: 0.15rem solid ${$ => $.$theme.colors.inputBorder};
+    display: inline-block;
+    visibility: ${$ => $.$tooltipVisible ? "visible" : "hidden"};
+    position: fixed;
+    left: ${$ => $.$tooltipX}px;
+    top: ${$ => $.$tooltipY}px;
+    padding: 0.4rem;
+    font-size: 0.77rem;
+    z-index: ${maximumZIndex};
+`;
+
+// normal
+
+const NormalLabel = styled.label<LabelCSSProps> `
+    font-family: ${fontFamily};
+    font-size: 0.9rem;
+    ${$ => $.$sizing}
+`;
+
+const NormalSpan = styled.span<LabelCSSProps> `
+    font-family: ${fontFamily};
+    font-size: 0.9rem;
+    ${$ => $.$sizing}
+`;
+
+// heading 1
+
+const H1Label = styled.label<LabelCSSProps> `
+    ${$ => $.$preferPrimaryColors ? `color: ${enhanceBrightness($.$theme.colors.background, $.$theme.colors.primary)};` : ""}
+    font-family: ${fontFamily};
+    font-weight: lighter;
+    font-size: 2.1rem;
+    margin: 0.67em 0;
+    ${$ => $.$sizing}
+`;
+
+const H1 = styled.h1<LabelCSSProps> `
+    ${$ => $.$preferPrimaryColors ? `color: ${enhanceBrightness($.$theme.colors.background, $.$theme.colors.primary)};` : ""}
+    font-family: ${fontFamily};
+    font-weight: lighter;
+    font-size: 2.1rem;
+    margin: 0.67em 0;
+    ${$ => $.$sizing}
+`;
+
+// heading 2
+
+const H2Label = styled.label<LabelCSSProps> `
+    ${$ => $.$preferPrimaryColors ? `color: ${enhanceBrightness($.$theme.colors.background, $.$theme.colors.primary)};` : ""}
+    font-family: ${fontFamily};
+    font-weight: lighter;
+    font-size: 1.7rem;
+    margin: 0.67em 0;
+    ${$ => $.$sizing}
+`;
+
+const H2 = styled.h2<LabelCSSProps> `
+    ${$ => $.$preferPrimaryColors ? `color: ${enhanceBrightness($.$theme.colors.background, $.$theme.colors.primary)};` : ""}
+    font-family: ${fontFamily};
+    font-weight: lighter;
+    font-size: 1.7rem;
+    margin: 0.67em 0;
+    ${$ => $.$sizing}
+`;
+
+// heading 3
+
+const H3Label = styled.label<LabelCSSProps> `
+    ${$ => $.$preferPrimaryColors ? `color: ${enhanceBrightness($.$theme.colors.background, $.$theme.colors.primary)};` : ""}
+    font-family: ${fontFamily};
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin: 0.67em 0;
+    ${$ => $.$sizing}
+`;
+
+const H3 = styled.h3<LabelCSSProps> `
+    ${$ => $.$preferPrimaryColors ? `color: ${enhanceBrightness($.$theme.colors.background, $.$theme.colors.primary)};` : ""}
+    font-family: ${fontFamily};
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin: 0.67em 0;
+    ${$ => $.$sizing}
+`;
+
+// heading 4
+
+const H4Label = styled.label<LabelCSSProps> `
+    ${$ => $.$preferPrimaryColors ? `color: ${enhanceBrightness($.$theme.colors.background, $.$theme.colors.primary)};` : ""}
+    font-family: ${fontFamily};
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin: 0.67em 0;
+    ${$ => $.$sizing}
+`;
+
+const H4 = styled.h4<LabelCSSProps> `
+    ${$ => $.$preferPrimaryColors ? `color: ${enhanceBrightness($.$theme.colors.background, $.$theme.colors.primary)};` : ""}
+    font-family: ${fontFamily};
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin: 0.67em 0;
+    ${$ => $.$sizing}
+`;
+
+// legend
+
+const LegendLabel = styled.label<LabelCSSProps> `
+    font-family: ${fontFamily};
+    font-size: 0.77rem;
+    ${$ => $.$sizing}
+`;
+
+const LegendSpan = styled.span<LabelCSSProps> `
+    font-family: ${fontFamily};
+    font-size: 0.77rem;
+    ${$ => $.$sizing}
+`;
+
+type LabelCSSProps = {
+    $preferPrimaryColors: boolean,
+    $sizing: string,
+    $theme: Theme,
+};
 
 export function Label(options: LabelOptions)
 {
@@ -46,18 +178,6 @@ export function Label(options: LabelOptions)
     const [tooltipY, setTooltipY] = useState<number>(0);
     const tooltipElement: Ref<HTMLDivElement> = useRef(null);
     let tooltipTimeout = -1;
-    let tooltip_serialized_styles: SerializedStyles | null = options.tooltip === undefined ? null : css `
-        background: ${theme.colors.inputBackground};
-        border: 0.15rem solid ${theme.colors.inputBorder};
-        display: inline-block;
-        visibility: ${tooltipVisible ? "visible" : "hidden"};
-        position: fixed;
-        left: ${tooltipX}px;
-        top: ${tooltipY}px;
-        padding: 0.4rem;
-        font-size: 0.77rem;
-        z-index: ${maximumZIndex};
-    `;
 
     // Display tooltip
     const mouseOver = (e: MouseEvent): any => {
@@ -93,133 +213,159 @@ export function Label(options: LabelOptions)
 
     const tooltipRendered = tooltip === undefined ?
         undefined :
-        <div ref={tooltipElement} css={tooltip_serialized_styles}>{tooltip}</div>;
+        <TooltipDiv
+            ref={tooltipElement}
+            $theme={theme}
+            $tooltipVisible={tooltipVisible}
+            $tooltipX={tooltipX}
+            $tooltipY={tooltipY}>
+    
+            {tooltip}
+        </TooltipDiv>;
 
     switch (variant)
     {
         case "normal":
         {
-            const serializedStyles = css `
-                font-family: ${fontFamily};
-                font-size: 0.9rem;
-                ${sizing}
-            `;
             if (options.for)
             {
                 return <>
-                    <label id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>
+                    <NormalLabel
+                        id={options.id} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle} htmlFor={options.for}
+                        $preferPrimaryColors={preferPrimaryColors} $sizing={sizing} $theme={theme}>
+
+                        {options.children}
+                    </NormalLabel>
                     {tooltipRendered}
                 </>;
             }
             return <>
-                <span id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle}>{options.children}</span>
+                <NormalSpan
+                    id={options.id} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle}
+                    $preferPrimaryColors={preferPrimaryColors} $sizing={sizing} $theme={theme}>
+
+                    {options.children}
+                </NormalSpan>
                 {tooltipRendered}
             </>;
         }
         case "heading1":
         {
-            const serializedStyles = css `
-                ${preferPrimaryColors ? `color: ${enhanceBrightness(theme.colors.background, theme.colors.primary)};` : ""}
-                font-family: ${fontFamily};
-                font-weight: lighter;
-                font-size: 2.1rem;
-                margin: 0.67em 0;
-                ${sizing}
-            `;
             if (options.for)
             {
                 return <>
-                    <label id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>
+                    <H1Label
+                        id={options.id} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle} htmlFor={options.for}
+                        $preferPrimaryColors={preferPrimaryColors} $sizing={sizing} $theme={theme}>
+
+                        {options.children}
+                    </H1Label>
                     {tooltipRendered}
                 </>;
             }
             return <>
-                <h1 id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle}>{options.children}</h1>
+                <H1
+                    id={options.id} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle}
+                    $preferPrimaryColors={preferPrimaryColors} $sizing={sizing} $theme={theme}>
+
+                    {options.children}
+                </H1>
                 {tooltipRendered}
             </>;
         }
         case "heading2":
         {
-            const serializedStyles = css `
-                ${preferPrimaryColors ? `color: ${enhanceBrightness(theme.colors.background, theme.colors.primary)};` : ""}
-                font-family: ${fontFamily};
-                font-weight: lighter;
-                font-size: 1.7rem;
-                margin: 0.67em 0;
-                ${sizing}
-            `;
             if (options.for)
             {
                 return <>
-                    <label id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>
+                    <H2Label
+                        id={options.id} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle} htmlFor={options.for}
+                        $preferPrimaryColors={preferPrimaryColors} $sizing={sizing} $theme={theme}>
+
+                        {options.children}
+                    </H2Label>
                     {tooltipRendered}
                 </>;
             }
             return <>
-                <h2 id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle}>{options.children}</h2>
+                <H2
+                    id={options.id} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle}
+                    $preferPrimaryColors={preferPrimaryColors} $sizing={sizing} $theme={theme}>
+
+                    {options.children}
+                </H2>
                 {tooltipRendered}
             </>;
         }
         case "heading3":
         {
-            const serializedStyles = css `
-                ${preferPrimaryColors ? `color: ${enhanceBrightness(theme.colors.background, theme.colors.primary)};` : ""}
-                font-family: ${fontFamily};
-                font-size: 1.3rem;
-                font-weight: bold;
-                margin: 0.67em 0;
-                ${sizing}
-            `;
             if (options.for)
             {
                 return <>
-                    <label id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>
+                    <H3Label
+                        id={options.id} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle} htmlFor={options.for}
+                        $preferPrimaryColors={preferPrimaryColors} $sizing={sizing} $theme={theme}>
+
+                        {options.children}
+                    </H3Label>
                     {tooltipRendered}
                 </>;
             }
             return <>
-                <h3 id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle}>{options.children}</h3>
+                <H3
+                    id={options.id} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle}
+                    $preferPrimaryColors={preferPrimaryColors} $sizing={sizing} $theme={theme}>
+
+                    {options.children}
+                </H3>
                 {tooltipRendered}
             </>;
         }
         case "heading4":
         {
-            const serializedStyles = css `
-                ${preferPrimaryColors ? `color: ${enhanceBrightness(theme.colors.background, theme.colors.primary)};` : ""}
-                font-family: ${fontFamily};
-                font-size: 1.1rem;
-                font-weight: bold;
-                margin: 0.67em 0;
-                ${sizing}
-            `;
             if (options.for)
             {
                 return <>
-                    <label id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>
+                    <H4Label
+                        id={options.id} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle} htmlFor={options.for}
+                        $preferPrimaryColors={preferPrimaryColors} $sizing={sizing} $theme={theme}>
+
+                        {options.children}
+                    </H4Label>
                     {tooltipRendered}
                 </>;
             }
             return <>
-                <h4 id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle}>{options.children}</h4>
+                <H4
+                    id={options.id} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle}
+                    $preferPrimaryColors={preferPrimaryColors} $sizing={sizing} $theme={theme}>
+
+                    {options.children}
+                </H4>
                 {tooltipRendered}
             </>;
         }
         case "legend":
         {
-            const serializedStyles = css `
-                font-family: ${fontFamily};
-                font-size: 0.77rem;
-                ${sizing}
-            `;
             if (options.for)
             {
                 return <>
-                    <label id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle} htmlFor={options.for}>{options.children}</label>
+                    <LegendLabel
+                        id={options.id} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle} htmlFor={options.for}
+                        $preferPrimaryColors={preferPrimaryColors} $sizing={sizing} $theme={theme}>
+
+                        {options.children}
+                    </LegendLabel>
                     {tooltipRendered}
                 </>;
             }
             return <>
-                <span id={options.id} css={serializedStyles} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle}>{options.children}</span>
+                <LegendSpan
+                    id={options.id} onMouseOver={mouseOver as any} onMouseOut={mouseOut as any} className={options.className} style={newStyle}
+                    $preferPrimaryColors={preferPrimaryColors} $sizing={sizing} $theme={theme}>
+
+                    {options.children}
+                </LegendSpan>
                 {tooltipRendered}
             </>;
         }
