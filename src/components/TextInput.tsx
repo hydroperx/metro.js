@@ -1,4 +1,4 @@
-import { useContext, useRef, useState, useEffect } from "react";
+import { useContext, useRef, useState, useEffect, Ref } from "react";
 import { styled } from "styled-components";
 import Color from "color";
 import extend from "extend";
@@ -27,10 +27,6 @@ export function TextInput(options: TextInputOptions)
     // Icon
     const icon: string | null = options.icon ?? (options.search ? "search" : null);
     const iconSize = 5;
-
-    // Refs
-    const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
-    const inputRef = useRef<HTMLInputElement | null>(null);
 
     // Colors
     const dark = Color(theme.colors.inputBackground).isDark();
@@ -80,13 +76,6 @@ export function TextInput(options: TextInputOptions)
         }
     `;
 
-    useEffect(() => {
-        const element = options.multiline ? textAreaRef.current! : inputRef.current!;
-
-        // Pass element
-        options.element?.(element);
-    });
-
     return (
         options.multiline ?
             <TextArea
@@ -94,9 +83,9 @@ export function TextInput(options: TextInputOptions)
                 className={options.className}
                 $css={css}
                 style={options.style}
-                ref={textAreaRef}
+                ref={options.ref as Ref<HTMLTextAreaElement>}
                 placeholder={options.placeholder}
-                onChange={event => { options.change?.(textAreaRef.current.value, event) }}
+                onChange={event => { options.change?.((event.target as HTMLTextAreaElement).value, event) }}
                 onScroll={options.scroll}
                 onFocus={options.focus}
                 onClick={options.click}
@@ -118,7 +107,7 @@ export function TextInput(options: TextInputOptions)
                 className={options.className}
                 $css={css}
                 style={options.style}
-                ref={inputRef}
+                ref={options.ref as Ref<HTMLInputElement>}
                 type={
                     options.email ? "email" :
                     options.password ? "password" :
@@ -127,7 +116,7 @@ export function TextInput(options: TextInputOptions)
                     options.telephone ? "telephone" : "text"}
                 placeholder={options.placeholder}
                 value={options.default}
-                onChange={event => { options.change?.(inputRef.current.value, event) }}
+                onChange={event => { options.change?.((event.target as HTMLInputElement).value, event) }}
                 onScroll={options.scroll}
                 onFocus={options.focus}
                 onClick={options.click}
@@ -224,8 +213,7 @@ export type TextInputOptions = {
 
     style?: React.CSSProperties,
     className?: string,
-
-    element?: (element: HTMLElement) => void,
+    ref?: Ref<HTMLTextAreaElement | HTMLInputElement | null>,
 
     /**
      * Change event.

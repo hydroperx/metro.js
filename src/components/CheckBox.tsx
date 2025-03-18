@@ -23,7 +23,7 @@ export function CheckBox(options: CheckBoxOptions)
     const button_ref = useRef<HTMLButtonElement | null>(null);
     const unchecked_div_ref = useRef<HTMLDivElement | null>(null);
     const checked_div_ref = useRef<HTMLDivElement | null>(null);
-    const carret_ref = useRef<HTMLDivElement | null>();
+    const carret_ref = useRef<HTMLDivElement | null>(null);
 
     // States
     let [value, setValue] = useState<boolean>(!!options.default);
@@ -53,13 +53,6 @@ export function CheckBox(options: CheckBoxOptions)
     const carret_left_px = ((carret_left / 100) * (w * rem));
     const leftmost_carret_pos = -(side_length / 2) * rem;
     const rightmost_carret_pos = (w * rem) - (side_length * rem) - (carret_w * rem);
-
-    useEffect(() => {
-        const button = button_ref.current!;
-
-        // pass element
-        options.element?.(button);
-    });
 
     // Handle click
     function button_onClick()
@@ -163,8 +156,6 @@ export type CheckBoxOptions = {
      * Event triggered on value change.
      */
     change?: (value: boolean) => void,
-
-    element?: (element: HTMLButtonElement) => void,
 };
 
 // CSS

@@ -177,13 +177,6 @@ export function Button(options: ButtonOptions)
         return userMouseOut?.(e as any);
     };
 
-    useEffect(() => {
-        const button = buttonRef.current!;
-
-        // Pass element
-        options.element?.(button);
-    });
-
     const Button = Button_comp!;
 
     return (
@@ -294,8 +287,6 @@ export type ButtonOptions =
     style?: React.CSSProperties,
     className?: string,
     children?: React.ReactNode,
-
-    element?: (element: HTMLButtonElement) => void,
 
     focus?: React.FocusEventHandler<HTMLButtonElement>,
     click?: React.MouseEventHandler<HTMLButtonElement>,
@@ -614,14 +605,6 @@ export function CircleIconButton(options: CircleIconButtonOptions)
     const size = options.size ?? 9;
     const size_rem = pointsToRem(size);
 
-    useEffect(() => {
-        // Obtain button
-        const button = ref.current!;
-
-        // Pass element
-        options.element?.(button);
-    },[]);
-
     const tooltip = options.tooltip;
     const [tooltipVisible, setTooltipVisible] = useState<boolean>(false);
     const [tooltipX, setTooltipX] = useState<number>(0);
@@ -746,8 +729,6 @@ export type CircleIconButtonOptions = {
     style?: React.CSSProperties,
     className?: string,
 
-    element?: (element: HTMLButtonElement) => void,
-
     contextMenu?: React.MouseEventHandler<HTMLButtonElement>,
     focus?: React.FocusEventHandler<HTMLButtonElement>,
     click?: React.MouseEventHandler<HTMLButtonElement>,
@@ -828,7 +809,6 @@ export function ArrowButton(options: ArrowButtonOptions)
             icon="arrowButton"
             rotation={d == "left" ? 0 : d == "right" ? 180 : d == "up" ? 90 : -90}
             className={options.className}
-            element={options.element}
             disabled={options.disabled ?? false}
             autoFocus={options.autoFocus ?? false}
             style={options.style}
@@ -869,8 +849,6 @@ export type ArrowButtonOptions = {
 
     style?: React.CSSProperties,
     className?: string,
-
-    element?: (element: HTMLButtonElement) => void,
 
     contextMenu?: React.MouseEventHandler<HTMLButtonElement>,
     focus?: React.FocusEventHandler<HTMLButtonElement>,

@@ -16,9 +16,6 @@ export function Container(options: ContainerOptions)
     // Use theme
     const theme = useContext(ThemeContext);
 
-    // Ref
-    const div_ref = useRef<HTMLDivElement | null>(null);
-
     // Enable or disable selection
     const user_select = (options.selection ?? true) ? "auto" : "none";
 
@@ -49,12 +46,8 @@ export function Container(options: ContainerOptions)
         transition = (transition ? transition : ", " + "") + "opacity 200ms ease-in";
     }
 
-    useEffect(() => {
-        options.element?.(div_ref.current!);
-    }, []);
-
     return <Div
-        ref={div_ref}
+        ref={options.ref}
         className={options.className ? " " + options.className : ""}
         style={options.style}
 
@@ -139,8 +132,7 @@ export type ContainerOptions =
     style?: React.CSSProperties,
     className?: string,
     children?: React.ReactNode,
-
-    element?: (element: HTMLDivElement) => void,
+    ref?: React.Ref<HTMLDivElement | null>,
 
     contextMenu?: React.MouseEventHandler<HTMLDivElement>,
     click?: React.MouseEventHandler<HTMLDivElement>,

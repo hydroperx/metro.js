@@ -45,8 +45,6 @@ const Div = styled.div<{
 
 export function HGroup(options: HGroupOptions)
 {
-    let div_ref = useRef<HTMLDivElement | null>(null);
-
     let overflow = "";
     if (options.clip)
     {
@@ -77,12 +75,8 @@ export function HGroup(options: HGroupOptions)
         alignItems = m;
     }
 
-    useEffect(() => {
-        options.element?.(div_ref.current!);
-    }, []);
-
     return <Div
-        ref={div_ref}
+        ref={options.ref}
         className={options.className}
         style={options.style}
 
@@ -174,8 +168,7 @@ export type HGroupOptions = {
     style?: React.CSSProperties,
     className?: string,
     children?: React.ReactNode,
-
-    element?: (element: HTMLDivElement) => void,
+    ref?: React.Ref<HTMLDivElement | null>,
 
     contextMenu?: React.MouseEventHandler<HTMLDivElement>,
     click?: React.MouseEventHandler<HTMLDivElement>,

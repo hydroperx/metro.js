@@ -24,7 +24,7 @@
     "styled-components": "^6.1.16"
   },
   "peerDependencies": {
-    "react": ">=18.3.1"
+    "react": ">=19.0.0"
   },
   "description": "Metro design components",
   "license": "Apache-2.0",
@@ -40,7 +40,7 @@
     "@types/delta-e": "^0.0.2",
     "@types/extend": "^3.0.4",
     "@types/jquery": "^3.5.32",
-    "@types/react": "^18.3.1",
+    "@types/react": "^19.0.0",
     "typescript": "~5.6.2"
   }
 }
