@@ -10,7 +10,6 @@
     "color": "^4.2.3",
     "color-convert": "^3.0.1",
     "com.hydroper.colorobserver": "^1.0.3",
-    "com.hydroper.gridstack": "file:../gridstack.js",
     "com.hydroper.inputaction": "^1.0.5",
     "com.hydroper.reactdraggable": "^1.0.2",
     "com.hydroper.typedeventtarget": "^1.0.1",
