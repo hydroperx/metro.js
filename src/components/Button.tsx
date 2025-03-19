@@ -364,7 +364,6 @@ const SmallDropdownButton = styled.button<ButtonCSSProps> `
     border: none;
     color: ${$ => $.$color.toString()};
     font-family: ${fontFamily};
-    font-weight: lighter;
     font-size: 0.75rem;
     display: flex;
     gap: 0.2rem;
