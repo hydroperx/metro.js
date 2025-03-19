@@ -37,8 +37,6 @@ export function Button(options: ButtonOptions)
     // Locale direction
     const localeDir = useContext(LocaleDirectionContext);
 
-    const buttonRef: Ref<HTMLButtonElement> = useRef(null);
-
     const newStyle: React.CSSProperties = {};
 
     if (options.minWidth !== undefined) newStyle.minWidth = pointsToRem(options.minWidth);
@@ -145,16 +143,16 @@ export function Button(options: ButtonOptions)
     const mouseOver = (e: MouseEvent): any => {
         if (tooltipElement.current)
         {
+            const button = e.currentTarget as HTMLButtonElement;
             tooltipTimeout = window.setTimeout(() => {
-                const button = buttonRef.current;
-                if (button?.matches(":hover"))
+                if (button.matches(":hover"))
                 {
                     setTooltipVisible(true);
                 }
             }, 700);
 
             // Adjust tooltip position
-            const [x, y] = computePosition(buttonRef.current, tooltipElement.current, {
+            const [x, y] = computePosition(button, tooltipElement.current, {
                 prefer: "bottom",
                 orthogonal: true,
                 margin: 7,
@@ -182,7 +180,7 @@ export function Button(options: ButtonOptions)
     return (
         <>
             <Button
-                ref={buttonRef}
+                ref={options.ref}
                 className={options.className}
                 style={newStyle}
                 type={options.type ?? "button"}
@@ -287,6 +285,7 @@ export type ButtonOptions =
     style?: React.CSSProperties,
     className?: string,
     children?: React.ReactNode,
+    ref?: React.Ref<HTMLButtonElement | null>,
 
     focus?: React.FocusEventHandler<HTMLButtonElement>,
     click?: React.MouseEventHandler<HTMLButtonElement>,
@@ -585,9 +584,6 @@ export function CircleIconButton(options: CircleIconButtonOptions)
     // Take the theme context
     const theme = useContext(ThemeContext);
 
-    // Button ref
-    const ref = useRef<HTMLButtonElement | null>(null);
-
     // Stylize
     const iconStyle: React.CSSProperties = {};
     if (options.rotation !== undefined)
@@ -615,16 +611,16 @@ export function CircleIconButton(options: CircleIconButtonOptions)
     const mouseOver = (e: MouseEvent): any => {
         if (tooltipElement.current)
         {
+            const button = e.currentTarget as HTMLButtonElement;
             tooltipTimeout = window.setTimeout(() => {
-                const button = ref.current;
-                if (button?.matches(":hover"))
+                if (button.matches(":hover"))
                 {
                     setTooltipVisible(true);
                 }
             }, 700);
 
             // Adjust tooltip position
-            const [x, y] = computePosition(ref.current, tooltipElement.current, {
+            const [x, y] = computePosition(button, tooltipElement.current, {
                 prefer: "bottom",
                 orthogonal: true,
                 margin: 7,
@@ -650,7 +646,7 @@ export function CircleIconButton(options: CircleIconButtonOptions)
     return (
         <>
             <CircleIconButtonButton
-                ref={ref}
+                ref={options.ref}
                 className={options.className}
                 disabled={options.disabled}
                 autoFocus={options.autoFocus}
@@ -726,6 +722,7 @@ export type CircleIconButtonOptions = {
 
     style?: React.CSSProperties,
     className?: string,
+    ref?: React.Ref<HTMLButtonElement | null>,
 
     contextMenu?: React.MouseEventHandler<HTMLButtonElement>,
     focus?: React.FocusEventHandler<HTMLButtonElement>,
@@ -806,6 +803,7 @@ export function ArrowButton(options: ArrowButtonOptions)
         <CircleIconButton
             icon="arrowButton"
             rotation={d == "left" ? 0 : d == "right" ? 180 : d == "up" ? 90 : -90}
+            ref={options.ref}
             className={options.className}
             disabled={options.disabled ?? false}
             autoFocus={options.autoFocus ?? false}
@@ -847,6 +845,7 @@ export type ArrowButtonOptions = {
 
     style?: React.CSSProperties,
     className?: string,
+    ref?: React.Ref<HTMLButtonElement | null>,
 
     contextMenu?: React.MouseEventHandler<HTMLButtonElement>,
     focus?: React.FocusEventHandler<HTMLButtonElement>,
