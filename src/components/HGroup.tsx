@@ -78,6 +78,22 @@ const Div = styled.div<{
     user-select: ${$ => $.$user_select};
     -moz-user-select: ${$ => $.$user_select};
     -webkit-user-select: ${$ => $.$user_select};
+
+    &::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+        background: ${$ => $.$theme.colors.scrollBarTrack};
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: ${$ => $.$theme.colors.scrollBarThumb};
+        border-radius: 0;
+    }
+
+    &::selection, &::-moz-selection {
+        background: ${$ => $.$theme.colors.foreground};
+        color: ${$ => $.$theme.colors.background};
+    }
 `;
 
 export function HGroup(options: HGroupOptions)
