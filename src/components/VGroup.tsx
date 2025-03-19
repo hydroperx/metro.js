@@ -136,7 +136,9 @@ export function VGroup(options: VGroupOptions)
         onTouchStart={options.touchStart}
         onTouchEnd={options.touchEnd}
         onTouchMove={options.touchMove}
-        onTouchCancel={options.touchCancel}>
+        onTouchCancel={options.touchCancel}
+        
+        onWheel={options.wheel}>
             
         {options.children}
     </Div>;
@@ -209,4 +211,6 @@ export type VGroupOptions = {
     touchEnd?: React.TouchEventHandler<HTMLDivElement>,
     touchMove?: React.TouchEventHandler<HTMLDivElement>,
     touchCancel?: React.TouchEventHandler<HTMLDivElement>,
+
+    wheel?: React.WheelEventHandler<HTMLDivElement>,
 };

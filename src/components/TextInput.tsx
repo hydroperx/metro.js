@@ -93,6 +93,7 @@ export function TextInput(options: TextInputOptions)
                 onMouseOut={options.mouseOut}
                 onMouseUp={options.mouseUp}
                 onContextMenu={options.contextMenu}
+                onWheel={options.wheel}
                 autoFocus={options.autoFocus}
                 disabled={options.disabled}
                 autoComplete={options.autoComplete}
@@ -124,6 +125,7 @@ export function TextInput(options: TextInputOptions)
                 onMouseOut={options.mouseOut}
                 onMouseUp={options.mouseUp}
                 onContextMenu={options.contextMenu}
+                onWheel={options.wheel}
                 autoFocus={options.autoFocus}
                 disabled={options.disabled}
                 autoComplete={options.autoComplete}
@@ -227,4 +229,5 @@ export type TextInputOptions = {
     mouseOver?: React.MouseEventHandler<HTMLElement>,
     mouseOut?: React.MouseEventHandler<HTMLElement>,
     mouseUp?: React.MouseEventHandler<HTMLElement>,
+    wheel?: React.WheelEventHandler<HTMLElement>,
 };

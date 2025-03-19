@@ -87,7 +87,9 @@ export function Container(options: ContainerOptions)
         onTouchStart={options.touchStart}
         onTouchEnd={options.touchEnd}
         onTouchMove={options.touchMove}
-        onTouchCancel={options.touchCancel}>
+        onTouchCancel={options.touchCancel}
+        
+        onWheel={options.wheel}>
 
         {options.children}
     </Div>;
@@ -155,6 +157,8 @@ export type ContainerOptions =
     touchEnd?: React.TouchEventHandler<HTMLDivElement>,
     touchMove?: React.TouchEventHandler<HTMLDivElement>,
     touchCancel?: React.TouchEventHandler<HTMLDivElement>,
+
+    wheel?: React.WheelEventHandler<HTMLDivElement>,
 };
 
 const Div = styled.div<{
