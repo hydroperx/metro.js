@@ -9,7 +9,8 @@ import { lighten, contrast } from "../utils/color";
 /**
  * Represents a generic container that may have a solid background color and be full-sized.
  *
- * This component is used by convention as the topmost content in an application.
+ * This component is used by convention as the topmost content in an application,
+ * although `HGroup` and `VGroup` may also be used instead.
  */
 export function Container(options: ContainerOptions)
 {

@@ -1,8 +1,11 @@
 import { styled } from "styled-components";
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
+import assert from "assert";
+
 import { Alignment } from "../layout/Alignment";
 import { pointsToRem } from "../utils/points";
-import assert from "assert";
+import { Theme, ThemeContext } from "../theme/Theme";
+import { fontFamily, fontSize } from "../utils/common";
 
 const verticalAlignMaps: any = {
     "start": "start",
@@ -41,9 +44,19 @@ const Div = styled.div<{
     $overflow?: string;
     $overflowX?: string;
     $overflowY?: string;
+    $wrap?: "wrap" | "wrap-reverse";
+    $user_select: string;
+    $transition: string;
+    $theme: Theme;
+    $solid: boolean;
+    $full: boolean;
 }> `
     display: ${$ => ($.$visible ?? true) ? ($.$inline ? "inline-flex" : "flex") : "none"};
     flex-direction: column;
+    ${ $ => $.$solid ? "background: " + $.$theme.colors.background + ";" : "" }
+    color: ${$ => $.$theme.colors.foreground};
+    font-family: ${fontFamily};
+    font-size: ${fontSize};
     ${ $ => $.$gap !== undefined ? "gap: " + pointsToRem($.$gap) + ";" : "" }
     ${ $ => $.$padding !== undefined ? "padding: " + pointsToRem($.$padding) + ";" : "" }
     ${ $ => $.$paddingLeft !== undefined ? "padding-left: " + pointsToRem($.$paddingLeft) + ";" : "" }
@@ -54,15 +67,24 @@ const Div = styled.div<{
     ${ $ => $.$minHeight !== undefined ? "min-height: " + pointsToRem($.$minHeight) + ";" : "" }
     ${ $ => $.$maxWidth !== undefined ? "max-width: " + pointsToRem($.$maxWidth) + ";" : "" }
     ${ $ => $.$maxHeight !== undefined ? "max-height: " + pointsToRem($.$maxHeight) + ";" : "" }
+    ${ $ => $.$full ? "width: 100%; height: 100%;" : ""}
     ${ $ => $.$justifyContent ? "justify-content: " + $.$justifyContent + ";" : "" }
     ${ $ => $.$alignItems ? "align-items: " + $.$alignItems + ";" : "" }
     ${ $ => $.$overflow ? "overflow: " + $.$overflow + ";" : "" }
     ${ $ => $.$overflowX ? "overflow-x: " + $.$overflowX + ";" : "" }
     ${ $ => $.$overflowY ? "overflow-y: " + $.$overflowY + ";" : "" }
+    ${ $ => $.$wrap !== undefined ? "flex-wrap: " + $.$wrap + ";" : "" }
+    transition: ${$ => $.$transition};
+    user-select: ${$ => $.$user_select};
+    -moz-user-select: ${$ => $.$user_select};
+    -webkit-user-select: ${$ => $.$user_select};
 `;
 
 export function VGroup(options: VGroupOptions)
 {
+    // Use theme
+    const theme = useContext(ThemeContext);
+
     let overflow = "";
     if (options.clip)
     {
@@ -93,6 +115,36 @@ export function VGroup(options: VGroupOptions)
         alignItems = m;
     }
 
+    // Build transition
+    let transition = "";
+    if (options.easeOutPosition)
+    {
+        transition = "left 200ms ease-out, top 200ms ease-out, right 200ms ease-out, bottom 200ms ease-out";
+    }
+    if (options.easeOutTransform)
+    {
+        transition = (transition ? transition : ", " + "") + "transform 200ms ease-out";
+    }
+    if (options.easeInPosition)
+    {
+        transition = (transition ? transition : ", " + "") + "left 200ms ease-in, top 200ms ease-in, right 200ms ease-in, bottom 200ms ease-in";
+    }
+    if (options.easeInTransform)
+    {
+        transition = (transition ? transition : ", " + "") + "transform 200ms ease-in";
+    }
+    if (options.easeOutOpacity)
+    {
+        transition = (transition ? transition : ", " + "") + "opacity 200ms ease-out";
+    }
+    if (options.easeInOpacity)
+    {
+        transition = (transition ? transition : ", " + "") + "opacity 200ms ease-in";
+    }
+
+    // Enable or disable selection
+    const user_select = (options.selection ?? true) ? "auto" : "none";
+
     return <Div
         ref={options.ref}
         className={options.className}
@@ -115,6 +167,12 @@ export function VGroup(options: VGroupOptions)
         $overflow={overflow}
         $overflowX={overflowX}
         $overflowY={overflowY}
+        $wrap={options.wrap}
+        $transition={transition}
+        $user_select={user_select}
+        $theme={theme}
+        $solid={!!options.solid}
+        $full={!!options.full}
 
         onClick={options.click}
         onMouseOver={options.mouseOver}
@@ -182,6 +240,29 @@ export type VGroupOptions = {
     minHeight?: number,
     maxWidth?: number,
     maxHeight?: number,
+
+    easeOutPosition?: boolean,
+    easeOutTransform?: boolean,
+    easeOutOpacity?: boolean,
+    easeInPosition?: boolean,
+    easeInTransform?: boolean,
+    easeInOpacity?: boolean,
+
+    /**
+     * Indicates whether the container should use a solid color
+     * as background according to the provided theme.
+     * Defaults to `false`.
+     */
+    solid?: boolean,
+
+    full?: boolean,
+
+    /**
+     * Indicates whether or not character selection is enabled for this container.
+     */
+    selection?: boolean,
+
+    wrap?: "wrap" | "wrap-reverse",
 
     visible?: boolean,
 
