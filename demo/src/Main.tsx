@@ -5,7 +5,6 @@ import {
     ProgressRing, ProgressEllipsis,
     Select, SelectOption, TextInput, FormGroup,
     CheckBox,
-    Tiles, TilesController, TilesState,
 
     ThemePresets,
     ThemeContext,
@@ -52,28 +51,6 @@ function App()
     {
         setLocaleDirection(value == "ltr" ? "ltr" : "rtl");
     }
-
-    // Tiles
-    const tiles_controller = new TilesController();
-    const tiles_state = new TilesState();
-
-    useEffect(() => {
-        tiles_controller.addTile({
-            id: "a", color: "#A2193E", size: "large",
-            label: "Tile A",
-            x: 0, y: 0,
-        });
-        tiles_controller.addTile({
-            id: "b", color: "#008100", size: "wide",
-            label: "Tile B",
-            x: 0, y: 4,
-        });
-        tiles_controller.addTile({
-            id: "c", color: "#2773E1", size: "small",
-            label: "Tile C",
-            x: 4, y: 0,
-        });
-    }, []);
 
     return (
         <LocaleDirectionContext.Provider value={localeDirection}>
@@ -151,13 +128,6 @@ function App()
                                     Click me
                                 </Button>
                             </HGroup>
-                        </div>
-                        <div style={{margin: "5rem 0", width: "100%", height: "37rem"}}>
-                            <Tiles
-                                controller={tiles_controller}
-                                state={tiles_state}
-                                direction="horizontal"
-                                style={{overflowX: "auto"}}/>
                         </div>
                         <ContextMenu id={contextMenuId}>
                             <ContextMenuItem className="foo" click={() => {alert("clicked item 1")}}>

@@ -122,13 +122,12 @@ const SmallButton = styled.button<ButtonCSSProps> `
     color: ${$ => $.$small_normal_color.toString()};
     font-family: ${fontFamily};
     font-weight: lighter;
-    font-size: 0.79rem;
+    font-size: 0.75rem;
     display: flex;
-    gap: 0.5rem;
+    gap: 0.2rem;
     flex-direction: ${$ => $.$localeDir == "ltr" ? "row" : "row-reverse"};
     align-items: center;
     padding: ${pointsToRemValue(1)}rem 0.7rem;
-    min-width: 3rem;
     outline: none;
 
     &:hover:not(:disabled), &:focus:not(:disabled) {
@@ -557,7 +556,7 @@ export function Select(options: SelectOptions)
                 </div>
 
                 <div className="Select-button-arrow">
-                    <DownArrowIcon size={options.big ? 6 : options.small ? 3.1 : 3.5}/>
+                    <DownArrowIcon size={options.big ? 6 : options.small ? 2.4 : 3.5}/>
                 </div>
             </Button>
             <SelectOptionBigContext.Provider value={!!options.big || !!options.medium}>

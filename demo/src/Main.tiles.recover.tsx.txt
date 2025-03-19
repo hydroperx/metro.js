@@ -5,7 +5,7 @@ import {
     ProgressRing, ProgressEllipsis,
     Select, SelectOption, TextInput, FormGroup,
     CheckBox,
-    Tiles, TilesController, TilesState, Tile, TileGroup,
+    Tiles, TilesController, TilesState,
 
     ThemePresets,
     ThemeContext,
@@ -52,10 +52,6 @@ function App()
     {
         setLocaleDirection(value == "ltr" ? "ltr" : "rtl");
     }
-
-    // Tiles
-    const tiles_controller = new TilesController();
-    const tiles_state = new TilesState();
 
     return (
         <LocaleDirectionContext.Provider value={localeDirection}>
@@ -114,19 +110,32 @@ function App()
                                 <SelectOption value="qux1">Qux 1</SelectOption>
                             </Select>
                         </div>
-                        <div style={{margin: "5rem 0", width: "100%", height: "30rem"}}>
+                        <div>
+                            <HGroup gap={5}>
+                                <Select default="foo" small primary>
+                                    <SelectOption value="foo">Foo</SelectOption>
+                                    <SelectOption value="bar">Bar</SelectOption>
+                                    <SelectOption value="qux">Qux</SelectOption>
+                                </Select>
+                                <Select default="foo" small>
+                                    <SelectOption value="foo">Foo</SelectOption>
+                                    <SelectOption value="bar">Bar</SelectOption>
+                                    <SelectOption value="qux">Qux</SelectOption>
+                                </Select>
+                                <Button variant="small-dropdown-primary">
+                                    Click me
+                                </Button>
+                                <Button variant="small-dropdown">
+                                    Click me
+                                </Button>
+                            </HGroup>
+                        </div>
+                        <div style={{margin: "5rem 0", width: "100%", height: "37rem"}}>
                             <Tiles
                                 controller={tiles_controller}
                                 state={tiles_state}
                                 direction="horizontal"
-                                style={{overflowX: "auto"}}>
-                                
-                                <TileGroup id="g1" position={0} label="Group 1"/>
-                                <TileGroup id="g2" position={1} label="Group 2"/>
-                                <Tile id="t1" size="large" group="g1" color="#008100"></Tile>
-                                <Tile id="t2" size="wide" group="g1" color="#A2193E"></Tile>
-                                <Tile id="t3" size="small" group="g2" color="#2773E1"></Tile>
-                            </Tiles>
+                                style={{overflowX: "auto"}}/>
                         </div>
                         <ContextMenu id={contextMenuId}>
                             <ContextMenuItem className="foo" click={() => {alert("clicked item 1")}}>

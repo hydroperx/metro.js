@@ -229,7 +229,7 @@ export function Button(options: ButtonOptions)
                                 {options.children}
                             </div>
                             <div className="Button-small-arrow">
-                                <DownArrowIcon size={3.1}/>
+                                <DownArrowIcon size={2.4}/>
                             </div>
                         </>:
                         options.children
@@ -365,13 +365,12 @@ const SmallDropdownButton = styled.button<ButtonCSSProps> `
     color: ${$ => $.$color.toString()};
     font-family: ${fontFamily};
     font-weight: lighter;
-    font-size: 0.79rem;
+    font-size: 0.75rem;
     display: flex;
-    gap: 0.5rem;
+    gap: 0.2rem;
     flex-direction: ${$ => $.$localeDir == "ltr" ? "row" : "row-reverse"};
     align-items: center;
     padding: ${pointsToRemValue(1)}rem 0.7rem;
-    min-width: 5rem;
     outline: none;
 
     &:hover:not(:disabled), &:focus:not(:disabled) {
