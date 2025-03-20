@@ -53,7 +53,7 @@ const H1Label = styled.label<LabelCSSProps> `
     ${$ => $.$preferPrimaryColors ? `color: ${enhanceBrightness($.$theme.colors.background, $.$theme.colors.primary)};` : ""}
     font-family: ${fontFamily};
     font-weight: lighter;
-    font-size: 2.1rem;
+    font-size: 2rem;
     margin: 0.67em 0;
     ${$ => $.$sizing}
 `;
@@ -62,7 +62,7 @@ const H1 = styled.h1<LabelCSSProps> `
     ${$ => $.$preferPrimaryColors ? `color: ${enhanceBrightness($.$theme.colors.background, $.$theme.colors.primary)};` : ""}
     font-family: ${fontFamily};
     font-weight: lighter;
-    font-size: 2.1rem;
+    font-size: 2rem;
     margin: 0.67em 0;
     ${$ => $.$sizing}
 `;
