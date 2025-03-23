@@ -48,6 +48,7 @@ New tile grids implementation:
   - [ ] Resize tile
   - [x] Add group
   - [x] Remove group (simply call `remove_group`)
+  - [ ] Rename group
 - [ ] Events
   - [ ] `check` (tile)
   - [ ] `click` (tile)

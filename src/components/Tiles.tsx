@@ -45,13 +45,17 @@ const Div = styled.div<{
         background: ${$ => $.$theme.colors.scrollBarThumb};
         border-radius: 0;
     }
-    
+
     & .Tile-group-label {
         overflow: hidden;
         word-break: none;
         color: ${$ => $.$theme.colors.foreground};
         font-size: 1.2rem;
         font-weight: lighter;
+    }
+
+    & .Tile-group-label:hover {
+        background: ${$ => Color($.$theme.colors.foreground).alpha(0.3).toString()};
     }
 
     & .Tile {
