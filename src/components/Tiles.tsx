@@ -527,7 +527,12 @@ export function Tiles(options: TilesOptions)
         {
             for (const page of livePages)
             {
-                fixme();
+                const page_el = document.createElement("div");
+                page_el.classList.add(tilePageClass);
+                if (page.id)
+                    page_el.id = page.id;
+                page_el.innerHTML = page.html;
+                page_elements.push(page_el);
             }
         }
 
