@@ -103,6 +103,26 @@ function App()
                 <Container full solid selection={false} contextMenu={Container_onContextMenu as any}>
                     <Container padding={5}>
                         <Label variant="heading1" tooltip="This demonstrates a Metro components library.">Metro demo</Label>
+                        <div>
+                            <HGroup gap={5}>
+                                <Select default="foo" small primary>
+                                    <SelectOption value="foo">Foo</SelectOption>
+                                    <SelectOption value="bar">Bar</SelectOption>
+                                    <SelectOption value="qux">Qux</SelectOption>
+                                </Select>
+                                <Select default="foo" small>
+                                    <SelectOption value="foo">Foo</SelectOption>
+                                    <SelectOption value="bar">Bar</SelectOption>
+                                    <SelectOption value="qux">Qux</SelectOption>
+                                </Select>
+                                <Button variant="small-dropdown-primary">
+                                    Click me
+                                </Button>
+                                <Button variant="small-dropdown">
+                                    Click me
+                                </Button>
+                            </HGroup>
+                        </div>
                         <div style={{margin: "7rem"}}></div>
                         <VGroup gap={7} maxWidth={100}>
                             <Select default="dark" big change={changeTheme}>
@@ -153,26 +173,6 @@ function App()
                                 <SelectOption value="barF">Bar F</SelectOption>
                                 <SelectOption value="qux1">Qux 1</SelectOption>
                             </Select>
-                        </div>
-                        <div>
-                            <HGroup gap={5}>
-                                <Select default="foo" small primary>
-                                    <SelectOption value="foo">Foo</SelectOption>
-                                    <SelectOption value="bar">Bar</SelectOption>
-                                    <SelectOption value="qux">Qux</SelectOption>
-                                </Select>
-                                <Select default="foo" small>
-                                    <SelectOption value="foo">Foo</SelectOption>
-                                    <SelectOption value="bar">Bar</SelectOption>
-                                    <SelectOption value="qux">Qux</SelectOption>
-                                </Select>
-                                <Button variant="small-dropdown-primary">
-                                    Click me
-                                </Button>
-                                <Button variant="small-dropdown">
-                                    Click me
-                                </Button>
-                            </HGroup>
                         </div>
                         <div ref={tiles_scroll_node} style={{margin: "5rem 0", width: "100%", height: "37rem", overflowY: "auto", padding: "0.5rem"}}>
                             <Tiles
