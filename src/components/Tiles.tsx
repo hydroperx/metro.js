@@ -115,6 +115,10 @@ const Div = styled.div<{
         height: 4.4rem;
     }
 
+    & .${tileLabelClass} {
+        font-size: 0.8rem;
+    }
+
     & .Tile[data-size="small"] .${tileIconClass} {
         width: 2.5rem;
         height: 2.5rem;
