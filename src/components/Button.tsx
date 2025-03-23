@@ -776,7 +776,7 @@ const CircleIconButtonButton = styled.button<{
 
     &:focus:not(:disabled) {
         outline: 0.05rem dotted ${$ => $.$theme.colors.focusDashes};
-        outline-offset: 0.3rem;
+        outline-offset: -0.4rem;
     }
 
     &:active:not(:disabled) {
