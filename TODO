@@ -46,7 +46,7 @@ New tile grids implementation:
   - [ ] Set tile icon and hypertext
   - [ ] Resize tile
   - [x] Add group
-  - [x] Remove group (simply call `remove_group`)
+  - [x] Remove group
   - [ ] Rename group
 - [ ] Events
   - [ ] `check` (tile)
@@ -61,6 +61,7 @@ New tile grids implementation:
 - [ ] Tile content
   - [ ] Icon
   - [ ] Label
+    - [ ] Hide for small tiles
   - [ ] Live tiles (and rolling)
 - [x] Checking tiles
   - [ ] Dispatch context menu event in a tile on a long touch pressure (call exactly `tile_onContextMenu`, not directly the user's context menu, since the library auto checks/unchecks for the user)

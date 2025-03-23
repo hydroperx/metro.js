@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useRef, useState, useEffect } from "react";
-import { styled } from "styled-components";
+import { styled, keyframes } from "styled-components";
 import assert from "assert";
 import Color from "color";
 import { TypedEventTarget } from "com.hydroper.typedeventtarget";
@@ -16,6 +16,7 @@ import { randomHexLarge } from "../utils/random";
 export type { TileSize } from "com.hydroper.tilelayout";
 
 const tileClass = "Tile";
+const tileIconClass = "Tile-icon";
 // Tile pages are the different slide contents a tile
 // may display one at a time.
 const tilePageClass = "Tile-page";
@@ -97,6 +98,22 @@ const Div = styled.div<{
 
     & .${tileClass}:disabled {
         opacity: 0.5;
+    }
+
+    & .${tilePageClass} {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+    & .${tileIconClass} {
+        width: 4.4rem;
+        height: 4.4rem;
+    }
+
+    & .Tile[data-size="small"] .${tileIconClass} {
+        width: 2.5rem;
+        height: 2.5rem;
     }
 
     & .${tileClass} .${tileCheckedRectClass} {
@@ -401,6 +418,7 @@ export function Tiles(options: TilesOptions)
         assert_tiles1_initialized();
         assert(!tiles_state.tileExists(tile.id), "Duplicate tile: " + tile.id);
         assert(tiles_state.groupExists(tile.group), "Group not found: " + tile.group);
+        assert(tile.liveHypertext ? tile.liveHypertext!.length <= 3 : true, "liveHypertext.length must be <= 3.");
 
         const element = tiles1.addTile({
             id: tile.id,
@@ -562,7 +580,10 @@ export type Tile = {
 
     /**
      * List of HTML content for live tiles
-     * with rolling animation.
+     * with rolling animation, each element of
+     * this array being a page of the tile.
+     *
+     * **Note:** this property may contain at most 3 elements.
      */
     liveHypertext?: string[],
 };
