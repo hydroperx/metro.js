@@ -10,4 +10,4 @@ export * from "./TextInput";
 export * from "./CheckBox";
 export * from "./FormGroup";
 export * from "./ProgressEllipsis";
-// export * from "./Tiles";
+export * from "./Tiles";

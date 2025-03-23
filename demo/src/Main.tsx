@@ -1,10 +1,11 @@
 import { createRoot } from "react-dom/client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     Button, Container, Label, HGroup, VGroup, ArrowButton,
     ProgressRing, ProgressEllipsis,
     Select, SelectOption, TextInput, FormGroup,
     CheckBox,
+    Tiles, TilesController, TilesState,
 
     ThemePresets,
     ThemeContext,
@@ -40,6 +41,10 @@ function App()
     const [localeDirection, setLocaleDirection] = useState<LocaleDirection>("ltr");
     const [checkbox_value, set_checkbox_value] = useState<boolean>(false);
 
+    // Tiles
+    const tiles_scroll_node = useRef<HTMLDivElement | null>(null);
+    const tiles_controller = new TilesController();
+
     // Change theme
     function changeTheme(value: string): void
     {
@@ -51,6 +56,46 @@ function App()
     {
         setLocaleDirection(value == "ltr" ? "ltr" : "rtl");
     }
+
+    useEffect(() => {
+        // Add tiles and their groups
+        tiles_controller.addGroup({
+            id: "group1",
+            label: "Group 1",
+        });
+        
+        tiles_controller.addTile({
+            id: "tile1",
+            group: "group1",
+            x: 0,
+            y: 0,
+            size: "large",
+            color: "#A8143A",
+        });
+
+        tiles_controller.addTile({
+            id: "tile2",
+            group: "group1",
+            x: 0,
+            y: 4,
+            size: "wide",
+            color: "#008000",
+        });
+
+        tiles_controller.addGroup({
+            id: "group2",
+            label: "Group 2",
+        });
+        
+        tiles_controller.addTile({
+            id: "tile3",
+            group: "group2",
+            x: 0,
+            y: 0,
+            size: "small",
+            color: "#2572E1",
+        });
+    });
 
     return (
         <LocaleDirectionContext.Provider value={localeDirection}>
@@ -128,6 +173,12 @@ function App()
                                     Click me
                                 </Button>
                             </HGroup>
+                        </div>
+                        <div ref={tiles_scroll_node} style={{margin: "5rem 0", width: "100%", height: "37rem", overflowY: "auto"}}>
+                            <Tiles
+                                controller={tiles_controller}
+                                direction="horizontal"
+                                scrollNode={tiles_scroll_node}/>
                         </div>
                         <ContextMenu id={contextMenuId}>
                             <ContextMenuItem className="foo" click={() => {alert("clicked item 1")}}>

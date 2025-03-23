@@ -4,7 +4,7 @@ import assert from "assert";
 import Color from "color";
 import { TypedEventTarget } from "com.hydroper.typedeventtarget";
 import { Tiles as Tiles1, TileSize, State as Tiles1State } from "com.hydroper.tilelayout";
-import { CheckedIcon, getIcon } from "./Icons";
+import { getIcon } from "./Icons";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { ThemeContext, PreferPrimaryContext, Theme } from "../theme";
 import { RemObserver } from "../utils/RemObserver";
@@ -44,6 +44,14 @@ const Div = styled.div<{
     &::-webkit-scrollbar-thumb {
         background: ${$ => $.$theme.colors.scrollBarThumb};
         border-radius: 0;
+    }
+    
+    & .Tile-group-label {
+        overflow: hidden;
+        word-break: none;
+        color: ${$ => $.$theme.colors.foreground};
+        font-size: 1.4rem;
+        font-weight: lighter;
     }
 
     & .Tile {
@@ -125,7 +133,8 @@ export function Tiles(options: TilesOptions)
     const localeDir = useContext(LocaleDirectionContext);
     
     // Misc vars
-    const {controller: tiles_controller, state: tiles_state } = options;
+    const {controller: tiles_controller } = options;
+    const tiles_state = new TilesState();
 
     // Refs
     const div_ref = useRef<HTMLDivElement | null>(null);
@@ -151,12 +160,12 @@ export function Tiles(options: TilesOptions)
         tiles1 = new Tiles1({
             element: div_ref.current!,
             direction: "horizontal",
-            labelClassName: "GroupLabel",
+            labelClassName: "Tile-group-label",
             tileClassName: "Tile",
             smallSize: 3.625,
             tileGap: 0.6,
             groupGap: 9,
-            labelHeight: 2,
+            labelHeight: 4,
             maxHeight: 6,
             scrollNode: options.scrollNode.current!,
         });
@@ -407,7 +416,13 @@ export function Tiles(options: TilesOptions)
     }
     function add_group(group: TileGroup): void
     {
-        fixme();
+        assert_tiles1_initialized();
+        assert(!tiles_state.groupExists(group.id), "Duplicate group ID: " + group.id);;
+        
+        const group_button = tiles1!.addGroup({
+            id: group.id,
+            label: group.label,
+        });
     }
     tiles_controller.addEventListener("addGroup", tiles_controller_addGroup);
 
@@ -418,7 +433,8 @@ export function Tiles(options: TilesOptions)
     }
     function remove_group(group_id: string): void
     {
-        fixme();
+        assert_tiles1_initialized();
+        tiles1.removeGroup(group_id);
     }
     tiles_controller.addEventListener("removeGroup", tiles_controller_removeGroup);
 
@@ -438,12 +454,6 @@ export function Tiles(options: TilesOptions)
 }
 
 export type TilesOptions = {
-    /**
-     * The state that this container will use for loading and saving
-     * positions and labels.
-     */
-    state: TilesState,
-
     /**
      * The tile controller allows controlling which tiles are checked (selected)
      * and their sizes.
@@ -526,6 +536,7 @@ export type Tile = {
 
 export type TileGroup = {
     id: string,
+    label?: string,
 };
 
 /**
