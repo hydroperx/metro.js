@@ -16,6 +16,7 @@ import { randomHexLarge } from "../utils/random";
 export type { TileSize } from "com.hydroper.tilelayout";
 
 const tileClass = "Tile";
+const tileIconWrapClass = "Tile-icon-wrap";
 const tileIconClass = "Tile-icon";
 const tileLabelClass = "Tile-label";
 // Tile pages are the different slide contents a tile
@@ -109,14 +110,22 @@ const Div = styled.div<{
         height: 100%;
     }
 
-    & .${tileIconClass} {
+    & .${tileIconWrapClass} {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
         flex-grow: 2;
+    }
+
+    & .${tileIconClass} {
         width: 4.4rem;
         height: 4.4rem;
     }
 
     & .${tileLabelClass} {
         font-size: 0.8rem;
+        padding: 0.2rem 0.3rem;
     }
 
     & .Tile[data-size="small"] .${tileIconClass} {
@@ -430,7 +439,6 @@ export function Tiles(options: TilesOptions)
         assert_tiles1_initialized();
         assert(!tiles_state.tileExists(tile.id), "Duplicate tile: " + tile.id);
         assert(tiles_state.groupExists(tile.group), "Group not found: " + tile.group);
-        assert(tile.liveHypertext ? tile.liveHypertext!.length <= 3 : true, "liveHypertext.length must be <= 3.");
 
         const element = tiles1.addTile({
             id: tile.id,
@@ -455,6 +463,9 @@ export function Tiles(options: TilesOptions)
         element.setAttribute("data-color", tile.color);
         element.style.background = `linear-gradient(90deg, ${tile.color} 0%, ${tile_color_b1} 100%)`;
 
+        // Initialize pages
+        set_tile_pages(tile.id, tile.icon, tile.label, tile.livePages);
+
         const state1 = tiles1.state.tiles.get(tile.id);
         tiles_state.tiles.set(tile.id, {
             x: state1.x,
@@ -465,6 +476,64 @@ export function Tiles(options: TilesOptions)
         });
     }
     tiles_controller.addEventListener("addTile", tiles_controller_addTile);
+
+    // Set tile pages
+    function set_tile_pages(tile: string, icon: string | undefined, label: string | undefined, livePages: LiveTilePage[] | undefined): void
+    {
+        assert(livePages ? livePages!.length <= 3 : true, "livePages.length must be <= 3.");
+
+        const button = Array.from(div_ref.current!.querySelectorAll("." + tileClass))
+            .find(btn => btn.getAttribute("data-id") == tile);
+        if (!button) return;
+
+        for (const page of Array.from(button.querySelectorAll("." + tilePageClass)))
+            page.remove();
+
+        // Use the checked rect as a reference to before where page divs are added.
+        const checked_rect = button.querySelector("." + tileCheckedRectClass)! as HTMLDivElement;
+
+        // Collect page elements to setup their animation later.
+        const page_elements: HTMLDivElement[] = [];
+
+        if (icon || label)
+        {
+            const page_el = document.createElement("div");
+            page_el.classList.add(tilePageClass);
+            page_elements.push(page_el);
+
+            const icon_wrap_el = document.createElement("div");
+            icon_wrap_el.classList.add(tileIconWrapClass);
+            page_el.appendChild(icon_wrap_el);
+
+            if (icon)
+            {
+                const icon_el = document.createElement("div");
+                icon_el.classList.add(tileIconClass);
+                icon_el.style.background = `url("${icon}") center no-repeat`;
+                icon_el.style.backgroundSize = "contain";
+                icon_wrap_el.appendChild(icon_el);
+            }
+
+            label ??= "";
+            label = label.length >= 40 ? label.slice(0, 40) + "..." : label;
+
+            const label_el = document.createElement("div");
+            label_el.classList.add(tileLabelClass);
+            label_el.innerText = label;
+            page_el.appendChild(label_el);
+        }
+
+        if (livePages)
+        {
+            for (const page of livePages)
+            {
+                fixme();
+            }
+        }
+
+        // Setup animation
+        fixme();
+    }
 
     // Handle adding groups
     function tiles_controller_addGroup(e: CustomEvent<TileGroup>): void
@@ -597,7 +666,17 @@ export type Tile = {
      *
      * **Note:** this property may contain at most 3 elements.
      */
-    liveHypertext?: string[],
+    livePages?: LiveTilePage[],
+};
+
+export type LiveTilePage = {
+    /**
+     * Contributes an `id` attribute to the page element that contains
+     * the `html` content, which may be queried through `querySelector()`
+     * in the tile's button element.
+     */
+    id?: string,
+    html: string,
 };
 
 export type TileGroup = {

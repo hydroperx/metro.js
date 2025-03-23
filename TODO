@@ -38,12 +38,11 @@ New tile grids implementation:
 
 - [ ] Controller
   - [x] Add tile
-  - [ ] Get tile hypertext elements (returns the button)
+  - [ ] Get tile's button element
   - [ ] Remove tile
   - [ ] Set tile size (involves use of `tiles_state` and `load`, and will also alter the `data-size` attr and the `tiles` map)
   - [ ] Set tile color (should update `tiles`, `tile_btn.style.background` and `data-color`)
-  - [ ] Set tile label
-  - [ ] Set tile icon and hypertext
+  - [ ] Set tile pages (icon, label and hypertext) (use `set_tile_pages()` to implement it)
   - [ ] Resize tile
   - [x] Add group
   - [x] Remove group
