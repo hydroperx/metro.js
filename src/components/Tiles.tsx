@@ -168,9 +168,29 @@ const Div = styled.div<{
 
 // Slide-Y animations
 
-const slide_y_animation_2_page = keyframes `
+const slide_y_animation = keyframes `
 0% {
     top: 0%;
+}
+
+70% {
+    top: 0%;
+    animation-timing-function: ease-in;
+}
+
+90% {
+    animation-timing-function: step-start;
+    top: -100%;
+}
+
+95% {
+    top: -100%;
+    animation-timing-function: step-start;
+}
+
+98% {
+    top: 100%;
+    animation-timing-function: ease-in;
 }
 `;
 
@@ -546,14 +566,8 @@ export function Tiles(options: TilesOptions)
         }
 
         // Setup animation
-        let anim = "";
         const page_duration = 5;
-        switch (page_elements.length)
-        {
-            case 2: anim = slide_y_animation_2_page.getName(); break;
-            case 3: anim = slide_y_animation_3_page.getName(); break;
-            case 4: anim = slide_y_animation_4_page.getName(); break;
-        }
+        let anim = page_elements.length == 0 ? "" : slide_y_animation.getName();
         let page_y = 0, page_i = 0;
         for (const page_el of page_elements)
         {
