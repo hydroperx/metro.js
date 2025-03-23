@@ -106,6 +106,7 @@ const Div = styled.div<{
         display: flex;
         flex-direction: column;
         position: absolute;
+        left: 0;
         width: 100%;
         height: 100%;
     }
@@ -163,6 +164,14 @@ const Div = styled.div<{
         vertical-align: middle;
         transform: rotate(-45deg) translate(-2.9rem, 8.4rem);
     }
+`;
+
+// Slide-Y animations
+
+const slide_y_animation_2_page = keyframes `
+0% {
+    top: 0%;
+}
 `;
 
 /**
@@ -537,7 +546,27 @@ export function Tiles(options: TilesOptions)
         }
 
         // Setup animation
-        fixme();
+        let anim = "";
+        const page_duration = 5;
+        switch (page_elements.length)
+        {
+            case 2: anim = slide_y_animation_2_page.getName(); break;
+            case 3: anim = slide_y_animation_3_page.getName(); break;
+            case 4: anim = slide_y_animation_4_page.getName(); break;
+        }
+        let page_y = 0, page_i = 0;
+        for (const page_el of page_elements)
+        {
+            page_el.style.top = page_y + "%";
+            if (anim)
+            {
+                page_el.style.animation = anim;
+                page_el.style.animationIterationCount = "infinite";
+                page_el.style.animationDelay = (page_duration * page_i) + "s";
+            }
+            page_y += 100;
+            page_i++;
+        }
     }
 
     // Handle adding groups
