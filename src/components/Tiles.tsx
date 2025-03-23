@@ -50,7 +50,7 @@ const Div = styled.div<{
         overflow: hidden;
         word-break: none;
         color: ${$ => $.$theme.colors.foreground};
-        font-size: 1.4rem;
+        font-size: 1.2rem;
         font-weight: lighter;
     }
 
@@ -107,10 +107,11 @@ const Div = styled.div<{
     & .Tile .Tile-checked-icon {
         background: url("${getIcon("checked", "white")}") no-repeat;
         background-position: center;
+        background-size: contain;
         width: ${pointsToRem(5)};
         height: ${pointsToRem(5)};
         vertical-align: middle;
-        transform: rotate(-45deg) translate(-5.4rem, 5.4rem);
+        transform: rotate(-45deg) translate(-2.9rem, 8.4rem);
     }
 `;
 
@@ -351,6 +352,23 @@ export function Tiles(options: TilesOptions)
         tile_button.style.background = `linear-gradient(90deg, ${tile_color} 0%, ${tile_color_b1} 100%)`;
     }
 
+    // Handle context menu on tile
+    function tile_onContextMenu(e: Event): void
+    {
+        const tile_button = e.currentTarget as HTMLButtonElement;
+        if (tile_button.getAttribute("data-checked") == "true")
+        {
+            tile_button.setAttribute("data-checked", "false");
+            const all_buttons_unchecked = Array.from(div_ref.current!.querySelectorAll(".Tile"))
+                .every(btn => btn.getAttribute("data-checked") !== "true");
+            if (all_buttons_unchecked)
+                mode_signal({ selection: false });
+            return;
+        }
+        tile_button.setAttribute("data-checked", "true");
+        mode_signal({ selection: true });
+    }
+
     // Handle pointer up
     function local_viewport_pointerUp(e: PointerEvent): void
     {
@@ -382,6 +400,7 @@ export function Tiles(options: TilesOptions)
         element.addEventListener("pointerdown", tile_onPointerDown);
         element.addEventListener("pointerover", tile_onPointerOver);
         element.addEventListener("pointerout", tile_onPointerOut);
+        element.addEventListener("contextmenu", tile_onContextMenu);
 
         element.innerHTML = `
             <div class="Tile-checked-tri">
