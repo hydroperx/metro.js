@@ -61,7 +61,6 @@ const Div = styled.div<{
         font-family: ${fontFamily};
         font-size: ${fontSize};
         color: ${$ => $.$theme.colors.foreground};
-        transition: opacity 0.2s;
         transform-style: preserve-3d;
         width: 100%;
         height: 100%;
@@ -69,10 +68,6 @@ const Div = styled.div<{
 
     & .Tile[data-selection-mode="true"] {
         opacity: 0.7;
-    }
-
-    & .Tile:not([data-dragging="true"]) {
-        transition: opacity 0.2s, transform 0.2s ease-out, scale 0.2s ease-out, translate 0.2s ease-out;
     }
 
     & .Tile[data-drag-n-drop-mode="true"] {
@@ -165,9 +160,10 @@ export function Tiles(options: TilesOptions)
             smallSize: 3.625,
             tileGap: 0.6,
             groupGap: 9,
-            labelHeight: 4,
+            labelHeight: 3,
             maxHeight: 6,
             scrollNode: options.scrollNode.current!,
+            tileTransition: "opacity 0.2s, transform 0.2s ease-out, scale 0.2s ease-out",
         });
 
         // On state update
@@ -437,6 +433,12 @@ export function Tiles(options: TilesOptions)
         tiles1.removeGroup(group_id);
     }
     tiles_controller.addEventListener("removeGroup", tiles_controller_removeGroup);
+
+    useEffect(() => {
+        setTimeout(() => {
+            set_forced_invisible((options.open ?? true) ? false : true);
+        }, 100);
+    }, [options.open]);
 
     return (
         <Div
