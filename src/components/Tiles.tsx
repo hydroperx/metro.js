@@ -17,6 +17,7 @@ export type { TileSize } from "com.hydroper.tilelayout";
 
 const tileClass = "Tile";
 const tileIconClass = "Tile-icon";
+const tileLabelClass = "Tile-label";
 // Tile pages are the different slide contents a tile
 // may display one at a time.
 const tilePageClass = "Tile-page";
@@ -117,6 +118,10 @@ const Div = styled.div<{
     & .Tile[data-size="small"] .${tileIconClass} {
         width: 2.5rem;
         height: 2.5rem;
+    }
+
+    & .Tile[data-size="small"] .${tileLabelClass} {
+        display: none;
     }
 
     & .${tileClass} .${tileCheckedRectClass} {
