@@ -15,6 +15,14 @@ import { randomHexLarge } from "../utils/random";
 
 export type { TileSize } from "com.hydroper.tilelayout";
 
+const tileClass = "Tile";
+// Tile pages are the different slide contents a tile
+// may display.
+const tilePageClass = "Tile-page";
+const tileCheckedRectClass = "Tile-checked-rect";
+const tileCheckedIconClass = "Tile-checked-icon";
+const labelClass = "Tile-group-label";
+
 // Viewport mouse up handler
 let viewport_pointerUp: Function | null = null;
 window.addEventListener("pointerup", (e) => {
@@ -46,7 +54,7 @@ const Div = styled.div<{
         border-radius: 0;
     }
 
-    & .Tile-group-label {
+    & .${labelClass} {
         overflow: hidden;
         word-break: none;
         color: ${$ => $.$theme.colors.foreground};
@@ -54,11 +62,11 @@ const Div = styled.div<{
         font-weight: lighter;
     }
 
-    & .Tile-group-label:hover {
+    & .${labelClass}:hover {
         background: ${$ => Color($.$theme.colors.foreground).alpha(0.3).toString()};
     }
 
-    & .Tile {
+    & .${tileClass} {
         overflow: hidden;
         outline: 0.11rem solid ${$ => Color($.$theme.colors.primary).alpha(0.6).alpha(0.3).toString()};
         border: none;
@@ -70,28 +78,28 @@ const Div = styled.div<{
         height: 100%;
     }
 
-    & .Tile[data-selection-mode="true"] {
+    & .${tileClass}[data-selection-mode="true"] {
         opacity: 0.7;
     }
 
-    & .Tile[data-drag-n-drop-mode="true"] {
+    & .${tileClass}[data-drag-n-drop-mode="true"] {
         scale: 0.9;
     }
 
-    & .Tile[data-dragging="true"] {
+    & .${tileClass}[data-dragging="true"] {
         opacity: 0.6;
     }
 
-    & .Tile:hover:not(:disabled),
-    & .Tile:focus:not(:disabled) {
+    & .${tileClass}:hover:not(:disabled),
+    & .${tileClass}:focus:not(:disabled) {
         outline: 0.17rem solid ${$ => Color($.$theme.colors.primary).alpha(0.6).toString()};
     }
 
-    & .Tile:disabled {
+    & .${tileClass}:disabled {
         opacity: 0.5;
     }
 
-    & .Tile .Tile-checked-tri {
+    & .${tileClass} .${tileCheckedRectClass} {
         position: absolute;
         right: -7rem;
         top: -7rem;
@@ -104,11 +112,11 @@ const Div = styled.div<{
         visibility: hidden;
     }
 
-    & .Tile[data-checked="true"] .Tile-checked-tri {
+    & .${tileClass}[data-checked="true"] .${tileCheckedRectClass} {
         visibility: visible;
     }
 
-    & .Tile .Tile-checked-icon {
+    & .${tileClass} .${tileCheckedIconClass} {
         background: url("${getIcon("checked", "white")}") no-repeat;
         background-position: center;
         background-size: contain;
@@ -160,8 +168,8 @@ export function Tiles(options: TilesOptions)
         tiles1 = new Tiles1({
             element: div_ref.current!,
             direction: "horizontal",
-            labelClassName: "Tile-group-label",
-            tileClassName: "Tile",
+            labelClassName: labelClass,
+            tileClassName: tileClass,
             smallSize: 3.625,
             tileGap: 0.6,
             groupGap: 9,
@@ -206,7 +214,7 @@ export function Tiles(options: TilesOptions)
             drag_n_drop_mode = true;
 
             // Set data-drag-n-drop-mode="true" attribute to tiles
-            for (const tile_btn of div_ref.current!.querySelectorAll(".Tile"))
+            for (const tile_btn of div_ref.current!.querySelectorAll("." + tileClass))
                 tile_btn.setAttribute("data-drag-n-drop-mode", "true");
         }
         else if (params.dragNDrop !== undefined)
@@ -214,7 +222,7 @@ export function Tiles(options: TilesOptions)
             drag_n_drop_mode = false;
 
             // Remove data-drag-n-drop-mode attribute from tiles
-            for (const tile_btn of div_ref.current!.querySelectorAll(".Tile"))
+            for (const tile_btn of div_ref.current!.querySelectorAll("." + tileClass))
                 tile_btn.removeAttribute("data-drag-n-drop-mode");
         }
 
@@ -223,7 +231,7 @@ export function Tiles(options: TilesOptions)
             selection_mode = true;
 
             // Set data-selection-mode="true" attribute to tiles
-            for (const tile_btn of div_ref.current!.querySelectorAll(".Tile"))
+            for (const tile_btn of div_ref.current!.querySelectorAll("." + tileClass))
                 tile_btn.setAttribute("data-selection-mode", "true");
         }
         else if (params.selection !== undefined)
@@ -231,7 +239,7 @@ export function Tiles(options: TilesOptions)
             selection_mode = false;
 
             // Remove data-selection-mode attribute from tiles
-            for (const tile_btn of div_ref.current!.querySelectorAll(".Tile"))
+            for (const tile_btn of div_ref.current!.querySelectorAll("." + tileClass))
                 tile_btn.removeAttribute("data-selection-mode");
         }
     }
@@ -295,7 +303,7 @@ export function Tiles(options: TilesOptions)
         let tiles: string[] = [];
         if (div)
         {
-            tiles = Array.from(div.querySelectorAll(".Tile"))
+            tiles = Array.from(div.querySelectorAll("." + tileClass))
                 .filter(div => div.getAttribute("data-checked") == "true")
                 .map(div => div.getAttribute("data-id"));
         }
@@ -363,7 +371,7 @@ export function Tiles(options: TilesOptions)
         if (tile_button.getAttribute("data-checked") == "true")
         {
             tile_button.setAttribute("data-checked", "false");
-            const all_buttons_unchecked = Array.from(div_ref.current!.querySelectorAll(".Tile"))
+            const all_buttons_unchecked = Array.from(div_ref.current!.querySelectorAll("." + tileClass))
                 .every(btn => btn.getAttribute("data-checked") !== "true");
             if (all_buttons_unchecked)
                 mode_signal({ selection: false });
@@ -407,8 +415,8 @@ export function Tiles(options: TilesOptions)
         element.addEventListener("contextmenu", tile_onContextMenu);
 
         element.innerHTML = `
-            <div class="Tile-checked-tri">
-                <div class="Tile-checked-icon"></div>
+            <div class="${tileCheckedRectClass}">
+                <div class="${tileCheckedIconClass}"></div>
             </div>
         `;
 
