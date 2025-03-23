@@ -174,7 +174,7 @@ function App()
                                 </Button>
                             </HGroup>
                         </div>
-                        <div ref={tiles_scroll_node} style={{margin: "5rem 0", width: "100%", height: "37rem", overflowY: "auto"}}>
+                        <div ref={tiles_scroll_node} style={{margin: "5rem 0", width: "100%", height: "37rem", overflowY: "auto", padding: "0.5rem"}}>
                             <Tiles
                                 controller={tiles_controller}
                                 direction="horizontal"

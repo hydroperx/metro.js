@@ -63,12 +63,12 @@ const Div = styled.div<{
     }
 
     & .${labelClass}:hover {
-        background: ${$ => Color($.$theme.colors.foreground).alpha(0.3).toString()};
+        background: ${$ => Color($.$theme.colors.foreground).alpha(0.1).toString()};
     }
 
     & .${tileClass} {
         overflow: hidden;
-        outline: 0.11rem solid ${$ => Color($.$theme.colors.primary).alpha(0.6).alpha(0.3).toString()};
+        outline: 0.11rem solid ${$ => Color($.$theme.colors.foreground).alpha(0.2).toString()};
         border: none;
         font-family: ${fontFamily};
         font-size: ${fontSize};
@@ -92,7 +92,7 @@ const Div = styled.div<{
 
     & .${tileClass}:hover:not(:disabled),
     & .${tileClass}:focus:not(:disabled) {
-        outline: 0.17rem solid ${$ => Color($.$theme.colors.primary).alpha(0.6).toString()};
+        outline: 0.17rem solid ${$ => Color($.$theme.colors.foreground).alpha(0.3).toString()};
     }
 
     & .${tileClass}:disabled {
