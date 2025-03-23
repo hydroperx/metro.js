@@ -101,12 +101,15 @@ const Div = styled.div<{
     }
 
     & .${tilePageClass} {
+        display: flex;
+        flex-direction: column;
         position: absolute;
         width: 100%;
         height: 100%;
     }
 
     & .${tileIconClass} {
+        flex-grow: 2;
         width: 4.4rem;
         height: 4.4rem;
     }
