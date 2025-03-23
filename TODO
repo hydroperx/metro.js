@@ -69,23 +69,10 @@ New tile grids implementation:
 - [ ] Clicking out of all tiles should uncheck them and exit selection mode
 - [ ] Fast scrolling as in Windows 8.1
 
-Former notes:
+More notes:
 
-- [x] Display a simple outline for tiles (very discrete)
-- [x] Support serializing and deserializing tile data
-- [x] While holding click button at tile, slightly rotate X/Y according to the side.
-- [x] Disabled tiles
-- [ ] Drag-n-drop mode
-  - [x] Save a copy of the overall tile state in the drag start
-  - [x] Detect dragged tile over another tile using bounding client rect on both for collision check (`hits_another_tile`)
-  - [x] Moving a tile over another tile should shift the latter: implement `rearrange({ shift: true, to_shift: string, place_taker: string, place_side: "left" | "right" | "top" | "bottom" })`.
-    - [ ] If canceling shift during drag-n-drop, restore state to the initially saved one, organizing tiles back except without re-positioning the dragging tile (use `rearrange_immediate` and implement `rearrange({ restore: true, restore_except: tile_id })`, remember to occupy the space of the dragging tile in the layout).
-  - [ ] On drag end, reset cascading `inset` to `""` and call `rearrange()` after changing tile position.
-    - [ ] Discard tiles state copy (`previous_tiles_state = null;`)
-    - [ ] If tile is to be put in an empty space (rather than shifting another tile), then use NPM `getoffset` to figure out the position offset into the tiles container (comparing it using a `TilesLayout`).
-  - [ ] Trigger "new group" event in TilesController so the user manually creates new groups.
-  - [ ] If dragging far beyond in the orthogonal axis of the tiles container, zoom out (scale down) the entire tiles container; when not, revert back to normal scale.
-  - [ ] Clicking out of all tiles should exit drag-n-drop mode (useful in case a tile is deleted while being dragged)
+- [ ] If dragging far beyond in the orthogonal axis of the tiles container, zoom out (scale down) the entire tiles container; when not, revert back to normal scale.
+- [ ] Clicking out of all tiles should exit drag-n-drop mode (useful in case a tile is deleted while being dragged)
 - [x] Selection mode (check one or more tiles)
   - [ ] Clicking out of all tiles should uncheck all of them
 - [ ] Tile content roll
@@ -93,12 +80,4 @@ Former notes:
   - [ ] No-icon text-only contents
   - [ ] Live tile image contents
     - [ ] Bottom-attached title like in news
-- [ ] Tile group
-  - [ ] Right click event (or long touch holding) for the label.
-  - [ ] If renameable, allow to add label to unlabeled group
-  - [ ] If renameable, allow renaming label
-- [ ] Dispatch context menu event in a tile on a long touch pressure (call exactly `on_context_menu`, not directly the user's context menu, since the library auto checks/unchecks for the user)
-- [x] Open transition
-- [x] Hide transition
-- In `rearrange`:
-- [ ] Fast easy scrolling based in Windows 8.1
+- [ ] Fast easy scrolling based in Windows 8.1 (implement that in another component, like Container, HGroup and VGroup)
