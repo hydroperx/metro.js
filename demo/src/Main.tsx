@@ -73,6 +73,8 @@ function App()
             y: 0,
             size: "large",
             color: "#A8143A",
+            icon: getIcon("video", "white"),
+            label: "Video",
         });
 
         tiles_controller.addTile({

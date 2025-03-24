@@ -15,6 +15,8 @@ import games_black from "../icons/games-black.svg";
 import games_white from "../icons/games-white.svg";
 import ie_black from "../icons/ie-black.svg";
 import ie_white from "../icons/ie-white.svg";
+import video_black from "../icons/video-black.svg";
+import video_white from "../icons/video-white.svg";
 
 import { ColorObserver } from "com.hydroper.colorobserver";
 import React, { useEffect, useRef, useState, useContext } from "react";
@@ -41,6 +43,7 @@ const iconMap = new Map<string, {black: any, white: any}>([
     ["clear", { black: clear_black, white: clear_white }],
     ["games", { black: games_black, white: games_white }],
     ["ie", { black: ie_black, white: ie_white }],
+    ["video", { black: video_black, white: video_white }],
 ]);
 
 export function registerIcon(type: string, sources: { black: any, white: any }): void
