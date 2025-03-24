@@ -13,6 +13,8 @@ import clear_black from "../icons/clear-black.svg";
 import clear_white from "../icons/clear-white.svg";
 import games_black from "../icons/games-black.svg";
 import games_white from "../icons/games-white.svg";
+import ie_black from "../icons/ie-black.svg";
+import ie_white from "../icons/ie-white.svg";
 
 import { ColorObserver } from "com.hydroper.colorobserver";
 import React, { useEffect, useRef, useState, useContext } from "react";
@@ -38,6 +40,7 @@ const iconMap = new Map<string, {black: any, white: any}>([
     ["search", { black: search_black, white: search_white }],
     ["clear", { black: clear_black, white: clear_white }],
     ["games", { black: games_black, white: games_white }],
+    ["ie", { black: ie_black, white: ie_white }],
 ]);
 
 export function registerIcon(type: string, sources: { black: any, white: any }): void

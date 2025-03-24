@@ -98,6 +98,8 @@ function App()
             y: 0,
             size: "small",
             color: "#2572E1",
+            icon: getIcon("ie", "white"),
+            label: "Internet Explorer",
         });
     });
 
