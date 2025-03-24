@@ -34,26 +34,6 @@ Basic components
 
 ## Tiles
 
-Tile layout:
-
-- [ ] Fix bug found in tilelayout: if you mess with a tile, dragging it far away out there and there, later you drop it and the code reports errors such as:
-
-```plain
-Uncaught TypeError: Cannot read properties of undefined (reading 'tiles')
-    at HorizontalLayout.shift (com__hydroper__tilelayout.js?v=6f52c762:1328:57)
-    at Object.onDrag (com__hydroper__tilelayout.js?v=6f52c762:1658:26)
-    at Draggable.drag (com__hydroper__tilelayout.js?v=6f52c762:277:15)
-    at HTMLDocument.<anonymous> (com__hydroper__tilelayout.js?v=6f52c762:106:10)
-
-com__hydroper__tilelayout.js?v=6f52c762:1163 Uncaught TypeError: Cannot read properties of undefined (reading 'auto_self_removal')
-    at HorizontalLayout.snap_to_grid (com__hydroper__tilelayout.js?v=6f52c762:1163:24)
-    at Object.onDragEnd (com__hydroper__tilelayout.js?v=6f52c762:1683:22)
-    at Draggable.stop (com__hydroper__tilelayout.js?v=6f52c762:305:15)
-    at HTMLDocument.<anonymous> (com__hydroper__tilelayout.js?v=6f52c762:106:10)
-```
-
-Other:
-
 - [ ] Controller
   - [x] Add tile
   - [ ] Get tile's button element
