@@ -48,11 +48,8 @@ New tile grids implementation:
   - [x] Remove group
   - [ ] Rename group
 - [ ] Events
-  - [ ] `check` (tile)
   - [ ] `click` (tile)
-  - [ ] `contextMenu` (tile)
-    - [ ] Long touch pressure
-- [ ] Click in a group label should make the label editable. It then turns ineditable once pointer is down outside.
+- [ ] Click in a group label should make the label editable (pressing enter should accept the change, and escape should cancel it). It then turns ineditable once pointer is down outside.
 - [ ] Ctrl+A selects all tiles
   - [ ] Trigger the `options.checkedChange` event
 - [x] Handle drag start and drag move to detect drag change and determine whether to reset tilt 3D transformation.
