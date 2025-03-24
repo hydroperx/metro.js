@@ -27,6 +27,7 @@ import "@fontsource/courier-prime";
 import clone from "clone";
 
 import xboxWallpaper from "./livetiles/content/xbox.png";
+import haloWallpaper from "./livetiles/content/halo.png";
 
 function App()
 {
@@ -92,6 +93,9 @@ function App()
                 {
                     html: `<div style='width:100%;height:100%;background: url("${xboxWallpaper}") no-repeat center 25%;background-size:cover'></div>`,
                 },
+                {
+                    html: `<div style='width:100%;height:100%;background: url("${haloWallpaper}") no-repeat center 25%;background-size:cover'></div>`,
+                }
             ],
         });
 
