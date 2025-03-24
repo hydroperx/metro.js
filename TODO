@@ -54,6 +54,7 @@ New tile grids implementation:
     - [ ] Long touch pressure
 - [ ] Click in a group label should make the label editable. It then turns ineditable once pointer is down outside.
 - [ ] Ctrl+A selects all tiles
+  - [ ] Trigger the `options.checkedChange` event
 - [x] Handle drag start and drag move to detect drag change and determine whether to reset tilt 3D transformation.
 - [ ] Maximize group length orthogonal to the direction
 - [x] Handle tile color
@@ -67,6 +68,7 @@ New tile grids implementation:
 - [ ] Enter selection mode (when checking tiles)
 - [ ] Exit selection mode
 - [ ] Clicking out of all tiles should uncheck them and exit selection mode
+  - [ ] Trigger the `options.checkedChange` event
 - [ ] Fast scrolling as in Windows 8.1
 
 More notes:
