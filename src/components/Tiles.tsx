@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useRef, useState, useEffect } from "react";
 import { styled, keyframes } from "styled-components";
+import Keyframes from "styled-components/dist/models/Keyframes";
 import assert from "assert";
 import Color from "color";
 import { TypedEventTarget } from "com.hydroper.typedeventtarget";
@@ -12,6 +13,9 @@ import { pointsToRem, pointsToRemValue } from "../utils/points";
 import { lighten, darken, enhanceBrightness, contrast } from "../utils/color";
 import { fontFamily, fontSize } from "../utils/common";
 import { randomHexLarge } from "../utils/random";
+
+// Slide-Y animation
+import "./Tiles.css";
 
 export type { TileSize } from "com.hydroper.tilelayout";
 
@@ -167,50 +171,8 @@ const Div = styled.div<{
     }
 `;
 
-// Slide-Y animations
-
+// Slide-Y animation
 const slide_y_page_duration = 5; // secs
-const slide_y_animations = [
-    [],
-    // Slide-Y 2 pages animation
-    [
-        keyframes `
-            50% {
-                animation-timing-function: ease-in;
-            }
-
-            60% {
-                top: -100%;
-                animation-timing-function: step-start;
-            }
-
-            70% {
-                top: 100%;
-                animation-timing-function: ease-out;
-            }
-        `,
-        keyframes `
-            50% {
-                animation-timing-function: ease-in;
-            }
-
-            60% {
-                top: 0%;
-                animation-timing-function: ease-in;
-            }
-
-            70% {
-                top: -100%;
-                animation-timing-function: step-start;
-            }
-
-            90% {
-                top: 100%;
-                animation-timing-function: ease-out;
-            }
-        `
-    ]
-];
 
 /**
  * Represents a container of Metro tiles.
@@ -527,7 +489,7 @@ export function Tiles(options: TilesOptions)
     // Set tile pages
     function set_tile_pages(tile: string, icon: string | undefined, label: string | undefined, livePages: LiveTilePage[] | undefined): void
     {
-        assert(livePages ? livePages!.length <= 3 : true, "livePages.length must be <= 3.");
+        assert(livePages ? livePages!.length <= 2 : true, "livePages.length must be <= 2.");
 
         const button = Array.from(div_ref.current!.querySelectorAll("." + tileClass))
             .find(btn => btn.getAttribute("data-id") == tile);
@@ -586,14 +548,14 @@ export function Tiles(options: TilesOptions)
         }
 
         // Setup animation
-        let anims = page_elements.length <= 1 ? "" : slide_y_animations[page_elements.length - 1];
+        let anim_prefix_1 = page_elements.length <= 1 ? "" : "Tiles_slide_y_" + page_elements.length;
         for (let page_i = 0; page_i < page_elements.length; page_i++)
         {
             const page_el = page_elements[page_i];
             page_el.style.top = page_i == 0 ? "0%" : "100%";
-            if (anims)
+            if (anim_prefix_1)
             {
-                page_el.style.animationName = (anims[page_i] as any).getName();
+                page_el.style.animationName = anim_prefix_1 + "_" + (page_i + 1);
                 page_el.style.animationDuration = (page_elements.length * slide_y_page_duration) + "s";
                 page_el.style.animationIterationCount = "infinite";
             }
@@ -729,7 +691,7 @@ export type Tile = {
      * with rolling animation, each element of
      * this array being a page of the tile.
      *
-     * **Note:** this property may contain at most 3 elements.
+     * **Note:** this property may contain at most 2 elements.
      */
     livePages?: LiveTilePage[],
 };

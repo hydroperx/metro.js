@@ -1,0 +1,40 @@
+/* Slide-Y 2 pages animation */
+
+@keyframes Tiles_slide_y_2_1 {
+    45% {
+        top: 0%;
+        animation-timing-function: ease-in;
+    }
+    50% {
+        top: -100%;
+        animation-timing-function: step-start;
+    }
+    51% {
+        top: 100%;
+        animation-timing-function: ease-out;
+    }
+    95% {
+        top: 100%;
+    }
+}
+
+@keyframes Tiles_slide_y_2_2 {
+    50% {
+        top: 100%;
+        animation-timing-function: ease-out;
+    }
+    55% {
+        top: 0%;
+    }
+    94% {
+        top: 0%;
+        animation-timing-function: ease-in;
+    }
+    99% {
+        top: -100%;
+        animation-timing-function: step-start;
+    }
+    100% {
+        top: 100%;
+    }
+}
