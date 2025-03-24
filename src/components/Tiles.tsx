@@ -418,14 +418,18 @@ export function Tiles(options: TilesOptions)
         if (tile_button.getAttribute("data-checked") == "true")
         {
             tile_button.setAttribute("data-checked", "false");
-            const all_buttons_unchecked = Array.from(div_ref.current!.querySelectorAll("." + tileClass))
-                .every(btn => btn.getAttribute("data-checked") !== "true");
-            if (all_buttons_unchecked)
+            const all_buttons = Array.from(div_ref.current!.querySelectorAll("." + tileClass))
+                .map(btn => [btn.getAttribute("data-id"), btn.getAttribute("data-checked") === "true"]);
+            if (all_buttons.every(([, y]) => !y))
                 mode_signal({ selection: false });
+            options.checkedChange?.(all_buttons.filter(([, y]) => y).map(([id]) => id as string));
             return;
         }
         tile_button.setAttribute("data-checked", "true");
         mode_signal({ selection: true });
+        const all_buttons = Array.from(div_ref.current!.querySelectorAll("." + tileClass))
+            .map(btn => [btn.getAttribute("data-id"), btn.getAttribute("data-checked") === "true"]);
+        options.checkedChange?.(all_buttons.filter(([, y]) => y).map(([id]) => id as string));
     }
 
     // Handle pointer up
@@ -640,6 +644,13 @@ export type TilesOptions = {
      * Event that triggers when the state is updated.
      */
     stateUpdated?: (state: TilesState) => void,
+
+    /**
+     * Event that triggers when any tiles are checked or unchecked.
+     * The given `tiles` parameter contains the tiles that are
+     * currently checked.
+     */
+    checkedChange?: (tiles: string[]) => void,
 };
 
 export type Tile = {

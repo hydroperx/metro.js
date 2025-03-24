@@ -30,7 +30,7 @@
         top: 0%;
         animation-timing-function: ease-in;
     }
-    99% {
+    97% {
         top: -100%;
         animation-timing-function: step-start;
     }
