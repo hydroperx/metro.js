@@ -11,6 +11,8 @@ import search_black from "../icons/search-black.svg";
 import search_white from "../icons/search-white.svg";
 import clear_black from "../icons/clear-black.svg";
 import clear_white from "../icons/clear-white.svg";
+import games_black from "../icons/games-black.svg";
+import games_white from "../icons/games-white.svg";
 
 import { ColorObserver } from "com.hydroper.colorobserver";
 import React, { useEffect, useRef, useState, useContext } from "react";
@@ -35,6 +37,7 @@ const iconMap = new Map<string, {black: any, white: any}>([
     ["arrowButton", { black: arrow_button_black, white: arrow_button_white }],
     ["search", { black: search_black, white: search_white }],
     ["clear", { black: clear_black, white: clear_white }],
+    ["games", { black: games_black, white: games_white }],
 ]);
 
 export function registerIcon(type: string, sources: { black: any, white: any }): void

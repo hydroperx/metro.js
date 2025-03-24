@@ -125,8 +125,9 @@ const Div = styled.div<{
     }
 
     & .${tileLabelClass} {
-        font-size: 0.8rem;
-        padding: 0.2rem 0.3rem;
+        font-size: 0.75rem;
+        padding: 0.2rem 1rem;
+        text-align: left;
     }
 
     & .Tile[data-size="small"] .${tileIconClass} {
@@ -168,31 +169,38 @@ const Div = styled.div<{
 
 // Slide-Y animations
 
-const slide_y_animation = keyframes `
-0% {
-    top: 0%;
-}
+const slide_y_page_duration = 5; // secs
+const slide_y_animations = [
+    [],
+    // Slide-Y 2 pages animation
+    [
+        keyframes `
+            0% {
+                top: 0%;
+            }
 
-70% {
-    top: 0%;
-    animation-timing-function: ease-in;
-}
+            70% {
+                top: 0%;
+                animation-timing-function: ease-in;
+            }
 
-90% {
-    animation-timing-function: step-start;
-    top: -100%;
-}
+            90% {
+                animation-timing-function: step-start;
+                top: -100%;
+            }
 
-95% {
-    top: -100%;
-    animation-timing-function: step-start;
-}
+            95% {
+                top: -100%;
+                animation-timing-function: step-start;
+            }
 
-98% {
-    top: 100%;
-    animation-timing-function: ease-in;
-}
-`;
+            98% {
+                top: 100%;
+                animation-timing-function: ease-in;
+            }
+            `
+    ]
+];
 
 /**
  * Represents a container of Metro tiles.
@@ -529,6 +537,7 @@ export function Tiles(options: TilesOptions)
             const page_el = document.createElement("div");
             page_el.classList.add(tilePageClass);
             page_elements.push(page_el);
+            button.insertBefore(page_el, checked_rect);
 
             const icon_wrap_el = document.createElement("div");
             icon_wrap_el.classList.add(tileIconWrapClass);
@@ -562,24 +571,22 @@ export function Tiles(options: TilesOptions)
                     page_el.id = page.id;
                 page_el.innerHTML = page.html;
                 page_elements.push(page_el);
+                button.insertBefore(page_el, checked_rect);
             }
         }
 
         // Setup animation
-        const page_duration = 5;
-        let anim = page_elements.length == 0 ? "" : slide_y_animation.getName();
-        let page_y = 0, page_i = 0;
-        for (const page_el of page_elements)
+        let anims = page_elements.length <= 1 ? "" : slide_y_animations[page_elements.length - 1];
+        for (let page_i = 0; page_i < page_elements.length; page_i++)
         {
-            page_el.style.top = page_y + "%";
-            if (anim)
+            const page_el = page_elements[page_i];
+            page_el.style.top = page_i == 0 ? "0%" : "100%";
+            if (anims)
             {
-                page_el.style.animation = anim;
+                page_el.style.animation = (anims[page_i] as any).getName();
+                page_el.style.animationDuration = (page_elements.length * slide_y_page_duration) + "s";
                 page_el.style.animationIterationCount = "infinite";
-                page_el.style.animationDelay = (page_duration * page_i) + "s";
             }
-            page_y += 100;
-            page_i++;
         }
     }
 

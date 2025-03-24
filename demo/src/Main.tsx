@@ -7,6 +7,8 @@ import {
     CheckBox,
     Tiles, TilesController, TilesState,
 
+    getIcon,
+
     ThemePresets,
     ThemeContext,
     LocaleDirectionContext,
@@ -80,6 +82,8 @@ function App()
             y: 4,
             size: "wide",
             color: "#008000",
+            icon: getIcon("games", "white"),
+            label: "Games",
         });
 
         tiles_controller.addGroup({
