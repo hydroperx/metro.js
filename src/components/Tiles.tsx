@@ -175,30 +175,40 @@ const slide_y_animations = [
     // Slide-Y 2 pages animation
     [
         keyframes `
-            0% {
-                top: 0%;
+            50% {
+                animation-timing-function: ease-in;
+            }
+
+            60% {
+                top: -100%;
+                animation-timing-function: step-start;
             }
 
             70% {
+                top: 100%;
+                animation-timing-function: ease-out;
+            }
+        `,
+        keyframes `
+            50% {
+                animation-timing-function: ease-in;
+            }
+
+            60% {
                 top: 0%;
                 animation-timing-function: ease-in;
             }
 
+            70% {
+                top: -100%;
+                animation-timing-function: step-start;
+            }
+
             90% {
-                animation-timing-function: step-start;
-                top: -100%;
-            }
-
-            95% {
-                top: -100%;
-                animation-timing-function: step-start;
-            }
-
-            98% {
                 top: 100%;
-                animation-timing-function: ease-in;
+                animation-timing-function: ease-out;
             }
-            `
+        `
     ]
 ];
 
@@ -583,7 +593,7 @@ export function Tiles(options: TilesOptions)
             page_el.style.top = page_i == 0 ? "0%" : "100%";
             if (anims)
             {
-                page_el.style.animation = (anims[page_i] as any).getName();
+                page_el.style.animationName = (anims[page_i] as any).getName();
                 page_el.style.animationDuration = (page_elements.length * slide_y_page_duration) + "s";
                 page_el.style.animationIterationCount = "infinite";
             }

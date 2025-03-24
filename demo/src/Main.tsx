@@ -26,6 +26,8 @@ import "@fontsource/open-sans/700.css";
 import "@fontsource/courier-prime";
 import clone from "clone";
 
+import xboxWallpaper from "./livetiles/content/xbox.png";
+
 function App()
 {
     const { id: contextMenuId, show: showContextMenu } = useContextMenu();
@@ -86,6 +88,11 @@ function App()
             color: "#008000",
             icon: getIcon("games", "white"),
             label: "Games",
+            livePages: [
+                {
+                    html: `<div style='width:100%;height:100%;background: url("${xboxWallpaper}") no-repeat center 25%;background-size:cover'></div>`,
+                },
+            ],
         });
 
         tiles_controller.addGroup({
