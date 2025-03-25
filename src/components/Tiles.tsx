@@ -322,24 +322,6 @@ export function Tiles(options: TilesOptions)
         }
     }, [open]);
 
-    useEffect(() => {
-        // Initialize Tiles1 instance
-        init_tiles1();
-
-        return () => {
-            // Destroy Tiles1 instance
-            tiles1?.destroy();
-
-            // Dipose listeners on TilesController
-            tiles_controller.removeEventListener("getTileButton", tiles_controller_onGetTileButton);
-            tiles_controller.removeEventListener("getChecked", tiles_controller_onGetChecked);
-            tiles_controller.removeEventListener("addTile", tiles_controller_addTile);
-            tiles_controller.removeEventListener("removeTile", tiles_controller_removeTile);
-            tiles_controller.removeEventListener("addGroup", tiles_controller_addGroup);
-            tiles_controller.removeEventListener("removeGroup", tiles_controller_removeGroup);
-        };
-    }, []);
-
     function assert_tiles1_initialized(): void
     {
         assert(!!tiles1, "Tiles not initialized yet. Make sure to run initialization code within useEffect.");
@@ -599,6 +581,18 @@ export function Tiles(options: TilesOptions)
     }
     tiles_controller.addEventListener("removeTile", tiles_controller_removeTile);
 
+    // Remove tile
+    function tiles_controller_resizeTile(e: CustomEvent<{ id: string, value: TileSize }>): void
+    {
+        resize_tile(e.detail.id, e.detail.value);
+    }
+    function resize_tile(tile_id: string, size: TileSize): void
+    {
+        assert_tiles1_initialized();
+        tiles1.resizeTile(tile_id, size);
+    }
+    tiles_controller.addEventListener("resizeTile", tiles_controller_resizeTile);
+
     // Handle adding groups
     function tiles_controller_addGroup(e: CustomEvent<TileGroup>): void
     {
@@ -633,6 +627,25 @@ export function Tiles(options: TilesOptions)
             set_forced_invisible((options.open ?? true) ? false : true);
         }, 100);
     }, [options.open]);
+
+    useEffect(() => {
+        // Initialize Tiles1 instance
+        init_tiles1();
+
+        return () => {
+            // Destroy Tiles1 instance
+            tiles1?.destroy();
+
+            // Dipose listeners on TilesController
+            tiles_controller.removeEventListener("getTileButton", tiles_controller_onGetTileButton);
+            tiles_controller.removeEventListener("getChecked", tiles_controller_onGetChecked);
+            tiles_controller.removeEventListener("addTile", tiles_controller_addTile);
+            tiles_controller.removeEventListener("resizeTile", tiles_controller_resizeTile);
+            tiles_controller.removeEventListener("removeTile", tiles_controller_removeTile);
+            tiles_controller.removeEventListener("addGroup", tiles_controller_addGroup);
+            tiles_controller.removeEventListener("removeGroup", tiles_controller_removeGroup);
+        };
+    }, []);
 
     return (
         <Div
@@ -907,7 +920,7 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
     getTileButton: CustomEvent<{ requestId: string, tile: string }>;
     getTileButtonResult: CustomEvent<{ requestId: string, button: HTMLButtonElement | null }>;
     setChecked: CustomEvent<{ id: string, value: boolean }>;
-    setSize: CustomEvent<{ id: string, value: TileSize }>;
+    resizeTile: CustomEvent<{ id: string, value: TileSize }>;
 }>) {
     /**
      * Gets the list of checked tiles.
@@ -993,9 +1006,9 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
     /**
      * Sets the size of a tile.
      */
-    setSize(id: string, value: TileSize): void
+    resizeTile(id: string, value: TileSize): void
     {
-        this.dispatchEvent(new CustomEvent("setSize", {
+        this.dispatchEvent(new CustomEvent("resizeTile", {
             detail: { id, value },
         }));
     }
