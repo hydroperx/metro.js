@@ -35,7 +35,6 @@ Basic components
 ## Tiles
 
 - [ ] Controller
-  - [ ] Set tile color (should update state, `tile_btn.style.background`, `data-color` and trigger state change event)
   - [ ] Set tile pages (icon, label and hypertext) (use `set_tile_pages()` to implement it)
   - [ ] Rename group
 - [ ] Events

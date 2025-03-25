@@ -581,7 +581,7 @@ export function Tiles(options: TilesOptions)
     }
     tiles_controller.addEventListener("removeTile", tiles_controller_removeTile);
 
-    // Remove tile
+    // Resize tile
     function tiles_controller_resizeTile(e: CustomEvent<{ id: string, value: TileSize }>): void
     {
         resize_tile(e.detail.id, e.detail.value);
@@ -592,6 +592,31 @@ export function Tiles(options: TilesOptions)
         tiles1.resizeTile(tile_id, size);
     }
     tiles_controller.addEventListener("resizeTile", tiles_controller_resizeTile);
+
+    // Recolor tile
+    function tiles_controller_setTileColor(e: CustomEvent<{ id: string, value: string }>): void
+    {
+        set_tile_color(e.detail.id, e.detail.value);
+    }
+    function set_tile_color(tile_id: string, color: string): void
+    {
+        assert_tiles1_initialized();
+
+        const state = tiles_state.tiles.get(tile_id);
+        if (!state) return;
+
+        const element = Array.from(div_ref.current!.querySelectorAll("." + tileClass))
+            .find(btn => btn.getAttribute("data-id") == tile_id) as HTMLButtonElement | undefined;
+        if (!element) return;
+
+        const tile_color_b1 = Color(color).lighten(0.15).hex().toString();
+        element.setAttribute("data-color", color);
+        element.style.background = `linear-gradient(90deg, ${color} 0%, ${tile_color_b1} 100%)`;
+        state.color = color;
+
+        options.stateUpdated?.(tiles_state);
+    }
+    tiles_controller.addEventListener("setTileColor", tiles_controller_setTileColor);
 
     // Handle adding groups
     function tiles_controller_addGroup(e: CustomEvent<TileGroup>): void
@@ -641,6 +666,7 @@ export function Tiles(options: TilesOptions)
             tiles_controller.removeEventListener("getChecked", tiles_controller_onGetChecked);
             tiles_controller.removeEventListener("addTile", tiles_controller_addTile);
             tiles_controller.removeEventListener("resizeTile", tiles_controller_resizeTile);
+            tiles_controller.removeEventListener("setTileColor", tiles_controller_setTileColor);
             tiles_controller.removeEventListener("removeTile", tiles_controller_removeTile);
             tiles_controller.removeEventListener("addGroup", tiles_controller_addGroup);
             tiles_controller.removeEventListener("removeGroup", tiles_controller_removeGroup);
@@ -921,6 +947,7 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
     getTileButtonResult: CustomEvent<{ requestId: string, button: HTMLButtonElement | null }>;
     setChecked: CustomEvent<{ id: string, value: boolean }>;
     resizeTile: CustomEvent<{ id: string, value: TileSize }>;
+    setTileColor: CustomEvent<{ id: string, value: string }>;
 }>) {
     /**
      * Gets the list of checked tiles.
@@ -1009,6 +1036,16 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
     resizeTile(id: string, value: TileSize): void
     {
         this.dispatchEvent(new CustomEvent("resizeTile", {
+            detail: { id, value },
+        }));
+    }
+
+    /**
+     * Sets the color of a tile.
+     */
+    setTileColor(id: string, value: string): void
+    {
+        this.dispatchEvent(new CustomEvent("setTileColor", {
             detail: { id, value },
         }));
     }
