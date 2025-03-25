@@ -35,7 +35,6 @@ Basic components
 ## Tiles
 
 - [ ] Controller
-  - [ ] Set tile pages (icon, label and hypertext) (use `set_tile_pages()` to implement it)
   - [ ] Rename group
 - [ ] Events
   - [ ] `click` (tile)

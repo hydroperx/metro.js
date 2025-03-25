@@ -618,6 +618,14 @@ export function Tiles(options: TilesOptions)
     }
     tiles_controller.addEventListener("setTileColor", tiles_controller_setTileColor);
 
+    // Set tile pages
+    function tiles_controller_setTilePages(e: CustomEvent<{ id: string, icon?: string, label?: string, livePages?: LiveTilePage[] }>): void
+    {
+        assert_tiles1_initialized();
+        set_tile_pages(e.detail.id, e.detail.icon, e.detail.label, e.detail.livePages);
+    }
+    tiles_controller.addEventListener("setTilePages", tiles_controller_setTilePages);
+
     // Handle adding groups
     function tiles_controller_addGroup(e: CustomEvent<TileGroup>): void
     {
@@ -667,6 +675,7 @@ export function Tiles(options: TilesOptions)
             tiles_controller.removeEventListener("addTile", tiles_controller_addTile);
             tiles_controller.removeEventListener("resizeTile", tiles_controller_resizeTile);
             tiles_controller.removeEventListener("setTileColor", tiles_controller_setTileColor);
+            tiles_controller.removeEventListener("setTilePages", tiles_controller_setTilePages);
             tiles_controller.removeEventListener("removeTile", tiles_controller_removeTile);
             tiles_controller.removeEventListener("addGroup", tiles_controller_addGroup);
             tiles_controller.removeEventListener("removeGroup", tiles_controller_removeGroup);
@@ -948,6 +957,7 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
     setChecked: CustomEvent<{ id: string, value: boolean }>;
     resizeTile: CustomEvent<{ id: string, value: TileSize }>;
     setTileColor: CustomEvent<{ id: string, value: string }>;
+    setTilePages: CustomEvent<{ id: string, icon?: string, label?: string, livePages?: LiveTilePage[] }>;
 }>) {
     /**
      * Gets the list of checked tiles.
@@ -1047,6 +1057,16 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
     {
         this.dispatchEvent(new CustomEvent("setTileColor", {
             detail: { id, value },
+        }));
+    }
+
+    /**
+     * Sets the pages of a tile (icon, label and live tile pages).
+     */
+    setTilePages(id: string, { icon, label, livePages }: { icon?: string, label?: string, livePages?: LiveTilePage[] }): void
+    {
+        this.dispatchEvent(new CustomEvent("setTilePages", {
+            detail: { id, icon, label, livePages },
         }));
     }
 }
