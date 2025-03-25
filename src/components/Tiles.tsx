@@ -161,7 +161,7 @@ const Div = styled.div<{
     }
 
     & .${tileClass} .${tileCheckedIconClass} {
-        background: url("${getIcon("checked", "white")}") no-repeat;
+        background: url("${$ => getIcon("checked", Color($.$theme.colors.primaryForeground).isDark() ? "black" : "white")}") no-repeat;
         background-position: center;
         background-size: contain;
         width: ${pointsToRem(5)};
