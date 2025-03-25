@@ -216,6 +216,10 @@ const Div = styled.div<{
         color: ${$ => $.$theme.colors.background};
     }
 
+    & h1, & h2, & h3 {
+        font-weight: lighter;
+    }
+
     & a {
         color: ${$ => $.$theme.colors.anchor};
         text-decoration: none;

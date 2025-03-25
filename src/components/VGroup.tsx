@@ -94,6 +94,10 @@ const Div = styled.div<{
         background: ${$ => $.$theme.colors.foreground};
         color: ${$ => $.$theme.colors.background};
     }
+    
+    & h1, & h2, & h3 {
+        font-weight: lighter;
+    }
 `;
 
 export function VGroup(options: VGroupOptions)
