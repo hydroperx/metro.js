@@ -35,10 +35,9 @@ Basic components
 ## Tiles
 
 - [ ] Controller
-  - [ ] Set tile size (involves use of `tiles_state` and `load`, and will also alter the `data-size` attr and the `tiles` map)
-  - [ ] Set tile color (should update `tiles`, `tile_btn.style.background` and `data-color`)
-  - [ ] Set tile pages (icon, label and hypertext) (use `set_tile_pages()` to implement it)
   - [ ] Resize tile
+  - [ ] Set tile color (should update state, `tile_btn.style.background`, `data-color` and trigger state change event)
+  - [ ] Set tile pages (icon, label and hypertext) (use `set_tile_pages()` to implement it)
   - [ ] Rename group
 - [ ] Events
   - [ ] `click` (tile)
