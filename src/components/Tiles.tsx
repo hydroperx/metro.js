@@ -493,7 +493,61 @@ export function Tiles(options: TilesOptions)
     }
     tiles_controller.addEventListener("addTile", tiles_controller_addTile);
 
+    // Remove tile
+    function tiles_controller_removeTile(e: CustomEvent<string>): void
+    {
+        remove_tile(e.detail);
+    }
+    function remove_tile(tile_id: string): void
+    {
+        assert_tiles1_initialized();
+        tiles1.removeTile(tile_id);
+    }
+    tiles_controller.addEventListener("removeTile", tiles_controller_removeTile);
+
+    // Resize tile
+    function tiles_controller_resizeTile(e: CustomEvent<{ id: string, value: TileSize }>): void
+    {
+        resize_tile(e.detail.id, e.detail.value);
+    }
+    function resize_tile(tile_id: string, size: TileSize): void
+    {
+        assert_tiles1_initialized();
+        tiles1.resizeTile(tile_id, size);
+    }
+    tiles_controller.addEventListener("resizeTile", tiles_controller_resizeTile);
+
+    // Recolor tile
+    function tiles_controller_setTileColor(e: CustomEvent<{ id: string, value: string }>): void
+    {
+        set_tile_color(e.detail.id, e.detail.value);
+    }
+    function set_tile_color(tile_id: string, color: string): void
+    {
+        assert_tiles1_initialized();
+
+        const state = tiles_state.tiles.get(tile_id);
+        if (!state) return;
+
+        const element = Array.from(div_ref.current!.querySelectorAll("." + tileClass))
+            .find(btn => btn.getAttribute("data-id") == tile_id) as HTMLButtonElement | undefined;
+        if (!element) return;
+
+        const tile_color_b1 = Color(color).lighten(0.15).hex().toString();
+        element.setAttribute("data-color", color);
+        element.style.background = `linear-gradient(90deg, ${color} 0%, ${tile_color_b1} 100%)`;
+        state.color = color;
+
+        options.stateUpdated?.(tiles_state);
+    }
+    tiles_controller.addEventListener("setTileColor", tiles_controller_setTileColor);
+
     // Set tile pages
+    function tiles_controller_setTilePages(e: CustomEvent<{ id: string, icon?: string, label?: string, livePages?: LiveTilePage[] }>): void
+    {
+        assert_tiles1_initialized();
+        set_tile_pages(e.detail.id, e.detail.icon, e.detail.label, e.detail.livePages);
+    }
     function set_tile_pages(tile: string, icon: string | undefined, label: string | undefined, livePages: LiveTilePage[] | undefined): void
     {
         assert(livePages ? livePages!.length <= 2 : true, "livePages.length must be <= 2.");
@@ -567,62 +621,6 @@ export function Tiles(options: TilesOptions)
                 page_el.style.animationIterationCount = "infinite";
             }
         }
-    }
-
-    // Remove tile
-    function tiles_controller_removeTile(e: CustomEvent<string>): void
-    {
-        remove_tile(e.detail);
-    }
-    function remove_tile(tile_id: string): void
-    {
-        assert_tiles1_initialized();
-        tiles1.removeTile(tile_id);
-    }
-    tiles_controller.addEventListener("removeTile", tiles_controller_removeTile);
-
-    // Resize tile
-    function tiles_controller_resizeTile(e: CustomEvent<{ id: string, value: TileSize }>): void
-    {
-        resize_tile(e.detail.id, e.detail.value);
-    }
-    function resize_tile(tile_id: string, size: TileSize): void
-    {
-        assert_tiles1_initialized();
-        tiles1.resizeTile(tile_id, size);
-    }
-    tiles_controller.addEventListener("resizeTile", tiles_controller_resizeTile);
-
-    // Recolor tile
-    function tiles_controller_setTileColor(e: CustomEvent<{ id: string, value: string }>): void
-    {
-        set_tile_color(e.detail.id, e.detail.value);
-    }
-    function set_tile_color(tile_id: string, color: string): void
-    {
-        assert_tiles1_initialized();
-
-        const state = tiles_state.tiles.get(tile_id);
-        if (!state) return;
-
-        const element = Array.from(div_ref.current!.querySelectorAll("." + tileClass))
-            .find(btn => btn.getAttribute("data-id") == tile_id) as HTMLButtonElement | undefined;
-        if (!element) return;
-
-        const tile_color_b1 = Color(color).lighten(0.15).hex().toString();
-        element.setAttribute("data-color", color);
-        element.style.background = `linear-gradient(90deg, ${color} 0%, ${tile_color_b1} 100%)`;
-        state.color = color;
-
-        options.stateUpdated?.(tiles_state);
-    }
-    tiles_controller.addEventListener("setTileColor", tiles_controller_setTileColor);
-
-    // Set tile pages
-    function tiles_controller_setTilePages(e: CustomEvent<{ id: string, icon?: string, label?: string, livePages?: LiveTilePage[] }>): void
-    {
-        assert_tiles1_initialized();
-        set_tile_pages(e.detail.id, e.detail.icon, e.detail.label, e.detail.livePages);
     }
     tiles_controller.addEventListener("setTilePages", tiles_controller_setTilePages);
 
