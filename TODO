@@ -35,24 +35,17 @@ Basic components
 ## Tiles
 
 - [ ] Controller
-  - [x] Add tile
-  - [ ] Get tile's button element
-  - [ ] Remove tile
   - [ ] Set tile size (involves use of `tiles_state` and `load`, and will also alter the `data-size` attr and the `tiles` map)
   - [ ] Set tile color (should update `tiles`, `tile_btn.style.background` and `data-color`)
   - [ ] Set tile pages (icon, label and hypertext) (use `set_tile_pages()` to implement it)
   - [ ] Resize tile
-  - [x] Add group
-  - [x] Remove group
   - [ ] Rename group
 - [ ] Events
   - [ ] `click` (tile)
 - [ ] Click in a group label should make the label editable (pressing enter should accept the change, and escape should cancel it). It then turns ineditable once pointer is down outside.
 - [ ] Ctrl+A selects all tiles
   - [ ] Trigger the `options.checkedChange` event
-- [x] Handle drag start and drag move to detect drag change and determine whether to reset tilt 3D transformation.
 - [ ] Maximize group length orthogonal to the direction
-- [x] Handle tile color
 - [ ] Tile content
   - [ ] Icon
   - [ ] Label

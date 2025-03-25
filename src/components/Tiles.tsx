@@ -331,8 +331,10 @@ export function Tiles(options: TilesOptions)
             tiles1?.destroy();
 
             // Dipose listeners on TilesController
+            tiles_controller.removeEventListener("getTileButton", tiles_controller_onGetTileButton);
             tiles_controller.removeEventListener("getChecked", tiles_controller_onGetChecked);
             tiles_controller.removeEventListener("addTile", tiles_controller_addTile);
+            tiles_controller.removeEventListener("removeTile", tiles_controller_removeTile);
             tiles_controller.removeEventListener("addGroup", tiles_controller_addGroup);
             tiles_controller.removeEventListener("removeGroup", tiles_controller_removeGroup);
         };
@@ -362,6 +364,25 @@ export function Tiles(options: TilesOptions)
         }));
     }
     tiles_controller.addEventListener("getChecked", tiles_controller_onGetChecked);
+
+    // Handle request to get a tile's button
+    function tiles_controller_onGetTileButton(e: CustomEvent<{ requestId: string, tile: string }>)
+    {
+        const div = div_ref.current;
+        let button: HTMLButtonElement | null = null;
+        if (div)
+        {
+            button = (Array.from(div.querySelectorAll("." + tileClass))
+                .find(btn => btn.getAttribute("data-id") == e.detail.tile) ?? null) as HTMLButtonElement | null;
+        }
+        tiles_controller.dispatchEvent(new CustomEvent("getTileButtonResult", {
+            detail: {
+                requestId: e.detail.requestId,
+                button,
+            },
+        }));
+    }
+    tiles_controller.addEventListener("getTileButton", tiles_controller_onGetTileButton);
 
     // Tilting
     let tilting_button: HTMLButtonElement | null = null,
@@ -565,6 +586,18 @@ export function Tiles(options: TilesOptions)
             }
         }
     }
+
+    // Remove tile
+    function tiles_controller_removeTile(e: CustomEvent<string>): void
+    {
+        remove_tile(e.detail);
+    }
+    function remove_tile(tile_id: string): void
+    {
+        assert_tiles1_initialized();
+        tiles1.removeTile(tile_id);
+    }
+    tiles_controller.addEventListener("removeTile", tiles_controller_removeTile);
 
     // Handle adding groups
     function tiles_controller_addGroup(e: CustomEvent<TileGroup>): void
@@ -866,10 +899,13 @@ export class TilesState
  */
 export class TilesController extends (EventTarget as TypedEventTarget<{
     addTile: CustomEvent<Tile>;
+    removeTile: CustomEvent<string>;
     addGroup: CustomEvent<TileGroup>;
     removeGroup: CustomEvent<string>;
     getChecked: CustomEvent<{ requestId: string }>;
     getCheckedResult: CustomEvent<{ requestId: string, tiles: string[] }>;
+    getTileButton: CustomEvent<{ requestId: string, tile: string }>;
+    getTileButtonResult: CustomEvent<{ requestId: string, button: HTMLButtonElement | null }>;
     setChecked: CustomEvent<{ id: string, value: boolean }>;
     setSize: CustomEvent<{ id: string, value: TileSize }>;
 }>) {
@@ -894,10 +930,39 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
         });
     }
 
+    /**
+     * Gets the button element corresponding to a tile.
+     */
+    tileButton(tile: string): Promise<HTMLButtonElement | null>
+    {
+        return new Promise((resolve, _) => {
+            const requestId = randomHexLarge();
+            const listener = (e: CustomEvent<{ requestId: string, button: HTMLButtonElement | null }>) => {
+                if (e.detail.requestId !== requestId) return;
+                this.removeEventListener("getTileButtonResult", listener)
+                resolve(e.detail.button);
+            };
+            this.addEventListener("getTileButtonResult", listener);
+            this.dispatchEvent(new CustomEvent("getTileButton", {
+                detail: {
+                    requestId,
+                    tile,
+                },
+            }));
+        });
+    }
+
     addTile(options: Tile): void
     {
         this.dispatchEvent(new CustomEvent("addTile", {
             detail: options,
+        }));
+    }
+
+    removeTile(id: string): void
+    {
+        this.dispatchEvent(new CustomEvent("removeTile", {
+            detail: id,
         }));
     }
 
