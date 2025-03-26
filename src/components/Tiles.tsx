@@ -324,7 +324,7 @@ export function Tiles(options: TilesOptions)
 
     function assert_tiles1_initialized(): void
     {
-        assert(!!tiles1, "Tiles not initialized yet. Make sure to run initialization code within useEffect.");
+        assert(!!tiles1, "Tiles not initialized yet. Make sure to run initialization code within useEffect of [] (empty) dependencies.");
     }
 
     // Handle request to get checked tiles

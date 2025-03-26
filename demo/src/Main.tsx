@@ -110,7 +110,7 @@ function App()
             icon: getIcon("ie", "white"),
             label: "Internet Explorer",
         });
-    });
+    }, []);
 
     return (
         <LocaleDirectionContext.Provider value={localeDirection}>

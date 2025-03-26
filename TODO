@@ -36,7 +36,6 @@ Basic components
 
 Fix bug:
 
-- [ ] After changing theme dynamically, code errors indicating that `tiles1` is not initialized. It seems like `tiles1` is being destroyed and not initialized anymore?
 - [ ] Somewhat if you keep snapping tiles around, at some point some of them may not snap at some places temporarily.
 
 Other notes:
