@@ -36,7 +36,7 @@ Basic components
 
 Fix bug:
 
-- [ ] Somewhat if you keep snapping tiles around, at some point some of them may not snap at some places temporarily.
+- [ ] Somewhat if you keep snapping tiles around, at some point some of them may not snap at some places temporarily. Debugging: this bug is **not** about "tile data" (x, y, w, h) duplicating themselves.
 
 Other notes:
 
