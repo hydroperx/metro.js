@@ -34,12 +34,6 @@ Basic components
 
 ## Tiles
 
-Fix bug:
-
-- [ ] Somewhat if you keep snapping tiles around, at some point some of them may not snap at some places temporarily. Debugging: this bug is **not** about "tile data" (x, y, w, h) duplicating themselves.
-
-Other notes:
-
 - [ ] Controller
   - [ ] Rename group
 - [ ] Events
@@ -49,6 +43,7 @@ Other notes:
   - [ ] Trigger the `options.checkedChange` event
 - [x] Checking tiles
   - [ ] Dispatch context menu event in a tile on a long touch pressure (call exactly `tile_onContextMenu`, not directly the user's context menu, since the library auto checks/unchecks for the user)
+- [ ] Show/hide grid snap target rect as user drags a tile
 - [ ] Enter selection mode (when checking tiles)
 - [ ] Exit selection mode
 - [ ] Clicking out of all tiles should uncheck them and exit selection mode
