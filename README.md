@@ -93,6 +93,8 @@ registerIcon("iconX", { black: source, white: source });
 
 These icons can then be used in for example `Icon` and `IconButton` components.
 
+To unregister a previously registered icon, use `unregisterIcon()`.
+
 ### Measuring points
 
 The cascading `font-size` property in the `<html>` tag is used for determining the unit in points in the library. 1 point equals `0.25rem`, where `rem` is the `font-size` pixels of the `<html>` tag.

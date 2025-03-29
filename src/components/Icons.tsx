@@ -78,6 +78,11 @@ export function registerIcon(type: string, sources: { black: any, white: any }):
     iconMap.set(type, sources);
 }
 
+export function unregisterIcon(type: string): void
+{
+    iconMap.delete(type);
+}
+
 const Img = styled.img<{
     $computed_size: string,
 }> `
