@@ -222,7 +222,6 @@ export function Tiles(options: TilesOptions)
             groupGap: 9,
             labelHeight: 3,
             maxHeight: 6,
-            scrollNode: options.scrollNode.current!,
             tileTransition: "opacity 0.2s, transform 0.2s ease-out, scale 0.2s ease-out",
         });
 
@@ -703,11 +702,6 @@ export type TilesOptions = {
     controller: TilesController,
  
     direction: "horizontal" | "vertical",
-
-    /**
-     * The scroll node relative to the container.
-     */
-    scrollNode: React.RefObject<HTMLElement | null>,
 
     /**
      * Whether to display open or close transition.

@@ -46,7 +46,6 @@ function App()
     const [checkbox_value, set_checkbox_value] = useState<boolean>(false);
 
     // Tiles
-    const tiles_scroll_node = useRef<HTMLDivElement | null>(null);
     const tiles_controller = new TilesController();
 
     // Change theme
@@ -189,11 +188,10 @@ function App()
                                 <SelectOption value="qux1">Qux 1</SelectOption>
                             </Select>
                         </div>
-                        <div ref={tiles_scroll_node} style={{margin: "5rem 0", width: "100%", height: "37rem", overflowY: "auto", padding: "0.5rem"}}>
+                        <div style={{margin: "5rem 0", width: "100%", height: "37rem", overflowY: "auto", padding: "0.5rem"}}>
                             <Tiles
                                 controller={tiles_controller}
-                                direction="horizontal"
-                                scrollNode={tiles_scroll_node}/>
+                                direction="horizontal"/>
                         </div>
                         <ContextMenu id={contextMenuId}>
                             <ContextMenuItem className="foo" click={() => {alert("clicked item 1")}}>
