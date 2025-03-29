@@ -28,6 +28,7 @@ const tileLabelClass = "Tile-label";
 const tilePageClass = "Tile-page";
 const tileCheckedRectClass = "Tile-checked-rect";
 const tileCheckedIconClass = "Tile-checked-icon";
+const placeholderClass = "Tile-placeholder";
 const labelClass = "Tile-group-label";
 
 // Viewport mouse up handler
@@ -71,6 +72,10 @@ const Div = styled.div<{
 
     & .${labelClass}:hover {
         background: ${$ => Color($.$theme.colors.foreground).alpha(0.1).toString()};
+    }
+
+    & .${placeholderClass} {
+        outline: 0.15rem solid ${$ => Color($.$theme.colors.foreground).alpha(0.3).toString()};
     }
 
     & .${tileClass} {
@@ -217,6 +222,7 @@ export function Tiles(options: TilesOptions)
             direction: "horizontal",
             labelClassName: labelClass,
             tileClassName: tileClass,
+            placeholderClassName: placeholderClass,
             smallSize: 3.625,
             tileGap: 0.6,
             groupGap: 9,
