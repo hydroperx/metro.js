@@ -201,6 +201,77 @@ If a context menu contains "checked" or "option" items, prepend a `<ContextMenuC
 );
 ```
 
+### Tiles
+
+Live tiles are supported, though partially since during dragging tiles the library will not shift tiles automatically, and "vertical" tile containers are not supported. In the future these cases might be implemented.
+
+Some basic API is being finished currently, as well.
+
+Here's an usage example:
+
+```tsx
+const tiles_controller = new TilesController();
+
+useEffect(() => {
+    // Add tiles and their groups
+    tiles_controller.addGroup({
+        id: "group1",
+        label: "Group 1",
+    });
+    
+    tiles_controller.addTile({
+        id: "tile1",
+        group: "group1",
+        x: 0,
+        y: 0,
+        size: "large",
+        color: "#A8143A",
+        icon: getIcon("video", "white"),
+        label: "Video",
+    });
+
+    tiles_controller.addTile({
+        id: "tile2",
+        group: "group1",
+        x: 0,
+        y: 4,
+        size: "wide",
+        color: "#008000",
+        icon: getIcon("games", "white"),
+        label: "Games",
+        livePages: [
+            {
+                html: `<div style='width:100%;height:100%;background: url("${xboxWallpaper}") no-repeat center 25%;background-size:cover'></div>`,
+            },
+        ],
+    });
+
+    tiles_controller.addGroup({
+        id: "group2",
+        label: "Group 2",
+    });
+    
+    tiles_controller.addTile({
+        id: "tile3",
+        group: "group2",
+        x: 0,
+        y: 0,
+        size: "small",
+        color: "#2572E1",
+        icon: getIcon("ie", "white"),
+        label: "Internet Explorer",
+    });
+}, []);
+
+return (
+    <>
+        <Tiles
+            controller={tiles_controller}
+            direction="horizontal"/>
+    </>
+);
+```
+
 ## License
 
 Apache 2.0
