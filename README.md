@@ -89,8 +89,8 @@ Here is a list of built-in icons:
 | ---- | ----------- |
 | `bullet` | Correponds to the bullet character. |
 | `checked` | Something is done or checked. |
-| `arrow` | A simple arrow. |
-| `arrowButton` | An arrow. |
+| `arrow` | A simple left arrow. |
+| `arrowButton` | A left arrow. |
 | `search` | Search or zoom. |
 | `clear` | Clear. |
 | `games` | Game controller. |
