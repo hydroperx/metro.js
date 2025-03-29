@@ -95,7 +95,7 @@ const Div = styled.div<{
     }
 
     & .${tileClass}[data-drag-n-drop-mode="true"] {
-        scale: 0.9;
+        scale: 0.92;
     }
 
     & .${tileClass}[data-dragging="true"] {
