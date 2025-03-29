@@ -31,6 +31,8 @@ import calc_black from "../icons/calc-black.svg";
 import calc_white from "../icons/calc-white.svg";
 import camera_black from "../icons/camera-black.svg";
 import camera_white from "../icons/camera-white.svg";
+import bluetooth_black from "../icons/bluetooth-black.svg";
+import bluetooth_white from "../icons/bluetooth-white.svg";
 
 import { ColorObserver } from "com.hydroper.colorobserver";
 import React, { useEffect, useRef, useState, useContext } from "react";
@@ -65,6 +67,7 @@ const iconMap = new Map<string, {black: any, white: any}>([
     ["security", { black: security_black, white: security_white }],
     ["calc", { black: calc_black, white: calc_white }],
     ["camera", { black: camera_black, white: camera_white }],
+    ["bluetooth", { black: bluetooth_black, white: bluetooth_white }],
 ]);
 
 export function registerIcon(type: string, sources: { black: any, white: any }): void
