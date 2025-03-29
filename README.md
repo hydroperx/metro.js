@@ -81,6 +81,31 @@ The `Icon` component is colored automatically at every state (hover, pressed) ac
 
 The `CircleIconButton` component represents a circle button consisting of an icon. For example, `ArrowButton` is an alias to `<CircleIconButton icon="arrowButton" {...rest}/>`, where the `arrowButton` icon fits into a square circle.
 
+### Built-in icons
+
+Here is a list of built-in icons:
+
+| Type | Description |
+| ---- | ----------- |
+| `bullet` | Correponds to the bullet character. |
+| `checked` | Something is done or checked. |
+| `arrow` | A simple arrow. |
+| `arrowButton` | An arrow. |
+| `search` | Search or zoom. |
+| `clear` | Clear. |
+| `games` | Game controller. |
+| `ie` | Internet Explorer |
+| `video` | Video. |
+| `store` | Generic store or marketplace icon. |
+| `settings` | Settings. |
+| `mail` | (e-)mail. |
+| `user` | Generic user avatar. |
+| `security` | Security or safety. |
+| `calc` | Calculator. |
+| `camera` | Camera. |
+| `bluetooth` | Bluetooth. |
+| `news` | News. |
+
 ### Registering icons
 
 Register custom icons with:
