@@ -91,7 +91,7 @@ import { registerIcon } from "com.hydroper.metrocomponents";
 registerIcon("iconX", { black: source, white: source });
 ```
 
-These icons can then be used in for example `Icon` and `IconButton` components.
+These icons can then be used in for example `Icon` and `CircleIconButton` components.
 
 To unregister a previously registered icon, use `unregisterIcon()`.
 
