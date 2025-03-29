@@ -23,6 +23,10 @@ import settings_black from "../icons/settings-black.svg";
 import settings_white from "../icons/settings-white.svg";
 import mail_black from "../icons/mail-black.svg";
 import mail_white from "../icons/mail-white.svg";
+import user_black from "../icons/user-black.svg";
+import user_white from "../icons/user-white.svg";
+import security_black from "../icons/security-black.svg";
+import security_white from "../icons/security-white.svg";
 
 import { ColorObserver } from "com.hydroper.colorobserver";
 import React, { useEffect, useRef, useState, useContext } from "react";
@@ -53,6 +57,8 @@ const iconMap = new Map<string, {black: any, white: any}>([
     ["store", { black: store_black, white: store_white }],
     ["settings", { black: settings_black, white: settings_white }],
     ["mail", { black: mail_black, white: mail_white }],
+    ["user", { black: user_black, white: user_white }],
+    ["security", { black: security_black, white: security_white }],
 ]);
 
 export function registerIcon(type: string, sources: { black: any, white: any }): void
