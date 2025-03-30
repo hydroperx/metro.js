@@ -352,6 +352,30 @@ export function Tiles(options: TilesOptions)
     }
     tiles_controller.addEventListener("getChecked", tiles_controller_onGetChecked);
 
+    // Handle request to determine whether a tile exists or not.
+    function tiles_controller_onTileExists(e: CustomEvent<{ requestId: string, tile: string }>)
+    {
+        tiles_controller.dispatchEvent(new CustomEvent("tileExistsResult", {
+            detail: {
+                requestId: e.detail.requestId,
+                value: tiles1.state.tileExists(e.detail.tile),
+            },
+        }));
+    }
+    tiles_controller.addEventListener("tileExists", tiles_controller_onTileExists);
+
+    // Handle request to determine whether a group exists or not.
+    function tiles_controller_onGroupExists(e: CustomEvent<{ requestId: string, group: string }>)
+    {
+        tiles_controller.dispatchEvent(new CustomEvent("groupExistsResult", {
+            detail: {
+                requestId: e.detail.requestId,
+                value: tiles1.state.groupExists(e.detail.group),
+            },
+        }));
+    }
+    tiles_controller.addEventListener("groupExists", tiles_controller_onGroupExists);
+
     // Handle request to get a tile's button
     function tiles_controller_onGetTileButton(e: CustomEvent<{ requestId: string, tile: string }>)
     {
@@ -680,8 +704,10 @@ export function Tiles(options: TilesOptions)
             tiles_controller.removeEventListener("setTileColor", tiles_controller_setTileColor);
             tiles_controller.removeEventListener("setTilePages", tiles_controller_setTilePages);
             tiles_controller.removeEventListener("removeTile", tiles_controller_removeTile);
+            tiles_controller.removeEventListener("tileExists", tiles_controller_onTileExists);
             tiles_controller.removeEventListener("addGroup", tiles_controller_addGroup);
             tiles_controller.removeEventListener("removeGroup", tiles_controller_removeGroup);
+            tiles_controller.removeEventListener("groupExists", tiles_controller_onGroupExists);
         };
     }, []);
 
@@ -945,8 +971,12 @@ export class TilesState
  */
 export class TilesController extends (EventTarget as TypedEventTarget<{
     addTile: CustomEvent<Tile>;
+    tileExists: CustomEvent<{ requestId: string, tile: string }>;
+    tileExistsResult: CustomEvent<{ requestId: string, value: boolean }>;
     removeTile: CustomEvent<string>;
     addGroup: CustomEvent<TileGroup>;
+    groupExists: CustomEvent<{ requestId: string, group: string }>;
+    groupExistsResult: CustomEvent<{ requestId: string, value: boolean }>;
     removeGroup: CustomEvent<string>;
     getChecked: CustomEvent<{ requestId: string }>;
     getCheckedResult: CustomEvent<{ requestId: string, tiles: string[] }>;
@@ -1007,6 +1037,25 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
         }));
     }
 
+    tileExists(tile_id: string): Promise<boolean>
+    {
+        return new Promise((resolve, _) => {
+            const requestId = randomHexLarge();
+            const listener = (e: CustomEvent<{ requestId: string, value: boolean }>) => {
+                if (e.detail.requestId !== requestId) return;
+                this.removeEventListener("tileExistsResult", listener)
+                resolve(e.detail.value);
+            };
+            this.addEventListener("tileExistsResult", listener);
+            this.dispatchEvent(new CustomEvent("tileExists", {
+                detail: {
+                    requestId,
+                    tile: tile_id,
+                },
+            }));
+        });
+    }
+
     removeTile(id: string): void
     {
         this.dispatchEvent(new CustomEvent("removeTile", {
@@ -1019,6 +1068,25 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
         this.dispatchEvent(new CustomEvent("addGroup", {
             detail: options,
         }));
+    }
+
+    groupExists(group_id: string): Promise<boolean>
+    {
+        return new Promise((resolve, _) => {
+            const requestId = randomHexLarge();
+            const listener = (e: CustomEvent<{ requestId: string, value: boolean }>) => {
+                if (e.detail.requestId !== requestId) return;
+                this.removeEventListener("groupExistsResult", listener)
+                resolve(e.detail.value);
+            };
+            this.addEventListener("groupExistsResult", listener);
+            this.dispatchEvent(new CustomEvent("groupExists", {
+                detail: {
+                    requestId,
+                    group: group_id,
+                },
+            }));
+        });
     }
 
     removeGroup(id: string): void
