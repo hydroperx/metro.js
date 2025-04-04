@@ -534,6 +534,11 @@ export function Tiles(options: TilesOptions)
         assert_tiles1_initialized();
         tiles1.removeTile(tile_id);
         tiles_pages.delete(tile_id);
+
+        const button = Array.from(div_ref.current!.querySelectorAll("." + tileClass))
+            .find(btn => btn.getAttribute("data-id") === tile_id) as HTMLButtonElement | undefined;
+        if (button && button.getAttribute("data-dragging") === "true")
+            mode_signal({ dragNDrop: false });
     }
     tiles_controller.addEventListener("removeTile", tiles_controller_removeTile);
 
