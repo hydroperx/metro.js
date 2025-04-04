@@ -132,7 +132,7 @@ This library uses [`com.hydroper.inputaction`](https://jsr.io/com.hydroper.input
 
 **Important**
 
-Elements that may be navigated with arrow input contain the cascading class name specified by the `ReservedClasses.BUTTON_NAVIGABLE` constant. This is useful for applications like games for avoid duplicating focus handling by detecting that class name.
+Elements that may be navigated with arrow input contain the cascading class name specified by the `BUTTON_NAVIGABLE` constant. This is useful for applications like games for avoid duplicating focus handling by detecting that class name.
 
 ### Context menu
 
@@ -200,6 +200,29 @@ If a context menu contains "checked" or "option" items, prepend a `<ContextMenuC
     </ContextMenuItem>
 );
 ```
+
+<blockquote>
+
+Tip: it is common, for instance, to disable opening a common context menu on buttons, as in the following code snippet:
+
+```ts
+function on_context_menu(e: MouseEvent): void
+{
+    let p = e.target as HTMLElement | null;
+    while (p)
+    {
+        if (!p.matches(":hover")) break;
+        if (p instanceof HTMLButtonElement ||
+            (p instanceof HTMLInputElement && p.type == "button"))
+            return;
+        p = p.parentElement;
+    }
+
+    show_context_menu();
+}
+```
+
+</blockquote>
 
 ### Tiles
 

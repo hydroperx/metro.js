@@ -14,8 +14,7 @@ export const monoFontFamily: string = "'Courier Prime', 'Courier New', monospace
 export const maximumZIndex: string = "1999999999";
 
 /**
- * Reserved cascading class names.
+ * Reserved cascading class name for buttons that may be navigated
+ * through buttons or keyboard keys.
  */
-export const ReservedClasses = {
-    BUTTON_NAVIGABLE: "buttonNavigable",
-};
+export const BUTTON_NAVIGABLE = "button-navigable";

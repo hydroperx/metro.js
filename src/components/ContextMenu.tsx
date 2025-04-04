@@ -9,7 +9,7 @@ import { ArrowIcon, BulletIcon, CheckedIcon, DownArrowIcon, IconOptions, UpArrow
 import { LocaleDirection, LocaleDirectionContext } from "../layout/LocaleDirection";
 import { computePosition, fitViewportPosition, Side } from "../utils/placement";
 import { Theme, ThemeContext } from "../theme";
-import { fontFamily, fontSize, maximumZIndex } from "../utils/common";
+import { BUTTON_NAVIGABLE, fontFamily, fontSize, maximumZIndex } from "../utils/common";
 import { pointsToRem } from "../utils/points";
 import { focusPrevSibling, focusNextSibling } from "../utils/focus";
 import { randomHexLarge } from "../utils/random";
@@ -601,7 +601,7 @@ export function ContextMenuItem(options: ContextMenuItemOptions)
 
     return (
         <ItemButton
-            className={"buttonNavigable" + (options.className ? " " + options.className : "")}
+            className={BUTTON_NAVIGABLE + (options.className ? " " + options.className : "")}
             disabled={options.disabled}
             onClick={button_onClick}
             ref={buttonRef}
@@ -1106,7 +1106,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
 
     return (
         <SubmenuButton
-            className={submenuItemClassName + " " + "buttonNavigable"}
+            className={submenuItemClassName + " " + BUTTON_NAVIGABLE}
             ref={buttonRef}
             $localeDir={localeDir}
             $theme={theme}

@@ -35,6 +35,16 @@ function App()
     // Show context menu
     function Container_onContextMenu(e: MouseEvent): void
     {
+        let p = e.target as HTMLElement | null;
+        while (p)
+        {
+            if (!p.matches(":hover")) break;
+            if (p instanceof HTMLButtonElement ||
+                (p instanceof HTMLInputElement && p.type == "button"))
+                return;
+            p = p.parentElement;
+        }
+
         showContextMenu({
             event: e,
         });

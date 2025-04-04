@@ -11,7 +11,7 @@ import { UpArrowIcon, DownArrowIcon } from "./Icons";
 import { computePosition, fitViewportPosition, Side } from "../utils/placement";
 import { Theme, ThemeContext } from "../theme";
 import { enhanceBrightness, contrast } from "../utils/color";
-import { fontFamily, fontSize, maximumZIndex } from "../utils/common";
+import { BUTTON_NAVIGABLE, fontFamily, fontSize, maximumZIndex } from "../utils/common";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
 import { focusPrevSibling, focusNextSibling } from "../utils/focus";
 import { RemObserver } from "../utils/RemObserver";
@@ -691,7 +691,7 @@ export function SelectOption(options: SelectOptionOptions)
 
     return (
         <SelectOptionButton
-            className={"buttonNavigable" + (options.className ? " " + options.className : "")}
+            className={BUTTON_NAVIGABLE + (options.className ? " " + options.className : "")}
             onClick={button_onClick}
             ref={buttonRef}
             data-value={options.value}
