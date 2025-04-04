@@ -268,7 +268,12 @@ export function Tiles(options: TilesOptions)
 
             button.addEventListener("touchstart", e => {
                 contextTimeout = window.setTimeout(() => {
+                    // do not simulate context menu if dragging tile
+                    if (button.getAttribute("data-dragging") == "true")
+                        return;
+
                     // holding long on a tile will check it
+                    // (simulated context menu)
                     tile_simulated_context_menu(button);
                     contextTimestamp = Date.now();
                 }, 600);
