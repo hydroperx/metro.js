@@ -701,6 +701,18 @@ export function Tiles(options: TilesOptions)
     }
     tiles_controller.addEventListener("removeGroup", tiles_controller_removeGroup);
 
+    // Rename group
+    function tiles_controller_renameGroup(e: CustomEvent<{ id: string, value: string }>): void
+    {
+        rename_group(e.detail.id, e.detail.value);
+    }
+    function rename_group(group_id: string, label: string): void
+    {
+        assert_tiles1_initialized();
+        tiles1.renameGroup(group_id, label);
+    }
+    tiles_controller.addEventListener("renameGroup", tiles_controller_renameGroup);
+
     useEffect(() => {
         setTimeout(() => {
             set_forced_invisible((options.open ?? true) ? false : true);
@@ -727,6 +739,7 @@ export function Tiles(options: TilesOptions)
             tiles_controller.removeEventListener("addGroup", tiles_controller_addGroup);
             tiles_controller.removeEventListener("removeGroup", tiles_controller_removeGroup);
             tiles_controller.removeEventListener("groupExists", tiles_controller_onGroupExists);
+            tiles_controller.removeEventListener("renameGroup", tiles_controller_renameGroup);
         };
     }, []);
 
@@ -1005,6 +1018,7 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
     resizeTile: CustomEvent<{ id: string, value: TileSize }>;
     setTileColor: CustomEvent<{ id: string, value: string }>;
     setTilePages: CustomEvent<{ id: string, icon?: string, label?: string, livePages?: LiveTilePage[] }>;
+    renameGroup: CustomEvent<{ id: string, value: string }>;
 }>) {
     /**
      * Gets the list of checked tiles.
@@ -1152,6 +1166,16 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
     {
         this.dispatchEvent(new CustomEvent("setTilePages", {
             detail: { id, icon, label, livePages },
+        }));
+    }
+
+    /**
+     * Sets the label text of a group.
+     */
+    renameGroup(id: string, value: string): void
+    {
+        this.dispatchEvent(new CustomEvent("renameGroup", {
+            detail: { id, value },
         }));
     }
 }

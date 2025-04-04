@@ -34,8 +34,6 @@ Basic components
 
 ## Tiles
 
-- [ ] Controller
-  - [ ] Rename group
 - [ ] Events
   - [ ] `click` (tile)
 - [ ] Click in a group label should make the label editable (pressing enter should accept the change, and escape should cancel it). It then turns ineditable once pointer is down outside.
