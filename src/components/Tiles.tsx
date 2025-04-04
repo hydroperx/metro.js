@@ -238,10 +238,12 @@ export function Tiles(options: TilesOptions)
             options.stateUpdated?.(tiles_state);
         });
 
+        // On drag start
         tiles1.addEventListener("dragStart", ({ detail: { tile: el } }) => {
             if (el.getAttribute("data-drag-n-drop-mode") == "true") return;
         });
 
+        // On drag move
         tiles1.addEventListener("drag", ({ detail: { tile: el } }) => {
             if (el.getAttribute("data-dragging") != "true")
             {
@@ -254,8 +256,41 @@ export function Tiles(options: TilesOptions)
                 mode_signal({ dragNDrop: true });
         });
 
+        // On drag end
         tiles1.addEventListener("dragEnd", ({ detail: { tile: el } }) => {
             mode_signal({ dragNDrop: false });
+        });
+
+        // On tile added
+        tiles1.addEventListener("addedTile", ({ detail: { tile, button } }) => {
+            let contextTimeout = -1,
+                contextTimestamp = -1;
+
+            button.addEventListener("touchstart", e => {
+                contextTimeout = window.setTimeout(() => {
+                    // holding long on a tile will check it
+                    tile_onContextMenu(e);
+                    contextTimestamp = Date.now();
+                }, 1500);
+            });
+            button.addEventListener("touchend", e => {
+                if (contextTimeout !== -1)
+                    window.clearTimeout(contextTimeout),
+                    contextTimeout = -1;
+            });
+            button.addEventListener("touchcancel", e => {
+                if (contextTimeout !== -1)
+                    window.clearTimeout(contextTimeout),
+                    contextTimeout = -1;
+            });
+            button.addEventListener("click", e => {
+                if (contextTimeout !== -1)
+                    window.clearTimeout(contextTimeout),
+                    contextTimeout = -1;
+                // a click in a tile
+                if (contextTimestamp !== -1 && contextTimestamp < Date.now() - 100)
+                    options.tileClick?.((e.currentTarget as HTMLButtonElement).getAttribute("data-id"));
+            });
         });
     }
 
@@ -788,6 +823,11 @@ export type TilesOptions = {
      * currently checked.
      */
     checkedChange?: (tiles: string[]) => void,
+
+    /**
+     * Event that triggers when a tile is clicked.
+     */
+    tileClick?: (tileId: string) => void,
 };
 
 export type Tile = {

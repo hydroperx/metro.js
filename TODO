@@ -34,13 +34,10 @@ Basic components
 
 ## Tiles
 
-- [ ] Events
-  - [ ] `click` (tile)
 - [ ] Click in a group label should make the label editable (pressing enter should accept the change, and escape should cancel it). It then turns ineditable once pointer is down outside.
 - [ ] Ctrl+A selects all tiles
   - [ ] Trigger the `options.checkedChange` event
 - [x] Checking tiles
-  - [ ] Dispatch context menu event in a tile on a long touch pressure (call exactly `tile_onContextMenu`, not directly the user's context menu, since the library auto checks/unchecks for the user)
 - [ ] Enter selection mode (when checking tiles)
 - [ ] Exit selection mode
 - [ ] Clicking out of all tiles should uncheck them and exit selection mode
