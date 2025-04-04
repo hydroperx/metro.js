@@ -35,7 +35,7 @@ Basic components
 ## Tiles
 
 - [ ] Do not allow dragging tiles when in selection mode
-- [ ] Click in a group label should make the label editable (pressing enter should accept the change, and escape should cancel it). It then turns ineditable once pointer is down outside.
+- [ ] Click in a group label should make the label editable (pressing enter should accept the change, and escape should cancel it). It then turns ineditable once pointer is down outside (and saves the new label).
 - [ ] Ctrl+A selects all tiles
   - [ ] Trigger the `options.checkedChange` event
 - [ ] Clicking out of all tiles should uncheck them and exit selection mode
