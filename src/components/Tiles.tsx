@@ -195,6 +195,7 @@ export function Tiles(options: TilesOptions)
     // Misc vars
     const {controller: tiles_controller } = options;
     const tiles_state = new TilesState();
+    const tiles_pages = new Map<string, { icon: string | undefined, label: string | undefined, livePages: LiveTilePage[] | undefined }>();
 
     // Refs
     const div_ref = useRef<HTMLDivElement | null>(null);
@@ -508,9 +509,7 @@ export function Tiles(options: TilesOptions)
         element.setAttribute("data-color", tile.color);
         element.style.background = `linear-gradient(90deg, ${tile.color} 0%, ${tile_color_b1} 100%)`;
 
-        // Initialize pages
-        set_tile_pages(tile.id, tile.icon, tile.label, tile.livePages);
-
+        // Initialize state
         const state1 = tiles1.state.tiles.get(tile.id);
         tiles_state.tiles.set(tile.id, {
             x: state1.x,
@@ -519,6 +518,9 @@ export function Tiles(options: TilesOptions)
             group: state1.group,
             color: tile.color,
         });
+
+        // Initialize pages
+        set_tile_pages(tile.id, tile.icon, tile.label, tile.livePages);
     }
     tiles_controller.addEventListener("addTile", tiles_controller_addTile);
 
@@ -531,6 +533,7 @@ export function Tiles(options: TilesOptions)
     {
         assert_tiles1_initialized();
         tiles1.removeTile(tile_id);
+        tiles_pages.delete(tile_id);
     }
     tiles_controller.addEventListener("removeTile", tiles_controller_removeTile);
 
@@ -543,6 +546,9 @@ export function Tiles(options: TilesOptions)
     {
         assert_tiles1_initialized();
         tiles1.resizeTile(tile_id, size);
+        const pages = tiles_pages.get(tile_id);
+        if (pages)
+            set_tile_pages(tile_id, pages.icon, pages.label, pages.livePages);
     }
     tiles_controller.addEventListener("resizeTile", tiles_controller_resizeTile);
 
@@ -588,6 +594,11 @@ export function Tiles(options: TilesOptions)
         for (const page of Array.from(button.querySelectorAll("." + tilePageClass)))
             page.remove();
 
+        tiles_pages.set(tile, { icon, label, livePages });
+
+        // Retrieve state
+        const state = tiles_state.tiles.get(tile);
+
         // Use the checked rect as a reference to before where page divs are added.
         const checked_rect = button.querySelector("." + tileCheckedRectClass)! as HTMLDivElement;
 
@@ -623,17 +634,20 @@ export function Tiles(options: TilesOptions)
             page_el.appendChild(label_el);
         }
 
-        if (livePages)
+        if (state?.size !== "small")
         {
-            for (const page of livePages)
+            if (livePages)
             {
-                const page_el = document.createElement("div");
-                page_el.classList.add(tilePageClass);
-                if (page.id)
-                    page_el.id = page.id;
-                page_el.innerHTML = page.html;
-                page_elements.push(page_el);
-                button.insertBefore(page_el, checked_rect);
+                for (const page of livePages)
+                {
+                    const page_el = document.createElement("div");
+                    page_el.classList.add(tilePageClass);
+                    if (page.id)
+                        page_el.id = page.id;
+                    page_el.innerHTML = page.html;
+                    page_elements.push(page_el);
+                    button.insertBefore(page_el, checked_rect);
+                }
             }
         }
 
