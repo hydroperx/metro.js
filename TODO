@@ -45,4 +45,3 @@ Basic components
 More notes:
 
 - [ ] If dragging far beyond in the orthogonal axis of the tiles container, zoom out (scale down) the entire tiles container; when not, revert back to normal scale.
-- [ ] Clicking out of all tiles should exit drag-n-drop mode (useful in case a tile is deleted while being dragged)
