@@ -269,9 +269,9 @@ export function Tiles(options: TilesOptions)
             button.addEventListener("touchstart", e => {
                 contextTimeout = window.setTimeout(() => {
                     // holding long on a tile will check it
-                    tile_onContextMenu(e);
+                    tile_simulated_context_menu(button);
                     contextTimestamp = Date.now();
-                }, 1500);
+                }, 600);
             });
             button.addEventListener("touchend", e => {
                 if (contextTimeout !== -1)
@@ -289,7 +289,12 @@ export function Tiles(options: TilesOptions)
                     contextTimeout = -1;
                 // a click in a tile
                 if (contextTimestamp !== -1 && contextTimestamp < Date.now() - 100)
-                    options.tileClick?.((e.currentTarget as HTMLButtonElement).getAttribute("data-id"));
+                {
+                    // during selection mode a click is a simulated context menu event
+                    if (button.getAttribute("data-selection-mode") === "true")
+                        tile_simulated_context_menu(button);
+                    else options.tileClick?.((e.currentTarget as HTMLButtonElement).getAttribute("data-id"));
+                }
             });
         });
     }
@@ -482,7 +487,10 @@ export function Tiles(options: TilesOptions)
     // Handle context menu on tile
     function tile_onContextMenu(e: Event): void
     {
-        const tile_button = e.currentTarget as HTMLButtonElement;
+        tile_simulated_context_menu(e.currentTarget as HTMLButtonElement);
+    }
+    function tile_simulated_context_menu(tile_button: HTMLButtonElement): void
+    {
         if (tile_button.getAttribute("data-checked") == "true")
         {
             tile_button.setAttribute("data-checked", "false");
