@@ -41,6 +41,10 @@ import opera_black from "../icons/opera-black.svg";
 import opera_white from "../icons/opera-white.svg";
 import chrome_black from "../icons/chrome-black.svg";
 import chrome_white from "../icons/chrome-white.svg";
+import firefox_black from "../icons/firefox-black.svg";
+import firefox_white from "../icons/firefox-white.svg";
+import msedge_black from "../icons/msedge-black.svg";
+import msedge_white from "../icons/msedge-white.svg";
 
 import { ColorObserver } from "com.hydroper.colorobserver";
 import React, { useEffect, useRef, useState, useContext } from "react";
@@ -80,6 +84,8 @@ const iconMap = new Map<string, {black: any, white: any}>([
     ["bing", { black: bing_black, white: bing_white }],
     ["opera", { black: opera_black, white: opera_white }],
     ["chrome", { black: chrome_black, white: chrome_white }],
+    ["firefox", { black: firefox_black, white: firefox_white }],
+    ["msedge", { black: msedge_black, white: msedge_white }],
 ]);
 
 export function registerIcon(type: string, sources: { black: any, white: any }): void

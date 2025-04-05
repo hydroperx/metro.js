@@ -108,6 +108,8 @@ Here is a list of built-in icons:
 | `bing` | Bing search engine. |
 | `opera` | Opera browser. |
 | `chrome` | Google Chrome browser. |
+| `firefox` | Firefox browser. |
+| `msedge` | Microsoft Edge browser. |
 
 ### Registering icons
 
