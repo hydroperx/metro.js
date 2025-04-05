@@ -79,7 +79,7 @@ import { PreferPrimaryContext } from "com.hydroper.metrocomponents";
 
 The `Icon` component is colored automatically at every state (hover, pressed) according to the computed cascading `color` property.
 
-The `CircleIconButton` component represents a circle button consisting of an icon. For example, `ArrowButton` is an alias to `<CircleIconButton icon="arrowButton" {...rest}/>`, where the `arrowButton` icon fits into a square circle.
+The `CircleIconButton` component represents a circle button consisting of an icon. For example, `ArrowButton` is an alias to `<CircleIconButton icon="fullarrow" {...rest}/>`, where the `fullarrow` icon fits into a square circle.
 
 ### Built-in icons
 
@@ -90,7 +90,7 @@ Here is a list of built-in icons:
 | `bullet` | Correponds to the bullet character. |
 | `checked` | Something is done or checked. |
 | `arrow` | A simple left arrow. |
-| `arrowButton` | A left arrow. |
+| `fullarrow` | A full left arrow. |
 | `search` | Search or zoom. |
 | `clear` | Clear. |
 | `games` | Game controller. |

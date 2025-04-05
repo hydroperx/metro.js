@@ -5,8 +5,8 @@ import checked_black from "../icons/checked-black.svg";
 import checked_white from "../icons/checked-white.svg";
 import arrow_white from "../icons/arrow-white.svg";
 import arrow_black from "../icons/arrow-black.svg";
-import arrow_button_black from "../icons/arrow-button-black.svg";
-import arrow_button_white from "../icons/arrow-button-white.svg";
+import fullarrow_black from "../icons/fullarrow-black.svg";
+import fullarrow_white from "../icons/fullarrow-white.svg";
 import search_black from "../icons/search-black.svg";
 import search_white from "../icons/search-white.svg";
 import clear_black from "../icons/clear-black.svg";
@@ -66,7 +66,7 @@ const iconMap = new Map<string, {black: any, white: any}>([
     ["bullet", { black: bullet_black, white: bullet_white }],
     ["checked", { black: checked_black, white: checked_white }],
     ["arrow", { black: arrow_black, white: arrow_white }],
-    ["arrowButton", { black: arrow_button_black, white: arrow_button_white }],
+    ["fullarrow", { black: fullarrow_black, white: fullarrow_white }],
     ["search", { black: search_black, white: search_white }],
     ["clear", { black: clear_black, white: clear_white }],
     ["games", { black: games_black, white: games_white }],

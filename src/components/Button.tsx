@@ -801,7 +801,7 @@ export function ArrowButton(options: ArrowButtonOptions)
 
     return (
         <CircleIconButton
-            icon="arrowButton"
+            icon="fullarrow"
             rotation={d == "left" ? 0 : d == "right" ? 180 : d == "up" ? 90 : -90}
             ref={options.ref}
             className={options.className}
