@@ -141,6 +141,10 @@ Elements that may be navigated with arrow input contain the cascading class name
 
 ### Context menu
 
+![Context menu (1)](docs/contextmenu1.png)
+
+Displaying context menus (typically these from a right click) is supported by the library.
+
 ```tsx
 import {
     useContextMenu, ContextMenu,
@@ -230,6 +234,8 @@ function on_context_menu(e: MouseEvent): void
 </blockquote>
 
 ### Tiles
+
+![Tiles (1)](docs/tiles1.png)
 
 Live tiles are supported, though partially since during dragging tiles the library will not shift tiles automatically, and "vertical" tile containers are not supported. In the future these cases might be implemented.
 
