@@ -1,6 +1,6 @@
 # Metro components
 
-Set of React components using the Metro design.
+A component and icon library for React using the Metro design.
 
 ## Getting started
 
