@@ -90,7 +90,7 @@ Here is a list of built-in icons:
 | `bullet` | Correponds to the bullet character. |
 | `checked` | Something is done or checked. |
 | `arrow` | A simple left arrow. |
-| `fullarrow` | A full left arrow. |
+| `fullarrow` | A full left arrow, used mainly as a `CircleIconButton` (`ArrowButton`). |
 | `search` | Search or zoom. |
 | `clear` | Clear. |
 | `games` | Game controller. |

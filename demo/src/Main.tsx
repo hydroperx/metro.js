@@ -78,7 +78,7 @@ function App()
         });
         
         tiles_controller.addTile({
-            id: "tile1",
+            id: "video",
             group: "group1",
             x: 0,
             y: 0,
@@ -89,7 +89,7 @@ function App()
         });
 
         tiles_controller.addTile({
-            id: "tile2",
+            id: "games",
             group: "group1",
             x: 0,
             y: 4,
@@ -108,16 +108,38 @@ function App()
             id: "group2",
             label: "Group 2",
         });
-        
+
         tiles_controller.addTile({
-            id: "tile3",
+            id: "bing",
             group: "group2",
             x: 0,
             y: 0,
+            size: "medium",
+            color: "#FFC024",
+            icon: getIcon("bing", "white"),
+            label: "Bing",
+        });
+
+        tiles_controller.addTile({
+            id: "ie",
+            group: "group2",
+            x: 0,
+            y: 2,
             size: "small",
             color: "#2572E1",
             icon: getIcon("ie", "white"),
             label: "Internet Explorer",
+        });
+
+        tiles_controller.addTile({
+            id: "edge",
+            group: "group2",
+            x: 1,
+            y: 2,
+            size: "small",
+            color: "#2572E1",
+            icon: getIcon("msedge", "white"),
+            label: "Edge",
         });
     }, []);
 
