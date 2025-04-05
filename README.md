@@ -239,8 +239,6 @@ function on_context_menu(e: MouseEvent): void
 
 Live tiles are supported, though partially since during dragging tiles the library will not shift tiles automatically, and "vertical" tile containers are not supported. In the future these cases might be implemented.
 
-Some basic API is being finished currently, as well.
-
 Here's an usage example:
 
 ```tsx
