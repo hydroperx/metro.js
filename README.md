@@ -105,6 +105,9 @@ Here is a list of built-in icons:
 | `camera` | Camera. |
 | `bluetooth` | Bluetooth. |
 | `news` | News. |
+| `bing` | Bing search engine. |
+| `opera` | Opera browser. |
+| `chrome` | Google Chrome browser. |
 
 ### Registering icons
 
