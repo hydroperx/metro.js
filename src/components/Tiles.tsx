@@ -30,6 +30,7 @@ const tileCheckedRectClass = "Tile-checked-rect";
 const tileCheckedIconClass = "Tile-checked-icon";
 const placeholderClass = "Tile-placeholder";
 const labelClass = "Tile-group-label";
+const labelInputClass = "Tile-group-label-input";
 
 // Viewport mouse up handler
 let viewport_pointerUp: Function | null = null;
@@ -66,12 +67,28 @@ const Div = styled.div<{
         overflow: hidden;
         word-break: none;
         color: ${$ => $.$theme.colors.foreground};
+        font-family: ${fontFamily};
         font-size: 1.2rem;
         font-weight: lighter;
     }
 
     & .${labelClass}:hover {
         background: ${$ => Color($.$theme.colors.foreground).alpha(0.1).toString()};
+    }
+    
+    & .${labelInputClass} {
+        background: none;
+        padding: 0;
+        margin: 0;
+        outline: none;
+        border: none;
+        width: 100%;
+        height: 100%;
+        word-break: none;
+        color: ${$ => $.$theme.colors.foreground};
+        font-family: ${fontFamily};
+        font-size: 1.2rem;
+        font-weight: lighter;
     }
 
     & .${placeholderClass} {
@@ -205,6 +222,9 @@ export function Tiles(options: TilesOptions)
     const [forced_invisible, set_forced_invisible] = useState<boolean>(true);
     const [scale, set_scale] = useState<number>(open ? 0 : 1);
 
+    // Label events
+    let label_click_out_handler: any = null;
+
     // Rem
     const rem = useRef<number>(16);
     
@@ -300,6 +320,81 @@ export function Tiles(options: TilesOptions)
                         tile_simulated_context_menu(button);
                     else options.tileClick?.((e.currentTarget as HTMLButtonElement).getAttribute("data-id"));
                 }
+            });
+        });
+
+        // On group added
+        tiles1.addEventListener("addedGroup", ({ detail: { group, label } }) => {
+            // On label click, make it editable
+            label.addEventListener("click", e => {
+                // If already editing, do nothing.
+                if (label.querySelector("input")) return;
+
+                const initial_text = label.innerText;
+                label.innerHTML = `<input type="text" class="${labelInputClass}">`;
+
+                const input = label.querySelector("input") as HTMLInputElement;
+                input.value = initial_text;
+                input.focus();
+                input.selectionStart = input.value.length;
+
+                // Handle input key presses (escape and enter)
+                input.addEventListener("keydown", e => {
+                    switch (e.key.toLowerCase())
+                    {
+                        case "enter":
+                        {
+                            save_label();
+                            break;
+                        }
+                        case "escape":
+                        {
+                            cancel_label();
+                            break;
+                        }
+                    }
+                });
+                
+                const save_label = () => {
+                    // turn label ineditable and save new value
+                    const label_val = input.value;
+                    label.innerHTML = "";
+                    tiles1.renameGroup(group.id, label_val);
+
+                    clear_handler();
+                };
+                
+                const cancel_label = () => {
+                    // turn label ineditable and discard last typed value
+                    label.innerHTML = "";
+                    const group_state = tiles1.state.groups.get(group.id);
+                    if (group_state)
+                        label.innerText = group_state.label;
+
+                    clear_handler();
+                };
+
+                const clear_handler = () => {
+                    // remove click out handler
+                    if (label_click_out_handler === new_label_click_out_handler)
+                    {
+                        window.removeEventListener("click", label_click_out_handler);
+                        label_click_out_handler = null;
+                    }
+                };
+
+                // Handle click out
+                if (label_click_out_handler)
+                {
+                    label_click_out_handler();
+                    window.removeEventListener("click", label_click_out_handler);
+                }
+                const new_label_click_out_handler = (e: MouseEvent) => {
+                    if (label.matches(":hover")) return;
+                    save_label();
+                };
+                label_click_out_handler = new_label_click_out_handler;
+                window.addEventListener("click", label_click_out_handler);
             });
         });
     }
@@ -788,6 +883,10 @@ export function Tiles(options: TilesOptions)
             tiles_controller.removeEventListener("removeGroup", tiles_controller_removeGroup);
             tiles_controller.removeEventListener("groupExists", tiles_controller_onGroupExists);
             tiles_controller.removeEventListener("renameGroup", tiles_controller_renameGroup);
+
+            // Dispose of label handlers
+            if (label_click_out_handler)
+                window.removeEventListener("click", label_click_out_handler);
         };
     }, []);
 
