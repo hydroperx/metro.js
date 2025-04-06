@@ -141,6 +141,39 @@ function App()
             icon: getIcon("msedge", "white"),
             label: "Edge",
         });
+
+        tiles_controller.addTile({
+            id: "opera",
+            group: "group2",
+            x: 0,
+            y: 3,
+            size: "small",
+            color: "#C90000",
+            icon: getIcon("opera", "white"),
+            label: "Opera",
+        });
+
+        tiles_controller.addTile({
+            id: "chrome",
+            group: "group2",
+            x: 1,
+            y: 3,
+            size: "small",
+            color: "#C90000",
+            icon: getIcon("chrome", "white"),
+            label: "Google Chrome",
+        });
+
+        tiles_controller.addTile({
+            id: "firefox",
+            group: "group2",
+            x: 0,
+            y: 4,
+            size: "small",
+            color: "#E68100",
+            icon: getIcon("firefox", "white"),
+            label: "Firefox",
+        });
     }, []);
 
     return (
