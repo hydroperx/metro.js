@@ -14,7 +14,7 @@ import { lighten, darken, enhanceBrightness, contrast } from "../utils/color";
 import { fontFamily, fontSize } from "../utils/common";
 import { randomHexLarge } from "../utils/random";
 
-// Slide-Y animation
+// Cascading animations
 import "./Tiles.css";
 
 export type { TileSize } from "com.hydroper.tilelayout";

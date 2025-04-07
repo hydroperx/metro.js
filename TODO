@@ -35,8 +35,8 @@ Basic components
 ## Tiles
 
 - [ ] Do not allow dragging tiles when in selection mode
-- [ ] Fast scrolling as in Windows 8.1
-
-More notes:
-
 - [ ] If dragging far beyond in the orthogonal axis of the tiles container, zoom out (scale down) the entire tiles container; when not, revert back to normal scale.
+
+## Container/HGroup
+
+- [ ] Fast horizontal scrolling as in Windows 8.1
