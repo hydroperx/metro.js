@@ -111,7 +111,11 @@ export function HGroup(options: HGroupOptions)
         overflow = "hidden";
     }
     let overflowX = "";
-    if (options.clipHorizontal)
+    if (options.wheelScrollHorizontal)
+    {
+        overflowX = "auto";
+    }
+    else if (options.clipHorizontal)
     {
         overflowX = "hidden";
     }
@@ -255,6 +259,11 @@ export type HGroupOptions = {
      * Whether to clip vertically in case content overflows.
      */
     clipVertical?: boolean,
+
+    /**
+     * Enables horizontal scrolling with mouse wheel support.
+     */
+    wheelScrollHorizontal?: boolean,
 
     minWidth?: number,
     minHeight?: number,

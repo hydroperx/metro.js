@@ -39,4 +39,5 @@ Basic components
 
 ## Container/HGroup
 
-- [ ] Fast horizontal scrolling as in Windows 8.1 (`scrollHorizontal?: boolean`)
+- [x] Fast horizontal scrolling as in Windows 8.1 (`wheelScrollHorizontal?: boolean`)
+  - [ ] Wheel support

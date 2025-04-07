@@ -20,6 +20,9 @@ export function Container(options: ContainerOptions)
     // Enable or disable selection
     const user_select = (options.selection ?? true) ? "auto" : "none";
 
+    // Overflow X
+    let overflowX = options.wheelScrollHorizontal ? "auto" : "";
+
     // Build transition
     let transition = "";
     if (options.easeOutPosition)
@@ -64,6 +67,7 @@ export function Container(options: ContainerOptions)
         $minHeight={options.minHeight}
         $maxWidth={options.maxWidth}
         $maxHeight={options.maxHeight}
+        $overflowX={overflowX}
         $full={!!options.full}
         $user_select={user_select}
         $solid={!!options.solid}
@@ -112,6 +116,11 @@ export type ContainerOptions =
     paddingRight?: number,
     paddingTop?: number,
     paddingBottom?: number,
+
+    /**
+     * Enables horizontal scrolling with mouse wheel support.
+     */
+    wheelScrollHorizontal?: boolean,
 
     /**
      * Indicates whether or not character selection is enabled for this container.
@@ -175,6 +184,7 @@ const Div = styled.div<{
     $minHeight?: number;
     $maxWidth?: number;
     $maxHeight?: number;
+    $overflowX?: string;
     $full: boolean,
     $user_select: string;
     $solid: boolean,
@@ -190,6 +200,7 @@ const Div = styled.div<{
     font-family: ${fontFamily};
     font-size: ${fontSize};
     overflow: auto;
+    ${ $ => $.$overflowX ? "overflow-x: " + $.$overflowX + ";" : "" }
     transition: ${$ => $.$transition};
     user-select: ${$ => $.$user_select};
     -moz-user-select: ${$ => $.$user_select};
