@@ -313,12 +313,14 @@ export function Tiles(options: TilesOptions)
                     window.clearTimeout(contextTimeout),
                     contextTimeout = -1;
                 // a click in a tile
-                if (contextTimestamp !== -1 && contextTimestamp < Date.now() - 100)
+                if (contextTimestamp === -1 || contextTimestamp < Date.now() - 100)
                 {
                     // during selection mode a click is a simulated context menu event
                     if (button.getAttribute("data-selection-mode") === "true")
                         tile_simulated_context_menu(button);
                     else options.tileClick?.((e.currentTarget as HTMLButtonElement).getAttribute("data-id"));
+
+                    contextTimestamp = -1;
                 }
             });
         });
