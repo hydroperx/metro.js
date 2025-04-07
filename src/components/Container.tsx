@@ -21,7 +21,7 @@ export function Container(options: ContainerOptions)
     const user_select = (options.selection ?? true) ? "auto" : "none";
 
     // Overflow X
-    let overflowX = options.wheelScrollHorizontal ? "auto" : "";
+    let overflowX = options.wheelHorizontal ? "auto" : "";
 
     // Build transition
     let transition = "";
@@ -120,7 +120,7 @@ export type ContainerOptions =
     /**
      * Enables horizontal scrolling with mouse wheel support.
      */
-    wheelScrollHorizontal?: boolean,
+    wheelHorizontal?: boolean,
 
     /**
      * Indicates whether or not character selection is enabled for this container.

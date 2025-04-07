@@ -111,7 +111,7 @@ export function HGroup(options: HGroupOptions)
         overflow = "hidden";
     }
     let overflowX = "";
-    if (options.wheelScrollHorizontal)
+    if (options.wheelHorizontal)
     {
         overflowX = "auto";
     }
@@ -263,7 +263,7 @@ export type HGroupOptions = {
     /**
      * Enables horizontal scrolling with mouse wheel support.
      */
-    wheelScrollHorizontal?: boolean,
+    wheelHorizontal?: boolean,
 
     minWidth?: number,
     minHeight?: number,
