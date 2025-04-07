@@ -619,7 +619,7 @@ export function Tiles(options: TilesOptions)
     }
 
     // Handle window key press
-    function on_key_down(e: KeyboardEvent)
+    function on_key_down(e: KeyboardEvent): void
     {
         // Ctrl+A
         if (e.key.toLowerCase() == "a" && e.ctrlKey && !e.shiftKey && !e.altKey)
@@ -631,7 +631,24 @@ export function Tiles(options: TilesOptions)
             }
             if (buttons.length != 0)
                 mode_signal({ selection: true });
-            options.checkedChange(buttons.map(btn => btn.getAttribute("data-id")));
+            options.checkedChange?.(buttons.map(btn => btn.getAttribute("data-id")));
+        }
+    }
+
+    // Handle clicks on container
+    function on_click(e: MouseEvent): void
+    {
+        const buttons = Array.from(div_ref.current!.querySelectorAll("." + tileClass)) as HTMLButtonElement[];
+        const hovering_a_button = buttons.some(btn => btn.matches(":hover"));
+        if (!hovering_a_button)
+        {
+            // Deselect tiles
+            for (const button of buttons)
+            {
+                button.removeAttribute("data-checked");
+            }
+            mode_signal({ selection: false });
+            options.checkedChange?.([]);
         }
     }
 
@@ -921,7 +938,8 @@ export function Tiles(options: TilesOptions)
             $scale={scale}
             $theme={theme}
             $direction={options.direction}
-            $localeDir={localeDir}>
+            $localeDir={localeDir}
+            onClick={on_click as any}>
 
             <div ref={div_ref}></div>
         </Div>

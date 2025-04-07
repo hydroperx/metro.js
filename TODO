@@ -35,8 +35,7 @@ Basic components
 ## Tiles
 
 - [ ] Do not allow dragging tiles when in selection mode
-- [ ] Clicking out of all tiles should uncheck them and exit selection mode
-  - [ ] Trigger the `options.checkedChange` event (in case any tiles were unchecked)
+- [ ] Click on a tile during selection mode will select it (not "click" it)
 - [ ] Fast scrolling as in Windows 8.1
 
 More notes:
