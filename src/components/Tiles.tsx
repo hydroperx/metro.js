@@ -618,6 +618,23 @@ export function Tiles(options: TilesOptions)
         tilting_button = null;
     }
 
+    // Handle window key press
+    function on_key_down(e: KeyboardEvent)
+    {
+        // Ctrl+A
+        if (e.key.toLowerCase() == "a" && e.ctrlKey && !e.shiftKey && !e.altKey)
+        {
+            const buttons = Array.from(div_ref.current!.querySelectorAll("." + tileClass)) as HTMLButtonElement[];
+            for (const button of buttons)
+            {
+                button.setAttribute("data-checked", "true");
+            }
+            if (buttons.length != 0)
+                mode_signal({ selection: true });
+            options.checkedChange(buttons.map(btn => btn.getAttribute("data-id")));
+        }
+    }
+
     // Handle the request to add a tile
     function tiles_controller_addTile(e: CustomEvent<Tile>)
     {
@@ -866,11 +883,14 @@ export function Tiles(options: TilesOptions)
         // Initialize Tiles1 instance
         init_tiles1();
 
+        // Window events
+        window.addEventListener("keydown", on_key_down);
+
         return () => {
             // Destroy Tiles1 instance
             tiles1?.destroy();
 
-            // Dipose listeners on TilesController
+            // Dispose listeners on TilesController
             tiles_controller.removeEventListener("getTileButton", tiles_controller_onGetTileButton);
             tiles_controller.removeEventListener("getChecked", tiles_controller_onGetChecked);
             tiles_controller.removeEventListener("addTile", tiles_controller_addTile);
@@ -883,6 +903,9 @@ export function Tiles(options: TilesOptions)
             tiles_controller.removeEventListener("removeGroup", tiles_controller_removeGroup);
             tiles_controller.removeEventListener("groupExists", tiles_controller_onGroupExists);
             tiles_controller.removeEventListener("renameGroup", tiles_controller_renameGroup);
+
+            // Disopse listeners on window
+            window.removeEventListener("keydown", on_key_down);
 
             // Dispose of label handlers
             if (label_click_out_handler)

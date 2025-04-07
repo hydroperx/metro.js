@@ -437,7 +437,19 @@ function App()
 }
 
 // Disable default context menu
-document.addEventListener("contextmenu", event => event.preventDefault());
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+// Disable certain key behaviors
+window.addEventListener("keydown", e => {
+    // Ctrl+A
+    if (e.key.toLowerCase() == "a" && e.ctrlKey && !e.shiftKey && !e.altKey)
+    {
+        if (!(
+            document.activeElement instanceof HTMLInputElement ||
+            document.activeElement instanceof HTMLTextAreaElement
+        )) e.preventDefault();
+    }
+});
 
 const root = createRoot(document.getElementById("root")!);
 root.render(<App />);
