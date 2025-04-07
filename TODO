@@ -41,3 +41,5 @@ Basic components
 
 - [x] Fast horizontal scrolling as in Windows 8.1 (`wheelHorizontal?: boolean`)
   - [ ] Wheel support
+    - https://stackoverflow.com/a/71770226/26380963
+    - https://api.jquery.com/animate/ (easeOutBounce?)
