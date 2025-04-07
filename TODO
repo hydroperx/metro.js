@@ -35,7 +35,6 @@ Basic components
 ## Tiles
 
 - [ ] Do not allow dragging tiles when in selection mode
-- [ ] Click on a tile during selection mode will select it (not "click" it)
 - [ ] Fast scrolling as in Windows 8.1
 
 More notes:
