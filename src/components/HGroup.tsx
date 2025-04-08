@@ -206,10 +206,10 @@ export function HGroup(options: HGroupOptions)
     return <Div
         ref={node => {
             ref.current = node;
-            if (typeof ref == "function")
-                (ref as any)(node);
+            if (typeof options.ref == "function")
+                options.ref(node);
             else if (ref)
-                ref.current = node;
+                options.ref.current = node;
         }}
         className={options.className}
         style={options.style}
