@@ -253,11 +253,11 @@ function App()
                                 <SelectOption value="qux1">Qux 1</SelectOption>
                             </Select>
                         </div>
-                        <div style={{margin: "5rem 0", width: "100%", height: "37rem", overflowY: "auto", padding: "0.5rem"}}>
+                        <Container style={{margin: "5rem 0", width: "100%", height: "37rem", padding: "0.5rem"}} wheelHorizontal>
                             <Tiles
                                 controller={tiles_controller}
                                 direction="horizontal"/>
-                        </div>
+                        </Container>
                         <ContextMenu id={contextMenuId}>
                             <ContextMenuItem className="foo" click={() => {alert("clicked item 1")}}>
                                 <ContextMenuCheck state="none"/>

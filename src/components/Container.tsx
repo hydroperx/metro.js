@@ -50,6 +50,28 @@ export function Container(options: ContainerOptions)
         transition = (transition ? transition : ", " + "") + "opacity 200ms ease-in";
     }
 
+    // Wheel
+    let last_wheel_timestamp = -1,
+        last_fast_wheel_timestamp = -1;
+    const handle_wheel = (e: WheelEvent): void => {
+        // deltaMode == DOM_DELTA_PIXEL
+        if (options.wheelHorizontal && e.deltaMode == 0)
+        {
+            const div = e.currentTarget as HTMLDivElement;
+            let multiplier = 2;
+            if (last_wheel_timestamp != -1 && ((last_wheel_timestamp > Date.now() - 600 && last_wheel_timestamp < Date.now() - 20) || (last_fast_wheel_timestamp !== -1 && last_fast_wheel_timestamp > Date.now() - 100)))
+                multiplier *= 3,
+                last_fast_wheel_timestamp = Date.now();
+            else last_fast_wheel_timestamp = -1;
+            const delta_y = e.deltaY * multiplier;
+            let target_scroll = div.scrollLeft + delta_y;
+            target_scroll = Math.min(target_scroll, div.scrollWidth);
+            div.scrollTo({ left: target_scroll, behavior: "smooth" });
+            last_wheel_timestamp = Date.now();
+        }
+        options.wheel?.(e as any);
+    };
+
     return <Div
         ref={options.ref}
         className={options.className ? " " + options.className : ""}
@@ -94,7 +116,7 @@ export function Container(options: ContainerOptions)
         onTouchMove={options.touchMove}
         onTouchCancel={options.touchCancel}
         
-        onWheel={options.wheel}>
+        onWheel={handle_wheel as any}>
 
         {options.children}
     </Div>;
