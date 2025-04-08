@@ -17,6 +17,9 @@ export function Container(options: ContainerOptions)
     // Use theme
     const theme = useContext(ThemeContext);
 
+    // Refs
+    const ref: React.Ref<HTMLDivElement | null> = useRef(null);
+
     // Enable or disable selection
     const user_select = (options.selection ?? true) ? "auto" : "none";
 
@@ -58,6 +61,7 @@ export function Container(options: ContainerOptions)
         const div = e.currentTarget as HTMLDivElement;
         if (options.wheelHorizontal && e.deltaMode == 0)
         {
+            e.preventDefault();
             let multiplier = 2;
             if (last_wheel_timestamp != -1 && ((last_wheel_timestamp > Date.now() - 600 && last_wheel_timestamp < Date.now() - 20) || (last_fast_wheel_timestamp !== -1 && last_fast_wheel_timestamp > Date.now() - 100)))
                 multiplier *= 3,
@@ -72,8 +76,22 @@ export function Container(options: ContainerOptions)
         options.wheel?.(e as any);
     };
 
+    useEffect(() => {
+        let div: HTMLDivElement | null = ref.current;
+        div.addEventListener("wheel", handle_wheel, { passive: false });
+        return () => {
+            div.removeEventListener("wheel", handle_wheel);
+        };
+    }, []);
+
     return <Div
-        ref={options.ref}
+        ref={node => {
+            ref.current = node;
+            if (typeof ref == "function")
+                (ref as any)(node);
+            else if (ref)
+                ref.current = node;
+        }}
         className={options.className ? " " + options.className : ""}
         style={options.style}
 
