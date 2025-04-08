@@ -174,9 +174,9 @@ export function HGroup(options: HGroupOptions)
         last_fast_wheel_timestamp = -1;
     const handle_wheel = (e: WheelEvent): void => {
         // deltaMode == DOM_DELTA_PIXEL
+        const div = e.currentTarget as HTMLDivElement;
         if (options.wheelHorizontal && e.deltaMode == 0)
         {
-            const div = e.currentTarget as HTMLDivElement;
             let multiplier = 2;
             if (last_wheel_timestamp != -1 && ((last_wheel_timestamp > Date.now() - 600 && last_wheel_timestamp < Date.now() - 20) || (last_fast_wheel_timestamp !== -1 && last_fast_wheel_timestamp > Date.now() - 100)))
                 multiplier *= 3,
