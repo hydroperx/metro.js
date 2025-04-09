@@ -26,7 +26,10 @@
   "peerDependencies": {
     "react": ">=19.0.0"
   },
-  "description": "Metro design components",
+  "description": "Metro design components and icons",
+  "repository": {
+    "url": "https://github.com/realhydroper/tsmetrocomponents.git"
+  },
   "license": "Apache-2.0",
   "keywords": [
     "metro",
