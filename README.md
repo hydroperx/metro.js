@@ -111,6 +111,7 @@ Here is a list of built-in icons:
 | `firefox` | Firefox browser. |
 | `msedge` | Microsoft Edge browser. |
 | `lapis` | Southwest-pointing lapis. Also used as an "edit" icon. |
+| `idea` | An upstanding lamp. |
 
 ### Registering icons
 
