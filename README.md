@@ -110,6 +110,7 @@ Here is a list of built-in icons:
 | `chrome` | Google Chrome browser. |
 | `firefox` | Firefox browser. |
 | `msedge` | Microsoft Edge browser. |
+| `lapis` | Southwest-pointing lapis. Also used as an "edit" icon. |
 
 ### Registering icons
 
