@@ -439,37 +439,6 @@ export function Tiles(options: TilesOptions)
         }
     }
 
-    // Observe rem
-    useEffect(() => {
-        const rem_observer = new RemObserver(value => {
-            rem.current = value;
-        });
-        return () => {
-            rem_observer.cleanup();
-        };
-    }, []);
-
-    // Open/close transition
-    let transition_timeout = -1;
-    useEffect(() => {
-        if (transition_timeout !== -1)
-        {
-            window.clearTimeout(transition_timeout);
-        }
-        if (open)
-        {
-            transition_timeout = window.setTimeout(() => {
-                set_scale(1);
-            }, 300);
-        }
-        else
-        {
-            transition_timeout = window.setTimeout(() => {
-                set_scale(0);
-            }, 300);
-        }
-    }, [open]);
-
     function assert_tiles1_initialized(): void
     {
         assert(!!tiles1, "Tiles not initialized yet. Make sure to run initialization code within useEffect of [] (empty) dependencies.");
@@ -891,6 +860,37 @@ export function Tiles(options: TilesOptions)
         tiles1.renameGroup(group_id, label);
     }
     tiles_controller.addEventListener("renameGroup", tiles_controller_renameGroup);
+
+    // Observe rem
+    useEffect(() => {
+        const rem_observer = new RemObserver(value => {
+            rem.current = value;
+        });
+        return () => {
+            rem_observer.cleanup();
+        };
+    }, []);
+
+    // Open/close transition
+    let transition_timeout = -1;
+    useEffect(() => {
+        if (transition_timeout !== -1)
+        {
+            window.clearTimeout(transition_timeout);
+        }
+        if (open)
+        {
+            transition_timeout = window.setTimeout(() => {
+                set_scale(1);
+            }, 300);
+        }
+        else
+        {
+            transition_timeout = window.setTimeout(() => {
+                set_scale(0);
+            }, 300);
+        }
+    }, [open]);
 
     useEffect(() => {
         setTimeout(() => {

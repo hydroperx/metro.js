@@ -36,9 +36,3 @@ Basic components
 
 - [ ] Do not allow dragging tiles when in selection mode
 - [ ] If dragging far beyond in the orthogonal axis of the tiles container, zoom out (scale down) the entire tiles container; when not, revert back to normal scale.
-
-## Container/HGroup
-
-- [x] Fast horizontal scrolling as in Windows 8.1 (`wheelHorizontal?: boolean`)
-  - [x] Wheel support
-    - [ ] Prevent scrolling parents together

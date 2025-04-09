@@ -132,9 +132,7 @@ export function Container(options: ContainerOptions)
         onTouchStart={options.touchStart}
         onTouchEnd={options.touchEnd}
         onTouchMove={options.touchMove}
-        onTouchCancel={options.touchCancel}
-        
-        onWheel={handle_wheel as any}>
+        onTouchCancel={options.touchCancel}>
 
         {options.children}
     </Div>;
