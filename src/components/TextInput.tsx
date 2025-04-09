@@ -2,7 +2,7 @@ import { useContext, useRef, useState, useEffect, Ref } from "react";
 import { styled } from "styled-components";
 import Color from "color";
 import extend from "extend";
-import { getIcon } from "./Icons";
+import { IconRegistry } from "./Icons";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { ThemeContext } from "../theme";
 import { fontFamily, fontSize } from "../utils/common";
@@ -40,7 +40,7 @@ export function TextInput(options: TextInputOptions)
         font-size: ${fontSize};
         padding: ${pointsToRem(2.15)} 0.7rem;
         ${icon === null || options.multiline ? "" : `${localeDir == "ltr" ? "padding-right" : "padding-left"}: ${pointsToRem(iconSize + 3)};`}
-        ${icon === null || options.multiline ? "" : `background-image: url("${getIcon(icon, dark ? "white" : "black")}");`}
+        ${icon === null || options.multiline ? "" : `background-image: url("${IconRegistry.get(icon, dark ? "white" : "black")}");`}
         background-position: center ${ localeDir == "ltr" ? "right" : "left" } 0.5rem;
         background-size: ${pointsToRem(iconSize)};
         background-repeat: no-repeat;
@@ -70,7 +70,7 @@ export function TextInput(options: TextInputOptions)
             -webkit-appearance: none;
             width: ${pointsToRem(5)};
             height: ${pointsToRem(5)};
-            background: url("${getIcon("clear", dark ? "white" : "black")}");
+            background: url("${IconRegistry.get("clear", dark ? "white" : "black")}");
             background-size: ${pointsToRem(5)};
             background-repeat: no-repeat;
         }

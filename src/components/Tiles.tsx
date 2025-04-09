@@ -5,7 +5,7 @@ import assert from "assert";
 import Color from "color";
 import { TypedEventTarget } from "com.hydroper.typedeventtarget";
 import { Tiles as Tiles1, TileSize, State as Tiles1State } from "com.hydroper.tilelayout";
-import { getIcon } from "./Icons";
+import { IconRegistry } from "./Icons";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { ThemeContext, PreferPrimaryContext, Theme } from "../theme";
 import { RemObserver } from "../utils/RemObserver";
@@ -183,7 +183,7 @@ const Div = styled.div<{
     }
 
     & .${tileClass} .${tileCheckedIconClass} {
-        background: url("${$ => getIcon("checked", Color($.$theme.colors.primaryForeground).isDark() ? "black" : "white")}") no-repeat;
+        background: url("${$ => IconRegistry.get("checked", Color($.$theme.colors.primaryForeground).isDark() ? "black" : "white")}") no-repeat;
         background-position: center;
         background-size: contain;
         width: ${pointsToRem(5)};

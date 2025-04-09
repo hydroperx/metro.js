@@ -94,15 +94,22 @@ const iconMap = new Map<string, {black: any, white: any}>([
     ["idea", { black: idea_black, white: idea_white }],
 ]);
 
-export function registerIcon(type: string, sources: { black: any, white: any }): void
-{
-    iconMap.set(type, sources);
-}
-
-export function unregisterIcon(type: string): void
-{
-    iconMap.delete(type);
-}
+export const IconRegistry = {
+    register(type: string, sources: { black: any, white: any }): void
+    {
+        iconMap.set(type, sources);
+    },
+    unregister(type: string): void
+    {
+        iconMap.delete(type);
+    },
+    get(type: string, color: "white" | "black")
+    {
+        const m = iconMap.get(type);
+        assert(m !== undefined, "Icon is not defined: " + type);
+        return m[color];
+    },
+};
 
 const Img = styled.img<{
     $computed_size: string,
@@ -151,16 +158,6 @@ export function Icon(options: IconOptions)
             $computed_size={computed_size}>
         </Img>
     );
-}
-
-/**
- * Gets the source of an icon.
- */
-export function getIcon(type: string, color: "white" | "black")
-{
-    const m = iconMap.get(type);
-    assert(m !== undefined, "Icon is not defined: " + type);
-    return m[color];
 }
 
 export function CheckedIcon(options: IconOptions)

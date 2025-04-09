@@ -113,19 +113,21 @@ Here is a list of built-in icons:
 | `lapis` | Southwest-pointing lapis. Also used as an "edit" icon. |
 | `idea` | An upstanding lamp. |
 
-### Registering icons
+### Icon registry
 
 Register custom icons with:
 
 ```tsx
-import { registerIcon } from "com.hydroper.metrocomponents";
+import { IconRegistry } from "com.hydroper.metrocomponents";
 
-registerIcon("iconX", { black: source, white: source });
+IconRegistry.register("iconX", { black: source, white: source });
 ```
 
 These icons can then be used in for example `Icon` and `CircleIconButton` components.
 
-To unregister a previously registered icon, use `unregisterIcon()`.
+To unregister a previously registered icon, use `IconRegistry.unregister()`.
+
+Retrieve a registered icon's source URI using `IconRegistry.get()`.
 
 ### Measuring points
 
@@ -140,6 +142,10 @@ This library uses [`com.hydroper.inputaction`](https://jsr.io/com.hydroper.input
 **Important**
 
 Elements that may be navigated with arrow input contain the cascading class name specified by the `BUTTON_NAVIGABLE` constant. This is useful for applications like games for avoid duplicating focus handling by detecting that class name.
+
+```ts
+if (active_element.classList.contains(BUTTON_NAVIGABLE)) /* ignore */ return;
+```
 
 ### Context menu
 
@@ -260,7 +266,7 @@ useEffect(() => {
         y: 0,
         size: "large",
         color: "#A8143A",
-        icon: getIcon("video", "white"),
+        icon: IconRegistry.get("video", "white"),
         label: "Video",
     });
 
@@ -271,7 +277,7 @@ useEffect(() => {
         y: 4,
         size: "wide",
         color: "#008000",
-        icon: getIcon("games", "white"),
+        icon: IconRegistry.get("games", "white"),
         label: "Games",
         livePages: [
             {
@@ -292,7 +298,7 @@ useEffect(() => {
         y: 0,
         size: "small",
         color: "#2572E1",
-        icon: getIcon("ie", "white"),
+        icon: IconRegistry.get("ie", "white"),
         label: "Internet Explorer",
     });
 }, []);

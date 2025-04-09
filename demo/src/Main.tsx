@@ -7,7 +7,7 @@ import {
     CheckBox,
     Tiles, TilesController, TilesState,
 
-    getIcon,
+    IconRegistry,
 
     ThemePresets,
     ThemeContext,
@@ -84,7 +84,7 @@ function App()
             y: 0,
             size: "large",
             color: "#A8143A",
-            icon: getIcon("video", "white"),
+            icon: IconRegistry.get("video", "white"),
             label: "Video",
         });
 
@@ -95,7 +95,7 @@ function App()
             y: 4,
             size: "wide",
             color: "#008000",
-            icon: getIcon("games", "white"),
+            icon: IconRegistry.get("games", "white"),
             label: "Games",
             livePages: [
                 {
@@ -116,7 +116,7 @@ function App()
             y: 0,
             size: "medium",
             color: "#FFC024",
-            icon: getIcon("bing", "white"),
+            icon: IconRegistry.get("bing", "white"),
             label: "Bing",
         });
 
@@ -127,7 +127,7 @@ function App()
             y: 2,
             size: "small",
             color: "#2572E1",
-            icon: getIcon("ie", "white"),
+            icon: IconRegistry.get("ie", "white"),
             label: "Internet Explorer",
         });
 
@@ -138,7 +138,7 @@ function App()
             y: 2,
             size: "small",
             color: "#2572E1",
-            icon: getIcon("msedge", "white"),
+            icon: IconRegistry.get("msedge", "white"),
             label: "Edge",
         });
 
@@ -149,7 +149,7 @@ function App()
             y: 3,
             size: "small",
             color: "#C90000",
-            icon: getIcon("opera", "white"),
+            icon: IconRegistry.get("opera", "white"),
             label: "Opera",
         });
 
@@ -160,7 +160,7 @@ function App()
             y: 3,
             size: "small",
             color: "#C90000",
-            icon: getIcon("chrome", "white"),
+            icon: IconRegistry.get("chrome", "white"),
             label: "Google Chrome",
         });
 
@@ -171,7 +171,7 @@ function App()
             y: 4,
             size: "small",
             color: "#E68100",
-            icon: getIcon("firefox", "white"),
+            icon: IconRegistry.get("firefox", "white"),
             label: "Firefox",
         });
     }, []);
