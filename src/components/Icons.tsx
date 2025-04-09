@@ -47,6 +47,8 @@ import msedge_black from "../icons/msedge-black.svg";
 import msedge_white from "../icons/msedge-white.svg";
 import lapis_black from "../icons/lapis-black.svg";
 import lapis_white from "../icons/lapis-white.svg";
+import idea_black from "../icons/idea-black.svg";
+import idea_white from "../icons/idea-white.svg";
 
 import { ColorObserver } from "com.hydroper.colorobserver";
 import React, { useEffect, useRef, useState, useContext } from "react";
@@ -89,6 +91,7 @@ const iconMap = new Map<string, {black: any, white: any}>([
     ["firefox", { black: firefox_black, white: firefox_white }],
     ["msedge", { black: msedge_black, white: msedge_white }],
     ["lapis", { black: lapis_black, white: lapis_white }],
+    ["idea", { black: idea_black, white: idea_white }],
 ]);
 
 export function registerIcon(type: string, sources: { black: any, white: any }): void
