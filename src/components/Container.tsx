@@ -89,7 +89,7 @@ export function Container(options: ContainerOptions)
             ref.current = node;
             if (typeof options.ref == "function")
                 options.ref(node);
-            else if (ref)
+            else if (options.ref)
                 options.ref.current = node;
         }}
         className={options.className ? " " + options.className : ""}
