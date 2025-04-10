@@ -959,7 +959,7 @@ export type TilesOptions = {
 
     /**
      * Whether to display open or close transition.
-     * Displays a scale/opacity transition when visibility changes.
+     * Displays a 300ms scale/opacity transition when visibility changes.
      *
      * @default true
      */
