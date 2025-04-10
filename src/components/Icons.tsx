@@ -53,6 +53,8 @@ import help_black from "../icons/help-black.svg";
 import help_white from "../icons/help-white.svg";
 import help_circle_black from "../icons/help-circle-black.svg";
 import help_circle_white from "../icons/help-circle-white.svg";
+import new_black from "../icons/new-black.svg";
+import new_white from "../icons/new-white.svg";
 
 import { ColorObserver } from "com.hydroper.colorobserver";
 import React, { useEffect, useRef, useState, useContext } from "react";
@@ -98,6 +100,7 @@ const iconMap = new Map<string, {black: any, white: any}>([
     ["idea", { black: idea_black, white: idea_white }],
     ["help", { black: help_black, white: help_white }],
     ["helpcircle", { black: help_circle_black, white: help_circle_white }],
+    ["new", { black: new_black, white: new_white }],
 ]);
 
 export const IconRegistry = {

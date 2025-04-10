@@ -114,6 +114,7 @@ Here is a list of built-in icons:
 | `idea` | An upstanding lamp. |
 | `help` | Question mark. |
 | `helpcircle` | Question mark inside a circle outline. |
+| `new` | A rectangle containing a plus sign. |
 
 ### Icon registry
 
