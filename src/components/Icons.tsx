@@ -49,6 +49,10 @@ import lapis_black from "../icons/lapis-black.svg";
 import lapis_white from "../icons/lapis-white.svg";
 import idea_black from "../icons/idea-black.svg";
 import idea_white from "../icons/idea-white.svg";
+import help_black from "../icons/help-black.svg";
+import help_white from "../icons/help-white.svg";
+import help_circle_black from "../icons/help-circle-black.svg";
+import help_circle_white from "../icons/help-circle-white.svg";
 
 import { ColorObserver } from "com.hydroper.colorobserver";
 import React, { useEffect, useRef, useState, useContext } from "react";
@@ -92,6 +96,8 @@ const iconMap = new Map<string, {black: any, white: any}>([
     ["msedge", { black: msedge_black, white: msedge_white }],
     ["lapis", { black: lapis_black, white: lapis_white }],
     ["idea", { black: idea_black, white: idea_white }],
+    ["help", { black: help_black, white: help_white }],
+    ["helpcircle", { black: help_circle_black, white: help_circle_white }],
 ]);
 
 export const IconRegistry = {

@@ -112,6 +112,8 @@ Here is a list of built-in icons:
 | `msedge` | Microsoft Edge browser. |
 | `lapis` | Southwest-pointing lapis. Also used as an "edit" icon. |
 | `idea` | An upstanding lamp. |
+| `help` | Question mark. |
+| `helpcircle` | Question mark inside a circle outline. |
 
 ### Icon registry
 
