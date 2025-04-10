@@ -315,6 +315,24 @@ return (
 );
 ```
 
+### Useful snippets
+
+#### Disable "select all"
+
+```ts
+// Disable certain key behaviors
+window.addEventListener("keydown", e => {
+    // Ctrl+A
+    if (e.key.toLowerCase() == "a" && e.ctrlKey && !e.shiftKey && !e.altKey)
+    {
+        if (!(
+            document.activeElement instanceof HTMLInputElement ||
+            document.activeElement instanceof HTMLTextAreaElement
+        )) e.preventDefault();
+    }
+});
+```
+
 ## License
 
 Apache 2.0
