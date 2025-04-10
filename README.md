@@ -9,7 +9,7 @@ A component and icon library for React using the Metro design.
 Installation:
 
 ```sh
-npx jsr add com.hydroper.metrocomponents
+npm i com.hydroper.metrocomponents
 ```
 
 ### Installing the required fonts
