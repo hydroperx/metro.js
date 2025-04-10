@@ -150,23 +150,23 @@ export function HGroup(options: HGroupOptions)
     }
     if (options.easeOutTransform)
     {
-        transition = (transition ? transition : ", " + "") + "transform 200ms ease-out";
+        transition = (transition ? transition + ", " : "") + "transform 200ms ease-out";
     }
     if (options.easeInPosition)
     {
-        transition = (transition ? transition : ", " + "") + "left 200ms ease-in, top 200ms ease-in, right 200ms ease-in, bottom 200ms ease-in";
+        transition = (transition ? transition + ", " : "") + "left 200ms ease-in, top 200ms ease-in, right 200ms ease-in, bottom 200ms ease-in";
     }
     if (options.easeInTransform)
     {
-        transition = (transition ? transition : ", " + "") + "transform 200ms ease-in";
+        transition = (transition ? transition + ", " : "") + "transform 200ms ease-in";
     }
     if (options.easeOutOpacity)
     {
-        transition = (transition ? transition : ", " + "") + "opacity 200ms ease-out";
+        transition = (transition ? transition + ", " : "") + "opacity 200ms ease-out";
     }
     if (options.easeInOpacity)
     {
-        transition = (transition ? transition : ", " + "") + "opacity 200ms ease-in";
+        transition = (transition ? transition + ", " : "") + "opacity 200ms ease-in";
     }
 
     // Enable or disable selection
