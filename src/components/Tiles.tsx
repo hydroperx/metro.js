@@ -705,6 +705,48 @@ export function Tiles(options: TilesOptions)
     }
     tiles_controller.addEventListener("resizeTile", tiles_controller_resizeTile);
 
+    // Set whether tile is checked or not
+    function tiles_controller_setChecked(e: CustomEvent<{ id: string, value: boolean }>): void
+    {
+        set_checked(e.detail.id, e.detail.value);
+    }
+    function set_checked(tile_id: string, value: boolean): void
+    {
+        const buttons = Array.from(div_ref.current!.querySelectorAll("." + tileClass)) as HTMLButtonElement[];
+        const this_button = buttons.find(btn => btn.getAttribute("data-id") === tile_id);
+        if (this_button)
+        {
+            if (value)
+                this_button.setAttribute("data-checked", "true");
+            else this_button.removeAttribute("data-checked");
+
+            // Mode change
+            const checked_tiles = buttons
+                .filter(btn => btn.getAttribute("data-checked") === "true")
+                .map(btn => btn.getAttribute("data-id"));
+            mode_signal({ selection: checked_tiles.length != 0 });
+
+            // Trigger checkedChange event
+            options.checkedChange?.(checked_tiles);
+        }
+    }
+    tiles_controller.addEventListener("setChecked", tiles_controller_setChecked);
+
+    // Unchecks all tiles.
+    function tiles_controller_uncheckAll(e: Event): void
+    {
+        const buttons = Array.from(div_ref.current!.querySelectorAll("." + tileClass)) as HTMLButtonElement[];
+        for (const button of buttons)
+            button.removeAttribute("data-checked");
+
+        // Mode change
+        mode_signal({ selection: false });
+
+        // Trigger checkedChange event
+        options.checkedChange?.([]);
+    }
+    tiles_controller.addEventListener("uncheckAll", tiles_controller_uncheckAll);
+
     // Recolor tile
     function tiles_controller_setTileColor(e: CustomEvent<{ id: string, value: string }>): void
     {
@@ -922,6 +964,8 @@ export function Tiles(options: TilesOptions)
             tiles_controller.removeEventListener("removeGroup", tiles_controller_removeGroup);
             tiles_controller.removeEventListener("groupExists", tiles_controller_onGroupExists);
             tiles_controller.removeEventListener("renameGroup", tiles_controller_renameGroup);
+            tiles_controller.removeEventListener("setChecked", tiles_controller_setChecked);
+            tiles_controller.removeEventListener("uncheckAll", tiles_controller_uncheckAll);
 
             // Disopse listeners on window
             window.removeEventListener("keydown", on_key_down);
@@ -1210,6 +1254,7 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
     getTileButton: CustomEvent<{ requestId: string, tile: string }>;
     getTileButtonResult: CustomEvent<{ requestId: string, button: HTMLButtonElement | null }>;
     setChecked: CustomEvent<{ id: string, value: boolean }>;
+    uncheckAll: Event;
     resizeTile: CustomEvent<{ id: string, value: TileSize }>;
     setTileColor: CustomEvent<{ id: string, value: string }>;
     setTilePages: CustomEvent<{ id: string, icon?: string, label?: string, livePages?: LiveTilePage[] }>;
@@ -1332,6 +1377,14 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
         this.dispatchEvent(new CustomEvent("setChecked", {
             detail: { id, value },
         }));
+    }
+
+    /**
+     * Unchecks all tiles.
+     */
+    uncheckAll(): void
+    {
+        this.dispatchEvent(new Event("uncheckAll"));
     }
 
     /**
