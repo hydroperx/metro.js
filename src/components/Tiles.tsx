@@ -3,7 +3,7 @@ import { styled, keyframes } from "styled-components";
 import Keyframes from "styled-components/dist/models/Keyframes";
 import assert from "assert";
 import Color from "color";
-import { TypedEventTarget } from "@hydroper/typedeventtarget";
+import { TypedEventTarget } from "@hydroper/event";
 import { Tiles as Tiles1, TileSize, State as Tiles1State } from "@hydroper/tiles";
 import { IconRegistry } from "./Icons";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";

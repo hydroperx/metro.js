@@ -1,4 +1,4 @@
-import { TypedEventTarget } from "@hydroper/typedeventtarget";
+import { TypedEventTarget } from "@hydroper/event";
 import { useContext, useRef, useState, useEffect } from "react";
 import { styled } from "styled-components";
 import Color from "color";
