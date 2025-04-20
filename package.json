@@ -11,7 +11,7 @@
     "color-convert": "^3.0.1",
     "@hydroper/colorobserver": "^1.0.3",
     "@hydroper/inputaction": "^1.0.5",
-    "@hydroper/tilelayout": "^1.1.0",
+    "@hydroper/tiles": "^1.1.0",
     "@hydroper/typedeventtarget": "^1.0.1",
     "delta-e": "^0.0.8",
     "extend": "^3.0.2",
