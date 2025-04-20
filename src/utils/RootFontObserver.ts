@@ -1,7 +1,7 @@
 /**
  * Observes the value of the CSS `rem` unit.
  */
-export class RemObserver
+export class RootFontObserver
 {
     private element: HTMLDivElement;
     private resizeObserver: ResizeObserver;

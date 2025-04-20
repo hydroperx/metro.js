@@ -56,14 +56,14 @@ import help_circle_white from "../icons/help-circle-white.svg";
 import new_black from "../icons/new-black.svg";
 import new_white from "../icons/new-white.svg";
 
-import { ColorObserver } from "com.hydroper.colorobserver";
+import { ColorObserver } from "@hydroper/colorobserver";
 import React, { useEffect, useRef, useState, useContext } from "react";
 import Color from "color";
 import { styled, keyframes } from "styled-components";
 import extend from "extend";
 import assert from "assert";
 import { pointsToRem } from "../utils/points";
-import { RemObserver } from "../utils/RemObserver";
+import { RootFontObserver } from "../utils/RootFontObserver";
 
 export type IconOptions = {
     type?: string,
@@ -267,11 +267,11 @@ export function ProgressRing(options: ProgressRingOptions)
 
     // Adjust size
     useEffect(() => {
-        const remObserver = new RemObserver(rem => {
+        const rootFontObserver = new RootFontObserver(rem => {
             setRem(rem);
         });
         return () => {
-            remObserver.cleanup();
+            rootFontObserver.cleanup();
         };
     }, []);
 

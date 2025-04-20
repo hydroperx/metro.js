@@ -1,6 +1,6 @@
 {
-  "name": "com.hydroper.metrocomponents",
-  "version": "1.0.0",
+  "name": "@hydroper/metro",
+  "version": "1.1.0",
   "type": "module",
   "scripts": {},
   "main": "src/index.ts",
@@ -9,11 +9,10 @@
     "clone": "^2.1.2",
     "color": "^4.2.3",
     "color-convert": "^3.0.1",
-    "com.hydroper.colorobserver": "^1.0.3",
-    "com.hydroper.inputaction": "^1.0.5",
-    "com.hydroper.reactdraggable": "^1.0.2",
-    "com.hydroper.tilelayout": "^1.0.10",
-    "com.hydroper.typedeventtarget": "^1.0.1",
+    "@hydroper/colorobserver": "^1.0.3",
+    "@hydroper/inputaction": "^1.0.5",
+    "@hydroper/tilelayout": "^1.1.0",
+    "@hydroper/typedeventtarget": "^1.0.1",
     "delta-e": "^0.0.8",
     "extend": "^3.0.2",
     "focus-lock": "^1.3.6",
@@ -28,7 +27,7 @@
   },
   "description": "Metro design components and icons",
   "repository": {
-    "url": "https://github.com/realhydroper/tsmetrocomponents.git"
+    "url": "https://github.com/realhydroper/metro.git"
   },
   "license": "Apache-2.0",
   "keywords": [

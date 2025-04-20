@@ -4,7 +4,7 @@ import Color from "color";
 import Draggable from "react-draggable";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { ThemeContext, PreferPrimaryContext, Theme } from "../theme";
-import { RemObserver } from "../utils/RemObserver";
+import { RootFontObserver } from "../utils/RootFontObserver";
 import { pointsToRemValue } from "../utils/points";
 import { lighten, darken, enhanceBrightness, contrast } from "../utils/color";
 
@@ -80,11 +80,11 @@ export function CheckBox(options: CheckBoxOptions)
     }, [localeDir]);
 
     useEffect(() => {
-        const remObserver = new RemObserver(value => {
+        const rootFontObserver = new RootFontObserver(value => {
             set_rem(value);
         });
         return () => {
-            remObserver.cleanup();
+            rootFontObserver.cleanup();
         };
     }), [];
 

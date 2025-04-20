@@ -3,12 +3,12 @@ import { styled, keyframes } from "styled-components";
 import Keyframes from "styled-components/dist/models/Keyframes";
 import assert from "assert";
 import Color from "color";
-import { TypedEventTarget } from "com.hydroper.typedeventtarget";
-import { Tiles as Tiles1, TileSize, State as Tiles1State } from "com.hydroper.tilelayout";
+import { TypedEventTarget } from "@hydroper/typedeventtarget";
+import { Tiles as Tiles1, TileSize, State as Tiles1State } from "@hydroper/tilelayout";
 import { IconRegistry } from "./Icons";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { ThemeContext, PreferPrimaryContext, Theme } from "../theme";
-import { RemObserver } from "../utils/RemObserver";
+import { RootFontObserver } from "../utils/RootFontObserver";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
 import { lighten, darken, enhanceBrightness, contrast } from "../utils/color";
 import { fontFamily, fontSize } from "../utils/common";
@@ -17,7 +17,7 @@ import { randomHexLarge } from "../utils/random";
 // Cascading animations
 import "./Tiles.css";
 
-export type { TileSize } from "com.hydroper.tilelayout";
+export type { TileSize } from "@hydroper/tilelayout";
 
 const tileClass = "Tile";
 const tileIconWrapClass = "Tile-icon-wrap";
@@ -905,11 +905,11 @@ export function Tiles(options: TilesOptions)
 
     // Observe rem
     useEffect(() => {
-        const rem_observer = new RemObserver(value => {
+        const root_font_observer = new RootFontObserver(value => {
             rem.current = value;
         });
         return () => {
-            rem_observer.cleanup();
+            root_font_observer.cleanup();
         };
     }, []);
 

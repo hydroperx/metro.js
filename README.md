@@ -9,7 +9,7 @@ A component and icon library for React using the Metro design.
 Installation:
 
 ```sh
-npm i com.hydroper.metrocomponents
+npm i @hydroper/metro
 ```
 
 ### Installing the required fonts
@@ -40,7 +40,7 @@ import "@fontsource/courier-prime";
 By default, the `light` theme preset is used. Theme presets can be referenced in `ThemePresets`. You can provide a specific theme for a React section using:
 
 ```tsx
-import { ThemeContext, ThemePresets } from "com.hydroper.metrocomponents";
+import { ThemeContext, ThemePresets } from "@hydroper/metro";
 
 // somewhere in React content
 <ThemeContext.Provider value={ThemePresets.green}>
@@ -54,7 +54,7 @@ You can nest it as well.
 Indicate whether a LTR layout or RTL layout is preferred through `LocaleDirectionContext`:
 
 ```tsx
-import { LocaleDirectionContext, LocaleDirection } from "com.hydroper.metrocomponents";
+import { LocaleDirectionContext, LocaleDirection } from "@hydroper/metro";
 
 const direction: LocaleDirection = "ltr";
 
@@ -68,7 +68,7 @@ const direction: LocaleDirection = "ltr";
 To opt in to using primary colors in certain components such as heading titles and checkboxes, use the `PreferPrimaryContext` context:
 
 ```tsx
-import { PreferPrimaryContext } from "com.hydroper.metrocomponents";
+import { PreferPrimaryContext } from "@hydroper/metro";
 
 // somewhere in React content
 <PreferPrimaryContext.Provider value={true}>
@@ -121,7 +121,7 @@ Here is a list of built-in icons:
 Register custom icons with:
 
 ```tsx
-import { IconRegistry } from "com.hydroper.metrocomponents";
+import { IconRegistry } from "@hydroper/metro";
 
 IconRegistry.register("iconX", { black: source, white: source });
 ```
@@ -140,7 +140,7 @@ If it is desired to grow or reduce all the user interface together, you may adju
 
 ### Input navigation
 
-This library uses [`com.hydroper.inputaction`](https://jsr.io/com.hydroper.inputaction) for detecting pressed input such as keyboard arrows. You may customize the global `Input.input` input actions for supporting buttons other than arrow keys.
+This library uses [`@hydroper/inputaction`](https://jsr.io/@hydroper/inputaction) for detecting pressed input such as keyboard arrows. You may customize the global `Input.input` input actions for supporting buttons other than arrow keys.
 
 **Important**
 
@@ -162,14 +162,12 @@ import {
     ContextMenuItem, ContextMenuIcon, ContextMenuLabel, ContextMenuRight,
     ContextMenuSeparator, ContextMenuSubmenu, ContextMenuSubmenuList,
     ContextMenuSubIcon,
-} from "com.hydroper.metrocomponents";
+} from "@hydroper/metro";
 
-function MyComp()
-{
+function MyComp() {
     const { id: contextMenuId, show: showContextMenu } = useContextMenu();
 
-    function item1_onClick()
-    {
+    function item1_onClick() {
         console.log("clicked item 1");
     }
 
@@ -226,15 +224,15 @@ If a context menu contains "checked" or "option" items, prepend a `<ContextMenuC
 Tip: it is common, for instance, to disable opening a common context menu on buttons, as in the following code snippet:
 
 ```ts
-function on_context_menu(e: MouseEvent): void
-{
+function on_context_menu(e: MouseEvent): void {
     let p = e.target as HTMLElement | null;
-    while (p)
-    {
+    while (p) {
         if (!p.matches(":hover")) break;
         if (p instanceof HTMLButtonElement ||
-            (p instanceof HTMLInputElement && p.type == "button"))
+            (p instanceof HTMLInputElement && p.type == "button")
+        ) {
             return;
+        }
         p = p.parentElement;
     }
 
@@ -323,8 +321,7 @@ return (
 // Disable certain key behaviors
 window.addEventListener("keydown", e => {
     // Ctrl+A
-    if (e.key.toLowerCase() == "a" && e.ctrlKey && !e.shiftKey && !e.altKey)
-    {
+    if (e.key.toLowerCase() == "a" && e.ctrlKey && !e.shiftKey && !e.altKey) {
         if (!(
             document.activeElement instanceof HTMLInputElement ||
             document.activeElement instanceof HTMLTextAreaElement

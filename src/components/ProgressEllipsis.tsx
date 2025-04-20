@@ -1,11 +1,11 @@
-import { ColorObserver } from "com.hydroper.colorobserver";
+import { ColorObserver } from "@hydroper/colorobserver";
 import React, { useEffect, useRef, useState, useContext } from "react";
 import Color from "color";
 import { styled, keyframes } from "styled-components";
 import extend from "extend";
 import assert from "assert";
 import { pointsToRem } from "../utils/points";
-import { RemObserver } from "../utils/RemObserver";
+import { RootFontObserver } from "../utils/RootFontObserver";
 
 // Animation
 const move = keyframes `
@@ -107,11 +107,11 @@ export function ProgressEllipsis(options: ProgressEllipsisOptions)
 
     // Adjust size
     useEffect(() => {
-        const remObserver = new RemObserver(rem => {
+        const rootFontObserver = new RootFontObserver(rem => {
             setRem(rem);
         });
         return () => {
-            remObserver.cleanup();
+            rootFontObserver.cleanup();
         };
     }, []);
 

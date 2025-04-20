@@ -2,7 +2,7 @@ import React, { useContext, useRef, useState, useEffect, createContext } from "r
 import { styled } from "styled-components";
 import { IStyledComponentBase, Substitute } from "styled-components/dist/types";
 import Color from "color";
-import { Input } from "com.hydroper.inputaction";
+import { Input } from "@hydroper/inputaction";
 import $ from "jquery";
 import assert from "assert";
 
@@ -14,7 +14,7 @@ import { enhanceBrightness, contrast } from "../utils/color";
 import { BUTTON_NAVIGABLE, fontFamily, fontSize, maximumZIndex } from "../utils/common";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
 import { focusPrevSibling, focusNextSibling } from "../utils/focus";
-import { RemObserver } from "../utils/RemObserver";
+import { RootFontObserver } from "../utils/RootFontObserver";
 
 // Item visible transition
 const visibleTransition = "opacity 300ms ease-out, top 300ms ease-out";
@@ -525,11 +525,11 @@ export function Select(options: SelectOptions)
 
     // Observe CSS rem unit
     useEffect(() => {
-        const remObserver = new RemObserver(value => {
+        const rootFontObserver = new RootFontObserver(value => {
             setRem(value);
         });
         return () => {
-            remObserver.cleanup();
+            rootFontObserver.cleanup();
         };
     }, []);
 
