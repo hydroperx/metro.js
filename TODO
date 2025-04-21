@@ -30,7 +30,7 @@ Basic components
 ## Select
 
 - [ ] Future change: a more Metro like transition and positioning that centers the selected option to the input button
-  - [ ] "Open transition" draft: https://github.com/realhydroper/metro/blob/d18900aad5e94d3429e4a762d1f79015dcf9aef4/src/components/Select.tsx#L161 (in this draft, `base_bottom =` apparently needs to be assigned something else, like `window.innerHeight - baseRect.top - baseRect.height`, to work better). (I was having a wrong assumption about what is `boundingClientRect.bottom` (it is similiar to top coordinates-wise))
+  - [ ] "Open transition" draft: https://github.com/hydroperx/metro/blob/d18900aad5e94d3429e4a762d1f79015dcf9aef4/src/components/Select.tsx#L161 (in this draft, `base_bottom =` apparently needs to be assigned something else, like `window.innerHeight - baseRect.top - baseRect.height`, to work better). (I was having a wrong assumption about what is `boundingClientRect.bottom` (it is similiar to top coordinates-wise))
 
 ## Tiles
 
