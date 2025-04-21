@@ -1193,7 +1193,7 @@ export class TilesState
         }
     }
 
-    /** @private */
+    /** @internal */
     _clear_and_set1(state: Tiles1State): void
     {
         const k_tile_colors = Array.from(this.tiles.entries())
