@@ -1,6 +1,5 @@
 import extend from "extend";
 import { styled } from "styled-components";
-import { IStyledComponentBase, Substitute } from "styled-components/dist/types";
 import React, { Ref, useContext, useRef, useState, useEffect } from "react";
 import Color from "color";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
@@ -54,7 +53,7 @@ export function Button(options: ButtonOptions)
     }
 
     // Emotion CSS
-    let Button_comp: (IStyledComponentBase<"web", Substitute<React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>, ButtonCSSProps>> & string) | null = null;
+    let Button_comp = null;
     
     const padding = "0.6rem 1rem";
     let color: Color | string = "",

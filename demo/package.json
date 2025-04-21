@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "build": "webpack build",
-    "dev": "webpack run"
+    "dev": "webpack run",
+    "check": "tsc --noEmit"
   },
   "dependencies": {
     "@fontsource/courier-prime": "^5.2.5",
@@ -20,7 +21,7 @@
     "@types/clone": "^2.1.4",
     "@types/node": "^22.13.4",
     "@types/react-dom": "^19.0.0",
-    
+    "@hydroperx/webpack": "^1.0.0",
     "typescript": "~5.8.3"
   }
 }

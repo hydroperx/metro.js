@@ -1,6 +1,5 @@
 import React, { useContext, useRef, useState, useEffect, createContext } from "react";
 import { styled } from "styled-components";
-import { IStyledComponentBase, Substitute } from "styled-components/dist/types";
 import Color from "color";
 import { Input } from "@hydroperx/inputaction";
 import $ from "jquery";
@@ -217,9 +216,8 @@ export function Select(options: SelectOptions)
 
     // Button CSS
     const hoverBackground = Color(theme.colors.inputBackground).darken(0.4).toString();
-    const Button: IStyledComponentBase<"web", Substitute<React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>, ButtonCSSProps>> & string =
-        options.big || options.medium ? BigOrMediumButton :
-        options.small ? SmallButton : NormalButton;
+    const Button = options.big || options.medium ? BigOrMediumButton :
+            options.small ? SmallButton : NormalButton;
 
     // Button inner CSS
     const button_inner_css = `
