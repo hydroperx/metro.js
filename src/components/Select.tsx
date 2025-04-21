@@ -119,7 +119,7 @@ const BigOrMediumButton = styled.button<ButtonCSSProps> `
 const SmallButton = styled.button<ButtonCSSProps> `
     background: none;
     border: none;
-    color: ${$ => $.$small_normal_color.toString()};
+    color: ${$ => $.$small_normal_color!.toString()};
     font-family: ${fontFamily};
     font-size: 0.75rem;
     display: flex;
@@ -240,7 +240,7 @@ export function Select(options: SelectOptions)
         }
     `;
 
-    let small_normal_color: Color = options.small ? (options.primary ? Color(enhanceBrightness(theme.colors.background, theme.colors.primary)).alpha(0.67) : Color(theme.colors.foreground).alpha(0.67)) : undefined;
+    let small_normal_color: Color | undefined = options.small ? (options.primary ? Color(enhanceBrightness(theme.colors.background, theme.colors.primary)).alpha(0.67) : Color(theme.colors.foreground).alpha(0.67)) : undefined;
 
     // Open the list
     function open(): void

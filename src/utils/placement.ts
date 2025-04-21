@@ -29,7 +29,7 @@ export function computePosition(referenceElement: HTMLElement, positioningElemen
             {
                 resolution = "top";
             }
-            else if (options.orthogonal)
+            else if (options?.orthogonal)
             {
                 if (referenceRect.right + margin + positioningRect.width < viewportWidth)
                 {
@@ -56,7 +56,7 @@ export function computePosition(referenceElement: HTMLElement, positioningElemen
             {
                 resolution = "bottom";
             }
-            else if (options.orthogonal)
+            else if (options?.orthogonal)
             {
                 if (referenceRect.right + margin + positioningRect.width < viewportWidth)
                 {
@@ -84,7 +84,7 @@ export function computePosition(referenceElement: HTMLElement, positioningElemen
             {
                 resolution = "right";
             }
-            else if (options.orthogonal)
+            else if (options?.orthogonal)
             {
                 if (referenceRect.top - margin - positioningRect.height >= 0)
                 {
@@ -112,7 +112,7 @@ export function computePosition(referenceElement: HTMLElement, positioningElemen
             {
                 resolution = "left";
             }
-            else if (options.orthogonal)
+            else if (options?.orthogonal)
             {
                 if (referenceRect.top - margin - positioningRect.height >= 0)
                 {

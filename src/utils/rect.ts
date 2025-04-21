@@ -18,7 +18,7 @@ export function getRectHitSide(
     const height = (r1.h+r2.h)/2;
     const crossWidth = width*dy;
     const crossHeight = height*dx;
-    let collision = null;
+    let collision: "top" | "bottom" | "left" | "right" | null = null;
 
     if (Math.abs(dx) <= width && Math.abs(dy) <= height)
     {

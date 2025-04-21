@@ -196,7 +196,7 @@ export function HGroup(options: HGroupOptions)
     };
 
     useEffect(() => {
-        let div: HTMLDivElement | null = ref.current;
+        let div: HTMLDivElement | null = ref.current!;
         div.addEventListener("wheel", handle_wheel, { passive: false });
         return () => {
             div.removeEventListener("wheel", handle_wheel);

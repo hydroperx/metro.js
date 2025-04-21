@@ -119,7 +119,7 @@ export function CheckBox(options: CheckBoxOptions)
                 className="CheckBox-checked-rect">
             </div>
             <Draggable
-                nodeRef={carret_ref}
+                nodeRef={carret_ref as React.RefObject<HTMLDivElement>}
                 axis="x"
                 bounds="parent"
                 disabled

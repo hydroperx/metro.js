@@ -159,7 +159,7 @@ export function Icon(options: IconOptions)
     return (
         <Img
             ref={ref}
-            src={m[color]}
+            src={(m as any)[color]}
             draggable={false}
             alt={type}
             style={options.style}

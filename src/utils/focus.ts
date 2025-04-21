@@ -9,7 +9,7 @@ export function canFocus(element: HTMLElement): boolean {
     if ($el.is(":hidden") || $el.is(":disabled")) {
         return false;
     }
-    var tabIndex = +$el.attr("tabindex");
+    var tabIndex = +$el.attr("tabindex")!;
     tabIndex = isNaN(tabIndex) ? -1 : tabIndex;
     return $el.is(":input, a[href], area[href], iframe") || tabIndex > -1;
 }
@@ -20,7 +20,7 @@ export function canFocus(element: HTMLElement): boolean {
 export function focusPrevSibling(element: HTMLElement): void
 {
     const parent = element.parentElement;
-    const children = Array.from(parent.children) as HTMLElement[];
+    const children = Array.from(parent!.children) as HTMLElement[];
     const i = children.indexOf(element);
     const list = children.slice(0, i).reverse().concat(children.slice(i + 1).reverse());
     const firstFocusable = list.find(e => canFocus(e));
@@ -37,7 +37,7 @@ export function focusPrevSibling(element: HTMLElement): void
 export function focusNextSibling(element: HTMLElement): void
 {
     const parent = element.parentElement;
-    const children = Array.from(parent.children) as HTMLElement[];
+    const children = Array.from(parent!.children) as HTMLElement[];
     const i = children.indexOf(element);
     const list = children.slice(i + 1).concat(children.slice(0, i + 1));
     const firstFocusable = list.find(e => canFocus(e));

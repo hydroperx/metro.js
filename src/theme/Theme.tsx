@@ -140,6 +140,6 @@ export const ThemePresets = {
     green,
 };
 
-export const ThemeContext: React.Context<Theme> = createContext(light);
+export const ThemeContext = createContext<Theme>(light);
 
-export const PreferPrimaryContext: React.Context<boolean> = createContext(false);
+export const PreferPrimaryContext = createContext<boolean>(false);

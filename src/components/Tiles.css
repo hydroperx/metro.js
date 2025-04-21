@@ -1,6 +1,6 @@
 /* Slide-Y 2 pages animation */
 
-@keyframes Tiles_slide_y_2_1 {
+@keyframes Tiles--slideY2-1 {
     45% {
         top: 0%;
         animation-timing-function: ease-in;
@@ -18,7 +18,7 @@
     }
 }
 
-@keyframes Tiles_slide_y_2_2 {
+@keyframes Tiles--slideY2-2 {
     50% {
         top: 100%;
         animation-timing-function: ease-out;
@@ -41,7 +41,7 @@
 
 /* Slide-Y 3 pages animation */
 
-@keyframes Tiles_slide_y_3_1 {
+@keyframes Tiles--slideY3-1 {
     22.5% {
         top: 0%;
         animation-timing-function: ease-in;
@@ -62,7 +62,7 @@
     }
 }
 
-@keyframes Tiles_slide_y_3_2 {
+@keyframes Tiles--slideY3-2 {
     25% {
         top: 100%;
         animation-timing-function: ease-out;
@@ -83,7 +83,7 @@
     }
 }
 
-@keyframes Tiles_slide_y_3_3 {
+@keyframes Tiles--slideY3-3 {
     50% {
         top: 100%;
         animation-timing-function: ease-out;

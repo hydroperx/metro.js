@@ -158,7 +158,7 @@ export function ContextMenu(options: ContextMenuOptions)
 
     function getItemListDiv(): HTMLDivElement
     {
-        return divRef.current.children[1] as HTMLDivElement;
+        return divRef.current!.children[1] as HTMLDivElement;
     }
 
     // Handle "show" signal
@@ -217,7 +217,7 @@ export function ContextMenu(options: ContextMenuOptions)
             }
             else
             {
-                [x1, y1] = e.detail.position;
+                [x1, y1] = e.detail.position!;
             }
 
             [x, y] = fitViewportPosition(div, [x1, y1]);
@@ -377,7 +377,7 @@ export function ContextMenu(options: ContextMenuOptions)
             else
             {
                 // Check input on submenu
-                submenuInputPressedListeners.get(submenus[submenus.length - 1])();
+                submenuInputPressedListeners.get(submenus[submenus.length - 1])!();
             }
 
             return;
@@ -407,7 +407,7 @@ export function ContextMenu(options: ContextMenuOptions)
                 else if (Input.input.justPressed(localeDirRef.value == "ltr" ? "navigateRight" : "navigateLeft") && child.classList.contains(submenuItemClassName))
                 {
                     (child as HTMLButtonElement).click();
-                    const submenuList = child.nextElementSibling;
+                    const submenuList = child.nextElementSibling!;
                     if (submenuList.classList.contains(submenuClassName))
                     {
                         if (submenuList.children[1].lastElementChild)
@@ -452,7 +452,7 @@ export function ContextMenu(options: ContextMenuOptions)
         else
         {
             // Check input on submenu
-            submenuInputPressedListeners.get(submenus[submenus.length - 1])(e);
+            submenuInputPressedListeners.get(submenus[submenus.length - 1])!(e);
         }
     }
 
@@ -573,7 +573,7 @@ export function ContextMenuItem(options: ContextMenuItemOptions)
 
     function hideAllFromParent(element: HTMLElement): void
     {
-        const parent = element.parentElement;
+        const parent = element.parentElement!;
         for (const divElement of Array.from(parent.querySelectorAll("." + submenuClassName)))
         {
             (divElement as HTMLElement).style.visibility = "hidden";
@@ -922,7 +922,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
             transitionTimeout = -1;
         }
 
-        const parent = element.parentElement;
+        const parent = element.parentElement!;
         const divs = Array.from(parent.querySelectorAll("." + submenuClassName)) as HTMLDivElement[];
 
         // Exclude self submenu
@@ -1023,7 +1023,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
                 else if (Input.input.justPressed(localeDirRef.value == "ltr" ? "navigateRight" : "navigateLeft") && child.classList.contains(submenuItemClassName))
                 {
                     (child as HTMLButtonElement).click();
-                    const submenuList = child.nextElementSibling;
+                    const submenuList = child.nextElementSibling!;
                     if (submenuList.classList.contains(submenuClassName))
                     {
                         if (submenuList.children[1].lastElementChild)

@@ -1,28 +1,26 @@
 {
   "name": "demo",
-  "type": "module",
-  "devDependencies": {
-    "@types/clone": "^2.1.4",
-    "@types/react-dom": "^19.0.0",
-    "@vitejs/plugin-react": "^4.3.4",
-    "typescript": "~5.7.2",
-    "vite": "^6.1.0"
-  },
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
-  "peerDependencies": {
-    "react": ">=19.0.0"
+    "build": "webpack build",
+    "dev": "webpack run"
   },
   "dependencies": {
     "@fontsource/courier-prime": "^5.2.5",
     "@fontsource/open-sans": "^5.1.1",
     "@hydroperx/metro": "file:..",
-    "@types/node": "^22.13.4",
     "clone": "^2.1.2",
     "react-dom": "^19.0.0"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0"
+  },
+  "devDependencies": {
+    "@types/clone": "^2.1.4",
+    "@types/node": "^22.13.4",
+    "@types/react-dom": "^19.0.0",
+    
+    "typescript": "~5.8.3"
   }
 }

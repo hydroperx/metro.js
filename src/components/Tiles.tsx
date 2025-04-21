@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useRef, useState, useEffect } from "react";
-import { styled, keyframes } from "styled-components";
-import Keyframes from "styled-components/dist/models/Keyframes";
+import { styled } from "styled-components";
 import assert from "assert";
 import Color from "color";
 import { TypedEventTarget } from "@hydroperx/event";
@@ -45,12 +44,13 @@ const Div = styled.div<{
     $theme: Theme,
     $direction: "horizontal" | "vertical",
     $localeDir: "ltr" | "rtl",
+    $open: boolean,
 }> `
     width: 100%;
     height: 100%;
     opacity: ${$ => $.$forced_invisible ? 0 : $.$scale};
     transform: scale(${$ => $.$scale});
-    transition: opacity 0.3s ${open ? "ease-out" : "ease-in"}, transform 0.3s ${open ? "ease-out" : "ease-in"};
+    transition: opacity 0.3s ${$ => $.$open ? "ease-out" : "ease-in"}, transform 0.3s ${$ => $.$open ? "ease-out" : "ease-in"};
 
     &::-webkit-scrollbar {
         width: 12px;
@@ -267,7 +267,7 @@ export function Tiles(options: TilesOptions)
         tiles1.addEventListener("drag", ({ detail: { tile: el } }) => {
             if (el.getAttribute("data-dragging") != "true")
             {
-                el.style.transform = el.getAttribute("data-transform-3d");
+                el.style.transform = el.getAttribute("data-transform-3d")!;
                 return;
             }
 
@@ -318,7 +318,7 @@ export function Tiles(options: TilesOptions)
                     // during selection mode a click is a simulated context menu event
                     if (button.getAttribute("data-selection-mode") === "true")
                         tile_simulated_context_menu(button);
-                    else options.tileClick?.((e.currentTarget as HTMLButtonElement).getAttribute("data-id"));
+                    else options.tileClick?.((e.currentTarget as HTMLButtonElement).getAttribute("data-id")!);
 
                     contextTimestamp = -1;
                 }
@@ -361,7 +361,7 @@ export function Tiles(options: TilesOptions)
                     // turn label ineditable and save new value
                     const label_val = input.value;
                     label.innerHTML = "";
-                    tiles1.renameGroup(group.id, label_val);
+                    tiles1!.renameGroup(group.id, label_val);
 
                     clear_handler();
                 };
@@ -369,7 +369,7 @@ export function Tiles(options: TilesOptions)
                 const cancel_label = () => {
                     // turn label ineditable and discard last typed value
                     label.innerHTML = "";
-                    const group_state = tiles1.state.groups.get(group.id);
+                    const group_state = tiles1!.state.groups.get(group.id);
                     if (group_state)
                         label.innerText = group_state.label;
 
@@ -453,7 +453,7 @@ export function Tiles(options: TilesOptions)
         {
             tiles = Array.from(div.querySelectorAll("." + tileClass))
                 .filter(div => div.getAttribute("data-checked") == "true")
-                .map(div => div.getAttribute("data-id"));
+                .map(div => div.getAttribute("data-id")!);
         }
         tiles_controller.dispatchEvent(new CustomEvent("getCheckedResult", {
             detail: {
@@ -470,7 +470,7 @@ export function Tiles(options: TilesOptions)
         tiles_controller.dispatchEvent(new CustomEvent("tileExistsResult", {
             detail: {
                 requestId: e.detail.requestId,
-                value: tiles1.state.tileExists(e.detail.tile),
+                value: tiles1!.state.tileExists(e.detail.tile),
             },
         }));
     }
@@ -482,7 +482,7 @@ export function Tiles(options: TilesOptions)
         tiles_controller.dispatchEvent(new CustomEvent("groupExistsResult", {
             detail: {
                 requestId: e.detail.requestId,
-                value: tiles1.state.groupExists(e.detail.group),
+                value: tiles1!.state.groupExists(e.detail.group),
             },
         }));
     }
@@ -540,7 +540,7 @@ export function Tiles(options: TilesOptions)
     {
         const tile_button = e.currentTarget as HTMLButtonElement;
         if (!tile_button.matches(":hover")) return;
-        const tile_color = tile_button.getAttribute("data-color");
+        const tile_color = tile_button.getAttribute("data-color")!;
         const tile_color_b1 = Color(tile_color).lighten(0.15).hex().toString();
         const tile_color_b2 = Color(tile_color).lighten(0.23).hex().toString();
         tile_button.style.background = `linear-gradient(90deg, ${tile_color_b1} 0%, ${tile_color_b2} 100%)`;
@@ -550,7 +550,7 @@ export function Tiles(options: TilesOptions)
     function tile_onPointerOut(e: PointerEvent): void
     {
         const tile_button = e.currentTarget as HTMLButtonElement;
-        const tile_color = tile_button.getAttribute("data-color");
+        const tile_color = tile_button.getAttribute("data-color")!;
         const tile_color_b1 = Color(tile_color).lighten(0.15).hex().toString();
         tile_button.style.background = `linear-gradient(90deg, ${tile_color} 0%, ${tile_color_b1} 100%)`;
     }
@@ -602,7 +602,7 @@ export function Tiles(options: TilesOptions)
             }
             if (buttons.length != 0)
                 mode_signal({ selection: true });
-            options.checkedChange?.(buttons.map(btn => btn.getAttribute("data-id")));
+            options.checkedChange?.(buttons.map(btn => btn.getAttribute("data-id")!));
         }
     }
 
@@ -634,7 +634,7 @@ export function Tiles(options: TilesOptions)
         assert(!tiles_state.tileExists(tile.id), "Duplicate tile: " + tile.id);
         assert(tiles_state.groupExists(tile.group), "Group not found: " + tile.group);
 
-        const element = tiles1.addTile({
+        const element = tiles1!.addTile({
             id: tile.id,
             group: tile.group,
             x: tile.x,
@@ -653,18 +653,19 @@ export function Tiles(options: TilesOptions)
         `;
 
         // Color
-        const tile_color_b1 = Color(tile.color).lighten(0.15).hex().toString();
-        element.setAttribute("data-color", tile.color);
-        element.style.background = `linear-gradient(90deg, ${tile.color} 0%, ${tile_color_b1} 100%)`;
+        const color = tile.color || "#333";
+        const tile_color_b1 = Color(color).lighten(0.15).hex().toString();
+        element.setAttribute("data-color", color);
+        element.style.background = `linear-gradient(90deg, ${color} 0%, ${tile_color_b1} 100%)`;
 
         // Initialize state
-        const state1 = tiles1.state.tiles.get(tile.id);
+        const state1 = tiles1!.state.tiles.get(tile.id)!;
         tiles_state.tiles.set(tile.id, {
             x: state1.x,
             y: state1.y,
             size: state1.size,
             group: state1.group,
-            color: tile.color,
+            color,
         });
 
         // Initialize pages
@@ -680,7 +681,7 @@ export function Tiles(options: TilesOptions)
     function remove_tile(tile_id: string): void
     {
         assert_tiles1_initialized();
-        tiles1.removeTile(tile_id);
+        tiles1!.removeTile(tile_id);
         tiles_pages.delete(tile_id);
 
         const button = Array.from(div_ref.current!.querySelectorAll("." + tileClass))
@@ -698,7 +699,7 @@ export function Tiles(options: TilesOptions)
     function resize_tile(tile_id: string, size: TileSize): void
     {
         assert_tiles1_initialized();
-        tiles1.resizeTile(tile_id, size);
+        tiles1!.resizeTile(tile_id, size);
         const pages = tiles_pages.get(tile_id);
         if (pages)
             set_tile_pages(tile_id, pages.icon, pages.label, pages.livePages);
@@ -723,7 +724,7 @@ export function Tiles(options: TilesOptions)
             // Mode change
             const checked_tiles = buttons
                 .filter(btn => btn.getAttribute("data-checked") === "true")
-                .map(btn => btn.getAttribute("data-id"));
+                .map(btn => btn.getAttribute("data-id")!);
             mode_signal({ selection: checked_tiles.length != 0 });
 
             // Trigger checkedChange event
@@ -847,14 +848,14 @@ export function Tiles(options: TilesOptions)
         }
 
         // Setup animation
-        let anim_prefix_1 = page_elements.length <= 1 ? "" : "Tiles_slide_y_" + page_elements.length;
+        let anim_prefix_1 = page_elements.length <= 1 ? "" : "Tiles--slideY" + page_elements.length;
         for (let page_i = 0; page_i < page_elements.length; page_i++)
         {
             const page_el = page_elements[page_i];
             page_el.style.top = page_i == 0 ? "0%" : "100%";
             if (anim_prefix_1)
             {
-                page_el.style.animationName = anim_prefix_1 + "_" + (page_i + 1);
+                page_el.style.animationName = anim_prefix_1 + "-" + (page_i + 1);
                 page_el.style.animationDuration = (page_elements.length * slide_y_page_duration) + "s";
                 page_el.style.animationIterationCount = "infinite";
             }
@@ -887,7 +888,7 @@ export function Tiles(options: TilesOptions)
     function remove_group(group_id: string): void
     {
         assert_tiles1_initialized();
-        tiles1.removeGroup(group_id);
+        tiles1!.removeGroup(group_id);
     }
     tiles_controller.addEventListener("removeGroup", tiles_controller_removeGroup);
 
@@ -899,7 +900,7 @@ export function Tiles(options: TilesOptions)
     function rename_group(group_id: string, label: string): void
     {
         assert_tiles1_initialized();
-        tiles1.renameGroup(group_id, label);
+        tiles1!.renameGroup(group_id, label);
     }
     tiles_controller.addEventListener("renameGroup", tiles_controller_renameGroup);
 
@@ -985,6 +986,7 @@ export function Tiles(options: TilesOptions)
             $theme={theme}
             $direction={options.direction}
             $localeDir={localeDir}
+            $open={open}
             onClick={on_click as any}>
 
             <div ref={div_ref}></div>
