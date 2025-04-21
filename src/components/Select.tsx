@@ -2,7 +2,7 @@ import React, { useContext, useRef, useState, useEffect, createContext } from "r
 import { styled } from "styled-components";
 import { IStyledComponentBase, Substitute } from "styled-components/dist/types";
 import Color from "color";
-import { Input } from "@hydroper/inputaction";
+import { Input } from "@hydroperx/inputaction";
 import $ from "jquery";
 import assert from "assert";
 

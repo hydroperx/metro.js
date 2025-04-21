@@ -9,7 +9,7 @@ A component and icon library for React using the Metro design.
 Installation:
 
 ```sh
-npm i @hydroper/metro
+npm i @hydroperx/metro
 ```
 
 ### Installing the required fonts
@@ -40,7 +40,7 @@ import "@fontsource/courier-prime";
 By default, the `light` theme preset is used. Theme presets can be referenced in `ThemePresets`. You can provide a specific theme for a React section using:
 
 ```tsx
-import { ThemeContext, ThemePresets } from "@hydroper/metro";
+import { ThemeContext, ThemePresets } from "@hydroperx/metro";
 
 // somewhere in React content
 <ThemeContext.Provider value={ThemePresets.green}>
@@ -54,7 +54,7 @@ You can nest it as well.
 Indicate whether a LTR layout or RTL layout is preferred through `LocaleDirectionContext`:
 
 ```tsx
-import { LocaleDirectionContext, LocaleDirection } from "@hydroper/metro";
+import { LocaleDirectionContext, LocaleDirection } from "@hydroperx/metro";
 
 const direction: LocaleDirection = "ltr";
 
@@ -68,7 +68,7 @@ const direction: LocaleDirection = "ltr";
 To opt in to using primary colors in certain components such as heading titles and checkboxes, use the `PreferPrimaryContext` context:
 
 ```tsx
-import { PreferPrimaryContext } from "@hydroper/metro";
+import { PreferPrimaryContext } from "@hydroperx/metro";
 
 // somewhere in React content
 <PreferPrimaryContext.Provider value={true}>
@@ -121,7 +121,7 @@ Here is a list of built-in icons:
 Register custom icons with:
 
 ```tsx
-import { IconRegistry } from "@hydroper/metro";
+import { IconRegistry } from "@hydroperx/metro";
 
 IconRegistry.register("iconX", { black: source, white: source });
 ```
@@ -140,7 +140,7 @@ If it is desired to grow or reduce all the user interface together, you may adju
 
 ### Input navigation
 
-This library uses [`@hydroper/inputaction`](https://jsr.io/@hydroper/inputaction) for detecting pressed input such as keyboard arrows. You may customize the global `Input.input` input actions for supporting buttons other than arrow keys.
+This library uses [`@hydroperx/inputaction`](https://jsr.io/@hydroperx/inputaction) for detecting pressed input such as keyboard arrows. You may customize the global `Input.input` input actions for supporting buttons other than arrow keys.
 
 **Important**
 
@@ -162,7 +162,7 @@ import {
     ContextMenuItem, ContextMenuIcon, ContextMenuLabel, ContextMenuRight,
     ContextMenuSeparator, ContextMenuSubmenu, ContextMenuSubmenuList,
     ContextMenuSubIcon,
-} from "@hydroper/metro";
+} from "@hydroperx/metro";
 
 function MyComp() {
     const { id: contextMenuId, show: showContextMenu } = useContextMenu();

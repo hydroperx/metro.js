@@ -1,4 +1,4 @@
-import { ColorObserver } from "@hydroper/colorobserver";
+import { ColorObserver } from "@hydroperx/colorobserver";
 import React, { useEffect, useRef, useState, useContext } from "react";
 import Color from "color";
 import { styled, keyframes } from "styled-components";

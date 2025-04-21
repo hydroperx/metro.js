@@ -1,9 +1,9 @@
-import { TypedEventTarget } from "@hydroper/event";
+import { TypedEventTarget } from "@hydroperx/event";
 import { useContext, useRef, useState, useEffect } from "react";
 import { styled } from "styled-components";
 import Color from "color";
 import assert from "assert";
-import { Input } from "@hydroper/inputaction";
+import { Input } from "@hydroperx/inputaction";
 import $ from "jquery";
 import { ArrowIcon, BulletIcon, CheckedIcon, DownArrowIcon, IconOptions, UpArrowIcon } from "./Icons";
 import { LocaleDirection, LocaleDirectionContext } from "../layout/LocaleDirection";

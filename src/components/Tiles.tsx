@@ -3,8 +3,8 @@ import { styled, keyframes } from "styled-components";
 import Keyframes from "styled-components/dist/models/Keyframes";
 import assert from "assert";
 import Color from "color";
-import { TypedEventTarget } from "@hydroper/event";
-import { Tiles as Tiles1, TileSize, State as Tiles1State } from "@hydroper/tiles";
+import { TypedEventTarget } from "@hydroperx/event";
+import { Tiles as Tiles1, TileSize, State as Tiles1State } from "@hydroperx/tiles";
 import { IconRegistry } from "./Icons";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { ThemeContext, PreferPrimaryContext, Theme } from "../theme";
@@ -17,7 +17,7 @@ import { randomHexLarge } from "../utils/random";
 // Cascading animations
 import "./Tiles.css";
 
-export type { TileSize } from "@hydroper/tiles";
+export type { TileSize } from "@hydroperx/tiles";
 
 const tileClass = "Tile";
 const tileIconWrapClass = "Tile-icon-wrap";

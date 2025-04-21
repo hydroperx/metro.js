@@ -56,7 +56,7 @@ import help_circle_white from "../icons/help-circle-white.svg";
 import new_black from "../icons/new-black.svg";
 import new_white from "../icons/new-white.svg";
 
-import { ColorObserver } from "@hydroper/colorobserver";
+import { ColorObserver } from "@hydroperx/colorobserver";
 import React, { useEffect, useRef, useState, useContext } from "react";
 import Color from "color";
 import { styled, keyframes } from "styled-components";

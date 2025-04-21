@@ -20,7 +20,7 @@
   "dependencies": {
     "@fontsource/courier-prime": "^5.2.5",
     "@fontsource/open-sans": "^5.1.1",
-    "@hydroper/metro": "file:..",
+    "@hydroperx/metro": "file:..",
     "@types/node": "^22.13.4",
     "clone": "^2.1.2",
     "react-dom": "^19.0.0"

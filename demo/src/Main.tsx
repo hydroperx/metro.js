@@ -12,13 +12,13 @@ import {
     ThemePresets,
     ThemeContext,
     LocaleDirectionContext,
-} from "@hydroper/metro";
-import type { Theme, LocaleDirection } from "@hydroper/metro";
+} from "@hydroperx/metro";
+import type { Theme, LocaleDirection } from "@hydroperx/metro";
 import {
     useContextMenu, ContextMenu,
     ContextMenuItem, ContextMenuCheck, ContextMenuIcon, ContextMenuLabel, ContextMenuRight,
     ContextMenuSeparator, ContextMenuSubmenu, ContextMenuSubIcon, ContextMenuSubmenuList
-} from "@hydroper/metro";
+} from "@hydroperx/metro";
 import "@fontsource/open-sans/300.css";
 import "@fontsource/open-sans/400.css";
 import "@fontsource/open-sans/500.css";
