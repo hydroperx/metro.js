@@ -31,10 +31,10 @@ const TooltipDiv = styled.div<{
 export function Button(options: ButtonOptions)
 {
     // Take the theme context
-    const theme = useContext(ThemeContext);
+    const theme = useContext(ThemeContext!);
 
     // Locale direction
-    const localeDir = useContext(LocaleDirectionContext);
+    const localeDir = useContext(LocaleDirectionContext!);
 
     const newStyle: React.CSSProperties = {};
 
@@ -581,7 +581,7 @@ const OutlinePrimaryButton = styled.button<ButtonCSSProps> `
 export function CircleIconButton(options: CircleIconButtonOptions)
 {
     // Take the theme context
-    const theme = useContext(ThemeContext);
+    const theme = useContext(ThemeContext!);
 
     // Stylize
     const iconStyle: React.CSSProperties = {};
@@ -682,7 +682,7 @@ export function CircleIconButton(options: CircleIconButtonOptions)
                 onTouchMove={options.touchMove}
                 onTouchCancel={options.touchCancel}>
 
-                <Icon type={options.icon} size={size - (size <= 4.5 ? 0 : 4.5)} style={iconStyle}/>
+                <Icon type={options.icon} size={size - (size <= 3.5 ? 0 : 3.5)} style={iconStyle}/>
             </CircleIconButtonButton>
 
             {tooltip === undefined ?

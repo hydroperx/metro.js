@@ -40,27 +40,27 @@ import "@fontsource/courier-prime";
 By default, the `light` theme preset is used. Theme presets can be referenced in `ThemePresets`. You can provide a specific theme for a React section using:
 
 ```tsx
-import { ThemeContext, ThemePresets } from "@hydroperx/metro";
+import { ThemeProvider, ThemePresets } from "@hydroperx/metro";
 
 // somewhere in React content
-<ThemeContext.Provider value={ThemePresets.green}>
-</ThemeContext.Provider>
+<ThemeProvider theme={ThemePresets.green}>
+</ThemeProvider>
 ```
 
 You can nest it as well.
 
 ### Locale direction
 
-Indicate whether a LTR layout or RTL layout is preferred through `LocaleDirectionContext`:
+Indicate whether a LTR layout or RTL layout is preferred through `LocaleDirectionProvider`:
 
 ```tsx
-import { LocaleDirectionContext, LocaleDirection } from "@hydroperx/metro";
+import { LocaleDirectionProvider, LocaleDirection } from "@hydroperx/metro";
 
 const direction: LocaleDirection = "ltr";
 
 // somewhere in React content
-<LocaleDirectionContext.Provider value={direction}>
-</LocaleDirectionContext.Provider>
+<LocaleDirectionProvider value={direction}>
+</LocaleDirectionProvider>
 ```
 
 ### Primary colors
@@ -68,11 +68,11 @@ const direction: LocaleDirection = "ltr";
 To opt in to using primary colors in certain components such as heading titles and checkboxes, use the `PreferPrimaryContext` context:
 
 ```tsx
-import { PreferPrimaryContext } from "@hydroperx/metro";
+import { PreferPrimary } from "@hydroperx/metro";
 
 // somewhere in React content
-<PreferPrimaryContext.Provider value={true}>
-</PreferPrimaryContext.Provider>
+<PreferPrimary prefer={true}>
+</PreferPrimary>
 ```
 
 ### Icons

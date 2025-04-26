@@ -103,7 +103,7 @@ const Div = styled.div<{
 export function HGroup(options: HGroupOptions)
 {
     // Use theme
-    const theme = useContext(ThemeContext);
+    const theme = useContext(ThemeContext!);
 
     // Refs
     const ref: React.Ref<HTMLDivElement | null> = useRef(null);

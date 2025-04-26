@@ -19,10 +19,10 @@ const Input = styled.input<{
 export function TextInput(options: TextInputOptions)
 {
     // Use the theme context
-    const theme = useContext(ThemeContext);
+    const theme = useContext(ThemeContext!);
 
     // Locale direction
-    const localeDir = useContext(LocaleDirectionContext);
+    const localeDir = useContext(LocaleDirectionContext!);
 
     // Icon
     const icon: string | null = options.icon ?? (options.search ? "search" : null);

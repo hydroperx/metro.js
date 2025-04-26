@@ -10,8 +10,8 @@ import {
     IconRegistry,
 
     ThemePresets,
-    ThemeContext,
-    LocaleDirectionContext,
+    ThemeProvider,
+    LocaleDirectionProvider,
 } from "@hydroperx/metro";
 import type { Theme, LocaleDirection } from "@hydroperx/metro";
 import {
@@ -176,8 +176,8 @@ function App()
     }, []);
 
     return (
-        <LocaleDirectionContext.Provider value={localeDirection}>
-            <ThemeContext.Provider value={theme}>
+        <LocaleDirectionProvider direction={localeDirection}>
+            <ThemeProvider theme={theme}>
                 <Container full solid selection={false} contextMenu={Container_onContextMenu as any}>
                     <Container padding={5}>
                         <Label variant="heading1" tooltip="This demonstrates a Metro components library.">Metro demo</Label>
@@ -430,8 +430,8 @@ function App()
                         </ContextMenu>
                     </Container>
                 </Container>
-            </ThemeContext.Provider>
-        </LocaleDirectionContext.Provider>
+            </ThemeProvider>
+        </LocaleDirectionProvider>
     );
 }
 

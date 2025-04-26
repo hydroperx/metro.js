@@ -207,10 +207,10 @@ export function Tiles(options: TilesOptions)
     assert(options.direction == "horizontal", "Vertical tiles not supported currently.");
 
     // Use theme
-    const theme = useContext(ThemeContext);
+    const theme = useContext(ThemeContext!);
 
     // Locale direction
-    const localeDir = useContext(LocaleDirectionContext);
+    const localeDir = useContext(LocaleDirectionContext!);
     
     // Misc vars
     const {controller: tiles_controller } = options;

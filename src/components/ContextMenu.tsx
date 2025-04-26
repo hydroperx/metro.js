@@ -138,10 +138,10 @@ export function hideAllContextMenu(): void
 export function ContextMenu(options: ContextMenuOptions)
 {
     // Use the theme context
-    const theme = useContext(ThemeContext);
+    const theme = useContext(ThemeContext!);
 
     // Locale direction
-    const localeDir = useContext(LocaleDirectionContext);
+    const localeDir = useContext(LocaleDirectionContext!);
     const localeDirRef = useRef<{ value?: LocaleDirection }>({}).current;
     localeDirRef.value = localeDir;
 
@@ -563,10 +563,10 @@ const MainDiv = styled.div<{
 export function ContextMenuItem(options: ContextMenuItemOptions)
 {
     // Locale direction
-    const localeDir = useContext(LocaleDirectionContext);
+    const localeDir = useContext(LocaleDirectionContext!);
 
     // Use the theme context
-    const theme = useContext(ThemeContext);
+    const theme = useContext(ThemeContext!);
 
     // Button ref
     const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -721,7 +721,7 @@ const IconSpan = styled.span<{
 export function ContextMenuLabel(options: ContextMenuLabelOptions)
 {
     // Locale direction
-    const localeDir = useContext(LocaleDirectionContext);
+    const localeDir = useContext(LocaleDirectionContext!);
 
     return (
         <LabelSpan $localeDir={localeDir}>
@@ -748,7 +748,7 @@ const LabelSpan = styled.span<{
 export function ContextMenuRight(options: ContextMenuRightOptions)
 {
     // Locale direction
-    const localeDir = useContext(LocaleDirectionContext);
+    const localeDir = useContext(LocaleDirectionContext!);
 
     // Minimum size for an icon
     const size = pointsToRem(3);
@@ -784,12 +784,12 @@ const RightSpan = styled.span<{
 export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions)
 {
     // Locale direction
-    const localeDir = useContext(LocaleDirectionContext);
+    const localeDir = useContext(LocaleDirectionContext!);
     const localeDirRef = useRef<{ value?: LocaleDirection }>({}).current;
     localeDirRef.value = localeDir;
 
     // Use the theme context
-    const theme = useContext(ThemeContext);
+    const theme = useContext(ThemeContext!);
 
     // Button reference
     const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -1156,7 +1156,7 @@ const SubmenuButton = styled.button<{
 export function ContextMenuSubmenuList(options: ContextMenuSubmenuListOptions)
 {
     // Use the theme context
-    const theme = useContext(ThemeContext);
+    const theme = useContext(ThemeContext!);
 
     // References
     const divRef = useRef<HTMLDivElement | null>(null);
@@ -1222,7 +1222,7 @@ const SubmenuMainDiv = styled.div<{
 export function ContextMenuSubIcon(options: IconOptions)
 {
     // Locale direction
-    const localeDir = useContext(LocaleDirectionContext);
+    const localeDir = useContext(LocaleDirectionContext!);
 
     return <ArrowIcon direction={localeDir == "ltr" ? "right" : "left"} size={options.size ?? 3} style={options.style}/>;
 }
