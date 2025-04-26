@@ -33,9 +33,12 @@ const labelInputClass = "Tile-group-label-input";
 
 // Viewport mouse up handler
 let viewport_pointerUp: Function | null = null;
-window.addEventListener("pointerup", (e) => {
-    viewport_pointerUp?.(e);
-});
+if (typeof window !== "undefined")
+{
+    window.addEventListener("pointerup", (e) => {
+        viewport_pointerUp?.(e);
+    });
+}
 
 // CSS
 const Div = styled.div<{

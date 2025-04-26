@@ -37,10 +37,13 @@ let currentSelectClose: Function | null = null;
 let currentMouseDownListener: Function | null = null;
 
 // Globalized mouse down event listener
-window.addEventListener("mousedown", function(): void
+if (typeof window !== "undefined")
 {
-    currentMouseDownListener?.();
-});
+    window.addEventListener("mousedown", function(): void
+    {
+        currentMouseDownListener?.();
+    });
+}
 
 // Cooldown when clicking options
 let cooldown = 0;

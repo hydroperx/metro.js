@@ -57,10 +57,13 @@ Input.input.addEventListener("inputPressed", function(e: Event): void
 let currentMouseDownListener: Function | null = null;
 
 // Globalized mouse down event listener
-window.addEventListener("mousedown", function(): void
+if (typeof window !== "undefined")
 {
-    currentMouseDownListener?.();
-});
+    window.addEventListener("mousedown", function(): void
+    {
+        currentMouseDownListener?.();
+    });
+}
 
 /**
  * Hook for using a context menu.
