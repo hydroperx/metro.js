@@ -6,14 +6,14 @@
     "/dist"
   ],
   "scripts": {
-    "build": "tsc && npm run copyMedia",
-    "copyMedia": "npx copyfiles -u 1 \"src/**/*.{svg,png,jpg,jpeg,webp,gif}\" dist",
+    "build": "tsc && npm run copyFiles",
+    "copyFiles": "npx copyfiles -u 1 \"src/**/*.{json,css,svg,png,jpg,jpeg,webp,gif}\" dist",
     "prepublishOnly": "npm run build"
   },
   "exports": {
     ".": {
-      "default": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     }
   },
   "dependencies": {
