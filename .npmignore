@@ -1,2 +1,8 @@
+# ignore demonstration
 /demo
+
+# ignore documentation files
 /docs
+
+# do not exclude TypeScript compiler output
+!/dist

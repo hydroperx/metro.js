@@ -1,8 +1,2 @@
-# ignore NPM artifacts
 /node_modules
-
-# ignore environment variables
-/.env
-
-# ignore distribution folder
-/dist
+/package-lock.json

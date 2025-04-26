@@ -1,6 +1,5 @@
 import { createContext } from "react";
 import Color from "color";
-import clone from "clone";
 
 export type Theme =
 {
@@ -123,12 +122,11 @@ const dark: Theme =
     },
 };
 
-
-const purple: Theme = clone(dark);
+const purple: Theme = structuredClone(dark);
 purple.colors.background =
 purple.colors.primary = "#180053";
 
-const green = clone(dark);
+const green = structuredClone(dark);
 green.colors.background = "#3F8700";
 green.colors.primary = "#4F970E";
 green.colors.anchor = "#ef7127";
