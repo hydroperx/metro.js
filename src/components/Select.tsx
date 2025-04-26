@@ -559,7 +559,7 @@ export function Select(options: SelectOptions)
                     <DownArrowIcon size={options.big ? 6 : options.small ? 2.4 : 3.5}/>
                 </div>
             </Button>
-            <SelectOptionBigContext.Provider value={!!options.big || !!options.medium}>
+            <SelectOptionBigProvider big={!!options.big || !!options.medium}>
                 <DropdownDiv
                     ref={divRef}
                     $visible={visible}
@@ -582,7 +582,7 @@ export function Select(options: SelectOptions)
                         <DownArrowIcon size={2.5}/>
                     </div>
                 </DropdownDiv>
-            </SelectOptionBigContext.Provider>
+            </SelectOptionBigProvider>
         </>
     );
 }
@@ -671,7 +671,7 @@ export function SelectOption(options: SelectOptionOptions)
     const theme = useContext(ThemeContext!);
 
     // Big
-    const big = useContext(SelectOptionBigContext);
+    const big = useContext(SelectOptionBigContext!);
 
     // Button ref
     const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -718,4 +718,24 @@ export type SelectOptionOptions = {
     value: string,
 };
 
-const SelectOptionBigContext = createContext<boolean>(false);
+const SelectOptionBigContext = typeof window !== "undefined" ? createContext<boolean>(false) : null;
+
+function SelectOptionBigProvider({
+    big,
+    children,
+}: {
+    big: boolean,
+    children?: React.ReactNode,
+})
+{
+    if (!SelectOptionBigContext)
+    {
+        return <>{children}</>;
+    }
+
+    return (
+        <SelectOptionBigContext.Provider value={big}>
+            {children}
+        </SelectOptionBigContext.Provider>
+    );
+}
