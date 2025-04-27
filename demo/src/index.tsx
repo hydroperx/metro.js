@@ -69,7 +69,7 @@ function App()
         setLocaleDirection(value == "ltr" ? "ltr" : "rtl");
     }
 
-    useEffect(() => {
+    tiles_controller.initialized(() => {
         // Add tiles and their groups
         tiles_controller.addGroup({
             id: "group1",
@@ -173,7 +173,7 @@ function App()
             icon: IconRegistry.get("firefox", "white"),
             label: "Firefox",
         });
-    }, []);
+    });
 
     return (
         <LocaleDirectionProvider direction={localeDirection}>

@@ -402,6 +402,9 @@ export function Tiles(options: TilesOptions)
                 window.addEventListener("click", label_click_out_handler);
             });
         });
+
+        // Emit initialization event
+        tiles_controller.dispatchEvent(new Event("initialized"));
     }
 
     // Detect a mode change
@@ -444,7 +447,7 @@ export function Tiles(options: TilesOptions)
 
     function assert_tiles1_initialized(): void
     {
-        assert(!!tiles1, "Tiles not initialized yet. Make sure to run initialization code within useEffect of [] (empty) dependencies.");
+        assert(!!tiles1, "Tiles not initialized yet. Make sure to run initialization code within the TilesController#initialized() event.");
     }
 
     // Handle request to get checked tiles
@@ -1246,6 +1249,7 @@ export class TilesState
  * Provides control over tiles in a `Tiles` container.
  */
 export class TilesController extends (EventTarget as TypedEventTarget<{
+    initialized: Event;
     addTile: CustomEvent<Tile>;
     tileExists: CustomEvent<{ requestId: string, tile: string }>;
     tileExistsResult: CustomEvent<{ requestId: string, value: boolean }>;
@@ -1265,6 +1269,19 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
     setTilePages: CustomEvent<{ id: string, icon?: string, label?: string, livePages?: LiveTilePage[] }>;
     renameGroup: CustomEvent<{ id: string, value: string }>;
 }>) {
+    /**
+     * Event that triggers when the tiles container is initialized.
+     */
+    initialized(initFn: () => void): void
+    {
+        const listener = () => {
+            initFn();
+            this.removeEventListener("initialized", listener);
+        };
+
+        this.addEventListener("initialized", listener);
+    }
+
     /**
      * Gets the list of checked tiles.
      */
