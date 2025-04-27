@@ -11,13 +11,13 @@ import { lighten, darken, enhanceBrightness, contrast } from "../utils/color";
 export function CheckBox(options: CheckBoxOptions)
 {
     // Use the theme context
-    const theme = useContext(ThemeContext!);
+    const theme = useContext(ThemeContext);
 
     // Determine which coloring is preferred
-    const preferPrimaryColors = useContext(PreferPrimaryContext!);
+    const preferPrimaryColors = useContext(PreferPrimaryContext);
 
     // Locale direction
-    const localeDir = useContext(LocaleDirectionContext!);
+    const localeDir = useContext(LocaleDirectionContext);
 
     // Refs
     const button_ref = useRef<HTMLButtonElement | null>(null);

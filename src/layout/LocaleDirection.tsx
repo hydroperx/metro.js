@@ -2,7 +2,7 @@ import { createContext } from "react";
 
 export type LocaleDirection = "ltr" | "rtl";
 
-export const LocaleDirectionContext = typeof window !== "undefined" ? createContext<LocaleDirection>("ltr") : null;
+export const LocaleDirectionContext = createContext<LocaleDirection>("ltr");
 
 export function LocaleDirectionProvider({
     direction,
@@ -11,11 +11,6 @@ export function LocaleDirectionProvider({
     direction: LocaleDirection,
     children?: React.ReactNode,
 }) {
-    if (!LocaleDirectionContext)
-    {
-        return <>{children}</>;
-    }
-
     return (
         <LocaleDirectionContext.Provider value={direction}>
             {children}

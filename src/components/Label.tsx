@@ -150,10 +150,10 @@ type LabelCSSProps = {
 export function Label(options: LabelOptions)
 {
     // Use the theme context
-    const theme = useContext(ThemeContext!);
+    const theme = useContext(ThemeContext);
 
     // Determine which coloring is preferred
-    const preferPrimaryColors = useContext(PreferPrimaryContext!);
+    const preferPrimaryColors = useContext(PreferPrimaryContext);
 
     // Variant
     const variant = options.variant ?? "normal";

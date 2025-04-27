@@ -194,10 +194,10 @@ type ButtonCSSProps = {
 export function Select(options: SelectOptions)
 {
     // Use the theme context
-    const theme = useContext(ThemeContext!);
+    const theme = useContext(ThemeContext);
 
     // Locale direction
-    const localeDir = useContext(LocaleDirectionContext!);
+    const localeDir = useContext(LocaleDirectionContext);
 
     // State
     const [visible, setVisible] = useState<boolean>(false);
@@ -665,13 +665,13 @@ const SelectOptionButton = styled.button<{
 export function SelectOption(options: SelectOptionOptions)
 {
     // Locale direction
-    const localeDir = useContext(LocaleDirectionContext!);
+    const localeDir = useContext(LocaleDirectionContext);
 
     // Use the theme context
-    const theme = useContext(ThemeContext!);
+    const theme = useContext(ThemeContext);
 
     // Big
-    const big = useContext(SelectOptionBigContext!);
+    const big = useContext(SelectOptionBigContext);
 
     // Button ref
     const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -718,7 +718,7 @@ export type SelectOptionOptions = {
     value: string,
 };
 
-const SelectOptionBigContext = typeof window !== "undefined" ? createContext<boolean>(false) : null;
+const SelectOptionBigContext = createContext<boolean>(false);
 
 function SelectOptionBigProvider({
     big,
@@ -728,11 +728,6 @@ function SelectOptionBigProvider({
     children?: React.ReactNode,
 })
 {
-    if (!SelectOptionBigContext)
-    {
-        return <>{children}</>;
-    }
-
     return (
         <SelectOptionBigContext.Provider value={big}>
             {children}

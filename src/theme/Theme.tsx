@@ -138,7 +138,7 @@ export const ThemePresets = {
     green,
 };
 
-export const ThemeContext = typeof window !== "undefined" ? createContext<Theme>(light) : null;
+export const ThemeContext = createContext<Theme>(light);
 
 export function ThemeProvider({
     theme,
@@ -147,11 +147,6 @@ export function ThemeProvider({
     theme: Theme,
     children?: React.ReactNode,
 }) {
-    if (!ThemeContext)
-    {
-        return <>{children}</>;
-    }
-
     return (
         <ThemeContext.Provider value={theme}>
             {children}
@@ -159,7 +154,7 @@ export function ThemeProvider({
     );
 }
 
-export const PreferPrimaryContext = typeof window !== "undefined" ? createContext<boolean>(false) : null;
+export const PreferPrimaryContext = createContext<boolean>(false);
 
 export function PreferPrimary({
     prefer,
@@ -168,11 +163,6 @@ export function PreferPrimary({
     prefer: boolean,
     children?: React.ReactNode,
 }) {
-    if (!PreferPrimaryContext)
-    {
-        return <>{children}</>;
-    }
-
     return (
         <PreferPrimaryContext.Provider value={prefer}>
             {children}

@@ -30,7 +30,7 @@ ${
 export function FormGroup(options: FormGroupOptions)
 {
     // Locale direction
-    const localeDir = useContext(LocaleDirectionContext!);
+    const localeDir = useContext(LocaleDirectionContext);
 
     return (
         <Div

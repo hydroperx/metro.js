@@ -103,7 +103,7 @@ const Div = styled.div<{
 export function VGroup(options: VGroupOptions)
 {
     // Use theme
-    const theme = useContext(ThemeContext!);
+    const theme = useContext(ThemeContext);
 
     let overflow = "";
     if (options.clip)
