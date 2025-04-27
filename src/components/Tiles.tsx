@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { styled } from "styled-components";
 import assert from "assert";
-import Color from "color";
+import { Color } from "@hydroperx/color";
 import { TypedEventTarget } from "@hydroperx/event";
 import {
   Tiles as Tiles1,

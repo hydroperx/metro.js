@@ -1,7 +1,7 @@
 import extend from "extend";
 import { styled } from "styled-components";
 import React, { Ref, useContext, useRef, useState, useEffect } from "react";
-import Color from "color";
+import { Color } from "@hydroperx/color";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
 import { fontFamily, fontSize, maximumZIndex } from "../utils/common";
 import { lighten, darken, enhanceBrightness } from "../utils/color";

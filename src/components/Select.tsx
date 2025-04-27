@@ -6,7 +6,7 @@ import React, {
   createContext,
 } from "react";
 import { styled } from "styled-components";
-import Color from "color";
+import { Color } from "@hydroperx/color";
 import { Input } from "@hydroperx/inputaction";
 import $ from "jquery";
 import assert from "assert";

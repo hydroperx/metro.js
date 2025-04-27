@@ -1,6 +1,6 @@
 import { useContext, useRef, useState, useEffect, Ref } from "react";
 import { styled } from "styled-components";
-import Color from "color";
+import { Color } from "@hydroperx/color";
 import extend from "extend";
 import { IconRegistry } from "./Icons";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";

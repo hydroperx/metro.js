@@ -1,7 +1,7 @@
 import { TypedEventTarget } from "@hydroperx/event";
 import { useContext, useRef, useState, useEffect } from "react";
 import { styled } from "styled-components";
-import Color from "color";
+import { Color } from "@hydroperx/color";
 import assert from "assert";
 import { Input } from "@hydroperx/inputaction";
 import $ from "jquery";

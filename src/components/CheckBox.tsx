@@ -1,6 +1,6 @@
 import React, { useContext, useRef, useState, useEffect } from "react";
 import { styled } from "styled-components";
-import Color from "color";
+import { Color } from "@hydroperx/color";
 import Draggable from "react-draggable";
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { ThemeContext, PreferPrimaryContext, Theme } from "../theme";
