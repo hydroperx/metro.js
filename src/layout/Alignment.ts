@@ -1,1 +1,10 @@
-export type Alignment = "start" | "center" | "end" | "spaceBetween" | "stretch" | "left" | "right" | "top" | "bottom";
+export type Alignment =
+  | "start"
+  | "center"
+  | "end"
+  | "spaceBetween"
+  | "stretch"
+  | "left"
+  | "right"
+  | "top"
+  | "bottom";

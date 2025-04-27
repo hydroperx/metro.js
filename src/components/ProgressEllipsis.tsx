@@ -8,7 +8,7 @@ import { pointsToRem } from "../utils/points";
 import { RootFontObserver } from "../utils/RootFontObserver";
 
 // Animation
-const move = keyframes `
+const move = keyframes`
     0% {
         left: 10%;
         opacity: 1;
@@ -44,111 +44,125 @@ const move = keyframes `
 `;
 
 const Div = styled.div<{
-    $size: number,
-    $time: number,
-    $color: string,
-    $r: number,
-    $m: number,
-    $rem: number,
-}> `
-    position: relative;
-    width: 100%;
-    height: ${$ => $.$size * 0.25 * $.$rem}px;
-    overflow: hidden;
+  $size: number;
+  $time: number;
+  $color: string;
+  $r: number;
+  $m: number;
+  $rem: number;
+}>`
+  position: relative;
+  width: 100%;
+  height: ${($) => $.$size * 0.25 * $.$rem}px;
+  overflow: hidden;
 
-    & .progress-ellipsis__circle {
-        position: absolute;
-        left: 62.5%;
-        animation: ${move} ${$=> $.$time}ms infinite;
-        width: ${$ => $.$size * 0.25 * $.$rem}px;
-        height: ${$ => $.$size * 0.25 * $.$rem}px;
-        background: ${$ => $.$color};
-        border-radius: 100%;
-        opacity: 0;
-    }
+  & .progress-ellipsis__circle {
+    position: absolute;
+    left: 62.5%;
+    animation: ${move} ${($) => $.$time}ms infinite;
+    width: ${($) => $.$size * 0.25 * $.$rem}px;
+    height: ${($) => $.$size * 0.25 * $.$rem}px;
+    background: ${($) => $.$color};
+    border-radius: 100%;
+    opacity: 0;
+  }
 
-    & div:nth-of-type(2) { left: ${$ => $.$r}% }
-    & div:nth-of-type(3) { left: ${$ => $.$r * 2}% }
-    & div:nth-of-type(4) { left: ${$ => $.$r * 3}% }
-    & div:nth-of-type(5) { left: ${$ => $.$r * 4}% }
-    & div:nth-of-type(2) { animation-delay: ${$ => $.$time / $.$m}ms }
-    & div:nth-of-type(3) { animation-delay: ${$ => $.$time / $.$m*2}ms }
-    & div:nth-of-type(4) { animation-delay: ${$ => $.$time / $.$m*3}ms }
-    & div:nth-of-type(5) { animation-delay: ${$ => $.$time / $.$m*4}ms }
+  & div:nth-of-type(2) {
+    left: ${($) => $.$r}%;
+  }
+  & div:nth-of-type(3) {
+    left: ${($) => $.$r * 2}%;
+  }
+  & div:nth-of-type(4) {
+    left: ${($) => $.$r * 3}%;
+  }
+  & div:nth-of-type(5) {
+    left: ${($) => $.$r * 4}%;
+  }
+  & div:nth-of-type(2) {
+    animation-delay: ${($) => $.$time / $.$m}ms;
+  }
+  & div:nth-of-type(3) {
+    animation-delay: ${($) => ($.$time / $.$m) * 2}ms;
+  }
+  & div:nth-of-type(4) {
+    animation-delay: ${($) => ($.$time / $.$m) * 3}ms;
+  }
+  & div:nth-of-type(5) {
+    animation-delay: ${($) => ($.$time / $.$m) * 4}ms;
+  }
 `;
 
-export function ProgressEllipsis(options: ProgressEllipsisOptions)
-{
-    // Div ref
-    const ref = useRef(null);
+export function ProgressEllipsis(options: ProgressEllipsisOptions) {
+  // Div ref
+  const ref = useRef(null);
 
-    // States
-    const [color, setColor] = useState<string>("#fff");
-    const [rem, setRem] = useState<number>(0);
+  // States
+  const [color, setColor] = useState<string>("#fff");
+  const [rem, setRem] = useState<number>(0);
 
-    // Set style
-    const newStyle: React.CSSProperties = {};
-    newStyle.verticalAlign = "middle";
-    if (options.style)
-    {
-        extend(newStyle, options.style);
-    }
+  // Set style
+  const newStyle: React.CSSProperties = {};
+  newStyle.verticalAlign = "middle";
+  if (options.style) {
+    extend(newStyle, options.style);
+  }
 
-    // Adjust color
-    useEffect(() => {
-        const colorObserver = new ColorObserver(ref.current, (color: Color) => {
-            setColor(color.isLight() ? "#fff" : "#000");
-        });
+  // Adjust color
+  useEffect(() => {
+    const colorObserver = new ColorObserver(ref.current, (color: Color) => {
+      setColor(color.isLight() ? "#fff" : "#000");
+    });
 
-        return () => {
-            colorObserver.cleanup();
-        };
-    }, []);
+    return () => {
+      colorObserver.cleanup();
+    };
+  }, []);
 
-    // Adjust size
-    useEffect(() => {
-        const rootFontObserver = new RootFontObserver(rem => {
-            setRem(rem);
-        });
-        return () => {
-            rootFontObserver.cleanup();
-        };
-    }, []);
+  // Adjust size
+  useEffect(() => {
+    const rootFontObserver = new RootFontObserver((rem) => {
+      setRem(rem);
+    });
+    return () => {
+      rootFontObserver.cleanup();
+    };
+  }, []);
 
-    // Animation time in milliseconds
-    let time = 4000;
+  // Animation time in milliseconds
+  let time = 4000;
 
-    // Other animation parameters
-    let r = -14; // left in percentage
-    let m = 30; // milliseconds
+  // Other animation parameters
+  let r = -14; // left in percentage
+  let m = 30; // milliseconds
 
-    // Size
-    const size = options.size ?? 1.5;
+  // Size
+  const size = options.size ?? 1.5;
 
-    return (
-        <Div
-            ref={ref}
-            className={options.className}
-            style={options.style}
-            $size={size}
-            $time={time}
-            $color={color}
-            $r={r}
-            $m={m}
-            $rem={rem}>
-
-            <div className='progress-ellipsis__circle'></div>
-            <div className='progress-ellipsis__circle'></div>
-            <div className='progress-ellipsis__circle'></div>
-            <div className='progress-ellipsis__circle'></div>
-            <div className='progress-ellipsis__circle'></div>
-        </Div>
-    );
+  return (
+    <Div
+      ref={ref}
+      className={options.className}
+      style={options.style}
+      $size={size}
+      $time={time}
+      $color={color}
+      $r={r}
+      $m={m}
+      $rem={rem}
+    >
+      <div className="progress-ellipsis__circle"></div>
+      <div className="progress-ellipsis__circle"></div>
+      <div className="progress-ellipsis__circle"></div>
+      <div className="progress-ellipsis__circle"></div>
+      <div className="progress-ellipsis__circle"></div>
+    </Div>
+  );
 }
 
 export type ProgressEllipsisOptions = {
-    size?: number,
+  size?: number;
 
-    style?: React.CSSProperties,
-    className?: string,
+  style?: React.CSSProperties;
+  className?: string;
 };
