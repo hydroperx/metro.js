@@ -3,11 +3,16 @@
  */
 export class RootFontObserver
 {
-    private element: HTMLDivElement;
-    private resizeObserver: ResizeObserver;
+    private element: HTMLDivElement | null = null;
+    private resizeObserver: ResizeObserver | null = null;
 
     constructor(updateCallback: (value: number) => void)
     {
+        if (typeof window !== "object")
+        {
+            return;
+        }
+
         this.element = document.createElement("div");
         this.element.classList.add("rem-unit");
         this.element.style.pointerEvents = "none";
@@ -24,14 +29,14 @@ export class RootFontObserver
 
     cleanup()
     {
-        this.resizeObserver.disconnect();
-        this.element.remove();
+        this.resizeObserver?.disconnect();
+        this.element?.remove();
     }
 
     private read(): number
     {
         const widthMatch = window
-            .getComputedStyle(this.element)
+            .getComputedStyle(this.element!)
             .getPropertyValue("width")
             .match(/^(\d*\.?\d*)px$/);
 
