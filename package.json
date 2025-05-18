@@ -38,7 +38,7 @@
   },
   "description": "Metro design components and icons",
   "repository": {
-    "url": "https://github.com/hydroperx/metro.git"
+    "url": "https://github.com/hydroperx/metro.js.git"
   },
   "license": "Apache-2.0",
   "keywords": [
