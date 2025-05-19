@@ -59,7 +59,7 @@ import { LocaleDirectionProvider, LocaleDirection } from "@hydroperx/metro";
 const direction: LocaleDirection = "ltr";
 
 // somewhere in React content
-<LocaleDirectionProvider value={direction}>
+<LocaleDirectionProvider direction={direction}>
 </LocaleDirectionProvider>
 ```
 
