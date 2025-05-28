@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { styled } from "styled-components";
 import { Color } from "@hydroperx/color";
-import { Input } from "@hydroperx/inputaction";
+import { input } from "@hydroperx/inputaction";
 import $ from "jquery";
 import assert from "assert";
 
@@ -33,7 +33,7 @@ const visibleTransition = "opacity 300ms ease-out, top 300ms ease-out";
 let currentInputPressedListener: Function | null = null;
 
 // Globalized input action listener
-Input.input.addEventListener("inputPressed", function (e: Event): void {
+input.on("inputPressed", function (e: Event): void {
   currentInputPressedListener?.(e);
 });
 
@@ -459,7 +459,7 @@ export function Select(options: SelectOptions) {
     const listDiv = getItemListDiv();
 
     // Escape
-    if (Input.input.justPressed("escape")) {
+    if (input.justPressed("escape")) {
       close();
       buttonRef.current!.focus();
       return;
@@ -472,12 +472,12 @@ export function Select(options: SelectOptions) {
       // If focused
       if (document.activeElement === child) {
         // navigate up
-        if (Input.input.justPressed("navigateUp")) {
+        if (input.justPressed("navigateUp")) {
           e.preventDefault();
           focusPrevSibling(child);
         }
         // navigate down
-        else if (Input.input.justPressed("navigateDown")) {
+        else if (input.justPressed("navigateDown")) {
           e.preventDefault();
           focusNextSibling(child);
         }
@@ -487,7 +487,7 @@ export function Select(options: SelectOptions) {
     }
 
     // focus last
-    if (Input.input.justPressed("navigateUp")) {
+    if (input.justPressed("navigateUp")) {
       let first = listDiv.firstElementChild;
       if (first) {
         e.preventDefault();
@@ -495,7 +495,7 @@ export function Select(options: SelectOptions) {
       }
     }
     // focus first
-    else if (Input.input.justPressed("navigateDown")) {
+    else if (input.justPressed("navigateDown")) {
       let last = listDiv.lastElementChild;
       if (last) {
         e.preventDefault();

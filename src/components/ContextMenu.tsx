@@ -3,7 +3,7 @@ import { useContext, useRef, useState, useEffect } from "react";
 import { styled } from "styled-components";
 import { Color } from "@hydroperx/color";
 import assert from "assert";
-import { Input } from "@hydroperx/inputaction";
+import { input } from "@hydroperx/inputaction";
 import $ from "jquery";
 import {
   ArrowIcon,
@@ -64,7 +64,7 @@ const submenuInputPressedListeners = new WeakMap<HTMLDivElement, Function>();
 let currentInputPressedListener: Function | null = null;
 
 // Globalized input action listener
-Input.input.addEventListener("inputPressed", function (e: Event): void {
+input.on("inputPressed", function (e: Event): void {
   currentInputPressedListener?.(e);
 });
 
@@ -361,7 +361,7 @@ export function ContextMenu(options: ContextMenuOptions) {
     // Obtain item list div
     const itemListDiv = getItemListDiv();
 
-    if (Input.input.justPressed("escape")) {
+    if (input.justPressed("escape")) {
       // If this is the innermost context menu open, close it.
       const submenus = (
         Array.from(
@@ -387,18 +387,18 @@ export function ContextMenu(options: ContextMenuOptions) {
       // If focused
       if (document.activeElement === child) {
         // navigate up
-        if (Input.input.justPressed("navigateUp")) {
+        if (input.justPressed("navigateUp")) {
           e.preventDefault();
           focusPrevSibling(child);
         }
         // navigate down
-        else if (Input.input.justPressed("navigateDown")) {
+        else if (input.justPressed("navigateDown")) {
           e.preventDefault();
           focusNextSibling(child);
         }
         // open submenu
         else if (
-          Input.input.justPressed(
+          input.justPressed(
             localeDirRef.value == "ltr" ? "navigateRight" : "navigateLeft",
           ) &&
           child.classList.contains(submenuItemClassName)
@@ -428,7 +428,7 @@ export function ContextMenu(options: ContextMenuOptions) {
     const innermost = submenus.length === 0;
     if (innermost) {
       // focus last
-      if (Input.input.justPressed("navigateUp")) {
+      if (input.justPressed("navigateUp")) {
         let first = itemListDiv.firstElementChild;
         if (first) {
           e.preventDefault();
@@ -436,7 +436,7 @@ export function ContextMenu(options: ContextMenuOptions) {
         }
       }
       // focus first
-      else if (Input.input.justPressed("navigateDown")) {
+      else if (input.justPressed("navigateDown")) {
         let last = itemListDiv.lastElementChild;
         if (last) {
           e.preventDefault();
@@ -955,7 +955,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
     // Obtain div element
     const div = getDiv();
 
-    if (Input.input.justPressed("escape")) {
+    if (input.justPressed("escape")) {
       // If this is the innermost context menu open, close it.
       const innermost = !Array.from(
         div.querySelectorAll("." + submenuClassName),
@@ -980,18 +980,18 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
       // If focused
       if (document.activeElement === child) {
         // navigate up
-        if (Input.input.justPressed("navigateUp")) {
+        if (input.justPressed("navigateUp")) {
           e.preventDefault();
           focusPrevSibling(child);
         }
         // navigate down
-        else if (Input.input.justPressed("navigateDown")) {
+        else if (input.justPressed("navigateDown")) {
           e.preventDefault();
           focusNextSibling(child);
         }
         // open submenu
         else if (
-          Input.input.justPressed(
+          input.justPressed(
             localeDirRef.value == "ltr" ? "navigateRight" : "navigateLeft",
           ) &&
           child.classList.contains(submenuItemClassName)
@@ -1009,7 +1009,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
         }
         // close current submenu
         else if (
-          Input.input.justPressed(
+          input.justPressed(
             localeDirRef.value == "ltr" ? "navigateLeft" : "navigateRight",
           )
         ) {
@@ -1029,7 +1029,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
     ).some((div) => (div as HTMLElement).style.visibility == "visible");
     if (innermost) {
       // focus last
-      if (Input.input.justPressed("navigateUp")) {
+      if (input.justPressed("navigateUp")) {
         let first = itemListDiv.firstElementChild;
         if (first) {
           e.preventDefault();
@@ -1037,7 +1037,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
         }
       }
       // focus first
-      else if (Input.input.justPressed("navigateDown")) {
+      else if (input.justPressed("navigateDown")) {
         let last = itemListDiv.lastElementChild;
         if (last) {
           e.preventDefault();
@@ -1046,7 +1046,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
       }
       // close current submenu
       else if (
-        Input.input.justPressed(
+        input.justPressed(
           localeDirRef.value == "ltr" ? "navigateLeft" : "navigateRight",
         )
       ) {
