@@ -6,11 +6,11 @@
     "/dist"
   ],
   "scripts": {
-    "build": "tsc && npm run copy-files",
-    "watch": "run-p watch-typescript watch-copy-files",
-    "copy-files": "copy-and-watch \"src/**/*.{json,css,svg,png,jpg,jpeg,webp,gif}\" dist",
-    "watch-typescript": "tsc --watch",
-    "watch-copy-files": "copy-and-watch --watch \"src/**/*.{json,css,svg,png,jpg,jpeg,webp,gif}\" dist",
+    "build": "tsc && npm run build_copy",
+    "build_copy": "copy-and-watch \"src/**/*.{json,css,svg,png,jpg,jpeg,webp,gif}\" dist",
+    "watch": "run-p watch_ts watch_copy",
+    "watch_ts": "tsc --watch",
+    "watch_copy": "copy-and-watch --watch \"src/**/*.{json,css,svg,png,jpg,jpeg,webp,gif}\" dist",
     "prepublishOnly": "npm run build"
   },
   "exports": {
