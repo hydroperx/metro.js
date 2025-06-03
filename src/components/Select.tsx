@@ -6,6 +6,7 @@ import React, {
   createContext,
 } from "react";
 import { styled } from "styled-components";
+import { computePosition, offset } from "@floating-ui/dom";
 import { Color } from "@hydroperx/color";
 import { input } from "@hydroperx/inputaction";
 import $ from "jquery";
@@ -13,7 +14,7 @@ import assert from "assert";
 
 import { LocaleDirectionContext } from "../layout/LocaleDirection";
 import { UpArrowIcon, DownArrowIcon } from "./Icons";
-import { computePosition, fitViewportPosition, Side } from "../utils/placement";
+import { fitViewportPosition, Side } from "../utils/placement";
 import { Theme, ThemeContext } from "../theme";
 import { enhanceBrightness, contrast } from "../utils/color";
 import {
@@ -271,7 +272,7 @@ export function Select(options: SelectOptions) {
     : undefined;
 
   // Open the list
-  function open(): void {
+  async function open() {
     if (visible) {
       return;
     }
@@ -330,10 +331,16 @@ export function Select(options: SelectOptions) {
     itemListDiv.scrollTop = k_scroll;
 
     // Position after button.
-    const [x, y, sideResolution] = computePosition(buttonRef.current!, div, {
-      prefer: "bottom",
-      margin: 3,
+    let prev_display = div.style.display;
+    if (prev_display === "none") div.style.display = "inline-block";
+    const r = await computePosition(buttonRef.current!, div, {
+      placement: "bottom",
+      middleware: [ offset(3) ]
     });
+    div.style.display = prev_display;
+    const x = r.x;
+    const y = r.y;
+    const sideResolution = r.placement.replace(/\-.*/, "") as Side;
 
     // Stop transition
     setTransition("");

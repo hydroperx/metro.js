@@ -1,11 +1,11 @@
 import extend from "extend";
 import { styled } from "styled-components";
+import { computePosition, offset } from "@floating-ui/dom";
 import { useContext, useState, useRef, Ref } from "react";
 import { ThemeContext, PreferPrimaryContext, Theme } from "../theme/Theme";
 import { fontFamily, maximumZIndex } from "../utils/common";
 import { enhanceBrightness } from "../utils/color";
 import { pointsToRem } from "../utils/points";
-import { computePosition } from "../utils/placement";
 
 export type LabelVariant =
   | "normal"
@@ -202,7 +202,7 @@ export function Label(options: LabelOptions) {
   let tooltipTimeout = -1;
 
   // Display tooltip
-  const mouseOver = (e: MouseEvent): any => {
+  const mouseOver = async (e: MouseEvent) => {
     if (tooltipElement.current) {
       const element = e.target as HTMLElement;
       tooltipTimeout = window.setTimeout(() => {
@@ -212,17 +212,15 @@ export function Label(options: LabelOptions) {
       }, 700);
 
       // Adjust tooltip position
-      const [x, y] = computePosition(
-        e.target as HTMLElement,
-        tooltipElement.current,
-        {
-          prefer: "bottom",
-          orthogonal: true,
-          margin: 7,
-        },
-      );
-      setTooltipX(x);
-      setTooltipY(y);
+      let prev_display = tooltipElement.current.style.display;
+      if (prev_display === "none") tooltipElement.current.style.display = "inline-block";
+      const r = await computePosition(e.target as HTMLElement, tooltipElement.current, {
+        placement: "bottom",
+        middleware: [ offset(7) ],
+      });
+      tooltipElement.current.style.display = prev_display;
+      setTooltipX(r.x);
+      setTooltipY(r.y);
     }
   };
 

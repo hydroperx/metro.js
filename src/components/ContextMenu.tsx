@@ -216,7 +216,6 @@ export function ContextMenu(options: ContextMenuOptions) {
 
     if (e.detail.reference) {
       // Position context menu after a reference element.
-      // -- Change the display so the positioning size is obtained
       let prev_display = div.style.display;
       if (prev_display === "none") div.style.display = "inline-block";
       const r = await computePosition(e.detail.reference, div, {
@@ -844,7 +843,6 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
     submenuInputPressedListeners.set(div, input_onInputPressed);
 
     // Position context menu after butotn.
-    // -- Change the display so the positioning size is obtained
     let prev_display = div.style.display;
     if (prev_display === "none") div.style.display = "inline-block";
     const r = await computePosition(button, div, {

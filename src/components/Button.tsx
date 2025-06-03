@@ -1,11 +1,11 @@
 import extend from "extend";
 import { styled } from "styled-components";
+import { computePosition, offset } from "@floating-ui/dom";
 import React, { Ref, useContext, useRef, useState, useEffect } from "react";
 import { Color } from "@hydroperx/color";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
 import { fontFamily, fontSize, maximumZIndex } from "../utils/common";
 import { lighten, darken, enhanceBrightness } from "../utils/color";
-import { computePosition } from "../utils/placement";
 import { DownArrowIcon, Icon } from "./Icons";
 import { Theme, ThemeContext } from "../theme";
 import { LocaleDirectionContext } from "../layout";
@@ -142,7 +142,7 @@ export function Button(options: ButtonOptions) {
 
   // Display tooltip
   const userMouseOver = options.mouseOver;
-  const mouseOver = (e: MouseEvent): any => {
+  const mouseOver = async (e: MouseEvent) => {
     if (tooltipElement.current) {
       const button = e.currentTarget as HTMLButtonElement;
       tooltipTimeout = window.setTimeout(() => {
@@ -152,13 +152,15 @@ export function Button(options: ButtonOptions) {
       }, 700);
 
       // Adjust tooltip position
-      const [x, y] = computePosition(button, tooltipElement.current, {
-        prefer: "bottom",
-        orthogonal: true,
-        margin: 7,
+      let prev_display = tooltipElement.current.style.display;
+      if (prev_display === "none") tooltipElement.current.style.display = "inline-block";
+      const r = await computePosition(button, tooltipElement.current, {
+        placement: "bottom",
+        middleware: [ offset(7) ],
       });
-      setTooltipX(x);
-      setTooltipY(y);
+      tooltipElement.current.style.display = prev_display;
+      setTooltipX(r.x);
+      setTooltipY(r.y);
     }
 
     return userMouseOver?.(e as any);
@@ -607,7 +609,7 @@ export function CircleIconButton(options: CircleIconButtonOptions) {
 
   // Display tooltip
   const userMouseOver = options.mouseOver;
-  const mouseOver = (e: MouseEvent): any => {
+  const mouseOver = async (e: MouseEvent) => {
     if (tooltipElement.current) {
       const button = e.currentTarget as HTMLButtonElement;
       tooltipTimeout = window.setTimeout(() => {
@@ -617,13 +619,15 @@ export function CircleIconButton(options: CircleIconButtonOptions) {
       }, 700);
 
       // Adjust tooltip position
-      const [x, y] = computePosition(button, tooltipElement.current, {
-        prefer: "bottom",
-        orthogonal: true,
-        margin: 7,
+      let prev_display = tooltipElement.current.style.display;
+      if (prev_display === "none") tooltipElement.current.style.display = "inline-block";
+      const r = await computePosition(button, tooltipElement.current, {
+        placement: "bottom",
+        middleware: [ offset(7) ],
       });
-      setTooltipX(x);
-      setTooltipY(y);
+      tooltipElement.current.style.display = prev_display;
+      setTooltipX(r.x);
+      setTooltipY(r.y);
     }
 
     return userMouseOver?.(e as any);
