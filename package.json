@@ -20,6 +20,7 @@
     }
   },
   "dependencies": {
+    "@floating-ui/dom": "^1.7.1",
     "@hydroperx/color": "^1.0.0",
     "@hydroperx/event": "^1.0.0",
     "@hydroperx/inputaction": "^1.0.0",

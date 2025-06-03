@@ -1,6 +1,7 @@
 import { TypedEventTarget } from "@hydroperx/event";
 import { useContext, useRef, useState, useEffect } from "react";
 import { styled } from "styled-components";
+import { computePosition } from "@floating-ui/dom";
 import { Color } from "@hydroperx/color";
 import assert from "assert";
 import { input } from "@hydroperx/inputaction";
@@ -17,7 +18,7 @@ import {
   LocaleDirection,
   LocaleDirectionContext,
 } from "../layout/LocaleDirection";
-import { computePosition, fitViewportPosition, Side } from "../utils/placement";
+import { fitViewportPosition, Side } from "../utils/placement";
 import { Theme, ThemeContext } from "../theme";
 import {
   BUTTON_NAVIGABLE,
@@ -178,7 +179,7 @@ export function ContextMenu(options: ContextMenuOptions) {
   }
 
   // Handle "show" signal
-  function eventDispatcher_onShow(e: CustomEvent<ContextMenuEvent>): void {
+  async function eventDispatcher_onShow(e: CustomEvent<ContextMenuEvent>) {
     // Identifier must match
     if (e.detail.id !== options.id) {
       return;
@@ -215,9 +216,16 @@ export function ContextMenu(options: ContextMenuOptions) {
 
     if (e.detail.reference) {
       // Position context menu after a reference element.
-      [x, y, sideResolution] = computePosition(e.detail.reference, div, {
-        prefer: e.detail.prefer,
+      // -- Change the display so the positioning size is obtained
+      let prev_display = div.style.display;
+      if (prev_display === "none") div.style.display = "inline-block";
+      const r = await computePosition(e.detail.reference, div, {
+        placement: e.detail.prefer,
       });
+      div.style.display = prev_display;
+      x = r.x;
+      y = r.y;
+      sideResolution = r.placement.replace(/\-.*/, "") as Side;
     } else {
       // Position context menu at a given point.
       assert(
@@ -804,7 +812,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
     return getDiv().children[2] as HTMLDivElement;
   }
 
-  function show(div: HTMLDivElement): void {
+  async function show(div: HTMLDivElement) {
     // Hide all context menu's submenus from the parent
     hideAllFromParent(div, true);
 
@@ -836,9 +844,16 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
     submenuInputPressedListeners.set(div, input_onInputPressed);
 
     // Position context menu after butotn.
-    const [x, y, sideResolution] = computePosition(button, div, {
-      prefer: localeDirRef.value == "ltr" ? "right" : "left",
+    // -- Change the display so the positioning size is obtained
+    let prev_display = div.style.display;
+    if (prev_display === "none") div.style.display = "inline-block";
+    const r = await computePosition(button, div, {
+      placement: localeDirRef.value == "ltr" ? "right" : "left",
     });
+    div.style.display = prev_display;
+    const x = r.x;
+    const y = r.y;
+    const sideResolution = r.placement.replace(/\-.*/, "") as Side;
     div.style.left = x + "px";
     div.style.top = y + "px";
 
