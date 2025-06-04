@@ -1,6 +1,6 @@
 import extend from "extend";
 import { styled } from "styled-components";
-import { computePosition, offset } from "@floating-ui/dom";
+import { computePosition, offset, flip, shift } from "@floating-ui/dom";
 import React, { Ref, useContext, useRef, useState, useEffect } from "react";
 import { Color } from "@hydroperx/color";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
@@ -8,7 +8,7 @@ import { fontFamily, fontSize, maximumZIndex } from "../utils/common";
 import { lighten, darken, enhanceBrightness } from "../utils/color";
 import { DownArrowIcon, Icon } from "./Icons";
 import { Theme, ThemeContext } from "../theme";
-import { LocaleDirectionContext } from "../layout";
+import { RTLContext } from "../layout";
 
 const TooltipDiv = styled.div<{
   $theme: Theme;
@@ -33,7 +33,7 @@ export function Button(options: ButtonOptions) {
   const theme = useContext(ThemeContext);
 
   // Locale direction
-  const localeDir = useContext(LocaleDirectionContext);
+  const localeDir = useContext(RTLContext);
 
   const newStyle: React.CSSProperties = {};
 
@@ -155,8 +155,8 @@ export function Button(options: ButtonOptions) {
       let prev_display = tooltipElement.current.style.display;
       if (prev_display === "none") tooltipElement.current.style.display = "inline-block";
       const r = await computePosition(button, tooltipElement.current, {
-        placement: "bottom",
-        middleware: [ offset(7) ],
+        placement: "bottom-start",
+        middleware: [ offset(7), flip(), shift() ],
       });
       tooltipElement.current.style.display = prev_display;
       setTooltipX(r.x);
@@ -622,8 +622,8 @@ export function CircleIconButton(options: CircleIconButtonOptions) {
       let prev_display = tooltipElement.current.style.display;
       if (prev_display === "none") tooltipElement.current.style.display = "inline-block";
       const r = await computePosition(button, tooltipElement.current, {
-        placement: "bottom",
-        middleware: [ offset(7) ],
+        placement: "bottom-start",
+        middleware: [ offset(7), flip(), shift() ],
       });
       tooltipElement.current.style.display = prev_display;
       setTooltipX(r.x);

@@ -3,7 +3,7 @@ import { styled } from "styled-components";
 import { Color } from "@hydroperx/color";
 import extend from "extend";
 import { IconRegistry } from "./Icons";
-import { LocaleDirectionContext } from "../layout/LocaleDirection";
+import { RTLContext } from "../layout/RTL";
 import { ThemeContext } from "../theme";
 import { fontFamily, fontSize } from "../utils/common";
 import { pointsToRem } from "../utils/points";
@@ -25,7 +25,7 @@ export function TextInput(options: TextInputOptions) {
   const theme = useContext(ThemeContext);
 
   // Locale direction
-  const localeDir = useContext(LocaleDirectionContext);
+  const localeDir = useContext(RTLContext);
 
   // Icon
   const icon: string | null =

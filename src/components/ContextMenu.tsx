@@ -1,7 +1,7 @@
 import { TypedEventTarget } from "@hydroperx/event";
 import { useContext, useRef, useState, useEffect } from "react";
 import { styled } from "styled-components";
-import { computePosition } from "@floating-ui/dom";
+import { computePosition, flip, shift } from "@floating-ui/dom";
 import { Color } from "@hydroperx/color";
 import assert from "assert";
 import { input } from "@hydroperx/inputaction";
@@ -15,9 +15,9 @@ import {
   UpArrowIcon,
 } from "./Icons";
 import {
-  LocaleDirection,
-  LocaleDirectionContext,
-} from "../layout/LocaleDirection";
+  RTLType,
+  RTLContext,
+} from "../layout/RTL";
 import { fitViewportPosition, Side } from "../utils/placement";
 import { Theme, ThemeContext } from "../theme";
 import {
@@ -156,8 +156,8 @@ export function ContextMenu(options: ContextMenuOptions) {
   const theme = useContext(ThemeContext);
 
   // Locale direction
-  const localeDir = useContext(LocaleDirectionContext);
-  const localeDirRef = useRef<{ value?: LocaleDirection }>({}).current;
+  const localeDir = useContext(RTLContext);
+  const localeDirRef = useRef<{ value?: RTLType }>({}).current;
   localeDirRef.value = localeDir;
 
   // State
@@ -220,6 +220,7 @@ export function ContextMenu(options: ContextMenuOptions) {
       if (prev_display === "none") div.style.display = "inline-block";
       const r = await computePosition(e.detail.reference, div, {
         placement: e.detail.prefer,
+        middleware: [flip(), shift()],
       });
       div.style.display = prev_display;
       x = r.x;
@@ -557,7 +558,7 @@ const MainDiv = styled.div<{
  */
 export function ContextMenuItem(options: ContextMenuItemOptions) {
   // Locale direction
-  const localeDir = useContext(LocaleDirectionContext);
+  const localeDir = useContext(RTLContext);
 
   // Use the theme context
   const theme = useContext(ThemeContext);
@@ -714,7 +715,7 @@ const IconSpan = styled.span<{
  */
 export function ContextMenuLabel(options: ContextMenuLabelOptions) {
   // Locale direction
-  const localeDir = useContext(LocaleDirectionContext);
+  const localeDir = useContext(RTLContext);
 
   return <LabelSpan $localeDir={localeDir}>{options.children}</LabelSpan>;
 }
@@ -736,7 +737,7 @@ const LabelSpan = styled.span<{
  */
 export function ContextMenuRight(options: ContextMenuRightOptions) {
   // Locale direction
-  const localeDir = useContext(LocaleDirectionContext);
+  const localeDir = useContext(RTLContext);
 
   // Minimum size for an icon
   const size = pointsToRem(3);
@@ -771,8 +772,8 @@ const RightSpan = styled.span<{
  */
 export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
   // Locale direction
-  const localeDir = useContext(LocaleDirectionContext);
-  const localeDirRef = useRef<{ value?: LocaleDirection }>({}).current;
+  const localeDir = useContext(RTLContext);
+  const localeDirRef = useRef<{ value?: RTLType }>({}).current;
   localeDirRef.value = localeDir;
 
   // Use the theme context
@@ -847,6 +848,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
     if (prev_display === "none") div.style.display = "inline-block";
     const r = await computePosition(button, div, {
       placement: localeDirRef.value == "ltr" ? "right" : "left",
+      middleware: [flip(), shift()],
     });
     div.style.display = prev_display;
     const x = r.x;
@@ -1201,7 +1203,7 @@ const SubmenuMainDiv = styled.div<{
  */
 export function ContextMenuSubIcon(options: IconOptions) {
   // Locale direction
-  const localeDir = useContext(LocaleDirectionContext);
+  const localeDir = useContext(RTLContext);
 
   return (
     <ArrowIcon

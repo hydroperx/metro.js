@@ -1,7 +1,7 @@
 import { styled } from "styled-components";
 import { useContext } from "react";
 import { pointsToRem } from "../utils/points";
-import { LocaleDirectionContext } from "../layout";
+import { RTLContext } from "../layout";
 
 // CSS
 const Div = styled.div<{
@@ -30,7 +30,7 @@ const Div = styled.div<{
  */
 export function FormGroup(options: FormGroupOptions) {
   // Locale direction
-  const localeDir = useContext(LocaleDirectionContext);
+  const localeDir = useContext(RTLContext);
 
   return (
     <Div

@@ -1,6 +1,6 @@
 import extend from "extend";
 import { styled } from "styled-components";
-import { computePosition, offset } from "@floating-ui/dom";
+import { computePosition, offset, flip, shift } from "@floating-ui/dom";
 import { useContext, useState, useRef, Ref } from "react";
 import { ThemeContext, PreferPrimaryContext, Theme } from "../theme/Theme";
 import { fontFamily, maximumZIndex } from "../utils/common";
@@ -215,8 +215,8 @@ export function Label(options: LabelOptions) {
       let prev_display = tooltipElement.current.style.display;
       if (prev_display === "none") tooltipElement.current.style.display = "inline-block";
       const r = await computePosition(e.target as HTMLElement, tooltipElement.current, {
-        placement: "bottom",
-        middleware: [ offset(7) ],
+        placement: "bottom-start",
+        middleware: [ offset(7), flip(), shift() ],
       });
       tooltipElement.current.style.display = prev_display;
       setTooltipX(r.x);

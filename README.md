@@ -51,16 +51,16 @@ You can nest it as well.
 
 ### Locale direction
 
-Indicate whether a LTR layout or RTL layout is preferred through `LocaleDirectionProvider`:
+Indicate whether a LTR layout or RTL layout is preferred through `RTLProvider`:
 
 ```tsx
-import { LocaleDirectionProvider, LocaleDirection } from "@hydroperx/metro";
+import { RTLProvider, RTLType } from "@hydroperx/metro";
 
-const direction: LocaleDirection = "ltr";
+const direction: RTLType = "ltr";
 
 // somewhere in React content
-<LocaleDirectionProvider direction={direction}>
-</LocaleDirectionProvider>
+<RTLProvider direction={direction}>
+</RTLProvider>
 ```
 
 ### Primary colors

@@ -6,13 +6,13 @@ import React, {
   createContext,
 } from "react";
 import { styled } from "styled-components";
-import { computePosition, offset } from "@floating-ui/dom";
+import { computePosition, offset, flip, shift } from "@floating-ui/dom";
 import { Color } from "@hydroperx/color";
 import { input } from "@hydroperx/inputaction";
 import $ from "jquery";
 import assert from "assert";
 
-import { LocaleDirectionContext } from "../layout/LocaleDirection";
+import { RTLContext } from "../layout/RTL";
 import { UpArrowIcon, DownArrowIcon } from "./Icons";
 import { fitViewportPosition, Side } from "../utils/placement";
 import { Theme, ThemeContext } from "../theme";
@@ -213,7 +213,7 @@ export function Select(options: SelectOptions) {
   const theme = useContext(ThemeContext);
 
   // Locale direction
-  const localeDir = useContext(LocaleDirectionContext);
+  const localeDir = useContext(RTLContext);
 
   // State
   const [visible, setVisible] = useState<boolean>(false);
@@ -334,8 +334,8 @@ export function Select(options: SelectOptions) {
     let prev_display = div.style.display;
     if (prev_display === "none") div.style.display = "inline-block";
     const r = await computePosition(buttonRef.current!, div, {
-      placement: "bottom",
-      middleware: [ offset(3) ]
+      placement: "bottom-start",
+      middleware: [ offset(3), flip(), shift() ],
     });
     div.style.display = prev_display;
     const x = r.x;
@@ -674,7 +674,7 @@ const SelectOptionButton = styled.button<{
 
 export function SelectOption(options: SelectOptionOptions) {
   // Locale direction
-  const localeDir = useContext(LocaleDirectionContext);
+  const localeDir = useContext(RTLContext);
 
   // Use the theme context
   const theme = useContext(ThemeContext);

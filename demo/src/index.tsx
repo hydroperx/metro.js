@@ -20,9 +20,9 @@ import {
   IconRegistry,
   ThemePresets,
   ThemeProvider,
-  LocaleDirectionProvider,
+  RTLProvider,
 } from "@hydroperx/metro";
-import type { Theme, LocaleDirection } from "@hydroperx/metro";
+import type { Theme, RTLType } from "@hydroperx/metro";
 import {
   useContextMenu,
   ContextMenu,
@@ -67,8 +67,8 @@ function App() {
 
   // States
   const [theme, setTheme] = useState<Theme>(ThemePresets.dark);
-  const [localeDirection, setLocaleDirection] =
-    useState<LocaleDirection>("ltr");
+  const [localeDirection, setRTLType] =
+    useState<RTLType>("ltr");
   const [checkbox_value, set_checkbox_value] = useState<boolean>(false);
 
   // Tiles
@@ -81,7 +81,7 @@ function App() {
 
   // Change locale direction
   function changeLocaleDir(value: string): void {
-    setLocaleDirection(value == "ltr" ? "ltr" : "rtl");
+    setRTLType(value == "ltr" ? "ltr" : "rtl");
   }
 
   tiles_controller.initialized(() => {
@@ -191,7 +191,7 @@ function App() {
   });
 
   return (
-    <LocaleDirectionProvider direction={localeDirection}>
+    <RTLProvider direction={localeDirection}>
       <ThemeProvider theme={theme}>
         <Container
           full
@@ -479,7 +479,7 @@ function App() {
           </Container>
         </Container>
       </ThemeProvider>
-    </LocaleDirectionProvider>
+    </RTLProvider>
   );
 }
 

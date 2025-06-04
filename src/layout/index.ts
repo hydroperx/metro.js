@@ -1,2 +1,2 @@
 export * from "./Alignment";
-export * from "./LocaleDirection";
+export * from "./RTL";

@@ -15,7 +15,7 @@ import {
   State as Tiles1State,
 } from "@hydroperx/tiles";
 import { IconRegistry } from "./Icons";
-import { LocaleDirectionContext } from "../layout/LocaleDirection";
+import { RTLContext } from "../layout/RTL";
 import { ThemeContext, PreferPrimaryContext, Theme } from "../theme";
 import { RootFontObserver } from "../utils/RootFontObserver";
 import { pointsToRem, pointsToRemValue } from "../utils/points";
@@ -232,7 +232,7 @@ export function Tiles(options: TilesOptions) {
   const theme = useContext(ThemeContext);
 
   // Locale direction
-  const localeDir = useContext(LocaleDirectionContext);
+  const localeDir = useContext(RTLContext);
 
   // Misc vars
   const { controller: tiles_controller } = options;

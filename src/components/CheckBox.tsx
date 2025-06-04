@@ -2,7 +2,7 @@ import React, { useContext, useRef, useState, useEffect } from "react";
 import { styled } from "styled-components";
 import { Color } from "@hydroperx/color";
 import Draggable from "react-draggable";
-import { LocaleDirectionContext } from "../layout/LocaleDirection";
+import { RTLContext } from "../layout/RTL";
 import { ThemeContext, PreferPrimaryContext, Theme } from "../theme";
 import { RootFontObserver } from "../utils/RootFontObserver";
 import { pointsToRemValue } from "../utils/points";
@@ -16,7 +16,7 @@ export function CheckBox(options: CheckBoxOptions) {
   const preferPrimaryColors = useContext(PreferPrimaryContext);
 
   // Locale direction
-  const localeDir = useContext(LocaleDirectionContext);
+  const localeDir = useContext(RTLContext);
 
   // Refs
   const button_ref = useRef<HTMLButtonElement | null>(null);
