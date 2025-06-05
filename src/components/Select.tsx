@@ -6,7 +6,7 @@ import React, {
   createContext,
 } from "react";
 import { styled } from "styled-components";
-import { computePosition, offset, flip, shift } from "@floating-ui/dom";
+import { computePosition, offset, flip, shift, size } from "@floating-ui/dom";
 import { Color } from "@hydroperx/color";
 import { input } from "@hydroperx/inputaction";
 import $ from "jquery";
@@ -335,7 +335,17 @@ export function Select(options: SelectOptions) {
     if (prev_display === "none") div.style.display = "inline-block";
     const r = await computePosition(buttonRef.current!, div, {
       placement: "bottom-start",
-      middleware: [ offset(3), flip(), shift() ],
+      middleware: [
+        offset(3), flip(), shift(),
+        size({
+          apply({ availableWidth, availableHeight, elements }) {
+            Object.assign(elements.floating.style, {
+              maxWidth: `${availableWidth}px`,
+              maxHeight: `${availableHeight}px`,
+            });
+          },
+        }),
+      ],
     });
     div.style.display = prev_display;
     const x = r.x;

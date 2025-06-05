@@ -1,7 +1,7 @@
 import { TypedEventTarget } from "@hydroperx/event";
 import { useContext, useRef, useState, useEffect } from "react";
 import { styled } from "styled-components";
-import { computePosition, flip, shift } from "@floating-ui/dom";
+import { computePosition, flip, shift, size } from "@floating-ui/dom";
 import { Color } from "@hydroperx/color";
 import assert from "assert";
 import { input } from "@hydroperx/inputaction";
@@ -220,7 +220,17 @@ export function ContextMenu(options: ContextMenuOptions) {
       if (prev_display === "none") div.style.display = "inline-block";
       const r = await computePosition(e.detail.reference, div, {
         placement: e.detail.prefer,
-        middleware: [flip(), shift()],
+        middleware: [
+          flip(), shift(),
+          size({
+            apply({ availableWidth, availableHeight, elements }) {
+              Object.assign(elements.floating.style, {
+                maxWidth: `${availableWidth}px`,
+                maxHeight: `${availableHeight}px`,
+              });
+            },
+          }),
+        ],
       });
       div.style.display = prev_display;
       x = r.x;
@@ -848,7 +858,17 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
     if (prev_display === "none") div.style.display = "inline-block";
     const r = await computePosition(button, div, {
       placement: localeDirRef.value == "ltr" ? "right" : "left",
-      middleware: [flip(), shift()],
+      middleware: [
+        flip(), shift(),
+        size({
+          apply({ availableWidth, availableHeight, elements }) {
+            Object.assign(elements.floating.style, {
+              maxWidth: `${availableWidth}px`,
+              maxHeight: `${availableHeight}px`,
+            });
+          },
+        }),
+      ],
     });
     div.style.display = prev_display;
     const x = r.x;
