@@ -313,6 +313,10 @@ return (
 );
 ```
 
+### Transition delays
+
+Menu transitions occur in `MENU_TRANSITION_DELAY` milliseconds. You can build timeouts based on that constant.
+
 ### Useful snippets
 
 #### Disable "select all"

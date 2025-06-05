@@ -19,3 +19,9 @@ export const maximumZIndex: string = "1999999999";
  * through buttons or keyboard keys.
  */
 export const BUTTON_NAVIGABLE = "button-navigable";
+
+/**
+ * Transition delay in milliseconds used when opening or closing
+ * a menu.
+ */
+export const MENU_TRANSITION_DELAY = 200;
