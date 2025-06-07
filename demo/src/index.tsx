@@ -202,7 +202,7 @@ function App() {
           <Container padding={5}>
             <Label
               variant="heading1"
-              tooltip="This demonstrates a Metro components library."
+              tooltip={{text: "This demonstrates a Metro components library."}}
             >
               Metro demo
             </Label>
@@ -255,7 +255,7 @@ function App() {
             <HGroup gap={2} style={{ float: "right", marginRight: "3rem" }}>
               <Button
                 variant="outline-primary"
-                tooltip="An useful description."
+                tooltip={{text: "An useful description."}}
               >
                 Outline primary
               </Button>

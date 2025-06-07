@@ -1,11 +1,13 @@
 import extend from "extend";
 import { styled } from "styled-components";
+import { useEffect } from "react";
 import { computePosition, offset, flip, shift } from "@floating-ui/dom";
 import { useContext, useState, useRef, Ref } from "react";
 import { ThemeContext, PreferPrimaryContext, Theme } from "../theme/Theme";
 import { fontFamily, maximumZIndex } from "../utils/common";
 import { enhanceBrightness } from "../utils/color";
 import { pointsToRem } from "../utils/points";
+import { Side } from "../utils/placement";
 
 export type LabelVariant =
   | "normal"
@@ -17,17 +19,17 @@ export type LabelVariant =
 
 const TooltipDiv = styled.div<{
   $theme: Theme;
-  $tooltipVisible: boolean;
-  $tooltipX: number;
-  $tooltipY: number;
+  $tooltip_visible: boolean;
+  $tooltip_x: number;
+  $tooltip_y: number;
 }>`
   background: ${($) => $.$theme.colors.inputBackground};
   border: 0.15rem solid ${($) => $.$theme.colors.inputBorder};
   display: inline-block;
-  visibility: ${($) => ($.$tooltipVisible ? "visible" : "hidden")};
+  visibility: ${($) => ($.$tooltip_visible ? "visible" : "hidden")};
   position: fixed;
-  left: ${($) => $.$tooltipX}px;
-  top: ${($) => $.$tooltipY}px;
+  left: ${($) => $.$tooltip_x}px;
+  top: ${($) => $.$tooltip_y}px;
   padding: 0.4rem;
   font-size: 0.77rem;
   z-index: ${maximumZIndex};
@@ -195,56 +197,62 @@ export function Label(options: LabelOptions) {
     `;
 
   const tooltip = options.tooltip;
-  const [tooltipVisible, setTooltipVisible] = useState<boolean>(false);
-  const [tooltipX, setTooltipX] = useState<number>(0);
-  const [tooltipY, setTooltipY] = useState<number>(0);
-  const tooltipElement: Ref<HTMLDivElement> = useRef(null);
-  let tooltipTimeout = -1;
+  const tooltip_side_ref = useRef<Side>("bottom");
+  const [tooltip_visible, set_tooltip_visible] = useState<boolean>(false);
+  const [tooltip_x, set_tooltip_x] = useState<number>(0);
+  const [tooltip_y, set_tooltip_y] = useState<number>(0);
+  const tooltip_el: Ref<HTMLDivElement> = useRef(null);
+  let tooltip_timeout = -1;
 
   // Display tooltip
   const mouseOver = async (e: MouseEvent) => {
-    if (tooltipElement.current) {
+    if (tooltip_el.current) {
       const element = e.target as HTMLElement;
-      tooltipTimeout = window.setTimeout(() => {
+      tooltip_timeout = window.setTimeout(() => {
         if (element.matches(":hover")) {
-          setTooltipVisible(true);
+          set_tooltip_visible(true);
         }
       }, 700);
 
       // Adjust tooltip position
-      let prev_display = tooltipElement.current.style.display;
-      if (prev_display === "none") tooltipElement.current.style.display = "inline-block";
-      const r = await computePosition(e.target as HTMLElement, tooltipElement.current, {
-        placement: "bottom-start",
+      let prev_display = tooltip_el.current.style.display;
+      if (prev_display === "none") tooltip_el.current.style.display = "inline-block";
+      const r = await computePosition(e.target as HTMLElement, tooltip_el.current, {
+        placement: (tooltip_side_ref.current + "-start") as any,
         middleware: [ offset(7), flip(), shift() ],
       });
-      tooltipElement.current.style.display = prev_display;
-      setTooltipX(r.x);
-      setTooltipY(r.y);
+      tooltip_el.current.style.display = prev_display;
+      set_tooltip_x(r.x);
+      set_tooltip_y(r.y);
     }
   };
 
   // Hide tooltip
   const mouseOut = (e: MouseEvent): any => {
-    if (tooltipTimeout !== -1) {
-      window.clearTimeout(tooltipTimeout);
-      tooltipTimeout = -1;
+    if (tooltip_timeout !== -1) {
+      window.clearTimeout(tooltip_timeout);
+      tooltip_timeout = -1;
     }
-    setTooltipVisible(false);
+    set_tooltip_visible(false);
   };
 
-  const tooltipRendered =
+  const tooltip_rendered =
     tooltip === undefined ? undefined : (
       <TooltipDiv
-        ref={tooltipElement}
+        ref={tooltip_el}
         $theme={theme}
-        $tooltipVisible={tooltipVisible}
-        $tooltipX={tooltipX}
-        $tooltipY={tooltipY}
+        $tooltip_visible={tooltip_visible}
+        $tooltip_x={tooltip_x}
+        $tooltip_y={tooltip_y}
       >
-        {tooltip}
+        {tooltip.text}
       </TooltipDiv>
     );
+
+  // sync tooltip side
+  useEffect(() => {
+    tooltip_side_ref.current = options.tooltip?.side ?? "bottom";
+  }, [options.tooltip?.side ?? "bottom"]);
 
   switch (variant) {
     case "normal": {
@@ -264,7 +272,7 @@ export function Label(options: LabelOptions) {
             >
               {options.children}
             </NormalLabel>
-            {tooltipRendered}
+            {tooltip_rendered}
           </>
         );
       }
@@ -282,7 +290,7 @@ export function Label(options: LabelOptions) {
           >
             {options.children}
           </NormalSpan>
-          {tooltipRendered}
+          {tooltip_rendered}
         </>
       );
     }
@@ -303,7 +311,7 @@ export function Label(options: LabelOptions) {
             >
               {options.children}
             </H1Label>
-            {tooltipRendered}
+            {tooltip_rendered}
           </>
         );
       }
@@ -321,7 +329,7 @@ export function Label(options: LabelOptions) {
           >
             {options.children}
           </H1>
-          {tooltipRendered}
+          {tooltip_rendered}
         </>
       );
     }
@@ -342,7 +350,7 @@ export function Label(options: LabelOptions) {
             >
               {options.children}
             </H2Label>
-            {tooltipRendered}
+            {tooltip_rendered}
           </>
         );
       }
@@ -360,7 +368,7 @@ export function Label(options: LabelOptions) {
           >
             {options.children}
           </H2>
-          {tooltipRendered}
+          {tooltip_rendered}
         </>
       );
     }
@@ -381,7 +389,7 @@ export function Label(options: LabelOptions) {
             >
               {options.children}
             </H3Label>
-            {tooltipRendered}
+            {tooltip_rendered}
           </>
         );
       }
@@ -399,7 +407,7 @@ export function Label(options: LabelOptions) {
           >
             {options.children}
           </H3>
-          {tooltipRendered}
+          {tooltip_rendered}
         </>
       );
     }
@@ -420,7 +428,7 @@ export function Label(options: LabelOptions) {
             >
               {options.children}
             </H4Label>
-            {tooltipRendered}
+            {tooltip_rendered}
           </>
         );
       }
@@ -438,7 +446,7 @@ export function Label(options: LabelOptions) {
           >
             {options.children}
           </H4>
-          {tooltipRendered}
+          {tooltip_rendered}
         </>
       );
     }
@@ -459,7 +467,7 @@ export function Label(options: LabelOptions) {
             >
               {options.children}
             </LegendLabel>
-            {tooltipRendered}
+            {tooltip_rendered}
           </>
         );
       }
@@ -477,7 +485,7 @@ export function Label(options: LabelOptions) {
           >
             {options.children}
           </LegendSpan>
-          {tooltipRendered}
+          {tooltip_rendered}
         </>
       );
     }
@@ -487,7 +495,7 @@ export function Label(options: LabelOptions) {
 export type LabelOptions = {
   variant?: LabelVariant;
 
-  tooltip?: string;
+  tooltip?: { text: string, side?: Side };
 
   id?: string;
 

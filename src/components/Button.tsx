@@ -9,20 +9,21 @@ import { lighten, darken, enhanceBrightness } from "../utils/color";
 import { DownArrowIcon, Icon } from "./Icons";
 import { Theme, ThemeContext } from "../theme";
 import { RTLContext } from "../layout";
+import { Side } from "../utils/placement";
 
 const TooltipDiv = styled.div<{
   $theme: Theme;
-  $tooltipVisible: boolean;
-  $tooltipX: number;
-  $tooltipY: number;
+  $tooltip_visible: boolean;
+  $tooltip_x: number;
+  $tooltip_y: number;
 }>`
   background: ${($) => $.$theme.colors.inputBackground};
   border: 0.15rem solid ${($) => $.$theme.colors.inputBorder};
   display: inline-block;
-  visibility: ${($) => ($.$tooltipVisible ? "visible" : "hidden")};
+  visibility: ${($) => ($.$tooltip_visible ? "visible" : "hidden")};
   position: fixed;
-  left: ${($) => $.$tooltipX}px;
-  top: ${($) => $.$tooltipY}px;
+  left: ${($) => $.$tooltip_x}px;
+  top: ${($) => $.$tooltip_y}px;
   padding: 0.4rem;
   font-size: 0.77rem;
   z-index: ${maximumZIndex};
@@ -134,33 +135,34 @@ export function Button(options: ButtonOptions) {
   }
 
   const tooltip = options.tooltip;
-  const [tooltipVisible, setTooltipVisible] = useState<boolean>(false);
-  const [tooltipX, setTooltipX] = useState<number>(0);
-  const [tooltipY, setTooltipY] = useState<number>(0);
-  const tooltipElement: Ref<HTMLDivElement | null> = useRef(null);
-  let tooltipTimeout = -1;
+  const tooltip_side_ref = useRef<Side>("bottom");
+  const [tooltip_visible, set_tooltip_visible] = useState<boolean>(false);
+  const [tooltip_x, set_tooltip_x] = useState<number>(0);
+  const [tooltip_y, set_tooltip_y] = useState<number>(0);
+  const tooltip_el: Ref<HTMLDivElement | null> = useRef(null);
+  let tooltip_timeout = -1;
 
   // Display tooltip
   const userMouseOver = options.mouseOver;
   const mouseOver = async (e: MouseEvent) => {
-    if (tooltipElement.current) {
+    if (tooltip_el.current) {
       const button = e.currentTarget as HTMLButtonElement;
-      tooltipTimeout = window.setTimeout(() => {
+      tooltip_timeout = window.setTimeout(() => {
         if (button.matches(":hover")) {
-          setTooltipVisible(true);
+          set_tooltip_visible(true);
         }
       }, 700);
 
       // Adjust tooltip position
-      let prev_display = tooltipElement.current.style.display;
-      if (prev_display === "none") tooltipElement.current.style.display = "inline-block";
-      const r = await computePosition(button, tooltipElement.current, {
-        placement: "bottom-start",
+      let prev_display = tooltip_el.current.style.display;
+      if (prev_display === "none") tooltip_el.current.style.display = "inline-block";
+      const r = await computePosition(button, tooltip_el.current, {
+        placement: (tooltip_side_ref.current + "-start") as any,
         middleware: [ offset(7), flip(), shift() ],
       });
-      tooltipElement.current.style.display = prev_display;
-      setTooltipX(r.x);
-      setTooltipY(r.y);
+      tooltip_el.current.style.display = prev_display;
+      set_tooltip_x(r.x);
+      set_tooltip_y(r.y);
     }
 
     return userMouseOver?.(e as any);
@@ -169,13 +171,18 @@ export function Button(options: ButtonOptions) {
   // Hide tooltip
   const userMouseOut = options.mouseOut;
   const mouseOut = (e: MouseEvent): any => {
-    if (tooltipTimeout !== -1) {
-      window.clearTimeout(tooltipTimeout);
-      tooltipTimeout = -1;
+    if (tooltip_timeout !== -1) {
+      window.clearTimeout(tooltip_timeout);
+      tooltip_timeout = -1;
     }
-    setTooltipVisible(false);
+    set_tooltip_visible(false);
     return userMouseOut?.(e as any);
   };
+
+  // sync tooltip side
+  useEffect(() => {
+    tooltip_side_ref.current = options.tooltip?.side ?? "bottom";
+  }, [options.tooltip?.side ?? "bottom"]);
 
   const Button = Button_comp!;
 
@@ -232,13 +239,13 @@ export function Button(options: ButtonOptions) {
       </Button>
       {tooltip === undefined ? undefined : (
         <TooltipDiv
-          ref={tooltipElement}
+          ref={tooltip_el}
           $theme={theme}
-          $tooltipVisible={tooltipVisible}
-          $tooltipX={tooltipX}
-          $tooltipY={tooltipY}
+          $tooltip_visible={tooltip_visible}
+          $tooltip_x={tooltip_x}
+          $tooltip_y={tooltip_y}
         >
-          {tooltip}
+          {tooltip.text}
         </TooltipDiv>
       )}
     </>
@@ -274,7 +281,7 @@ export type ButtonOptions = {
   maxWidth?: number;
   maxHeight?: number;
 
-  tooltip?: string;
+  tooltip?: { text: string, side?: Side };
 
   style?: React.CSSProperties;
   className?: string;
@@ -601,33 +608,34 @@ export function CircleIconButton(options: CircleIconButtonOptions) {
   const size_rem = pointsToRem(size);
 
   const tooltip = options.tooltip;
-  const [tooltipVisible, setTooltipVisible] = useState<boolean>(false);
-  const [tooltipX, setTooltipX] = useState<number>(0);
-  const [tooltipY, setTooltipY] = useState<number>(0);
-  const tooltipElement: Ref<HTMLDivElement | null> = useRef(null);
-  let tooltipTimeout = -1;
+  const tooltip_side_ref = useRef<Side>("bottom");
+  const [tooltip_visible, set_tooltip_visible] = useState<boolean>(false);
+  const [tooltip_x, set_tooltip_x] = useState<number>(0);
+  const [tooltip_y, set_tooltip_y] = useState<number>(0);
+  const tooltip_el: Ref<HTMLDivElement | null> = useRef(null);
+  let tooltip_timeout = -1;
 
   // Display tooltip
   const userMouseOver = options.mouseOver;
   const mouseOver = async (e: MouseEvent) => {
-    if (tooltipElement.current) {
+    if (tooltip_el.current) {
       const button = e.currentTarget as HTMLButtonElement;
-      tooltipTimeout = window.setTimeout(() => {
+      tooltip_timeout = window.setTimeout(() => {
         if (button.matches(":hover")) {
-          setTooltipVisible(true);
+          set_tooltip_visible(true);
         }
       }, 700);
 
       // Adjust tooltip position
-      let prev_display = tooltipElement.current.style.display;
-      if (prev_display === "none") tooltipElement.current.style.display = "inline-block";
-      const r = await computePosition(button, tooltipElement.current, {
-        placement: "bottom-start",
+      let prev_display = tooltip_el.current.style.display;
+      if (prev_display === "none") tooltip_el.current.style.display = "inline-block";
+      const r = await computePosition(button, tooltip_el.current, {
+        placement: (tooltip_side_ref.current + "-start") as any,
         middleware: [ offset(7), flip(), shift() ],
       });
-      tooltipElement.current.style.display = prev_display;
-      setTooltipX(r.x);
-      setTooltipY(r.y);
+      tooltip_el.current.style.display = prev_display;
+      set_tooltip_x(r.x);
+      set_tooltip_y(r.y);
     }
 
     return userMouseOver?.(e as any);
@@ -636,13 +644,18 @@ export function CircleIconButton(options: CircleIconButtonOptions) {
   // Hide tooltip
   const userMouseOut = options.mouseOut;
   const mouseOut = (e: MouseEvent): any => {
-    if (tooltipTimeout !== -1) {
-      window.clearTimeout(tooltipTimeout);
-      tooltipTimeout = -1;
+    if (tooltip_timeout !== -1) {
+      window.clearTimeout(tooltip_timeout);
+      tooltip_timeout = -1;
     }
-    setTooltipVisible(false);
+    set_tooltip_visible(false);
     return userMouseOut?.(e as any);
   };
+
+  // sync tooltip side
+  useEffect(() => {
+    tooltip_side_ref.current = options.tooltip?.side ?? "bottom";
+  }, [options.tooltip?.side ?? "bottom"]);
 
   return (
     <>
@@ -689,13 +702,13 @@ export function CircleIconButton(options: CircleIconButtonOptions) {
 
       {tooltip === undefined ? undefined : (
         <TooltipDiv
-          ref={tooltipElement}
+          ref={tooltip_el}
           $theme={theme}
-          $tooltipVisible={tooltipVisible}
-          $tooltipX={tooltipX}
-          $tooltipY={tooltipY}
+          $tooltip_visible={tooltip_visible}
+          $tooltip_x={tooltip_x}
+          $tooltip_y={tooltip_y}
         >
-          {tooltip}
+          {tooltip.text}
         </TooltipDiv>
       )}
     </>
@@ -710,7 +723,7 @@ export type CircleIconButtonOptions = {
    */
   filled?: boolean;
 
-  tooltip?: string;
+  tooltip?: { text: string, side?: Side };
 
   /**
    * Rotation degrees.
@@ -838,7 +851,7 @@ export function ArrowButton(options: ArrowButtonOptions) {
 export type ArrowButtonOptions = {
   direction: ArrowButtonDirection;
   size?: number;
-  tooltip?: string;
+  tooltip?: { text: string, side?: Side };
   disabled?: boolean;
   autoFocus?: boolean;
 
