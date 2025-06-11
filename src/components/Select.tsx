@@ -14,18 +14,18 @@ import assert from "assert";
 
 import { RTLContext } from "../layout/RTL";
 import { UpArrowIcon, DownArrowIcon } from "./Icons";
-import { fitViewportPosition, Side } from "../utils/placement";
+import { Side } from "../utils/PlacementUtils";
 import { Theme, ThemeContext } from "../theme";
-import { enhanceBrightness, contrast } from "../utils/color";
+import { enhanceBrightness, contrast } from "../utils/ColorUtils";
 import {
   BUTTON_NAVIGABLE,
   fontFamily,
   fontSize,
   maximumZIndex,
-} from "../utils/common";
-import { pointsToRem, pointsToRemValue } from "../utils/points";
-import { focusPrevSibling, focusNextSibling } from "../utils/focus";
-import { RootFontObserver } from "../utils/RootFontObserver";
+} from "../utils/CommonVariables";
+import * as RFConvert from "../utils/RFConvert";
+import { focusPrevSibling, focusNextSibling } from "../utils/FocusUtils";
+import { RFObserver } from "../utils/RFObserver";
 
 // Item visible transition
 const visibleTransition = "opacity 300ms ease-out, top 300ms ease-out";
@@ -99,7 +99,7 @@ const DropdownDiv = styled.div<{
     display: ${($) => ($.$arrowsVisible ? "flex" : "none")};
     flex-direction: row;
     justify-content: center;
-    height: ${pointsToRem(2.5)};
+    height: ${RFConvert.points.cascadingRF(2.5)};
   }
 `;
 
@@ -115,7 +115,7 @@ const BigOrMediumButton = styled.button<ButtonCSSProps>`
   gap: 1rem;
   flex-direction: ${($) => ($.$localeDir == "ltr" ? "row" : "row-reverse")};
   align-items: center;
-  padding: ${pointsToRemValue(2)}rem 0.7rem;
+  padding: ${RFConvert.points.rf(2)}rem 0.7rem;
   min-width: 10rem;
   opacity: 0.7;
 
@@ -143,7 +143,7 @@ const SmallButton = styled.button<ButtonCSSProps>`
   gap: 0.2rem;
   flex-direction: ${($) => ($.$localeDir == "ltr" ? "row" : "row-reverse")};
   align-items: center;
-  padding: ${pointsToRemValue(1)}rem 0.7rem;
+  padding: ${RFConvert.points.rf(1)}rem 0.7rem;
   outline: none;
 
   &:hover:not(:disabled),
@@ -172,7 +172,7 @@ const NormalButton = styled.button<ButtonCSSProps>`
   display: flex;
   flex-direction: ${($) => ($.$localeDir == "ltr" ? "row" : "row-reverse")};
   align-items: center;
-  padding: ${pointsToRemValue(2) + 0.15}rem 0.7rem;
+  padding: ${RFConvert.points.rf(2) + 0.15}rem 0.7rem;
   min-width: 15rem;
   outline: none;
 
@@ -224,7 +224,7 @@ export function Select(options: SelectOptions) {
   const [arrowsVisible, setArrowsVisible] = useState<boolean>(false);
   const [value, setValue] = useState<string>(options.default ?? "");
   const [valueHyperText, setValueHyperText] = useState<string>("");
-  const [rem, setRem] = useState<number>(0);
+  const [rf, set_rf] = useState<number>(0); // root font size
 
   // Refs
   const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -544,11 +544,11 @@ export function Select(options: SelectOptions) {
 
   // Observe CSS rem unit
   useEffect(() => {
-    const rootFontObserver = new RootFontObserver((value) => {
-      setRem(value);
+    const rf_observer = new RFObserver((value) => {
+      set_rf(value);
     });
     return () => {
-      rootFontObserver.cleanup();
+      rf_observer.cleanup();
     };
   }, []);
 

@@ -1,15 +1,16 @@
-import { pointsToRem } from "../utils/points";
 import extend from "extend";
 import React, { useContext, useEffect, useRef } from "react";
 import { styled } from "styled-components";
+
 import { Theme, ThemeContext } from "../theme";
 import {
   fontFamily,
   monoFontFamily,
   fontSize,
   monoFontSize,
-} from "../utils/common";
-import { lighten, contrast } from "../utils/color";
+} from "../utils/CommonVariables";
+import { lighten, contrast } from "../utils/ColorUtils";
+import * as RFConvert from "../utils/RFConvert";
 
 /**
  * Represents a generic container that may have a solid background color and be full-sized.
@@ -233,22 +234,22 @@ const Div = styled.div<{
 }>`
   ${($) => ($.$solid ? "background: " + $.$theme.colors.background + ";" : "")}
   ${($) =>
-    $.$padding !== undefined ? "padding: " + pointsToRem($.$padding) + ";" : ""}
+    $.$padding !== undefined ? "padding: " + RFConvert.points.cascadingRF($.$padding) + ";" : ""}
     ${($) =>
     $.$paddingLeft !== undefined
-      ? "padding-left: " + pointsToRem($.$paddingLeft) + ";"
+      ? "padding-left: " + RFConvert.points.cascadingRF($.$paddingLeft) + ";"
       : ""}
     ${($) =>
     $.$paddingRight !== undefined
-      ? "padding-right: " + pointsToRem($.$paddingRight) + ";"
+      ? "padding-right: " + RFConvert.points.cascadingRF($.$paddingRight) + ";"
       : ""}
     ${($) =>
     $.$paddingTop !== undefined
-      ? "padding-top: " + pointsToRem($.$paddingTop) + ";"
+      ? "padding-top: " + RFConvert.points.cascadingRF($.$paddingTop) + ";"
       : ""}
     ${($) =>
     $.$paddingBottom !== undefined
-      ? "padding-bottom: " + pointsToRem($.$paddingBottom) + ";"
+      ? "padding-bottom: " + RFConvert.points.cascadingRF($.$paddingBottom) + ";"
       : ""}
     ${($) => (($.$visible ?? true) ? "" : "display: none;")}
     color: ${($) => $.$theme.colors.foreground};
@@ -262,19 +263,19 @@ const Div = styled.div<{
   -webkit-user-select: ${($) => $.$user_select};
   ${($) =>
     $.$minWidth !== undefined
-      ? "min-width: " + pointsToRem($.$minWidth) + ";"
+      ? "min-width: " + RFConvert.points.cascadingRF($.$minWidth) + ";"
       : ""}
   ${($) =>
     $.$minHeight !== undefined
-      ? "min-height: " + pointsToRem($.$minHeight) + ";"
+      ? "min-height: " + RFConvert.points.cascadingRF($.$minHeight) + ";"
       : ""}
     ${($) =>
     $.$maxWidth !== undefined
-      ? "max-width: " + pointsToRem($.$maxWidth) + ";"
+      ? "max-width: " + RFConvert.points.cascadingRF($.$maxWidth) + ";"
       : ""}
     ${($) =>
     $.$maxHeight !== undefined
-      ? "max-height: " + pointsToRem($.$maxHeight) + ";"
+      ? "max-height: " + RFConvert.points.cascadingRF($.$maxHeight) + ";"
       : ""}
     ${($) => ($.$full ? "width: 100%; height: 100%;" : "")}
 

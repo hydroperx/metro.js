@@ -61,8 +61,8 @@ import React, { useEffect, useRef, useState, useContext } from "react";
 import { styled, keyframes } from "styled-components";
 import extend from "extend";
 import assert from "assert";
-import { pointsToRem } from "../utils/points";
-import { RootFontObserver } from "../utils/RootFontObserver";
+import * as RFConvert from "../utils/RFConvert";
+import { RFObserver } from "../utils/RFObserver";
 
 export type IconOptions = {
   type?: string;
@@ -137,7 +137,7 @@ export function Icon(options: IconOptions) {
 
   // Compute size
   const computed_size =
-    options.size !== undefined ? pointsToRem(options.size) : "100%";
+    options.size !== undefined ? RFConvert.points.cascadingRF(options.size) : "100%";
 
   // Adjust color
   useEffect(() => {
@@ -292,7 +292,7 @@ export function ProgressRing(options: ProgressRingOptions) {
 
   // States
   const [color, setColor] = useState<string>("#fff");
-  const [rem, setRem] = useState<number>(0);
+  const [rf, set_rf] = useState<number>(0);
 
   // Set style
   const newStyle: React.CSSProperties = {};
@@ -314,11 +314,11 @@ export function ProgressRing(options: ProgressRingOptions) {
 
   // Adjust size
   useEffect(() => {
-    const rootFontObserver = new RootFontObserver((rem) => {
-      setRem(rem);
+    const rf_observer = new RFObserver((rem) => {
+      set_rf(rem);
     });
     return () => {
-      rootFontObserver.cleanup();
+      rf_observer.cleanup();
     };
   }, []);
 
@@ -342,7 +342,7 @@ export function ProgressRing(options: ProgressRingOptions) {
       $color={color}
       $r={r}
       $m={m}
-      $rem={rem}
+      $rem={rf}
     >
       <div className="progress-ring__wrap">
         <div className="progress-ring__circle"></div>

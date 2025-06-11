@@ -17,11 +17,11 @@ import {
 import { IconRegistry } from "./Icons";
 import { RTLContext } from "../layout/RTL";
 import { ThemeContext, PreferPrimaryContext, Theme } from "../theme";
-import { RootFontObserver } from "../utils/RootFontObserver";
-import { pointsToRem, pointsToRemValue } from "../utils/points";
-import { lighten, darken, enhanceBrightness, contrast } from "../utils/color";
-import { fontFamily, fontSize } from "../utils/common";
-import { randomHexLarge } from "../utils/random";
+import { RFObserver } from "../utils/RFObserver";
+import * as RFConvert from "../utils/RFConvert";
+import { lighten, darken, enhanceBrightness, contrast } from "../utils/ColorUtils";
+import { fontFamily, fontSize } from "../utils/CommonVariables";
+import { randomHexLarge } from "../utils/RandomUtils";
 
 // Cascading animations
 import "./Tiles.module.css";
@@ -209,8 +209,8 @@ const Div = styled.div<{
       no-repeat;
     background-position: center;
     background-size: contain;
-    width: ${pointsToRem(5)};
-    height: ${pointsToRem(5)};
+    width: ${RFConvert.points.cascadingRF(5)};
+    height: ${RFConvert.points.cascadingRF(5)};
     vertical-align: middle;
     transform: rotate(-45deg) translate(-2.9rem, 8.4rem);
   }
@@ -257,8 +257,8 @@ export function Tiles(options: TilesOptions) {
   // Label events
   let label_click_out_handler: any = null;
 
-  // Rem
-  const rem = useRef<number>(16);
+  // Root font size
+  const rf = useRef<number>(16);
 
   // Tiles1
   let tiles1: Tiles1 | null = null;
@@ -573,17 +573,17 @@ export function Tiles(options: TilesOptions) {
       y > rect.top + rect.height / 3 &&
       y < rect.bottom - rect.height / 3
     )
-      rotate_3d = `perspective(${rect.width / rem.current!}rem) rotate3d(0, -1, 0, ${deg}deg)`;
+      rotate_3d = `perspective(${rect.width / rf.current!}rem) rotate3d(0, -1, 0, ${deg}deg)`;
     else if (
       x > rect.right - rect.width / 2 &&
       y > rect.top + rect.height / 3 &&
       y < rect.bottom - rect.height / 3
     )
-      rotate_3d = `perspective(${rect.width / rem.current!}rem) rotate3d(0, 1, 0, ${deg}deg)`;
+      rotate_3d = `perspective(${rect.width / rf.current!}rem) rotate3d(0, 1, 0, ${deg}deg)`;
     else if (y < rect.top + rect.height / 2)
-      rotate_3d = `perspective(${rect.width / rem.current!}rem) rotate3d(1, 0, 0, ${deg}deg)`;
+      rotate_3d = `perspective(${rect.width / rf.current!}rem) rotate3d(1, 0, 0, ${deg}deg)`;
     else
-      rotate_3d = `perspective(${rect.width / rem.current!}rem) rotate3d(-1, 0, 0, ${deg}deg)`;
+      rotate_3d = `perspective(${rect.width / rf.current!}rem) rotate3d(-1, 0, 0, ${deg}deg)`;
 
     tilting_button.style.transform = rotate_3d;
     tilting_button.setAttribute("data-transform-3d", rotate_3d);
@@ -995,13 +995,13 @@ export function Tiles(options: TilesOptions) {
     tiles_controller_renameGroup,
   );
 
-  // Observe rem
+  // Observe root font size
   useEffect(() => {
-    const root_font_observer = new RootFontObserver((value) => {
-      rem.current = value;
+    const rf_observer = new RFObserver((value) => {
+      rf.current = value;
     });
     return () => {
-      root_font_observer.cleanup();
+      rf_observer.cleanup();
     };
   }, []);
 

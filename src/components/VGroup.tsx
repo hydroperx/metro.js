@@ -3,9 +3,9 @@ import { useContext, useEffect, useRef } from "react";
 import assert from "assert";
 
 import { Alignment } from "../layout/Alignment";
-import { pointsToRem } from "../utils/points";
+import * as RFConvert from "../utils/RFConvert";
 import { Theme, ThemeContext } from "../theme/Theme";
-import { fontFamily, fontSize } from "../utils/common";
+import { fontFamily, fontSize } from "../utils/CommonVariables";
 
 const verticalAlignMaps: any = {
   start: "start",
@@ -58,40 +58,40 @@ const Div = styled.div<{
   color: ${($) => $.$theme.colors.foreground};
   font-family: ${fontFamily};
   font-size: ${fontSize};
-  ${($) => ($.$gap !== undefined ? "gap: " + pointsToRem($.$gap) + ";" : "")}
+  ${($) => ($.$gap !== undefined ? "gap: " + RFConvert.points.cascadingRF($.$gap) + ";" : "")}
   ${($) =>
-    $.$padding !== undefined ? "padding: " + pointsToRem($.$padding) + ";" : ""}
+    $.$padding !== undefined ? "padding: " + RFConvert.points.cascadingRF($.$padding) + ";" : ""}
     ${($) =>
     $.$paddingLeft !== undefined
-      ? "padding-left: " + pointsToRem($.$paddingLeft) + ";"
+      ? "padding-left: " + RFConvert.points.cascadingRF($.$paddingLeft) + ";"
       : ""}
     ${($) =>
     $.$paddingRight !== undefined
-      ? "padding-right: " + pointsToRem($.$paddingRight) + ";"
+      ? "padding-right: " + RFConvert.points.cascadingRF($.$paddingRight) + ";"
       : ""}
     ${($) =>
     $.$paddingTop !== undefined
-      ? "padding-top: " + pointsToRem($.$paddingTop) + ";"
+      ? "padding-top: " + RFConvert.points.cascadingRF($.$paddingTop) + ";"
       : ""}
     ${($) =>
     $.$paddingBottom !== undefined
-      ? "padding-bottom: " + pointsToRem($.$paddingBottom) + ";"
+      ? "padding-bottom: " + RFConvert.points.cascadingRF($.$paddingBottom) + ";"
       : ""}
     ${($) =>
     $.$minWidth !== undefined
-      ? "min-width: " + pointsToRem($.$minWidth) + ";"
+      ? "min-width: " + RFConvert.points.cascadingRF($.$minWidth) + ";"
       : ""}
     ${($) =>
     $.$minHeight !== undefined
-      ? "min-height: " + pointsToRem($.$minHeight) + ";"
+      ? "min-height: " + RFConvert.points.cascadingRF($.$minHeight) + ";"
       : ""}
     ${($) =>
     $.$maxWidth !== undefined
-      ? "max-width: " + pointsToRem($.$maxWidth) + ";"
+      ? "max-width: " + RFConvert.points.cascadingRF($.$maxWidth) + ";"
       : ""}
     ${($) =>
     $.$maxHeight !== undefined
-      ? "max-height: " + pointsToRem($.$maxHeight) + ";"
+      ? "max-height: " + RFConvert.points.cascadingRF($.$maxHeight) + ";"
       : ""}
     ${($) => ($.$full ? "width: 100%; height: 100%;" : "")}
     ${($) =>

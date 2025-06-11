@@ -1,1 +1,1 @@
-export { BUTTON_NAVIGABLE, MENU_TRANSITION_DELAY } from "./common";
+export { BUTTON_NAVIGABLE, MENU_TRANSITION_DELAY } from "./CommonVariables";

@@ -1,10 +1,14 @@
 export type Side = "top" | "bottom" | "left" | "right";
 
-export function fitViewportPosition(
-  positioningElement: HTMLElement,
+/**
+ * Ensures an element at the given position fits into the viewport,
+ * returning a new position.
+ */
+export function fitViewport(
+  element: HTMLElement,
   [x, y]: [number, number],
 ): [number, number] {
-  const positioningRect = positioningElement.getBoundingClientRect();
+  const positioningRect = element.getBoundingClientRect();
 
   const viewportWidth = window.innerWidth;
   const viewportHeight = window.innerHeight;

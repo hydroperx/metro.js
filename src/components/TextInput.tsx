@@ -5,8 +5,8 @@ import extend from "extend";
 import { IconRegistry } from "./Icons";
 import { RTLContext } from "../layout/RTL";
 import { ThemeContext } from "../theme";
-import { fontFamily, fontSize } from "../utils/common";
-import { pointsToRem } from "../utils/points";
+import { fontFamily, fontSize } from "../utils/CommonVariables";
+import * as RFConvert from "../utils/RFConvert";
 
 const TextArea = styled.textarea<{
   $css: string;
@@ -42,17 +42,17 @@ export function TextInput(options: TextInputOptions) {
         color: ${theme.colors.foreground};
         font-family: ${fontFamily};
         font-size: ${fontSize};
-        padding: ${pointsToRem(2.15)} 0.7rem;
-        ${icon === null || options.multiline ? "" : `${localeDir == "ltr" ? "padding-right" : "padding-left"}: ${pointsToRem(iconSize + 3)};`}
+        padding: ${RFConvert.points.cascadingRF(2.15)} 0.7rem;
+        ${icon === null || options.multiline ? "" : `${localeDir == "ltr" ? "padding-right" : "padding-left"}: ${RFConvert.points.cascadingRF(iconSize + 3)};`}
         ${icon === null || options.multiline ? "" : `background-image: url("${IconRegistry.get(icon, dark ? "white" : "black")}");`}
         background-position: center ${localeDir == "ltr" ? "right" : "left"} 0.5rem;
-        background-size: ${pointsToRem(iconSize)};
+        background-size: ${RFConvert.points.cascadingRF(iconSize)};
         background-repeat: no-repeat;
         text-align: ${localeDir == "ltr" ? "left" : "right"};
-        ${options.minWidth !== undefined ? "min-width: " + pointsToRem(options.minWidth) + ";" : "min-width: 5rem;"}
-        ${options.minHeight !== undefined ? "min-height: " + pointsToRem(options.minHeight) + ";" : ""}
-        ${options.maxWidth !== undefined ? "max-width: " + pointsToRem(options.maxWidth) + ";" : ""}
-        ${options.maxHeight !== undefined ? "max-height: " + pointsToRem(options.maxHeight) + ";" : ""}
+        ${options.minWidth !== undefined ? "min-width: " + RFConvert.points.cascadingRF(options.minWidth) + ";" : "min-width: 5rem;"}
+        ${options.minHeight !== undefined ? "min-height: " + RFConvert.points.cascadingRF(options.minHeight) + ";" : ""}
+        ${options.maxWidth !== undefined ? "max-width: " + RFConvert.points.cascadingRF(options.maxWidth) + ";" : ""}
+        ${options.maxHeight !== undefined ? "max-height: " + RFConvert.points.cascadingRF(options.maxHeight) + ";" : ""}
         outline: none;
         vertical-align: middle;
 
@@ -72,10 +72,10 @@ export function TextInput(options: TextInputOptions) {
     
         &::-webkit-search-cancel-button {
             -webkit-appearance: none;
-            width: ${pointsToRem(5)};
-            height: ${pointsToRem(5)};
+            width: ${RFConvert.points.cascadingRF(5)};
+            height: ${RFConvert.points.cascadingRF(5)};
             background: url("${IconRegistry.get("clear", dark ? "white" : "black")}");
-            background-size: ${pointsToRem(5)};
+            background-size: ${RFConvert.points.cascadingRF(5)};
             background-repeat: no-repeat;
         }
     `;

@@ -6,6 +6,7 @@ import { Color } from "@hydroperx/color";
 import assert from "assert";
 import { input } from "@hydroperx/inputaction";
 import $ from "jquery";
+
 import {
   ArrowIcon,
   BulletIcon,
@@ -18,17 +19,17 @@ import {
   RTLType,
   RTLContext,
 } from "../layout/RTL";
-import { fitViewportPosition, Side } from "../utils/placement";
+import { fitViewport, Side } from "../utils/PlacementUtils";
 import { Theme, ThemeContext } from "../theme";
 import {
   BUTTON_NAVIGABLE,
   fontFamily,
   fontSize,
   maximumZIndex,
-} from "../utils/common";
-import { pointsToRem } from "../utils/points";
-import { focusPrevSibling, focusNextSibling } from "../utils/focus";
-import { randomHexLarge } from "../utils/random";
+} from "../utils/CommonVariables";
+import * as RFConvert from "../utils/RFConvert";
+import { focusPrevSibling, focusNextSibling } from "../utils/FocusUtils";
+import { randomHexLarge } from "../utils/RandomUtils";
 
 class ContextMenuEventDispatcher extends (EventTarget as TypedEventTarget<{
   show: CustomEvent<ContextMenuEvent>;
@@ -251,7 +252,7 @@ export function ContextMenu(options: ContextMenuOptions) {
         [x1, y1] = e.detail.position!;
       }
 
-      [x, y] = fitViewportPosition(div, [x1, y1]);
+      [x, y] = fitViewport(div, [x1, y1]);
     }
 
     // (x, y) transition
@@ -537,7 +538,7 @@ const MainDiv = styled.div<{
   position: fixed;
   background: ${($) => $.$theme.colors.inputBackground};
   border: 0.15rem solid ${($) => $.$theme.colors.inputBorder};
-  padding: ${pointsToRem(2)} 0;
+  padding: ${RFConvert.points.cascadingRF(2)} 0;
   min-width: 12rem;
   max-height: 30rem;
   left: ${($) => $.$x}px;
@@ -551,7 +552,7 @@ const MainDiv = styled.div<{
     display: ${($) => ($.$arrowsVisible ? "flex" : "none")};
     flex-direction: row;
     justify-content: center;
-    height: ${pointsToRem(2.5)};
+    height: ${RFConvert.points.cascadingRF(2.5)};
   }
 
   & > .ContextMenu-list {
@@ -669,7 +670,7 @@ const ItemButton = styled.button<{
  */
 export function ContextMenuCheck(options: ContextMenuCheckOptions) {
   // Size
-  const size = pointsToRem(3);
+  const size = RFConvert.points.cascadingRF(3);
 
   return (
     <CheckSpan $size={size}>
@@ -702,7 +703,7 @@ const CheckSpan = styled.span<{
  */
 export function ContextMenuIcon(options: ContextMenuIconOptions) {
   // Size
-  const size = pointsToRem(3);
+  const size = RFConvert.points.cascadingRF(3);
 
   return <IconSpan $size={size}>{options.children}</IconSpan>;
 }
@@ -750,7 +751,7 @@ export function ContextMenuRight(options: ContextMenuRightOptions) {
   const localeDir = useContext(RTLContext);
 
   // Minimum size for an icon
-  const size = pointsToRem(3);
+  const size = RFConvert.points.cascadingRF(3);
 
   return (
     <RightSpan $size={size} $localeDir={localeDir}>
@@ -1195,7 +1196,7 @@ const SubmenuMainDiv = styled.div<{
   position: fixed;
   background: ${($) => $.$theme.colors.inputBackground};
   border: 0.15rem solid ${($) => $.$theme.colors.inputBorder};
-  padding: ${pointsToRem(2)} 0;
+  padding: ${RFConvert.points.cascadingRF(2)} 0;
   min-width: 12rem;
   max-height: 30rem;
   opacity: 0;
@@ -1206,7 +1207,7 @@ const SubmenuMainDiv = styled.div<{
     display: flex;
     flex-direction: row;
     justify-content: center;
-    height: ${pointsToRem(2.5)};
+    height: ${RFConvert.points.cascadingRF(2.5)};
   }
 
   & > .ContextMenu-list {

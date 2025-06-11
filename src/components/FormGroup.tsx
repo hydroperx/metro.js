@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 import { useContext } from "react";
-import { pointsToRem } from "../utils/points";
+
 import { RTLContext } from "../layout";
 
 // CSS

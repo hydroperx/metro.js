@@ -3,8 +3,9 @@ import { Color, ColorObserver } from "@hydroperx/color";
 import { styled, keyframes } from "styled-components";
 import extend from "extend";
 import assert from "assert";
-import { pointsToRem } from "../utils/points";
-import { RootFontObserver } from "../utils/RootFontObserver";
+
+import * as RFConvert from "../utils/RFConvert";
+import { RFObserver } from "../utils/RFObserver";
 
 // Animation
 const move = keyframes`
@@ -97,8 +98,8 @@ export function ProgressEllipsis(options: ProgressEllipsisOptions) {
   const ref = useRef(null);
 
   // States
-  const [color, setColor] = useState<string>("#fff");
-  const [rem, setRem] = useState<number>(0);
+  const [color, set_color] = useState<string>("#fff");
+  const [rf, set_rf] = useState<number>(0); // root font size
 
   // Set style
   const newStyle: React.CSSProperties = {};
@@ -110,7 +111,7 @@ export function ProgressEllipsis(options: ProgressEllipsisOptions) {
   // Adjust color
   useEffect(() => {
     const colorObserver = new ColorObserver(ref.current, (color: Color) => {
-      setColor(color.isLight() ? "#fff" : "#000");
+      set_color(color.isLight() ? "#fff" : "#000");
     });
 
     return () => {
@@ -120,11 +121,11 @@ export function ProgressEllipsis(options: ProgressEllipsisOptions) {
 
   // Adjust size
   useEffect(() => {
-    const rootFontObserver = new RootFontObserver((rem) => {
-      setRem(rem);
+    const rf_observer = new RFObserver((rem) => {
+      set_rf(rem);
     });
     return () => {
-      rootFontObserver.cleanup();
+      rf_observer.cleanup();
     };
   }, []);
 
@@ -148,7 +149,7 @@ export function ProgressEllipsis(options: ProgressEllipsisOptions) {
       $color={color}
       $r={r}
       $m={m}
-      $rem={rem}
+      $rem={rf}
     >
       <div className="progress-ellipsis__circle"></div>
       <div className="progress-ellipsis__circle"></div>

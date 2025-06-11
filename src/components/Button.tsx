@@ -3,13 +3,13 @@ import { styled } from "styled-components";
 import { computePosition, offset, flip, shift } from "@floating-ui/dom";
 import React, { Ref, useContext, useRef, useState, useEffect } from "react";
 import { Color } from "@hydroperx/color";
-import { pointsToRem, pointsToRemValue } from "../utils/points";
-import { fontFamily, fontSize, maximumZIndex } from "../utils/common";
-import { lighten, darken, enhanceBrightness } from "../utils/color";
+import * as RFConvert from "../utils/RFConvert";
+import { fontFamily, fontSize, maximumZIndex } from "../utils/CommonVariables";
+import { lighten, darken, enhanceBrightness } from "../utils/ColorUtils";
 import { DownArrowIcon, Icon } from "./Icons";
 import { Theme, ThemeContext } from "../theme";
 import { RTLContext } from "../layout";
-import { Side } from "../utils/placement";
+import { Side } from "../utils/PlacementUtils";
 
 const TooltipDiv = styled.div<{
   $theme: Theme;
@@ -39,13 +39,13 @@ export function Button(options: ButtonOptions) {
   const newStyle: React.CSSProperties = {};
 
   if (options.minWidth !== undefined)
-    newStyle.minWidth = pointsToRem(options.minWidth);
+    newStyle.minWidth = RFConvert.points.cascadingRF(options.minWidth);
   if (options.maxWidth !== undefined)
-    newStyle.maxWidth = pointsToRem(options.maxWidth);
+    newStyle.maxWidth = RFConvert.points.cascadingRF(options.maxWidth);
   if (options.minHeight !== undefined)
-    newStyle.minHeight = pointsToRem(options.minHeight);
+    newStyle.minHeight = RFConvert.points.cascadingRF(options.minHeight);
   if (options.maxHeight !== undefined)
-    newStyle.maxHeight = pointsToRem(options.maxHeight);
+    newStyle.maxHeight = RFConvert.points.cascadingRF(options.maxHeight);
   if (options.disabled) {
     newStyle.opacity = "0.67";
   }
@@ -369,7 +369,7 @@ const SmallDropdownButton = styled.button<ButtonCSSProps>`
   gap: 0.2rem;
   flex-direction: ${($) => ($.$localeDir == "ltr" ? "row" : "row-reverse")};
   align-items: center;
-  padding: ${pointsToRemValue(1)}rem 0.7rem;
+  padding: ${RFConvert.points.rf(1)}rem 0.7rem;
   outline: none;
 
   &:hover:not(:disabled),
@@ -605,7 +605,7 @@ export function CircleIconButton(options: CircleIconButtonOptions) {
       ? "#fff"
       : "#000";
   const size = options.size ?? 9;
-  const size_rem = pointsToRem(size);
+  const size_rf = RFConvert.points.cascadingRF(size);
 
   const tooltip = options.tooltip;
   const tooltip_side_ref = useRef<Side>("bottom");
@@ -671,7 +671,7 @@ export function CircleIconButton(options: CircleIconButtonOptions) {
         $fg={fg}
         $theme={theme}
         $filled={!!options.filled}
-        $size_rem={size_rem}
+        $size_rf={size_rf}
         onFocus={options.focus}
         onClick={options.click}
         onMouseOver={mouseOver as any}
@@ -768,15 +768,15 @@ const CircleIconButtonButton = styled.button<{
   $fg: string;
   $theme: Theme;
   $filled: boolean;
-  $size_rem: string;
+  $size_rf: string;
 }>`
   border: 0.17rem solid ${($) => $.$fg};
   border-radius: 100%;
   outline: none;
   color: ${($) => $.$normal_color};
   ${($) => ($.$filled ? `background: ${$.$fg};` : "background: none;")}
-  width: ${($) => $.$size_rem};
-  height: ${($) => $.$size_rem};
+  width: ${($) => $.$size_rf};
+  height: ${($) => $.$size_rf};
   display: flex;
   flex-direction: row;
   justify-content: center;

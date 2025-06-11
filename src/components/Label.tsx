@@ -4,10 +4,10 @@ import { useEffect } from "react";
 import { computePosition, offset, flip, shift } from "@floating-ui/dom";
 import { useContext, useState, useRef, Ref } from "react";
 import { ThemeContext, PreferPrimaryContext, Theme } from "../theme/Theme";
-import { fontFamily, maximumZIndex } from "../utils/common";
-import { enhanceBrightness } from "../utils/color";
-import { pointsToRem } from "../utils/points";
-import { Side } from "../utils/placement";
+import { fontFamily, maximumZIndex } from "../utils/CommonVariables";
+import { enhanceBrightness } from "../utils/ColorUtils";
+import * as RFConvert from "../utils/RFConvert";
+import { Side } from "../utils/PlacementUtils";
 
 export type LabelVariant =
   | "normal"
@@ -190,10 +190,10 @@ export function Label(options: LabelOptions) {
   }
 
   const sizing = `
-        ${options.minWidth === undefined ? "" : "min-width: " + pointsToRem(options.minWidth) + ";"}
-        ${options.minHeight === undefined ? "" : "min-height: " + pointsToRem(options.minHeight) + ";"}
-        ${options.maxWidth === undefined ? "" : "max-width: " + pointsToRem(options.maxWidth) + ";"}
-        ${options.maxHeight === undefined ? "" : "max-height: " + pointsToRem(options.maxHeight) + ";"}
+        ${options.minWidth === undefined ? "" : "min-width: " + RFConvert.points.cascadingRF(options.minWidth) + ";"}
+        ${options.minHeight === undefined ? "" : "min-height: " + RFConvert.points.cascadingRF(options.minHeight) + ";"}
+        ${options.maxWidth === undefined ? "" : "max-width: " + RFConvert.points.cascadingRF(options.maxWidth) + ";"}
+        ${options.maxHeight === undefined ? "" : "max-height: " + RFConvert.points.cascadingRF(options.maxHeight) + ";"}
     `;
 
   const tooltip = options.tooltip;

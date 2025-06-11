@@ -4,9 +4,9 @@ import { Color } from "@hydroperx/color";
 import Draggable from "react-draggable";
 import { RTLContext } from "../layout/RTL";
 import { ThemeContext, PreferPrimaryContext, Theme } from "../theme";
-import { RootFontObserver } from "../utils/RootFontObserver";
-import { pointsToRemValue } from "../utils/points";
-import { lighten, darken, enhanceBrightness, contrast } from "../utils/color";
+import { RFObserver } from "../utils/RFObserver";
+import * as RFConvert from "../utils/RFConvert";
+import { lighten, darken, enhanceBrightness, contrast } from "../utils/ColorUtils";
 
 export function CheckBox(options: CheckBoxOptions) {
   // Use the theme context
@@ -32,15 +32,15 @@ export function CheckBox(options: CheckBoxOptions) {
   let [carret_left, set_carret_left] = useState<number>(
     localeDir == "ltr" ? (value ? 100 : 0) : value ? 0 : 100,
   ); // percent
-  const [rem, set_rem] = useState<number>(0);
+  const [rf, set_rf] = useState<number>(0);
 
   // Misc.
   const border_width = 0.15;
   const padding = 0.15;
   const side_length = border_width + padding;
-  const w = pointsToRemValue(14);
-  const h = pointsToRemValue(6.1);
-  const carret_w = pointsToRemValue(4);
+  const w = RFConvert.points.rf(14);
+  const h = RFConvert.points.rf(6.1);
+  const carret_w = RFConvert.points.rf(4);
   let checked_color = enhanceBrightness(
     theme.colors.background,
     theme.colors.primary,
@@ -57,9 +57,9 @@ export function CheckBox(options: CheckBoxOptions) {
   }
 
   // Carret misc.
-  const carret_left_px = (carret_left / 100) * (w * rem);
-  const leftmost_carret_pos = -(side_length / 2) * rem;
-  const rightmost_carret_pos = w * rem - side_length * rem - carret_w * rem;
+  const carret_left_px = (carret_left / 100) * (w * rf);
+  const leftmost_carret_pos = -(side_length / 2) * rf;
+  const rightmost_carret_pos = w * rf - side_length * rf - carret_w * rf;
 
   // Handle click
   function button_onClick() {
@@ -86,11 +86,11 @@ export function CheckBox(options: CheckBoxOptions) {
   }, [localeDir]);
 
   useEffect(() => {
-    const rootFontObserver = new RootFontObserver((value) => {
-      set_rem(value);
+    const rf_observer = new RFObserver((value) => {
+      set_rf(value);
     });
     return () => {
-      rootFontObserver.cleanup();
+      rf_observer.cleanup();
     };
   }),
     [];
@@ -129,10 +129,10 @@ export function CheckBox(options: CheckBoxOptions) {
         bounds="parent"
         disabled
         offsetParent={button_ref.current!}
-        defaultPosition={{ x: carret_left == 0 ? 0 : w * rem, y: 0 }}
+        defaultPosition={{ x: carret_left == 0 ? 0 : w * rf, y: 0 }}
         position={{
           x:
-            carret_left_px <= side_length * rem
+            carret_left_px <= side_length * rf
               ? leftmost_carret_pos
               : rightmost_carret_pos,
           y: 0,
