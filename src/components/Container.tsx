@@ -8,7 +8,7 @@ import {
   monoFontFamily,
   fontSize,
   monoFontSize,
-} from "../utils/CommonVariables";
+} from "../utils/vars";
 import { lighten, contrast } from "../utils/ColorUtils";
 import * as RFConvert from "../utils/RFConvert";
 

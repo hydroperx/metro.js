@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { computePosition, offset, flip, shift } from "@floating-ui/dom";
 import { useContext, useState, useRef, Ref } from "react";
 import { ThemeContext, PreferPrimaryContext, Theme } from "../theme/Theme";
-import { fontFamily, maximumZIndex } from "../utils/CommonVariables";
+import { fontFamily, maximumZIndex } from "../utils/vars";
 import { enhanceBrightness } from "../utils/ColorUtils";
 import * as RFConvert from "../utils/RFConvert";
 import { Side } from "../utils/PlacementUtils";

@@ -20,7 +20,7 @@ import { ThemeContext, PreferPrimaryContext, Theme } from "../theme";
 import { RFObserver } from "../utils/RFObserver";
 import * as RFConvert from "../utils/RFConvert";
 import { lighten, darken, enhanceBrightness, contrast } from "../utils/ColorUtils";
-import { fontFamily, fontSize } from "../utils/CommonVariables";
+import { fontFamily, fontSize } from "../utils/vars";
 import { randomHexLarge } from "../utils/RandomUtils";
 
 // Cascading animations

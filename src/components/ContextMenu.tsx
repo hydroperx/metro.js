@@ -26,7 +26,7 @@ import {
   fontFamily,
   fontSize,
   maximumZIndex,
-} from "../utils/CommonVariables";
+} from "../utils/vars";
 import * as RFConvert from "../utils/RFConvert";
 import { focusPrevSibling, focusNextSibling } from "../utils/FocusUtils";
 import { randomHexLarge } from "../utils/RandomUtils";

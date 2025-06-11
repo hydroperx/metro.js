@@ -5,7 +5,7 @@ import assert from "assert";
 import { Alignment } from "../layout/Alignment";
 import * as RFConvert from "../utils/RFConvert";
 import { Theme, ThemeContext } from "../theme/Theme";
-import { fontFamily, fontSize } from "../utils/CommonVariables";
+import { fontFamily, fontSize } from "../utils/vars";
 
 const horizontalAlignMaps: any = {
   start: "start",

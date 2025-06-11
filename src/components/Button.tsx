@@ -4,7 +4,7 @@ import { computePosition, offset, flip, shift } from "@floating-ui/dom";
 import React, { Ref, useContext, useRef, useState, useEffect } from "react";
 import { Color } from "@hydroperx/color";
 import * as RFConvert from "../utils/RFConvert";
-import { fontFamily, fontSize, maximumZIndex } from "../utils/CommonVariables";
+import { fontFamily, fontSize, maximumZIndex } from "../utils/vars";
 import { lighten, darken, enhanceBrightness } from "../utils/ColorUtils";
 import { DownArrowIcon, Icon } from "./Icons";
 import { Theme, ThemeContext } from "../theme";

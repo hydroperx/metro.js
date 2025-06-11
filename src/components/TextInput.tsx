@@ -5,7 +5,7 @@ import extend from "extend";
 import { IconRegistry } from "./Icons";
 import { RTLContext } from "../layout/RTL";
 import { ThemeContext } from "../theme";
-import { fontFamily, fontSize } from "../utils/CommonVariables";
+import { fontFamily, fontSize } from "../utils/vars";
 import * as RFConvert from "../utils/RFConvert";
 
 const TextArea = styled.textarea<{
