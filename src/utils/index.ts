@@ -1,1 +1,1 @@
-export { BUTTON_NAVIGABLE, MENU_TRANSITION_DELAY } from "./vars";
+export { BUTTON_NAVIGABLE, MENU_DELAY } from "./vars";

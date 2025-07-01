@@ -17,17 +17,17 @@ npm i @hydroperx/metro
 Installation:
 
 ```sh
-npm i @fontsource/open-sans @fontsource/courier-prime
+npm i @fontsource/noto-sans @fontsource/courier-prime
 ```
 
 Import it into your entry point TypeScript as follows:
 
 ```ts
-// Open Sans
-import "@fontsource/open-sans/300.css";
-import "@fontsource/open-sans/400.css";
-import "@fontsource/open-sans/500.css";
-import "@fontsource/open-sans/700.css";
+// Noto Sans
+import "@fontsource/noto-sans/300.css";
+import "@fontsource/noto-sans/400.css";
+import "@fontsource/noto-sans/500.css";
+import "@fontsource/noto-sans/700.css";
 
 // Courier Prime
 import "@fontsource/courier-prime";
@@ -315,7 +315,7 @@ return (
 
 ### Transition delays
 
-Menu transitions occur in `MENU_TRANSITION_DELAY` milliseconds. You can build timeouts based on that constant.
+Menu transitions occur in `MENU_DELAY` milliseconds. You can build timeouts based on that constant.
 
 ### Useful snippets
 

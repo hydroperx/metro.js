@@ -5,7 +5,7 @@ export const fontSize: string = "0.95rem";
 export const monoFontSize: string = "0.8rem";
 
 // The most common font family.
-export const fontFamily: string = "'Open Sans', 'Segoe UI', sans";
+export const fontFamily: string = "'Noto Sans', 'Segoe UI', sans";
 
 // Mono font
 export const monoFontFamily: string =
@@ -24,4 +24,4 @@ export const BUTTON_NAVIGABLE = "button-navigable";
  * Transition delay in milliseconds used when opening or closing
  * a menu.
  */
-export const MENU_TRANSITION_DELAY = 200;
+export const MENU_DELAY = 200;
