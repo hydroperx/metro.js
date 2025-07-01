@@ -25,7 +25,7 @@ export function TextInput(options: TextInputOptions) {
   const theme = useContext(ThemeContext);
 
   // Locale direction
-  const localeDir = useContext(RTLContext);
+  const rtl = useContext(RTLContext);
 
   // Icon
   const icon: string | null =
@@ -43,12 +43,12 @@ export function TextInput(options: TextInputOptions) {
         font-family: ${fontFamily};
         font-size: ${fontSize};
         padding: ${RFConvert.points.cascadingRF(6.45)} 0.7rem;
-        ${icon === null || options.multiline ? "" : `${localeDir == "ltr" ? "padding-right" : "padding-left"}: ${RFConvert.points.cascadingRF(iconSize + 3)};`}
+        ${icon === null || options.multiline ? "" : `${rtl ? "padding-left" : "padding-right"}: ${RFConvert.points.cascadingRF(iconSize + 3)};`}
         ${icon === null || options.multiline ? "" : `background-image: url("${IconRegistry.get(icon, dark ? "white" : "black")}");`}
-        background-position: center ${localeDir == "ltr" ? "right" : "left"} 0.5rem;
+        background-position: center ${rtl ? "left" : "right"} 0.5rem;
         background-size: ${RFConvert.points.cascadingRF(iconSize)};
         background-repeat: no-repeat;
-        text-align: ${localeDir == "ltr" ? "left" : "right"};
+        text-align: ${rtl ? "right" : "left"};
         ${options.minWidth !== undefined ? "min-width: " + RFConvert.points.cascadingRF(options.minWidth) + ";" : "min-width: 5rem;"}
         ${options.minHeight !== undefined ? "min-height: " + RFConvert.points.cascadingRF(options.minHeight) + ";" : ""}
         ${options.maxWidth !== undefined ? "max-width: " + RFConvert.points.cascadingRF(options.maxWidth) + ";" : ""}
@@ -104,7 +104,7 @@ export function TextInput(options: TextInputOptions) {
       autoComplete={options.autoComplete}
       rows={options.rows}
       cols={options.columns}
-      dir={localeDir == "ltr" ? "ltr" : "rtl"}
+      dir={rtl ? "rtl" : "ltr"}
     >
       {options.default}
     </TextArea>
@@ -144,7 +144,7 @@ export function TextInput(options: TextInputOptions) {
       autoFocus={options.autoFocus}
       disabled={options.disabled}
       autoComplete={options.autoComplete}
-      dir={localeDir == "ltr" ? "ltr" : "rtl"}
+      dir={rtl ? "rtl" : "ltr"}
     />
   );
 }

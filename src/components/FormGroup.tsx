@@ -6,11 +6,11 @@ import { RTLContext } from "../layout";
 // CSS
 const Div = styled.div<{
   $vertical: boolean;
-  $localeDir: "ltr" | "rtl";
+  $rtl: boolean;
 }>`
   display: flex;
   flex-direction: ${($) =>
-    $.$vertical ? "column" : $.$localeDir == "ltr" ? "row" : "row-reverse"};
+    $.$vertical ? "column" : !$.$rtl ? "row" : "row-reverse"};
   gap: 1rem;
 
   ${($) =>
@@ -19,7 +19,7 @@ const Div = styled.div<{
       : `
     & > label, & > span, & > h1, & > h2, & > h3, & > h4, & > h5 {
         min-width: 12rem;
-        ${$.$localeDir == "rtl" ? "text-align: right;" : ""}
+        ${$.$rtl ? "text-align: right;" : ""}
     }
     `}
 `;
@@ -30,12 +30,12 @@ const Div = styled.div<{
  */
 export function FormGroup(options: FormGroupOptions) {
   // Locale direction
-  const localeDir = useContext(RTLContext);
+  const rtl = useContext(RTLContext);
 
   return (
     <Div
       $vertical={!!options.vertical}
-      $localeDir={localeDir}
+      $rtl={rtl}
       style={options.style}
       className={options.className}
     >

@@ -34,7 +34,7 @@ export function Button(options: ButtonOptions) {
   const theme = useContext(ThemeContext);
 
   // Locale direction
-  const localeDir = useContext(RTLContext);
+  const rtl = useContext(RTLContext);
 
   const newStyle: React.CSSProperties = {};
 
@@ -203,7 +203,7 @@ export function Button(options: ButtonOptions) {
         $hover_color={hover_color}
         $pressed_color={pressed_color}
         $theme={theme}
-        $localeDir={localeDir}
+        $rtl={rtl}
         onFocus={options.focus}
         onClick={options.click}
         onMouseOver={mouseOver as any}
@@ -320,7 +320,7 @@ type ButtonCSSProps = {
   $hover_color: string;
   $pressed_color: string;
   $theme: Theme;
-  $localeDir: "ltr" | "rtl";
+  $rtl: boolean;
 };
 
 // none
@@ -367,7 +367,7 @@ const SmallDropdownButton = styled.button<ButtonCSSProps>`
   font-size: 0.75rem;
   display: flex;
   gap: 0.2rem;
-  flex-direction: ${($) => ($.$localeDir == "ltr" ? "row" : "row-reverse")};
+  flex-direction: ${($) => (!$.$rtl ? "row" : "row-reverse")};
   align-items: center;
   padding: ${RFConvert.points.rf(3)}rem 0.7rem;
   outline: none;
@@ -387,14 +387,14 @@ const SmallDropdownButton = styled.button<ButtonCSSProps>`
 
   & .Button-small-inner {
     display: inline-flex;
-    flex-direction: ${($) => ($.$localeDir == "ltr" ? "row" : "row-reverse")};
+    flex-direction: ${($) => (!$.$rtl ? "row" : "row-reverse")};
     gap: 0.9rem;
   }
 
   & .Button-small-arrow {
     display: inline-flex;
     flex-grow: 2;
-    flex-direction: ${($) => ($.$localeDir == "ltr" ? "row-reverse" : "row")};
+    flex-direction: ${($) => (!$.$rtl ? "row-reverse" : "row")};
     opacity: 0.7;
   }
 `;

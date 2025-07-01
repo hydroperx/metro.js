@@ -66,22 +66,17 @@ function App() {
   }
 
   // States
-  const [theme, setTheme] = useState<Theme>(ThemePresets.dark);
-  const [localeDirection, setRTLType] =
-    useState<RTLType>("ltr");
+  const [theme, set_theme] = useState<Theme>(ThemePresets.dark);
+  const [rtl, set_rtl] =
+    useState<boolean>(false);
   const [checkbox_value, set_checkbox_value] = useState<boolean>(false);
 
   // Tiles
   const tiles_controller = new TilesController();
 
   // Change theme
-  function changeTheme(value: string): void {
-    setTheme((ThemePresets as any)[value]);
-  }
-
-  // Change locale direction
-  function changeLocaleDir(value: string): void {
-    setRTLType(value == "ltr" ? "ltr" : "rtl");
+  function change_theme(value: string): void {
+    set_theme((ThemePresets as any)[value]);
   }
 
   tiles_controller.initialized(() => {
@@ -191,7 +186,7 @@ function App() {
   });
 
   return (
-    <RTLProvider direction={localeDirection}>
+    <RTLProvider rtl={rtl}>
       <ThemeProvider theme={theme}>
         <Container
           full
@@ -224,13 +219,13 @@ function App() {
             </div>
             <div style={{ margin: "7rem" }}></div>
             <VGroup gap={28} maxWidth={300}>
-              <Select default="dark" big change={changeTheme}>
+              <Select default="dark" big change={change_theme}>
                 <SelectOption value="dark">Dark</SelectOption>
                 <SelectOption value="light">Light</SelectOption>
                 <SelectOption value="purple">Purple</SelectOption>
                 <SelectOption value="green">Green</SelectOption>
               </Select>
-              <Select default="ltr" big change={changeLocaleDir}>
+              <Select default="ltr" big change={(value: string) => { set_rtl(value == "rtl") }}>
                 <SelectOption value="ltr">Left-to-right</SelectOption>
                 <SelectOption value="rtl">Right-to-left</SelectOption>
               </Select>

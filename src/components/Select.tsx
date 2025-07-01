@@ -113,7 +113,7 @@ const BigOrMediumButton = styled.button<ButtonCSSProps>`
   outline: none;
   display: flex;
   gap: 1rem;
-  flex-direction: ${($) => ($.$localeDir == "ltr" ? "row" : "row-reverse")};
+  flex-direction: ${($) => (!$.$rtl ? "row" : "row-reverse")};
   align-items: center;
   padding: ${RFConvert.points.rf(6)}rem 0.7rem;
   min-width: 10rem;
@@ -141,7 +141,7 @@ const SmallButton = styled.button<ButtonCSSProps>`
   font-size: 0.75rem;
   display: flex;
   gap: 0.2rem;
-  flex-direction: ${($) => ($.$localeDir == "ltr" ? "row" : "row-reverse")};
+  flex-direction: ${($) => (!$.$rtl ? "row" : "row-reverse")};
   align-items: center;
   padding: ${RFConvert.points.rf(3)}rem 0.7rem;
   outline: none;
@@ -170,7 +170,7 @@ const NormalButton = styled.button<ButtonCSSProps>`
   font-family: ${fontFamily};
   font-size: ${fontSize};
   display: flex;
-  flex-direction: ${($) => ($.$localeDir == "ltr" ? "row" : "row-reverse")};
+  flex-direction: ${($) => (!$.$rtl ? "row" : "row-reverse")};
   align-items: center;
   padding: ${RFConvert.points.rf(6) + 0.15}rem 0.7rem;
   min-width: 15rem;
@@ -198,7 +198,7 @@ type ButtonCSSProps = {
   $theme: Theme;
   $big: boolean;
   $medium: boolean;
-  $localeDir: "ltr" | "rtl";
+  $rtl: boolean;
   $button_inner_css: string;
   $button_arrow_css: string;
   $small_normal_color: Color | undefined;
@@ -213,7 +213,7 @@ export function Select(options: SelectOptions) {
   const theme = useContext(ThemeContext);
 
   // Locale direction
-  const localeDir = useContext(RTLContext);
+  const rtl = useContext(RTLContext);
 
   // State
   const [visible, setVisible] = useState<boolean>(false);
@@ -248,7 +248,7 @@ export function Select(options: SelectOptions) {
   const button_inner_css = `
         & .Select-button-inner {
             display: inline-flex;
-            flex-direction: ${localeDir == "ltr" ? "row" : "row-reverse"};
+            flex-direction: ${!rtl ? "row" : "row-reverse"};
             gap: 0.9rem;
         }
     `;
@@ -258,7 +258,7 @@ export function Select(options: SelectOptions) {
         & .Select-button-arrow {
             display: inline-flex;
             flex-grow: 2;
-            flex-direction: ${localeDir == "ltr" ? "row-reverse" : "row"};
+            flex-direction: ${!rtl ? "row-reverse" : "row"};
             opacity: 0.7;
         }
     `;
@@ -564,7 +564,7 @@ export function Select(options: SelectOptions) {
         $theme={theme}
         $big={!!options.big}
         $medium={!!options.medium}
-        $localeDir={localeDir}
+        $rtl={rtl}
         $button_inner_css={button_inner_css}
         $button_arrow_css={button_arrow_css}
         $small_normal_color={small_normal_color}
@@ -647,14 +647,14 @@ export type SelectOptions = {
 };
 
 const SelectOptionButton = styled.button<{
-  $localeDir: "ltr" | "rtl";
+  $rtl: boolean;
   $theme: Theme;
   $big: boolean;
   $hoverBackground: string;
   $activeBackground: string;
 }>`
   display: inline-flex;
-  flex-direction: ${($) => ($.$localeDir == "ltr" ? "row" : "row-reverse")};
+  flex-direction: ${($) => (!$.$rtl ? "row" : "row-reverse")};
   flex-wrap: wrap;
   gap: 0.9rem;
   padding: 0.5rem 0.7rem;
@@ -684,7 +684,7 @@ const SelectOptionButton = styled.button<{
 
 export function SelectOption(options: SelectOptionOptions) {
   // Locale direction
-  const localeDir = useContext(RTLContext);
+  const rtl = useContext(RTLContext);
 
   // Use the theme context
   const theme = useContext(ThemeContext);
@@ -715,7 +715,7 @@ export function SelectOption(options: SelectOptionOptions) {
       onClick={button_onClick}
       ref={buttonRef}
       data-value={options.value}
-      $localeDir={localeDir}
+      $rtl={rtl}
       $theme={theme}
       $big={big}
       $hoverBackground={hoverBackground}

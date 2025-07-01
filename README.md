@@ -54,12 +54,10 @@ You can nest it as well.
 Indicate whether a LTR layout or RTL layout is preferred through `RTLProvider`:
 
 ```tsx
-import { RTLProvider, RTLType } from "@hydroperx/metro";
-
-const direction: RTLType = "ltr";
+import { RTLProvider } from "@hydroperx/metro";
 
 // somewhere in React content
-<RTLProvider direction={direction}>
+<RTLProvider rtl={false}>
 </RTLProvider>
 ```
 

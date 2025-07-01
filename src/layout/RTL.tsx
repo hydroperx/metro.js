@@ -1,18 +1,16 @@
 import { createContext } from "react";
 
-export type RTLType = "ltr" | "rtl";
-
-export const RTLContext = createContext<RTLType>("ltr");
+export const RTLContext = createContext<boolean>(false);
 
 export function RTLProvider({
-  direction,
+  rtl,
   children,
 }: {
-  direction: RTLType;
+  rtl: boolean;
   children?: React.ReactNode;
 }) {
   return (
-    <RTLContext.Provider value={direction}>
+    <RTLContext.Provider value={rtl}>
       {children}
     </RTLContext.Provider>
   );

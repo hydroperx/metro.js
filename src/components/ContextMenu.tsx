@@ -15,10 +15,7 @@ import {
   IconOptions,
   UpArrowIcon,
 } from "./Icons";
-import {
-  RTLType,
-  RTLContext,
-} from "../layout/RTL";
+import { RTLContext } from "../layout/RTL";
 import { fitViewport, Side } from "../utils/PlacementUtils";
 import { Theme, ThemeContext } from "../theme";
 import {
@@ -157,9 +154,9 @@ export function ContextMenu(options: ContextMenuOptions) {
   const theme = useContext(ThemeContext);
 
   // Locale direction
-  const localeDir = useContext(RTLContext);
-  const localeDirRef = useRef<{ value?: RTLType }>({}).current;
-  localeDirRef.value = localeDir;
+  const rtl = useContext(RTLContext);
+  const rtl_ref = useRef<{ value?: boolean }>({}).current;
+  rtl_ref.value = rtl;
 
   // State
   const [visible, setVisible] = useState<boolean>(false);
@@ -418,7 +415,7 @@ export function ContextMenu(options: ContextMenuOptions) {
         // open submenu
         else if (
           input.justPressed(
-            localeDirRef.value == "ltr" ? "navigateRight" : "navigateLeft",
+            !rtl_ref.value ? "navigateRight" : "navigateLeft",
           ) &&
           child.classList.contains(submenuItemClassName)
         ) {
@@ -569,7 +566,7 @@ const MainDiv = styled.div<{
  */
 export function ContextMenuItem(options: ContextMenuItemOptions) {
   // Locale direction
-  const localeDir = useContext(RTLContext);
+  const rtl = useContext(RTLContext);
 
   // Use the theme context
   const theme = useContext(ThemeContext);
@@ -616,7 +613,7 @@ export function ContextMenuItem(options: ContextMenuItemOptions) {
       disabled={options.disabled}
       onClick={button_onClick}
       ref={buttonRef}
-      $localeDir={localeDir}
+      $rtl={rtl}
       $theme={theme}
       $hoverBackground={hoverBackground}
     >
@@ -634,12 +631,12 @@ export type ContextMenuItemOptions = {
 };
 
 const ItemButton = styled.button<{
-  $localeDir: "ltr" | "rtl";
+  $rtl: boolean;
   $theme: Theme;
   $hoverBackground: string;
 }>`
   display: inline-flex;
-  flex-direction: ${($) => ($.$localeDir == "ltr" ? "row" : "row-reverse")};
+  flex-direction: ${($) => (!$.$rtl ? "row" : "row-reverse")};
   gap: 0.9rem;
   padding: 0.5rem 0.7rem;
   background: none;
@@ -726,9 +723,9 @@ const IconSpan = styled.span<{
  */
 export function ContextMenuLabel(options: ContextMenuLabelOptions) {
   // Locale direction
-  const localeDir = useContext(RTLContext);
+  const rtl = useContext(RTLContext);
 
-  return <LabelSpan $localeDir={localeDir}>{options.children}</LabelSpan>;
+  return <LabelSpan $rtl={rtl}>{options.children}</LabelSpan>;
 }
 
 export type ContextMenuLabelOptions = {
@@ -737,9 +734,9 @@ export type ContextMenuLabelOptions = {
 
 // CSS
 const LabelSpan = styled.span<{
-  $localeDir: "ltr" | "rtl";
+  $rtl: boolean;
 }>`
-  ${($) => ($.$localeDir == "ltr" ? "" : "text-align: right;")}
+  ${($) => (!$.$rtl ? "" : "text-align: right;")}
 `;
 
 /**
@@ -748,13 +745,13 @@ const LabelSpan = styled.span<{
  */
 export function ContextMenuRight(options: ContextMenuRightOptions) {
   // Locale direction
-  const localeDir = useContext(RTLContext);
+  const rtl = useContext(RTLContext);
 
   // Minimum size for an icon
   const size = RFConvert.points.cascadingRF(9);
 
   return (
-    <RightSpan $size={size} $localeDir={localeDir}>
+    <RightSpan $size={size} $rtl={rtl}>
       {options.children}
     </RightSpan>
   );
@@ -765,13 +762,13 @@ export type ContextMenuRightOptions = {
 };
 
 const RightSpan = styled.span<{
-  $localeDir: "ltr" | "rtl";
+  $rtl: boolean;
   $size: string;
 }>`
   flex-grow: 4;
-  ${($) => ($.$localeDir == "ltr" ? "margin-left: 2rem;" : "")}
-  ${($) => ($.$localeDir == "rtl" ? "margin-right: 2rem;" : "")}
-    text-align: ${($) => ($.$localeDir == "ltr" ? "right" : "left")};
+  ${($) => (!$.$rtl ? "margin-left: 2rem;" : "")}
+  ${($) => ($.$rtl ? "margin-right: 2rem;" : "")}
+    text-align: ${($) => (!$.$rtl ? "right" : "left")};
   font-size: 0.8rem;
   opacity: 0.6;
   min-width: ${($) => $.$size};
@@ -783,9 +780,9 @@ const RightSpan = styled.span<{
  */
 export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
   // Locale direction
-  const localeDir = useContext(RTLContext);
-  const localeDirRef = useRef<{ value?: RTLType }>({}).current;
-  localeDirRef.value = localeDir;
+  const rtl = useContext(RTLContext);
+  const rtl_ref = useRef<{ value?: boolean }>({}).current;
+  rtl_ref.value = rtl;
 
   // Use the theme context
   const theme = useContext(ThemeContext);
@@ -858,7 +855,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
     let prev_display = div.style.display;
     if (prev_display === "none") div.style.display = "inline-block";
     const r = await computePosition(button, div, {
-      placement: localeDirRef.value == "ltr" ? "right" : "left",
+      placement: !rtl_ref.value ? "right" : "left",
       middleware: [
         flip(), shift(),
         size({
@@ -1028,7 +1025,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
         // open submenu
         else if (
           input.justPressed(
-            localeDirRef.value == "ltr" ? "navigateRight" : "navigateLeft",
+            !rtl_ref.value ? "navigateRight" : "navigateLeft",
           ) &&
           child.classList.contains(submenuItemClassName)
         ) {
@@ -1046,7 +1043,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
         // close current submenu
         else if (
           input.justPressed(
-            localeDirRef.value == "ltr" ? "navigateLeft" : "navigateRight",
+            !rtl_ref.value ? "navigateLeft" : "navigateRight",
           )
         ) {
           hideAllFromParent(div);
@@ -1083,7 +1080,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
       // close current submenu
       else if (
         input.justPressed(
-          localeDirRef.value == "ltr" ? "navigateLeft" : "navigateRight",
+          !rtl_ref.value ? "navigateLeft" : "navigateRight",
         )
       ) {
         hideAllFromParent(div);
@@ -1119,7 +1116,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
     <SubmenuButton
       className={submenuItemClassName + " " + BUTTON_NAVIGABLE}
       ref={buttonRef}
-      $localeDir={localeDir}
+      $rtl={rtl}
       $theme={theme}
       $hoverBackground={hoverBackground}
     >
@@ -1133,12 +1130,12 @@ export type ContextMenuSubmenuOptions = {
 };
 
 const SubmenuButton = styled.button<{
-  $localeDir: "ltr" | "rtl";
+  $rtl: boolean;
   $theme: Theme;
   $hoverBackground: string;
 }>`
   display: inline-flex;
-  flex-direction: ${($) => ($.$localeDir == "ltr" ? "row" : "row-reverse")};
+  flex-direction: ${($) => (!$.$rtl ? "row" : "row-reverse")};
   gap: 0.9rem;
   padding: 0.5rem 0.7rem;
   background: none;
@@ -1224,11 +1221,11 @@ const SubmenuMainDiv = styled.div<{
  */
 export function ContextMenuSubIcon(options: IconOptions) {
   // Locale direction
-  const localeDir = useContext(RTLContext);
+  const rtl = useContext(RTLContext);
 
   return (
     <ArrowIcon
-      direction={localeDir == "ltr" ? "right" : "left"}
+      direction={!rtl ? "right" : "left"}
       size={options.size ?? 3}
       style={options.style}
     />

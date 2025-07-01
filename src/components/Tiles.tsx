@@ -55,7 +55,7 @@ const Div = styled.div<{
   $scale: number;
   $theme: Theme;
   $direction: "horizontal" | "vertical";
-  $localeDir: "ltr" | "rtl";
+  $rtl: boolean;
   $open: boolean;
 }>`
   width: 100%;
@@ -232,7 +232,7 @@ export function Tiles(options: TilesOptions) {
   const theme = useContext(ThemeContext);
 
   // Locale direction
-  const localeDir = useContext(RTLContext);
+  const rtl = useContext(RTLContext);
 
   // Misc vars
   const { controller: tiles_controller } = options;
@@ -1111,7 +1111,7 @@ export function Tiles(options: TilesOptions) {
       $scale={scale}
       $theme={theme}
       $direction={options.direction}
-      $localeDir={localeDir}
+      $rtl={rtl}
       $open={open}
       onClick={on_click as any}
     >

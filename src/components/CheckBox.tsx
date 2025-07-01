@@ -16,7 +16,7 @@ export function CheckBox(options: CheckBoxOptions) {
   const preferPrimaryColors = useContext(PreferPrimaryContext);
 
   // Locale direction
-  const localeDir = useContext(RTLContext);
+  const rtl = useContext(RTLContext);
 
   // Refs
   const button_ref = useRef<HTMLButtonElement | null>(null);
@@ -30,7 +30,7 @@ export function CheckBox(options: CheckBoxOptions) {
     value ? 0 : 100,
   ); // percent
   let [carret_left, set_carret_left] = useState<number>(
-    localeDir == "ltr" ? (value ? 100 : 0) : value ? 0 : 100,
+    !rtl ? (value ? 100 : 0) : value ? 0 : 100,
   ); // percent
   const [rf, set_rf] = useState<number>(0);
 
@@ -68,7 +68,7 @@ export function CheckBox(options: CheckBoxOptions) {
     setValue(value);
 
     // Position carret
-    set_carret_left(localeDir == "ltr" ? (value ? 100 : 0) : value ? 0 : 100);
+    set_carret_left(!rtl ? (value ? 100 : 0) : value ? 0 : 100);
 
     // Position checked rectangle
     set_checked_horizontal_pos(value ? 0 : 100);
@@ -79,11 +79,11 @@ export function CheckBox(options: CheckBoxOptions) {
 
   useEffect(() => {
     // Update carret
-    set_carret_left(localeDir == "ltr" ? (value ? 100 : 0) : value ? 0 : 100);
+    set_carret_left(!rtl ? (value ? 100 : 0) : value ? 0 : 100);
 
     // Position checked rectangle
     set_checked_horizontal_pos(value ? 0 : 100);
-  }, [localeDir]);
+  }, [rtl]);
 
   useEffect(() => {
     const rf_observer = new RFObserver((value) => {
@@ -116,7 +116,7 @@ export function CheckBox(options: CheckBoxOptions) {
       $unchecked_hover_color={unchecked_hover_color}
       $checked_color={checked_color}
       $checked_hover_color={checked_hover_color}
-      $localeDir={localeDir}
+      $rtl={rtl}
       $carret_w={carret_w}
       $side_length={side_length}
       $checked_horizontal_pos={checked_horizontal_pos}
@@ -178,7 +178,7 @@ const Button = styled.button<{
   $unchecked_hover_color: string;
   $checked_color: string;
   $checked_hover_color: string;
-  $localeDir: "ltr" | "rtl";
+  $rtl: boolean;
   $carret_w: number;
   $side_length: number;
   $checked_horizontal_pos: number;
@@ -215,9 +215,9 @@ const Button = styled.button<{
 
   & .CheckBox-checked-rect {
     position: absolute;
-    ${($) => ($.$localeDir == "ltr" ? "left" : "right")}: ${($) =>
+    ${($) => (!$.$rtl ? "left" : "right")}: ${($) =>
       $.$padding}rem;
-    ${($) => ($.$localeDir == "ltr" ? "right" : "left")}: calc(${($) =>
+    ${($) => (!$.$rtl ? "right" : "left")}: calc(${($) =>
       $.$checked_horizontal_pos}% + ${($) => $.$padding}rem);
     top: ${($) => $.$padding}rem;
     bottom: ${($) => $.$padding}rem;
