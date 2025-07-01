@@ -24,7 +24,7 @@ import { fontFamily, fontSize } from "../utils/vars";
 import { randomHexLarge } from "../utils/RandomUtils";
 
 // Cascading animations
-import "./Tiles.module.css";
+import "./Tiles.css";
 
 export type { TileSize } from "@hydroperx/tiles";
 
