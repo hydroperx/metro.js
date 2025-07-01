@@ -209,8 +209,8 @@ const Div = styled.div<{
       no-repeat;
     background-position: center;
     background-size: contain;
-    width: ${RFConvert.points.cascadingRF(5)};
-    height: ${RFConvert.points.cascadingRF(5)};
+    width: ${RFConvert.points.cascadingRF(15)};
+    height: ${RFConvert.points.cascadingRF(15)};
     vertical-align: middle;
     transform: rotate(-45deg) translate(-2.9rem, 8.4rem);
   }

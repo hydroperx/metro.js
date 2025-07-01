@@ -199,7 +199,7 @@ function App() {
           selection={false}
           contextMenu={Container_onContextMenu as any}
         >
-          <Container padding={5}>
+          <Container padding={15}>
             <Label
               variant="heading1"
               tooltip={{text: "This demonstrates a Metro components library."}}
@@ -207,7 +207,7 @@ function App() {
               Metro demo
             </Label>
             <div>
-              <HGroup gap={5}>
+              <HGroup gap={15}>
                 <Select default="foo" small primary>
                   <SelectOption value="foo">Foo</SelectOption>
                   <SelectOption value="bar">Bar</SelectOption>
@@ -223,7 +223,7 @@ function App() {
               </HGroup>
             </div>
             <div style={{ margin: "7rem" }}></div>
-            <VGroup gap={7} maxWidth={100}>
+            <VGroup gap={28} maxWidth={300}>
               <Select default="dark" big change={changeTheme}>
                 <SelectOption value="dark">Dark</SelectOption>
                 <SelectOption value="light">Light</SelectOption>
@@ -248,11 +248,11 @@ function App() {
                 />
               </FormGroup>
             </VGroup>
-            <HGroup gap={2} style={{ margin: "1rem 0" }}>
+            <HGroup gap={18} style={{ margin: "1rem 0" }}>
               <Button variant="none">None button</Button>
               <Button variant="anchor">Anchor button</Button>
             </HGroup>
-            <HGroup gap={2} style={{ float: "right", marginRight: "3rem" }}>
+            <HGroup gap={18} style={{ float: "right", marginRight: "3rem" }}>
               <Button
                 variant="outline-primary"
                 tooltip={{text: "An useful description."}}
@@ -260,10 +260,10 @@ function App() {
                 Outline primary
               </Button>
               <Button variant="outline">Outline</Button>
-              <ArrowButton direction="right" size={9}></ArrowButton>
+              <ArrowButton direction="right" size={27}></ArrowButton>
             </HGroup>
             <VGroup horizontalAlign="center">
-              <ProgressRing size={9} />
+              <ProgressRing size={27} />
               <ProgressEllipsis />
             </VGroup>
             <div>

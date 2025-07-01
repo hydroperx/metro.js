@@ -369,7 +369,7 @@ const SmallDropdownButton = styled.button<ButtonCSSProps>`
   gap: 0.2rem;
   flex-direction: ${($) => ($.$localeDir == "ltr" ? "row" : "row-reverse")};
   align-items: center;
-  padding: ${RFConvert.points.rf(1)}rem 0.7rem;
+  padding: ${RFConvert.points.rf(3)}rem 0.7rem;
   outline: none;
 
   &:hover:not(:disabled),
@@ -604,7 +604,7 @@ export function CircleIconButton(options: CircleIconButtonOptions) {
     : Color(fg).isDark()
       ? "#fff"
       : "#000";
-  const size = options.size ?? 9;
+  const size = options.size ?? 27;
   const size_rf = RFConvert.points.cascadingRF(size);
 
   const tooltip = options.tooltip;

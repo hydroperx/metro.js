@@ -99,7 +99,7 @@ const DropdownDiv = styled.div<{
     display: ${($) => ($.$arrowsVisible ? "flex" : "none")};
     flex-direction: row;
     justify-content: center;
-    height: ${RFConvert.points.cascadingRF(2.5)};
+    height: ${RFConvert.points.cascadingRF(7.5)};
   }
 `;
 
@@ -115,7 +115,7 @@ const BigOrMediumButton = styled.button<ButtonCSSProps>`
   gap: 1rem;
   flex-direction: ${($) => ($.$localeDir == "ltr" ? "row" : "row-reverse")};
   align-items: center;
-  padding: ${RFConvert.points.rf(2)}rem 0.7rem;
+  padding: ${RFConvert.points.rf(6)}rem 0.7rem;
   min-width: 10rem;
   opacity: 0.7;
 
@@ -143,7 +143,7 @@ const SmallButton = styled.button<ButtonCSSProps>`
   gap: 0.2rem;
   flex-direction: ${($) => ($.$localeDir == "ltr" ? "row" : "row-reverse")};
   align-items: center;
-  padding: ${RFConvert.points.rf(1)}rem 0.7rem;
+  padding: ${RFConvert.points.rf(3)}rem 0.7rem;
   outline: none;
 
   &:hover:not(:disabled),
@@ -172,7 +172,7 @@ const NormalButton = styled.button<ButtonCSSProps>`
   display: flex;
   flex-direction: ${($) => ($.$localeDir == "ltr" ? "row" : "row-reverse")};
   align-items: center;
-  padding: ${RFConvert.points.rf(2) + 0.15}rem 0.7rem;
+  padding: ${RFConvert.points.rf(6) + 0.15}rem 0.7rem;
   min-width: 15rem;
   outline: none;
 

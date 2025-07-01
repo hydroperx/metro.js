@@ -30,7 +30,7 @@ export function TextInput(options: TextInputOptions) {
   // Icon
   const icon: string | null =
     options.icon ?? (options.search ? "search" : null);
-  const iconSize = 5;
+  const iconSize = 15;
 
   // Colors
   const dark = Color(theme.colors.inputBackground).isDark();
@@ -42,7 +42,7 @@ export function TextInput(options: TextInputOptions) {
         color: ${theme.colors.foreground};
         font-family: ${fontFamily};
         font-size: ${fontSize};
-        padding: ${RFConvert.points.cascadingRF(2.15)} 0.7rem;
+        padding: ${RFConvert.points.cascadingRF(6.45)} 0.7rem;
         ${icon === null || options.multiline ? "" : `${localeDir == "ltr" ? "padding-right" : "padding-left"}: ${RFConvert.points.cascadingRF(iconSize + 3)};`}
         ${icon === null || options.multiline ? "" : `background-image: url("${IconRegistry.get(icon, dark ? "white" : "black")}");`}
         background-position: center ${localeDir == "ltr" ? "right" : "left"} 0.5rem;
@@ -72,10 +72,10 @@ export function TextInput(options: TextInputOptions) {
     
         &::-webkit-search-cancel-button {
             -webkit-appearance: none;
-            width: ${RFConvert.points.cascadingRF(5)};
-            height: ${RFConvert.points.cascadingRF(5)};
+            width: ${RFConvert.points.cascadingRF(15)};
+            height: ${RFConvert.points.cascadingRF(15)};
             background: url("${IconRegistry.get("clear", dark ? "white" : "black")}");
-            background-size: ${RFConvert.points.cascadingRF(5)};
+            background-size: ${RFConvert.points.cascadingRF(15)};
             background-repeat: no-repeat;
         }
     `;

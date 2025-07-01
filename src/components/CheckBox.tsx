@@ -38,9 +38,9 @@ export function CheckBox(options: CheckBoxOptions) {
   const border_width = 0.15;
   const padding = 0.15;
   const side_length = border_width + padding;
-  const w = RFConvert.points.rf(14);
-  const h = RFConvert.points.rf(6.1);
-  const carret_w = RFConvert.points.rf(4);
+  const w = RFConvert.points.rf(42);
+  const h = RFConvert.points.rf(18.3);
+  const carret_w = RFConvert.points.rf(12);
   let checked_color = enhanceBrightness(
     theme.colors.background,
     theme.colors.primary,

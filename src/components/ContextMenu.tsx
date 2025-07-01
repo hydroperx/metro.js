@@ -538,7 +538,7 @@ const MainDiv = styled.div<{
   position: fixed;
   background: ${($) => $.$theme.colors.inputBackground};
   border: 0.15rem solid ${($) => $.$theme.colors.inputBorder};
-  padding: ${RFConvert.points.cascadingRF(2)} 0;
+  padding: ${RFConvert.points.cascadingRF(6)} 0;
   min-width: 12rem;
   max-height: 30rem;
   left: ${($) => $.$x}px;
@@ -552,7 +552,7 @@ const MainDiv = styled.div<{
     display: ${($) => ($.$arrowsVisible ? "flex" : "none")};
     flex-direction: row;
     justify-content: center;
-    height: ${RFConvert.points.cascadingRF(2.5)};
+    height: ${RFConvert.points.cascadingRF(7.5)};
   }
 
   & > .ContextMenu-list {
@@ -670,7 +670,7 @@ const ItemButton = styled.button<{
  */
 export function ContextMenuCheck(options: ContextMenuCheckOptions) {
   // Size
-  const size = RFConvert.points.cascadingRF(3);
+  const size = RFConvert.points.cascadingRF(9);
 
   return (
     <CheckSpan $size={size}>
@@ -703,7 +703,7 @@ const CheckSpan = styled.span<{
  */
 export function ContextMenuIcon(options: ContextMenuIconOptions) {
   // Size
-  const size = RFConvert.points.cascadingRF(3);
+  const size = RFConvert.points.cascadingRF(9);
 
   return <IconSpan $size={size}>{options.children}</IconSpan>;
 }
@@ -751,7 +751,7 @@ export function ContextMenuRight(options: ContextMenuRightOptions) {
   const localeDir = useContext(RTLContext);
 
   // Minimum size for an icon
-  const size = RFConvert.points.cascadingRF(3);
+  const size = RFConvert.points.cascadingRF(9);
 
   return (
     <RightSpan $size={size} $localeDir={localeDir}>
@@ -1196,7 +1196,7 @@ const SubmenuMainDiv = styled.div<{
   position: fixed;
   background: ${($) => $.$theme.colors.inputBackground};
   border: 0.15rem solid ${($) => $.$theme.colors.inputBorder};
-  padding: ${RFConvert.points.cascadingRF(2)} 0;
+  padding: ${RFConvert.points.cascadingRF(6)} 0;
   min-width: 12rem;
   max-height: 30rem;
   opacity: 0;
