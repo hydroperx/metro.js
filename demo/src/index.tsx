@@ -22,7 +22,7 @@ import {
   ThemeProvider,
   RTLProvider,
 } from "@hydroperx/metro";
-import type { Theme, RTLType } from "@hydroperx/metro";
+import type { Theme } from "@hydroperx/metro";
 import {
   useContextMenu,
   ContextMenu,
@@ -258,7 +258,7 @@ function App() {
               <ArrowButton direction="right" size={27}></ArrowButton>
             </HGroup>
             <VGroup horizontalAlign="center">
-              <ProgressRing size={27} />
+              <ProgressRing size={9} />
               <ProgressEllipsis />
             </VGroup>
             <div>

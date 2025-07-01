@@ -230,7 +230,7 @@ export function Button(options: ButtonOptions) {
           <>
             <div className="Button-small-inner">{options.children}</div>
             <div className="Button-small-arrow">
-              <DownArrowIcon size={2.4} />
+              <DownArrowIcon size={7} />
             </div>
           </>
         ) : (
@@ -695,7 +695,7 @@ export function CircleIconButton(options: CircleIconButtonOptions) {
       >
         <Icon
           type={options.icon}
-          size={size - (size <= 3.5 ? 0 : 3.5)}
+          size={size - (size <= 10.5 ? 0 : 10.5)}
           style={iconStyle}
         />
       </CircleIconButtonButton>

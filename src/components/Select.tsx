@@ -576,7 +576,7 @@ export function Select(options: SelectOptions) {
         ></div>
 
         <div className="Select-button-arrow">
-          <DownArrowIcon size={options.big ? 6 : options.small ? 2.4 : 3.5} />
+          <DownArrowIcon size={options.big ? 18 : options.small ? 7 : 10.5} />
         </div>
       </Button>
       <SelectOptionBigProvider big={!!options.big || !!options.medium}>
@@ -593,11 +593,11 @@ export function Select(options: SelectOptions) {
           $y={y}
         >
           <div className="Select-up-arrow">
-            <UpArrowIcon size={2.5} />
+            <UpArrowIcon size={7.5} />
           </div>
           <div className="Select-list">{options.children}</div>
           <div className="Select-down-arrow">
-            <DownArrowIcon size={2.5} />
+            <DownArrowIcon size={7.5} />
           </div>
         </DropdownDiv>
       </SelectOptionBigProvider>
