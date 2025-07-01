@@ -29,19 +29,19 @@ export function enhanceBrightness(background: any, color: any): string {
   let r = (
     a.isDark()
       ? b.isDark()
-        ? lighten(b, 0.1)
+        ? lighten(b, 0.25)
         : b
       : b.isLight()
-        ? darken(b, 0.1)
+        ? darken(b, 0.25)
         : b
   ).toString();
   r = (
     a.isDark()
       ? Color(r).isDark()
-        ? lighten(r, 0.1)
+        ? lighten(r, 0.25)
         : r
       : Color(r).isLight()
-        ? darken(r, 0.1)
+        ? darken(r, 0.25)
         : r
   ).toString();
   return b.toString();
