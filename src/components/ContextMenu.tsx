@@ -499,11 +499,11 @@ export function ContextMenu(options: ContextMenuOptions) {
       $y={y}
     >
       <div className="ContextMenu-up-arrow">
-        <UpArrowIcon size={2.5} />
+        <UpArrowIcon size={7.5} />
       </div>
       <div className="ContextMenu-list">{options.children}</div>
       <div className="ContextMenu-down-arrow">
-        <DownArrowIcon size={2.5} />
+        <DownArrowIcon size={7.5} />
       </div>
     </MainDiv>
   );
@@ -1169,11 +1169,11 @@ export function ContextMenuSubmenuList(options: ContextMenuSubmenuListOptions) {
   return (
     <SubmenuMainDiv ref={divRef} className={submenuClassName} $theme={theme}>
       <div className="ContextMenu-up-arrow">
-        <UpArrowIcon size={2.5} />
+        <UpArrowIcon size={7.5} />
       </div>
       <div className="ContextMenu-list">{options.children}</div>
       <div className="ContextMenu-down-arrow">
-        <DownArrowIcon size={2.5} />
+        <DownArrowIcon size={7.5} />
       </div>
     </SubmenuMainDiv>
   );
@@ -1226,7 +1226,7 @@ export function ContextMenuSubIcon(options: IconOptions) {
   return (
     <ArrowIcon
       direction={!rtl ? "right" : "left"}
-      size={options.size ?? 3}
+      size={options.size ?? 9}
       style={options.style}
     />
   );
