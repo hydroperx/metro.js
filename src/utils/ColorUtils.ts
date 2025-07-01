@@ -16,35 +16,35 @@ export function enhanceBrightness(background: any, color: any): string {
   const a = Color(background);
   const b = Color(color);
   if (like(a, b)) {
-    let r = a.isDark() ? lighten(b, 0.6) : darken(b, 0.6);
+    let r = a.isDark() ? lighten(b, 0.25) : darken(b, 0.25);
     r = a.isDark()
       ? Color(r).isDark()
-        ? lighten(r, 0.4)
+        ? lighten(r, 0.25)
         : r
       : Color(r).isLight()
-        ? darken(r, 0.4)
+        ? darken(r, 0.25)
         : r;
     return r;
   }
   let r = (
     a.isDark()
       ? b.isDark()
-        ? lighten(b, 0.6)
+        ? lighten(b, 0.1)
         : b
       : b.isLight()
-        ? darken(b, 0.6)
+        ? darken(b, 0.1)
         : b
   ).toString();
   r = (
     a.isDark()
       ? Color(r).isDark()
-        ? lighten(r, 0.4)
+        ? lighten(r, 0.1)
         : r
       : Color(r).isLight()
-        ? darken(r, 0.4)
+        ? darken(r, 0.1)
         : r
   ).toString();
-  return r;
+  return b.toString();
 }
 
 export function darken(a: any, ratio: number): string {
