@@ -223,6 +223,7 @@ export function Select(options: SelectOptions) {
   const [transition, setTransition] = useState<string>("");
   const [arrowsVisible, setArrowsVisible] = useState<boolean>(false);
   const [value, setValue] = useState<string>(options.default ?? "");
+  const [changed, set_changed] = useState<boolean>(false);
   const [valueHyperText, setValueHyperText] = useState<string>("");
   const [rf, set_rf] = useState<number>(0); // root font size
 
@@ -393,6 +394,7 @@ export function Select(options: SelectOptions) {
   function triggerChange(value: string): void {
     // Set value
     setValue(value);
+    set_changed(true);
 
     // Item list div
     const itemListDiv = getItemListDiv();
@@ -551,6 +553,12 @@ export function Select(options: SelectOptions) {
       rf_observer.cleanup();
     };
   }, []);
+
+  useEffect(() => {
+    if (changed) {
+      setValue(options.default ?? "");
+    }
+  }, [options.default);
 
   return (
     <>
