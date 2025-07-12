@@ -36,3 +36,14 @@ Basic components
 
 - [ ] Do not allow dragging tiles when in selection mode
 - [ ] If dragging far beyond in the orthogonal axis of the tiles container, zoom out (scale down) the entire tiles container; when not, revert back to normal scale.
+
+# Other random notes
+
+- [ ] PreferPrimary affects the loading icon and loading linear dots
+- [ ] Select should be ComboBox
+- [ ] On lists like ComboBox and context menu, autofocus item on hover
+- [ ] Change how ComboBox pops up, implementing the previously postponed transition
+- [ ] Fix context menu not showing down scroll indicator on viewport overflow
+- [ ] Checkbox indicator should be draggable (depends on RTL)
+- [ ] Reimplement live tiles
+  - [ ] API for live pages should change a bit (e.g. icon may be placed on a certain place and be resized, and label may be configured black or white)
