@@ -12,7 +12,7 @@ Basic components
   - [x] Arrow button
 - [x] Container
 - [x] ContextMenu
-- [x] Select
+- [x] ComboBox
 - [x] TextInput
 - [x] CheckBox
 - [x] FormGroup
@@ -27,10 +27,10 @@ Basic components
 
 - [ ] Fix the little snailing at the center of the animation.
 
-## Select
+## ComboBox
 
 - [ ] Future change: a more Metro like transition and positioning that centers the selected option to the input button
-  - [ ] "Open transition" draft: https://github.com/hydroperx/metro/blob/d18900aad5e94d3429e4a762d1f79015dcf9aef4/src/components/Select.tsx#L161 (in this draft, `base_bottom =` apparently needs to be assigned something else, like `window.innerHeight - baseRect.top - baseRect.height`, to work better). (I was having a wrong assumption about what is `boundingClientRect.bottom` (it is similiar to top coordinates-wise))
+  - [ ] "Open transition" draft: https://github.com/hydroperx/metro/blob/d18900aad5e94d3429e4a762d1f79015dcf9aef4/src/components/ComboBox.tsx#L161 (in this draft, `base_bottom =` apparently needs to be assigned something else, like `window.innerHeight - baseRect.top - baseRect.height`, to work better). (I was having a wrong assumption about what is `boundingClientRect.bottom` (it is similiar to top coordinates-wise))
 
 ## Tiles
 
@@ -40,10 +40,13 @@ Basic components
 # Other random notes
 
 - [ ] PreferPrimary affects the loading icon and loading linear dots
-- [ ] Select should be ComboBox
+- [ ] ComboBox
+  - [x] ComboBox should be ComboBox
+  - [ ] ComboBoxOption should be abbreviated to Option
 - [ ] On lists like ComboBox and context menu, autofocus item on hover
 - [ ] Change how ComboBox pops up, implementing the previously postponed transition
 - [ ] Fix context menu not showing down scroll indicator on viewport overflow
 - [ ] Checkbox indicator should be draggable (depends on RTL)
 - [ ] Reimplement live tiles
   - [ ] API for live pages should change a bit (e.g. icon may be placed on a certain place and be resized, and label may be configured black or white)
+- [ ] Make ContextMenu items more concise; perhaps reuse `<Item>`, `<Label>` and so on.

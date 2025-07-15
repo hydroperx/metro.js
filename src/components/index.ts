@@ -5,7 +5,7 @@ export * from "./Button";
 export * from "./Container";
 export * from "./ContextMenu";
 export * from "./Icons";
-export * from "./Select";
+export * from "./ComboBox";
 export * from "./TextInput";
 export * from "./CheckBox";
 export * from "./FormGroup";

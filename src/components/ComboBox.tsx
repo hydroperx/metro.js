@@ -38,11 +38,11 @@ input.on("inputPressed", function (e: Event): void {
   currentInputPressedListener?.(e);
 });
 
-// Global function for changing the selected value of an open context menu.
-let currentSelectChange: Function | null = null;
+// Global function
+let currentComboBoxChange: Function | null = null;
 
-// Global function for closing the currently open select.
-let currentSelectClose: Function | null = null;
+// Global function
+let currentComboBoxClose: Function | null = null;
 
 // Invoked by the global mouse down event listener
 let currentMouseDownListener: Function | null = null;
@@ -86,7 +86,7 @@ const DropdownDiv = styled.div<{
   ${($) => ($.$transition ? `transition: ${$.$transition};` : "")}
   z-index: ${maximumZIndex};
 
-  & .Select-list {
+  & .ComboBox-list {
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
@@ -94,8 +94,8 @@ const DropdownDiv = styled.div<{
     flex-grow: 3;
   }
 
-  & .Select-up-arrow,
-  & .Select-down-arrow {
+  & .ComboBox-up-arrow,
+  & .ComboBox-down-arrow {
     display: ${($) => ($.$arrowsVisible ? "flex" : "none")};
     flex-direction: row;
     justify-content: center;
@@ -206,9 +206,9 @@ type ButtonCSSProps = {
 };
 
 /**
- * Represents a list of selectable values.
+ * Represents a list of selectable options.
  */
-export function Select(options: SelectOptions) {
+export function ComboBox(options: ComboBoxOptions) {
   // Use the theme context
   const theme = useContext(ThemeContext);
 
@@ -247,7 +247,7 @@ export function Select(options: SelectOptions) {
 
   // Button inner CSS
   const button_inner_css = `
-        & .Select-button-inner {
+        & .ComboBox-button-inner {
             display: inline-flex;
             flex-direction: ${!rtl ? "row" : "row-reverse"};
             gap: 0.9rem;
@@ -256,7 +256,7 @@ export function Select(options: SelectOptions) {
 
   // Button arrow CSS
   const button_arrow_css = `
-        & .Select-button-arrow {
+        & .ComboBox-button-arrow {
             display: inline-flex;
             flex-grow: 2;
             flex-direction: ${!rtl ? "row-reverse" : "row"};
@@ -299,7 +299,7 @@ export function Select(options: SelectOptions) {
     if (!baseOption && itemListDiv.firstElementChild) {
       assert(
         itemListDiv.firstElementChild instanceof HTMLButtonElement,
-        "Malformed Select item.",
+        "Malformed ComboBox item.",
       );
       baseOption = itemListDiv.firstElementChild as HTMLButtonElement;
     }
@@ -314,10 +314,10 @@ export function Select(options: SelectOptions) {
     currentInputPressedListener = input_onInputPressed;
 
     // Change function
-    currentSelectChange = triggerChange;
+    currentComboBoxChange = triggerChange;
 
     // Close function
-    currentSelectClose = close;
+    currentComboBoxClose = close;
 
     // Turn visible
     setVisible(true);
@@ -437,10 +437,10 @@ export function Select(options: SelectOptions) {
     currentInputPressedListener = null;
 
     // Change function
-    currentSelectChange = null;
+    currentComboBoxChange = null;
 
     // Close function
-    currentSelectClose = null;
+    currentComboBoxClose = null;
 
     // Turn invisible
     setVisible(false);
@@ -532,10 +532,10 @@ export function Select(options: SelectOptions) {
       currentInputPressedListener = input_onInputPressed;
 
       // Change function
-      currentSelectChange = triggerChange;
+      currentComboBoxChange = triggerChange;
 
       // Close function
-      currentSelectClose = close;
+      currentComboBoxClose = close;
     }
   }, [visible]);
 
@@ -558,7 +558,7 @@ export function Select(options: SelectOptions) {
     if (changed) {
       setValue(options.default ?? "");
     }
-  }, [options.default);
+  }, [options.default]);
 
   return (
     <>
@@ -579,15 +579,15 @@ export function Select(options: SelectOptions) {
         $hoverBackground={hoverBackground}
       >
         <div
-          className="Select-button-inner"
+          className="ComboBox-button-inner"
           dangerouslySetInnerHTML={{ __html: valueHyperText }}
         ></div>
 
-        <div className="Select-button-arrow">
+        <div className="ComboBox-button-arrow">
           <DownArrowIcon size={options.big ? 18 : options.small ? 7 : 10.5} />
         </div>
       </Button>
-      <SelectOptionBigProvider big={!!options.big || !!options.medium}>
+      <ComboBoxOptionBigProvider big={!!options.big || !!options.medium}>
         <DropdownDiv
           ref={divRef}
           $visible={visible}
@@ -600,20 +600,20 @@ export function Select(options: SelectOptions) {
           $x={x}
           $y={y}
         >
-          <div className="Select-up-arrow">
+          <div className="ComboBox-up-arrow">
             <UpArrowIcon size={7.5} />
           </div>
-          <div className="Select-list">{options.children}</div>
-          <div className="Select-down-arrow">
+          <div className="ComboBox-list">{options.children}</div>
+          <div className="ComboBox-down-arrow">
             <DownArrowIcon size={7.5} />
           </div>
         </DropdownDiv>
-      </SelectOptionBigProvider>
+      </ComboBoxOptionBigProvider>
     </>
   );
 }
 
-export type SelectOptions = {
+export type ComboBoxOptions = {
   id?: string;
 
   children?: React.ReactNode;
@@ -654,7 +654,7 @@ export type SelectOptions = {
   change?: (value: string) => void;
 };
 
-const SelectOptionButton = styled.button<{
+const ComboBoxOptionButton = styled.button<{
   $rtl: boolean;
   $theme: Theme;
   $big: boolean;
@@ -690,7 +690,7 @@ const SelectOptionButton = styled.button<{
   }
 `;
 
-export function SelectOption(options: SelectOptionOptions) {
+export function ComboBoxOption(options: ComboBoxOptionOptions) {
   // Locale direction
   const rtl = useContext(RTLContext);
 
@@ -698,7 +698,7 @@ export function SelectOption(options: SelectOptionOptions) {
   const theme = useContext(ThemeContext);
 
   // Big
-  const big = useContext(SelectOptionBigContext);
+  const big = useContext(ComboBoxOptionBigContext);
 
   // Button ref
   const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -711,12 +711,12 @@ export function SelectOption(options: SelectOptionOptions) {
     if (cooldown > Date.now() - 50) {
       return;
     }
-    currentSelectChange?.(options.value);
-    currentSelectClose?.();
+    currentComboBoxChange?.(options.value);
+    currentComboBoxClose?.();
   }
 
   return (
-    <SelectOptionButton
+    <ComboBoxOptionButton
       className={
         BUTTON_NAVIGABLE + (options.className ? " " + options.className : "")
       }
@@ -730,11 +730,11 @@ export function SelectOption(options: SelectOptionOptions) {
       $activeBackground={activeBackground}
     >
       {options.children}
-    </SelectOptionButton>
+    </ComboBoxOptionButton>
   );
 }
 
-export type SelectOptionOptions = {
+export type ComboBoxOptionOptions = {
   children?: React.ReactNode;
   style?: React.CSSProperties;
   className?: string;
@@ -745,9 +745,9 @@ export type SelectOptionOptions = {
   value: string;
 };
 
-const SelectOptionBigContext = createContext<boolean>(false);
+const ComboBoxOptionBigContext = createContext<boolean>(false);
 
-function SelectOptionBigProvider({
+function ComboBoxOptionBigProvider({
   big,
   children,
 }: {
@@ -755,8 +755,8 @@ function SelectOptionBigProvider({
   children?: React.ReactNode;
 }) {
   return (
-    <SelectOptionBigContext.Provider value={big}>
+    <ComboBoxOptionBigContext.Provider value={big}>
       {children}
-    </SelectOptionBigContext.Provider>
+    </ComboBoxOptionBigContext.Provider>
   );
 }

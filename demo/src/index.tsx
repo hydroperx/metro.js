@@ -9,8 +9,8 @@ import {
   ArrowButton,
   ProgressRing,
   ProgressEllipsis,
-  Select,
-  SelectOption,
+  ComboBox,
+  ComboBoxOption,
   TextInput,
   FormGroup,
   CheckBox,
@@ -203,32 +203,32 @@ function App() {
             </Label>
             <div>
               <HGroup gap={15}>
-                <Select default="foo" small primary>
-                  <SelectOption value="foo">Foo</SelectOption>
-                  <SelectOption value="bar">Bar</SelectOption>
-                  <SelectOption value="qux">Qux</SelectOption>
-                </Select>
-                <Select default="foo" small>
-                  <SelectOption value="foo">Foo</SelectOption>
-                  <SelectOption value="bar">Bar</SelectOption>
-                  <SelectOption value="qux">Qux</SelectOption>
-                </Select>
+                <ComboBox default="foo" small primary>
+                  <ComboBoxOption value="foo">Foo</ComboBoxOption>
+                  <ComboBoxOption value="bar">Bar</ComboBoxOption>
+                  <ComboBoxOption value="qux">Qux</ComboBoxOption>
+                </ComboBox>
+                <ComboBox default="foo" small>
+                  <ComboBoxOption value="foo">Foo</ComboBoxOption>
+                  <ComboBoxOption value="bar">Bar</ComboBoxOption>
+                  <ComboBoxOption value="qux">Qux</ComboBoxOption>
+                </ComboBox>
                 <Button variant="small-dropdown-primary">Click me</Button>
                 <Button variant="small-dropdown">Click me</Button>
               </HGroup>
             </div>
             <div style={{ margin: "7rem" }}></div>
             <VGroup gap={28} maxWidth={300}>
-              <Select default="dark" big change={change_theme}>
-                <SelectOption value="dark">Dark</SelectOption>
-                <SelectOption value="light">Light</SelectOption>
-                <SelectOption value="purple">Purple</SelectOption>
-                <SelectOption value="green">Green</SelectOption>
-              </Select>
-              <Select default="ltr" big change={(value: string) => { set_rtl(value == "rtl") }}>
-                <SelectOption value="ltr">Left-to-right</SelectOption>
-                <SelectOption value="rtl">Right-to-left</SelectOption>
-              </Select>
+              <ComboBox default="dark" big change={change_theme}>
+                <ComboBoxOption value="dark">Dark</ComboBoxOption>
+                <ComboBoxOption value="light">Light</ComboBoxOption>
+                <ComboBoxOption value="purple">Purple</ComboBoxOption>
+                <ComboBoxOption value="green">Green</ComboBoxOption>
+              </ComboBox>
+              <ComboBox default="ltr" big change={(value: string) => { set_rtl(value == "rtl") }}>
+                <ComboBoxOption value="ltr">Left-to-right</ComboBoxOption>
+                <ComboBoxOption value="rtl">Right-to-left</ComboBoxOption>
+              </ComboBox>
               <TextInput search placeholder="Type something" />
               <TextInput multiline />
               <FormGroup>
@@ -262,23 +262,23 @@ function App() {
               <ProgressEllipsis />
             </VGroup>
             <div>
-              <Select default="qux1">
-                <SelectOption value="foo">Foo</SelectOption>
-                <SelectOption value="bar">Bar</SelectOption>
-                <SelectOption value="qux">Qux</SelectOption>
-                <SelectOption value="foo9">Foo 9</SelectOption>
-                <SelectOption value="bar3">Bar 3</SelectOption>
-                <SelectOption value="qux2">Qux 2</SelectOption>
-                <SelectOption value="foo1">Foo 1</SelectOption>
-                <SelectOption value="bar0">Bar 0</SelectOption>
-                <SelectOption value="quxA">Qux A</SelectOption>
-                <SelectOption value="fooB">Foo B</SelectOption>
-                <SelectOption value="barC">Bar C</SelectOption>
-                <SelectOption value="quxD">Qux D</SelectOption>
-                <SelectOption value="fooE">Foo E</SelectOption>
-                <SelectOption value="barF">Bar F</SelectOption>
-                <SelectOption value="qux1">Qux 1</SelectOption>
-              </Select>
+              <ComboBox default="qux1">
+                <ComboBoxOption value="foo">Foo</ComboBoxOption>
+                <ComboBoxOption value="bar">Bar</ComboBoxOption>
+                <ComboBoxOption value="qux">Qux</ComboBoxOption>
+                <ComboBoxOption value="foo9">Foo 9</ComboBoxOption>
+                <ComboBoxOption value="bar3">Bar 3</ComboBoxOption>
+                <ComboBoxOption value="qux2">Qux 2</ComboBoxOption>
+                <ComboBoxOption value="foo1">Foo 1</ComboBoxOption>
+                <ComboBoxOption value="bar0">Bar 0</ComboBoxOption>
+                <ComboBoxOption value="quxA">Qux A</ComboBoxOption>
+                <ComboBoxOption value="fooB">Foo B</ComboBoxOption>
+                <ComboBoxOption value="barC">Bar C</ComboBoxOption>
+                <ComboBoxOption value="quxD">Qux D</ComboBoxOption>
+                <ComboBoxOption value="fooE">Foo E</ComboBoxOption>
+                <ComboBoxOption value="barF">Bar F</ComboBoxOption>
+                <ComboBoxOption value="qux1">Qux 1</ComboBoxOption>
+              </ComboBox>
             </div>
             <Container
               style={{
