@@ -73,6 +73,14 @@ export function Button(options: ButtonOptions) {
       Button_comp = NoneButton;
       break;
     }
+    case "big": {
+      const dark = Color(theme.colors.background).isDark();
+      color = dark ? "#fff" : "#000";
+      hover_bg = dark ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.4)";
+
+      Button_comp = BigButton;
+      break;
+    }
     case "small-dropdown":
     case "small-dropdown-primary": {
       color =
@@ -254,6 +262,7 @@ export function Button(options: ButtonOptions) {
 
 export type ButtonVariant =
   | "none"
+  | "big"
   | "small-dropdown"
   | "small-dropdown-primary"
   | "anchor"
@@ -332,6 +341,41 @@ const NoneButton = styled.button<ButtonCSSProps>`
   border: none;
   border-radius: 0;
   font-size: ${fontSize};
+  font-family: ${fontFamily};
+
+  &:hover:not(:disabled) {
+    background: ${($) => $.$hover_bg};
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  &[data-chosen="true"]:not(:disabled) {
+    background: ${($) => $.$theme.colors.primary};
+    color: ${($) => $.$theme.colors.primaryForeground};
+  }
+
+  &:focus:not(:disabled) {
+    outline: 0.05rem dotted ${($) => $.$color as string};
+    outline-offset: -0.4rem;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+  }
+`;
+
+// big
+
+const BigButton = styled.button<ButtonCSSProps>`
+  background: none;
+  color: ${($) => $.$color as string};
+  padding: ${($) => $.$padding};
+  border: none;
+  border-radius: 0;
+  font-size: 2rem;
+  font-weight: lighter;
   font-family: ${fontFamily};
 
   &:hover:not(:disabled) {
