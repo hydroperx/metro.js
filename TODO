@@ -42,7 +42,7 @@ Basic components
 - [ ] PreferPrimary affects the loading icon and loading linear dots
 - [ ] ComboBox
   - [x] ComboBox should be ComboBox
-  - [ ] ComboBoxOption should be abbreviated to Option
+  - [x] ComboBoxOption should be abbreviated to Option
   - [ ] Autofocus Option on hover
 - [ ] Change how ComboBox pops up, implementing the previously postponed transition
 - [ ] Fix context menu not showing down scroll indicator on viewport overflow

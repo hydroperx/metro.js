@@ -6,6 +6,7 @@ export * from "./Container";
 export * from "./ContextMenu";
 export * from "./Icons";
 export * from "./ComboBox";
+export * from "./Option";
 export * from "./TextInput";
 export * from "./CheckBox";
 export * from "./FormGroup";

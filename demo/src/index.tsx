@@ -10,7 +10,7 @@ import {
   ProgressRing,
   ProgressEllipsis,
   ComboBox,
-  ComboBoxOption,
+  Option,
   TextInput,
   FormGroup,
   CheckBox,
@@ -204,14 +204,14 @@ function App() {
             <div>
               <HGroup gap={15}>
                 <ComboBox default="foo" small primary>
-                  <ComboBoxOption value="foo">Foo</ComboBoxOption>
-                  <ComboBoxOption value="bar">Bar</ComboBoxOption>
-                  <ComboBoxOption value="qux">Qux</ComboBoxOption>
+                  <Option value="foo">Foo</Option>
+                  <Option value="bar">Bar</Option>
+                  <Option value="qux">Qux</Option>
                 </ComboBox>
                 <ComboBox default="foo" small>
-                  <ComboBoxOption value="foo">Foo</ComboBoxOption>
-                  <ComboBoxOption value="bar">Bar</ComboBoxOption>
-                  <ComboBoxOption value="qux">Qux</ComboBoxOption>
+                  <Option value="foo">Foo</Option>
+                  <Option value="bar">Bar</Option>
+                  <Option value="qux">Qux</Option>
                 </ComboBox>
                 <Button variant="small-dropdown-primary">Click me</Button>
                 <Button variant="small-dropdown">Click me</Button>
@@ -220,14 +220,14 @@ function App() {
             <div style={{ margin: "7rem" }}></div>
             <VGroup gap={28} maxWidth={300}>
               <ComboBox default="dark" big change={change_theme}>
-                <ComboBoxOption value="dark">Dark</ComboBoxOption>
-                <ComboBoxOption value="light">Light</ComboBoxOption>
-                <ComboBoxOption value="purple">Purple</ComboBoxOption>
-                <ComboBoxOption value="green">Green</ComboBoxOption>
+                <Option value="dark">Dark</Option>
+                <Option value="light">Light</Option>
+                <Option value="purple">Purple</Option>
+                <Option value="green">Green</Option>
               </ComboBox>
               <ComboBox default="ltr" big change={(value: string) => { set_rtl(value == "rtl") }}>
-                <ComboBoxOption value="ltr">Left-to-right</ComboBoxOption>
-                <ComboBoxOption value="rtl">Right-to-left</ComboBoxOption>
+                <Option value="ltr">Left-to-right</Option>
+                <Option value="rtl">Right-to-left</Option>
               </ComboBox>
               <TextInput search placeholder="Type something" />
               <TextInput multiline />
@@ -263,21 +263,21 @@ function App() {
             </VGroup>
             <div>
               <ComboBox default="qux1">
-                <ComboBoxOption value="foo">Foo</ComboBoxOption>
-                <ComboBoxOption value="bar">Bar</ComboBoxOption>
-                <ComboBoxOption value="qux">Qux</ComboBoxOption>
-                <ComboBoxOption value="foo9">Foo 9</ComboBoxOption>
-                <ComboBoxOption value="bar3">Bar 3</ComboBoxOption>
-                <ComboBoxOption value="qux2">Qux 2</ComboBoxOption>
-                <ComboBoxOption value="foo1">Foo 1</ComboBoxOption>
-                <ComboBoxOption value="bar0">Bar 0</ComboBoxOption>
-                <ComboBoxOption value="quxA">Qux A</ComboBoxOption>
-                <ComboBoxOption value="fooB">Foo B</ComboBoxOption>
-                <ComboBoxOption value="barC">Bar C</ComboBoxOption>
-                <ComboBoxOption value="quxD">Qux D</ComboBoxOption>
-                <ComboBoxOption value="fooE">Foo E</ComboBoxOption>
-                <ComboBoxOption value="barF">Bar F</ComboBoxOption>
-                <ComboBoxOption value="qux1">Qux 1</ComboBoxOption>
+                <Option value="foo">Foo</Option>
+                <Option value="bar">Bar</Option>
+                <Option value="qux">Qux</Option>
+                <Option value="foo9">Foo 9</Option>
+                <Option value="bar3">Bar 3</Option>
+                <Option value="qux2">Qux 2</Option>
+                <Option value="foo1">Foo 1</Option>
+                <Option value="bar0">Bar 0</Option>
+                <Option value="quxA">Qux A</Option>
+                <Option value="fooB">Foo B</Option>
+                <Option value="barC">Bar C</Option>
+                <Option value="quxD">Qux D</Option>
+                <Option value="fooE">Foo E</Option>
+                <Option value="barF">Bar F</Option>
+                <Option value="qux1">Qux 1</Option>
               </ComboBox>
             </div>
             <Container

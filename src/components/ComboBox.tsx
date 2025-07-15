@@ -3,7 +3,6 @@ import React, {
   useRef,
   useState,
   useEffect,
-  createContext,
 } from "react";
 import { styled } from "styled-components";
 import { computePosition, offset, flip, shift, size } from "@floating-ui/dom";
@@ -17,15 +16,11 @@ import { UpArrowIcon, DownArrowIcon } from "./Icons";
 import { Side } from "../utils/PlacementUtils";
 import { Theme, ThemeContext } from "../theme";
 import { enhanceBrightness, contrast } from "../utils/ColorUtils";
-import {
-  BUTTON_NAVIGABLE,
-  fontFamily,
-  fontSize,
-  maximumZIndex,
-} from "../utils/vars";
+import { fontFamily, fontSize, maximumZIndex } from "../utils/vars";
 import * as RFConvert from "../utils/RFConvert";
 import { focusPrevSibling, focusNextSibling } from "../utils/FocusUtils";
 import { RFObserver } from "../utils/RFObserver";
+import { ComboBoxStatic } from "./ComboBoxStatic";
 
 // Item visible transition
 const visibleTransition = "opacity 300ms ease-out, top 300ms ease-out";
@@ -38,12 +33,6 @@ input.on("inputPressed", function (e: Event): void {
   currentInputPressedListener?.(e);
 });
 
-// Global function
-let currentComboBoxChange: Function | null = null;
-
-// Global function
-let currentComboBoxClose: Function | null = null;
-
 // Invoked by the global mouse down event listener
 let currentMouseDownListener: Function | null = null;
 
@@ -54,15 +43,16 @@ if (typeof window !== "undefined") {
   });
 }
 
-// Cooldown when clicking options
-let cooldown = 0;
-
 // Dropdown CSS
 const DropdownDiv = styled.div<{
   $visible: boolean;
   $theme: Theme;
+  $rtl: boolean;
   $big: boolean;
   $medium: boolean;
+  $bigOrMedium: boolean;
+  $optionHoverBackground: string;
+  $optionActiveBackground: string;
   $opacity: number;
   $transition: string;
   $arrowsVisible: boolean;
@@ -100,6 +90,40 @@ const DropdownDiv = styled.div<{
     flex-direction: row;
     justify-content: center;
     height: ${RFConvert.points.cascadingRF(7.5)};
+  }
+
+  /* Option */
+
+  & .ComboBox-list > .Option {
+    display: inline-flex;
+    flex-direction: ${($) => (!$.$rtl ? "row" : "row-reverse")};
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    padding: 0.5rem 0.7rem;
+    background: none;
+    border: none;
+    outline: none;
+    color: ${($) => $.$theme.colors.foreground};
+    font-family: ${fontFamily};
+    font-size: ${($) => ($.$bigOrMedium ? "1.1rem" : fontSize)};
+    ${($) => ($.$bigOrMedium ? "font-weight: lighter;" : "")}
+  }
+
+  & .ComboBox-list > .Option:hover,
+  & .ComboBox-list > .Option:focus {
+    background: ${($) => $.$optionHoverBackground};
+  }
+
+  & .ComboBox-list > .Option:active,
+  & .ComboBox-list > .Option[data-selected="true"] {
+    background: ${($) => $.$optionActiveBackground};
+    color: ${($) =>
+      enhanceBrightness($.$optionActiveBackground, $.$theme.colors.primary)
+    };
+  }
+
+  & .ComboBox-list > .Option:disabled {
+    opacity: 0.5;
   }
 `;
 
@@ -224,11 +248,11 @@ export function ComboBox(options: ComboBoxOptions) {
   const [arrowsVisible, setArrowsVisible] = useState<boolean>(false);
   const [value, setValue] = useState<string>(options.default ?? "");
   const [changed, set_changed] = useState<boolean>(false);
-  const [valueHyperText, setValueHyperText] = useState<string>("");
+  const [value_html, set_value_html] = useState<string>("");
   const [rf, set_rf] = useState<number>(0); // root font size
 
   // Refs
-  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const button_reference = useRef<HTMLButtonElement | null>(null);
   const divRef = useRef<HTMLDivElement | null>(null);
 
   // Transition timeout
@@ -263,6 +287,10 @@ export function ComboBox(options: ComboBoxOptions) {
             opacity: 0.7;
         }
     `;
+  
+  // Option specific colors.
+  const optionHoverBackground = contrast(theme.colors.inputBackground, 0.1);
+  const optionActiveBackground = contrast(theme.colors.inputBackground, 0.15);
 
   let small_normal_color: Color | undefined = options.small
     ? options.primary
@@ -305,7 +333,7 @@ export function ComboBox(options: ComboBoxOptions) {
     }
 
     // Update cooldown
-    cooldown = Date.now();
+    ComboBoxStatic.cooldown = Date.now();
 
     // Viewport event listeners
     currentMouseDownListener = viewport_onMouseDown;
@@ -314,10 +342,10 @@ export function ComboBox(options: ComboBoxOptions) {
     currentInputPressedListener = input_onInputPressed;
 
     // Change function
-    currentComboBoxChange = triggerChange;
+    ComboBoxStatic.change = triggerChange;
 
     // Close function
-    currentComboBoxClose = close;
+    ComboBoxStatic.close = close;
 
     // Turn visible
     setVisible(true);
@@ -334,7 +362,7 @@ export function ComboBox(options: ComboBoxOptions) {
     // Position after button.
     let prev_display = div.style.display;
     if (prev_display === "none") div.style.display = "inline-block";
-    const r = await computePosition(buttonRef.current!, div, {
+    const r = await computePosition(button_reference.current!, div, {
       placement: "bottom-start",
       middleware: [
         offset(3), flip(), shift(),
@@ -408,14 +436,14 @@ export function ComboBox(options: ComboBoxOptions) {
       children.find((e) => e.getAttribute("data-value") == value) ?? null;
     if (selectedOption) {
       selectedOption.setAttribute("data-selected", "true");
-      setValueHyperText(selectedOption.innerHTML);
+      set_value_html(selectedOption.innerHTML);
     }
 
     // Dispatch event
     options.change?.(value);
 
     // Focus button
-    buttonRef.current!.focus();
+    button_reference.current!.focus();
   }
 
   // Close the list
@@ -437,10 +465,10 @@ export function ComboBox(options: ComboBoxOptions) {
     currentInputPressedListener = null;
 
     // Change function
-    currentComboBoxChange = null;
+    ComboBoxStatic.change = null;
 
     // Close function
-    currentComboBoxClose = null;
+    ComboBoxStatic.close = null;
 
     // Turn invisible
     setVisible(false);
@@ -480,7 +508,7 @@ export function ComboBox(options: ComboBoxOptions) {
     // Escape
     if (input.justPressed("escape")) {
       close();
-      buttonRef.current!.focus();
+      button_reference.current!.focus();
       return;
     }
 
@@ -532,10 +560,10 @@ export function ComboBox(options: ComboBoxOptions) {
       currentInputPressedListener = input_onInputPressed;
 
       // Change function
-      currentComboBoxChange = triggerChange;
+      ComboBoxStatic.change = triggerChange;
 
       // Close function
-      currentComboBoxClose = close;
+      ComboBoxStatic.close = close;
     }
   }, [visible]);
 
@@ -564,7 +592,7 @@ export function ComboBox(options: ComboBoxOptions) {
     <>
       <Button
         id={options.id}
-        ref={buttonRef}
+        ref={button_reference}
         style={options.style}
         className={options.className}
         disabled={!!options.disabled}
@@ -580,35 +608,37 @@ export function ComboBox(options: ComboBoxOptions) {
       >
         <div
           className="ComboBox-button-inner"
-          dangerouslySetInnerHTML={{ __html: valueHyperText }}
+          dangerouslySetInnerHTML={{ __html: value_html }}
         ></div>
 
         <div className="ComboBox-button-arrow">
           <DownArrowIcon size={options.big ? 18 : options.small ? 7 : 10.5} />
         </div>
       </Button>
-      <ComboBoxOptionBigProvider big={!!options.big || !!options.medium}>
-        <DropdownDiv
-          ref={divRef}
-          $visible={visible}
-          $theme={theme}
-          $big={!!options.big}
-          $medium={!!options.medium}
-          $opacity={opacity}
-          $transition={transition}
-          $arrowsVisible={arrowsVisible}
-          $x={x}
-          $y={y}
-        >
-          <div className="ComboBox-up-arrow">
-            <UpArrowIcon size={7.5} />
-          </div>
-          <div className="ComboBox-list">{options.children}</div>
-          <div className="ComboBox-down-arrow">
-            <DownArrowIcon size={7.5} />
-          </div>
-        </DropdownDiv>
-      </ComboBoxOptionBigProvider>
+      <DropdownDiv
+        ref={divRef}
+        $visible={visible}
+        $theme={theme}
+        $rtl={rtl}
+        $big={!!options.big}
+        $medium={!!options.medium}
+        $bigOrMedium={!!options.big || !!options.medium}
+        $opacity={opacity}
+        $transition={transition}
+        $arrowsVisible={arrowsVisible}
+        $optionHoverBackground={optionHoverBackground}
+        $optionActiveBackground={optionActiveBackground}
+        $x={x}
+        $y={y}
+      >
+        <div className="ComboBox-up-arrow">
+          <UpArrowIcon size={7.5} />
+        </div>
+        <div className="ComboBox-list">{options.children}</div>
+        <div className="ComboBox-down-arrow">
+          <DownArrowIcon size={7.5} />
+        </div>
+      </DropdownDiv>
     </>
   );
 }
@@ -653,110 +683,3 @@ export type ComboBoxOptions = {
    */
   change?: (value: string) => void;
 };
-
-const ComboBoxOptionButton = styled.button<{
-  $rtl: boolean;
-  $theme: Theme;
-  $big: boolean;
-  $hoverBackground: string;
-  $activeBackground: string;
-}>`
-  display: inline-flex;
-  flex-direction: ${($) => (!$.$rtl ? "row" : "row-reverse")};
-  flex-wrap: wrap;
-  gap: 0.9rem;
-  padding: 0.5rem 0.7rem;
-  background: none;
-  border: none;
-  outline: none;
-  color: ${($) => $.$theme.colors.foreground};
-  font-family: ${fontFamily};
-  font-size: ${($) => ($.$big ? "1.1rem" : fontSize)};
-  ${($) => ($.$big ? "font-weight: lighter;" : "")}
-
-  &:hover, &:focus {
-    background: ${($) => $.$hoverBackground};
-  }
-
-  &:active,
-  &[data-selected="true"] {
-    background: ${($) => $.$activeBackground};
-    color: ${($) =>
-      enhanceBrightness($.$activeBackground, $.$theme.colors.primary)};
-  }
-
-  &:disabled {
-    opacity: 0.5;
-  }
-`;
-
-export function ComboBoxOption(options: ComboBoxOptionOptions) {
-  // Locale direction
-  const rtl = useContext(RTLContext);
-
-  // Use the theme context
-  const theme = useContext(ThemeContext);
-
-  // Big
-  const big = useContext(ComboBoxOptionBigContext);
-
-  // Button ref
-  const buttonRef = useRef<HTMLButtonElement | null>(null);
-
-  // Build the style class
-  const hoverBackground = contrast(theme.colors.inputBackground, 0.1);
-  const activeBackground = contrast(theme.colors.inputBackground, 0.15);
-
-  function button_onClick(): void {
-    if (cooldown > Date.now() - 50) {
-      return;
-    }
-    currentComboBoxChange?.(options.value);
-    currentComboBoxClose?.();
-  }
-
-  return (
-    <ComboBoxOptionButton
-      className={
-        BUTTON_NAVIGABLE + (options.className ? " " + options.className : "")
-      }
-      onClick={button_onClick}
-      ref={buttonRef}
-      data-value={options.value}
-      $rtl={rtl}
-      $theme={theme}
-      $big={big}
-      $hoverBackground={hoverBackground}
-      $activeBackground={activeBackground}
-    >
-      {options.children}
-    </ComboBoxOptionButton>
-  );
-}
-
-export type ComboBoxOptionOptions = {
-  children?: React.ReactNode;
-  style?: React.CSSProperties;
-  className?: string;
-
-  /**
-   * Value.
-   */
-  value: string;
-};
-
-const ComboBoxOptionBigContext = createContext<boolean>(false);
-
-function ComboBoxOptionBigProvider({
-  big,
-  children,
-}: {
-  big: boolean;
-  children?: React.ReactNode;
-}) {
-  return (
-    <ComboBoxOptionBigContext.Provider value={big}>
-      {children}
-    </ComboBoxOptionBigContext.Provider>
-  );
-}
