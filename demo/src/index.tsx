@@ -16,7 +16,6 @@ import {
   CheckBox,
   Tiles,
   TilesController,
-  TilesState,
   IconRegistry,
   ThemePresets,
   ThemeProvider,
@@ -27,10 +26,10 @@ import {
   useContextMenu,
   ContextMenu,
   ContextMenuItem,
-  ContextMenuCheck,
+  ContextMenuIndicator,
   ContextMenuIcon,
   ContextMenuLabel,
-  ContextMenuRight,
+  ContextMenuLast,
   ContextMenuSeparator,
   ContextMenuSubmenu,
   ContextMenuSubIcon,
@@ -296,177 +295,176 @@ function App() {
                 className="foo"
                 click={() => {
                   alert("clicked item 1");
-                }}
-              >
-                <ContextMenuCheck state="none" />
+                }}>
+                <ContextMenuIndicator state="none" />
                 <ContextMenuIcon></ContextMenuIcon>
                 <ContextMenuLabel>Item 1</ContextMenuLabel>
-                <ContextMenuRight>Ctrl+Z</ContextMenuRight>
+                <ContextMenuLast>Ctrl+Z</ContextMenuLast>
               </ContextMenuItem>
               <ContextMenuItem className="bar">
-                <ContextMenuCheck state="checked" />
+                <ContextMenuIndicator state="checked" />
                 <ContextMenuIcon></ContextMenuIcon>
                 <ContextMenuLabel>Item 2</ContextMenuLabel>
-                <ContextMenuRight></ContextMenuRight>
+                <ContextMenuLast></ContextMenuLast>
               </ContextMenuItem>
               <ContextMenuSeparator />
               <ContextMenuItem className="qux">
-                <ContextMenuCheck state="option" />
+                <ContextMenuIndicator state="option" />
                 <ContextMenuIcon></ContextMenuIcon>
                 <ContextMenuLabel>Item 3</ContextMenuLabel>
-                <ContextMenuRight></ContextMenuRight>
+                <ContextMenuLast></ContextMenuLast>
               </ContextMenuItem>
               <ContextMenuSubmenu>
-                <ContextMenuCheck state="none" />
+                <ContextMenuIndicator state="none" />
                 <ContextMenuIcon></ContextMenuIcon>
                 <ContextMenuLabel>Submenu 1</ContextMenuLabel>
-                <ContextMenuRight>
+                <ContextMenuLast>
                   <ContextMenuSubIcon />
-                </ContextMenuRight>
+                </ContextMenuLast>
               </ContextMenuSubmenu>
               <ContextMenuSubmenuList>
                 <ContextMenuItem click={() => alert("clicked item a")}>
                   <ContextMenuIcon></ContextMenuIcon>
                   <ContextMenuLabel>Item A</ContextMenuLabel>
-                  <ContextMenuRight></ContextMenuRight>
+                  <ContextMenuLast></ContextMenuLast>
                 </ContextMenuItem>
                 <ContextMenuItem disabled={true}>
                   <ContextMenuIcon></ContextMenuIcon>
                   <ContextMenuLabel>Item A</ContextMenuLabel>
-                  <ContextMenuRight></ContextMenuRight>
+                  <ContextMenuLast></ContextMenuLast>
                 </ContextMenuItem>
                 <ContextMenuSubmenu>
                   <ContextMenuIcon></ContextMenuIcon>
                   <ContextMenuLabel>Submenu A</ContextMenuLabel>
-                  <ContextMenuRight>
+                  <ContextMenuLast>
                     <ContextMenuSubIcon />
-                  </ContextMenuRight>
+                  </ContextMenuLast>
                 </ContextMenuSubmenu>
                 <ContextMenuSubmenuList>
                   <ContextMenuItem click={() => alert("clicked item a1")}>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item A1</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem disabled={true}>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item AA1</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item B2</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item C2</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item D2</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item E2</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item F2</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item G2</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item H2</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item I2</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item J2</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item K2</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item L2</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item M2</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item N2</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item AK2</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item AL2</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item AM2</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item AN2</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item AO2</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item AP2</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item AQ2</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item AR2</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item AS2</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                   <ContextMenuItem>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item AT2</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                   </ContextMenuItem>
                 </ContextMenuSubmenuList>
               </ContextMenuSubmenuList>

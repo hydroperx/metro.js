@@ -665,7 +665,7 @@ const ItemButton = styled.button<{
  * A column in a context menu item for reserving space
  * for "checked" and "selected option" signs.
  */
-export function ContextMenuCheck(options: ContextMenuCheckOptions) {
+export function ContextMenuIndicator(options: ContextMenuIndicatorOptions) {
   // Size
   const size = RFConvert.points.cascadingRF(9);
 
@@ -680,11 +680,11 @@ export function ContextMenuCheck(options: ContextMenuCheckOptions) {
   );
 }
 
-export type ContextMenuCheckOptions = {
-  state?: ContextMenuCheckState;
+export type ContextMenuIndicatorOptions = {
+  state?: ContextMenuIndicatorState;
 };
 
-export type ContextMenuCheckState = "none" | "checked" | "option";
+export type ContextMenuIndicatorState = "none" | "checked" | "option";
 
 // CSS
 const CheckSpan = styled.span<{
@@ -743,7 +743,7 @@ const LabelSpan = styled.span<{
  * A column in a context menu item for reserving space
  * for a shortcut label or a right icon.
  */
-export function ContextMenuRight(options: ContextMenuRightOptions) {
+export function ContextMenuLast(options: ContextMenuLastOptions) {
   // Locale direction
   const rtl = useContext(RTLContext);
 
@@ -757,7 +757,7 @@ export function ContextMenuRight(options: ContextMenuRightOptions) {
   );
 }
 
-export type ContextMenuRightOptions = {
+export type ContextMenuLastOptions = {
   children?: React.ReactNode;
 };
 

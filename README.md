@@ -157,7 +157,7 @@ Displaying context menus (typically these from a right click) is supported by th
 ```tsx
 import {
     useContextMenu, ContextMenu,
-    ContextMenuItem, ContextMenuIcon, ContextMenuLabel, ContextMenuRight,
+    ContextMenuItem, ContextMenuIcon, ContextMenuLabel, ContextMenuLast,
     ContextMenuSeparator, ContextMenuSubmenu, ContextMenuSubmenuList,
     ContextMenuSubIcon,
 } from "@hydroperx/metro";
@@ -177,19 +177,19 @@ function MyComp() {
                 <ContextMenuItem click={item1_onClick}>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Item 1</ContextMenuLabel>
-                    <ContextMenuRight></ContextMenuRight>
+                    <ContextMenuLast></ContextMenuLast>
                 </ContextMenuItem>
                 <ContextMenuSeparator/>
                 <ContextMenuSubmenu>
                     <ContextMenuIcon></ContextMenuIcon>
                     <ContextMenuLabel>Submenu 1</ContextMenuLabel>
-                    <ContextMenuRight><ContextMenuSubIcon/></ContextMenuRight>
+                    <ContextMenuLast><ContextMenuSubIcon/></ContextMenuLast>
                 </ContextMenuSubmenu>
                 <ContextMenuSubmenuList>
                     <ContextMenuItem disabled={true}>
                         <ContextMenuIcon></ContextMenuIcon>
                         <ContextMenuLabel>Item A</ContextMenuLabel>
-                        <ContextMenuRight></ContextMenuRight>
+                        <ContextMenuLast></ContextMenuLast>
                     </ContextMenuItem>
                 </ContextMenuSubmenuList>
             </ContextMenu>
@@ -198,21 +198,21 @@ function MyComp() {
 }
 ```
 
-If a context menu contains "checked" or "option" items, prepend a `<ContextMenuCheck/>` column to every item with the attribute `state` set to either `none`, `checked` or `option`.
+If a context menu contains "checked" or "option" items, prepend a `<ContextMenuIndicator/>` column to every item with the attribute `state` set to either `none`, `checked` or `option`.
 
 ```tsx
 (
     <ContextMenuItem>
-        <ContextMenuCheck state="none"/>
+        <ContextMenuIndicator state="none"/>
         <ContextMenuIcon></ContextMenuIcon>
         <ContextMenuLabel>Item 1</ContextMenuLabel>
-        <ContextMenuRight></ContextMenuRight>
+        <ContextMenuLast></ContextMenuLast>
     </ContextMenuItem>
     <ContextMenuItem>
-        <ContextMenuCheck state="checked"/>
+        <ContextMenuIndicator state="checked"/>
         <ContextMenuIcon></ContextMenuIcon>
         <ContextMenuLabel>Item 2</ContextMenuLabel>
-        <ContextMenuRight></ContextMenuRight>
+        <ContextMenuLast></ContextMenuLast>
     </ContextMenuItem>
 );
 ```

@@ -47,8 +47,6 @@ Basic components
 - [ ] Checkbox
   - [ ] Checkbox indicator should be draggable (depends on RTL)
 - [ ] ContextMenu
-  - [ ] Make ContextMenu items more concise; perhaps reuse `<Item>`, `<Label>` and so on.
-  - [ ] Autofocus item on hover
   - [ ] Fix context menu not showing down scroll indicator on viewport overflow
 - [ ] Item
 - [ ] Reimplement live tiles
