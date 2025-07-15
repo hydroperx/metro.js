@@ -30,7 +30,8 @@ import "@fontsource/noto-sans/500.css";
 import "@fontsource/noto-sans/700.css";
 
 // Courier Prime
-import "@fontsource/courier-prime";
+import "@fontsource/courier-prime/400.css";
+import "@fontsource/courier-prime/700.css";
 ```
 
 ## Documentation
