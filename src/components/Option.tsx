@@ -7,7 +7,7 @@ export function Option(options: OptionOptions) {
   // Button ref
   const button_reference = useRef<HTMLButtonElement | null>(null);
 
-  function button_onClick(): void {
+  function button_click(): void {
     const parent = button_reference.current!.parentElement!;
     
     // ComboBox specific behavior
@@ -25,7 +25,7 @@ export function Option(options: OptionOptions) {
       className={
         BUTTON_NAVIGABLE + " Option" + (options.className ? " " + options.className : "")
       }
-      onClick={button_onClick}
+      onClick={button_click}
       ref={button_reference}
       data-value={options.value}>
       {options.children}
