@@ -251,9 +251,12 @@ export function ComboBox(options: ComboBoxOptions) {
   const [value_html, set_value_html] = useState<string>("");
   const [rf, set_rf] = useState<number>(0); // root font size
 
-  // Refs
+  // References
   const button_reference = useRef<HTMLButtonElement | null>(null);
-  const divRef = useRef<HTMLDivElement | null>(null);
+  const div_reference = useRef<HTMLDivElement | null>(null);
+  const keydown_reference = useRef<Function | null>(null);
+  const key_sequence_reference = useRef<string>("");
+  const key_sequence_last_timestamp = useRef<number>(0);
 
   // Transition timeout
   let transitionTimeout = -1;
@@ -349,6 +352,34 @@ export function ComboBox(options: ComboBoxOptions) {
 
     // Turn visible
     setVisible(true);
+
+    // Key down handler
+    if (keydown_reference.current) {
+      window.removeEventListener("keydown", keydown_reference.current! as any);
+    }
+    keydown_reference.current = (e: KeyboardEvent) => {
+      if (e.key == " " || String.fromCodePoint(e.key.toLowerCase().codePointAt(0) ?? 0) != e.key.toLowerCase()) {
+        key_sequence_last_timestamp.current = 0;
+        return;
+      }
+
+      if (Date.now() < key_sequence_last_timestamp.current + 700) {
+        // continue key sequence
+        key_sequence_reference.current += e.key.toLowerCase();
+      } else {
+        // start new key sequence
+        key_sequence_reference.current = e.key.toLowerCase();
+      }
+      for (const option of Array.from(getItemListDiv().children) as HTMLElement[]) {
+        const option_text = option!.innerText.trim().toLowerCase();
+        if (option_text.startsWith(key_sequence_reference.current)) {
+          option.focus();
+          break;
+        }
+      }
+      key_sequence_last_timestamp.current = Date.now();
+    };
+    window.addEventListener("keydown", keydown_reference.current! as any);
 
     // Div
     const div = getDiv();
@@ -472,14 +503,20 @@ export function ComboBox(options: ComboBoxOptions) {
 
     // Turn invisible
     setVisible(false);
+
+    // Detach key down handler
+    if (keydown_reference.current) {
+      window.removeEventListener("keydown", keydown_reference.current! as any);
+      keydown_reference.current = null;
+    }
   }
 
   function getDiv(): HTMLDivElement {
-    return divRef.current! as HTMLDivElement;
+    return div_reference.current! as HTMLDivElement;
   }
 
   function getItemListDiv(): HTMLDivElement {
-    return divRef.current!.children[1] as HTMLDivElement;
+    return div_reference.current!.children[1] as HTMLDivElement;
   }
 
   // Detect mouse down event out of the list, closing itself.
@@ -616,7 +653,7 @@ export function ComboBox(options: ComboBoxOptions) {
         </div>
       </Button>
       <DropdownDiv
-        ref={divRef}
+        ref={div_reference}
         $visible={visible}
         $theme={theme}
         $rtl={rtl}

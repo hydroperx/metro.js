@@ -59,6 +59,9 @@ const submenuClassName = "ContextMenuSubmenuList-submenu";
 // The keys are the submenu lists themselves, not the submenu representing items.
 const submenuInputPressedListeners = new WeakMap<HTMLDivElement, Function>();
 
+// Weak map mapping to key down listeners of submenus.
+const submenuKeyDownListeners = new WeakMap<HTMLDivElement, Function>();
+
 // Invoked by the global Input action listener.
 let currentInputPressedListener: Function | null = null;
 
@@ -155,8 +158,8 @@ export function ContextMenu(options: ContextMenuOptions) {
 
   // Locale direction
   const rtl = useContext(RTLContext);
-  const rtl_ref = useRef<{ value?: boolean }>({}).current;
-  rtl_ref.value = rtl;
+  const rtl_reference = useRef<{ value?: boolean }>({}).current;
+  rtl_reference.value = rtl;
 
   // State
   const [visible, setVisible] = useState<boolean>(false);
@@ -167,17 +170,20 @@ export function ContextMenu(options: ContextMenuOptions) {
   const [arrowsVisible, setArrowsVisible] = useState<boolean>(false);
 
   // References
-  const divRef = useRef<HTMLDivElement | null>(null);
+  const div_reference = useRef<HTMLDivElement | null>(null);
+  const keydown_reference = useRef<Function | null>(null);
+  const key_sequence_reference = useRef<string>("");
+  const key_sequence_last_timestamp = useRef<number>(0);
 
   // Transition timeout
   let transitionTimeout = -1;
 
   function getItemListDiv(): HTMLDivElement {
-    return divRef.current!.children[1] as HTMLDivElement;
+    return div_reference.current!.children[1] as HTMLDivElement;
   }
 
   // Handle "show" signal
-  async function eventDispatcher_onShow(e: CustomEvent<ContextMenuEvent>) {
+  async function eventDispatcher_show(e: CustomEvent<ContextMenuEvent>) {
     // Identifier must match
     if (e.detail.id !== options.id) {
       return;
@@ -187,7 +193,7 @@ export function ContextMenu(options: ContextMenuOptions) {
     setVisible(true);
 
     // Obtain div element
-    const div = divRef.current!;
+    const div = div_reference.current!;
 
     // Disable transition
     setTransition("");
@@ -200,10 +206,51 @@ export function ContextMenu(options: ContextMenuOptions) {
     listItemDiv.scrollTop = k_scroll;
 
     // Viewport event listeners
-    currentMouseDownListener = viewport_onMouseDown;
+    currentMouseDownListener = viewport_mouseDown;
 
     // Input listeners
-    currentInputPressedListener = input_onInputPressed;
+    currentInputPressedListener = input_inputPressed;
+
+    // Key down handler
+    if (keydown_reference.current) {
+      window.removeEventListener("keydown", keydown_reference.current! as any);
+    }
+    keydown_reference.current = (e: KeyboardEvent) => {
+      if (e.key == " " || String.fromCodePoint(e.key.toLowerCase().codePointAt(0) ?? 0) != e.key.toLowerCase()) {
+        key_sequence_last_timestamp.current = 0;
+        return;
+      }
+
+      // Proceed only if this is the innermost context menu open.
+      const submenus = (
+        Array.from(
+          getItemListDiv().querySelectorAll("." + submenuClassName),
+        ) as HTMLDivElement[]
+      ).filter((div) => div.style.visibility == "visible");
+      const innermost = submenus.length === 0;
+      if (!innermost) {
+        return;
+      }
+
+      if (Date.now() < key_sequence_last_timestamp.current + 700) {
+        // continue key sequence
+        key_sequence_reference.current += e.key.toLowerCase();
+      } else {
+        // start new key sequence
+        key_sequence_reference.current = e.key.toLowerCase();
+      }
+      for (const item of Array.from(getItemListDiv().children) as HTMLElement[]) {
+        const label = item.querySelector(".ContextMenuLabel") as HTMLElement | null;
+        if (!label) continue;
+        const label_text = label!.innerText.trim().toLowerCase();
+        if (label_text.startsWith(key_sequence_reference.current)) {
+          item.focus();
+          break;
+        }
+      }
+      key_sequence_last_timestamp.current = Date.now();
+    };
+    window.addEventListener("keydown", keydown_reference.current! as any);
 
     // Side resolution
     let sideResolution: Side = "bottom";
@@ -321,24 +368,35 @@ export function ContextMenu(options: ContextMenuOptions) {
     // Input listeners
     currentInputPressedListener = null;
 
+    // Detach key down handler
+    if (keydown_reference.current) {
+      window.removeEventListener("keydown", keydown_reference.current! as any);
+      keydown_reference.current = null;
+    }
+
     // Hide submenus by querying their classes
     for (const div of Array.from(
       itemListDiv.querySelectorAll("." + submenuClassName),
     ) as HTMLDivElement[]) {
       div.style.visibility = "hidden";
+      // Detach key down handler
+      if (submenuKeyDownListeners.has(div)) {
+        window.removeEventListener("keydown", submenuKeyDownListeners.get(div) as any);
+        submenuKeyDownListeners.delete(div);
+      }
       submenuInputPressedListeners.delete(div);
     }
   }
 
   // Detect mouse down event out of the context menu,
   // closing all connected menus.
-  function viewport_onMouseDown(): void {
+  function viewport_mouseDown(): void {
     if (!visible) {
       return;
     }
 
     // Obtain div element
-    const div = divRef.current!;
+    const div = div_reference.current!;
 
     // Test hover
     let out = true;
@@ -369,7 +427,7 @@ export function ContextMenu(options: ContextMenuOptions) {
   }
 
   // Handle arrows and escape
-  function input_onInputPressed(e: Event): void {
+  function input_inputPressed(e: Event): void {
     if (!visible) {
       return;
     }
@@ -415,7 +473,7 @@ export function ContextMenu(options: ContextMenuOptions) {
         // open submenu
         else if (
           input.justPressed(
-            !rtl_ref.value ? "navigateRight" : "navigateLeft",
+            !rtl_reference.value ? "navigateRight" : "navigateLeft",
           ) &&
           child.classList.contains(submenuItemClassName)
         ) {
@@ -468,28 +526,28 @@ export function ContextMenu(options: ContextMenuOptions) {
   useEffect(() => {
     if (visible) {
       // Viewport event listeners
-      currentMouseDownListener = viewport_onMouseDown;
+      currentMouseDownListener = viewport_mouseDown;
 
       // Input listeners
-      currentInputPressedListener = input_onInputPressed;
+      currentInputPressedListener = input_inputPressed;
     }
   }, [visible]);
 
   useEffect(() => {
-    eventDispatcher.addEventListener("show", eventDispatcher_onShow);
+    eventDispatcher.addEventListener("show", eventDispatcher_show);
     eventDispatcher.addEventListener("hideAll", hideAll);
 
     // Cleanup
     return () => {
       // Event dispatcher listeners
-      eventDispatcher.removeEventListener("show", eventDispatcher_onShow);
+      eventDispatcher.removeEventListener("show", eventDispatcher_show);
       eventDispatcher.removeEventListener("hideAll", hideAll);
     };
   });
 
   return (
     <MainDiv
-      ref={divRef}
+      ref={div_reference}
       $visible={visible}
       $theme={theme}
       $opacity={opacity}
@@ -572,7 +630,7 @@ export function ContextMenuItem(options: ContextMenuItemOptions) {
   const theme = useContext(ThemeContext);
 
   // Button ref
-  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const button_reference = useRef<HTMLButtonElement | null>(null);
 
   // Build the style class
   const hoverBackground = Color(theme.colors.inputBackground)
@@ -581,26 +639,32 @@ export function ContextMenuItem(options: ContextMenuItemOptions) {
 
   function hideAllFromParent(element: HTMLElement): void {
     const parent = element.parentElement!;
-    for (const divElement of Array.from(
+    for (const div of Array.from(
       parent.querySelectorAll("." + submenuClassName),
-    )) {
-      (divElement as HTMLElement).style.visibility = "hidden";
+    ) as HTMLDivElement[]) {
+      div.style.visibility = "hidden";
+      // Detach key down handler
+      if (submenuKeyDownListeners.has(div)) {
+        window.removeEventListener("keydown", submenuKeyDownListeners.get(div) as any);
+        submenuKeyDownListeners.delete(div);
+      }
+      submenuInputPressedListeners.delete(div);
     }
   }
 
-  function button_onMouseX(_e: MouseEvent): void {
-    const button = buttonRef.current!;
+  function button_mouseX(_e: MouseEvent): void {
+    const button = button_reference.current!;
     button.focus();
     hideAllFromParent(button);
   }
 
   useEffect(() => {
-    const button = buttonRef.current!;
+    const button = button_reference.current!;
 
-    button.addEventListener("mouseover", button_onMouseX);
+    button.addEventListener("mouseover", button_mouseX);
   });
 
-  function button_onClick(): void {
+  function button_click(): void {
     hideAllContextMenu();
     options.click?.();
   }
@@ -611,8 +675,8 @@ export function ContextMenuItem(options: ContextMenuItemOptions) {
         BUTTON_NAVIGABLE + (options.className ? " " + options.className : "")
       }
       disabled={options.disabled}
-      onClick={button_onClick}
-      ref={buttonRef}
+      onClick={button_click}
+      ref={button_reference}
       $rtl={rtl}
       $theme={theme}
       $hoverBackground={hoverBackground}
@@ -725,7 +789,7 @@ export function ContextMenuLabel(options: ContextMenuLabelOptions) {
   // Locale direction
   const rtl = useContext(RTLContext);
 
-  return <LabelSpan $rtl={rtl}>{options.children}</LabelSpan>;
+  return <LabelSpan className="ContextMenuLabel" $rtl={rtl}>{options.children}</LabelSpan>;
 }
 
 export type ContextMenuLabelOptions = {
@@ -781,14 +845,14 @@ const RightSpan = styled.span<{
 export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
   // Locale direction
   const rtl = useContext(RTLContext);
-  const rtl_ref = useRef<{ value?: boolean }>({}).current;
-  rtl_ref.value = rtl;
+  const rtl_reference = useRef<{ value?: boolean }>({}).current;
+  rtl_reference.value = rtl;
 
   // Use the theme context
   const theme = useContext(ThemeContext);
 
   // Button reference
-  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const button_reference = useRef<HTMLButtonElement | null>(null);
 
   // Build the style class
   const hoverBackground = Color(theme.colors.inputBackground)
@@ -799,7 +863,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
   let transitionTimeout = -1;
 
   function getDiv(): HTMLDivElement {
-    const button = buttonRef.current!;
+    const button = button_reference.current!;
     const div = button.nextElementSibling;
     assert(
       div instanceof HTMLDivElement && div.classList.contains(submenuClassName),
@@ -846,16 +910,61 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
     div.style.transition = "";
 
     // Button
-    const button = buttonRef.current!;
+    const button = button_reference.current!;
 
     // Input listeners
-    submenuInputPressedListeners.set(div, input_onInputPressed);
+    submenuInputPressedListeners.set(div, input_inputPressed);
+
+    // Key down handler
+    if (submenuKeyDownListeners.has(div)) {
+      window.removeEventListener("keydown", submenuKeyDownListeners.get(div) as any);
+    }
+    submenuKeyDownListeners.set(div, (e: KeyboardEvent) => {
+      if (e.key == " " || String.fromCodePoint(e.key.toLowerCase().codePointAt(0) ?? 0) != e.key.toLowerCase()) {
+        div.setAttribute("data-keySequenceLastTimestamp", "0");
+        return;
+      }
+
+      // Proceed only if this is the innermost context menu open.
+      const submenus = (
+        Array.from(
+          getItemListDiv().querySelectorAll("." + submenuClassName),
+        ) as HTMLDivElement[]
+      ).filter((div) => div.style.visibility == "visible");
+      const innermost = submenus.length === 0;
+      if (!innermost) {
+        return;
+      }
+
+      let key_sequence_last_timestamp = parseInt(div.getAttribute("data-keySequenceLastTimestamp") ?? "0");
+      let key_sequence = div.getAttribute("data-keySequence") ?? "";
+
+      if (Date.now() < key_sequence_last_timestamp + 700) {
+        // continue key sequence
+        key_sequence += e.key.toLowerCase();
+      } else {
+        // start new key sequence
+        key_sequence = e.key.toLowerCase();
+      }
+      div.setAttribute("data-keySequence", key_sequence);
+      for (const item of Array.from(getItemListDiv().children) as HTMLElement[]) {
+        const label = item.querySelector(".ContextMenuLabel") as HTMLElement | null;
+        if (!label) continue;
+        const label_text = label!.innerText.trim().toLowerCase();
+        if (label_text.startsWith(key_sequence)) {
+          item.focus();
+          break;
+        }
+      }
+      div.setAttribute("data-keySequenceLastTimestamp", Date.now().toString());
+    });
+    window.addEventListener("keydown", submenuKeyDownListeners.get(div) as any);
 
     // Position context menu after butotn.
     let prev_display = div.style.display;
     if (prev_display === "none") div.style.display = "inline-block";
     const r = await computePosition(button, div, {
-      placement: !rtl_ref.value ? "right" : "left",
+      placement: !rtl_reference.value ? "right" : "left",
       middleware: [
         flip(), shift(),
         size({
@@ -956,24 +1065,29 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
 
     for (const div of divs) {
       div.style.visibility = "hidden";
+      // Detach key down handler
+      if (submenuKeyDownListeners.has(div)) {
+        window.removeEventListener("keydown", submenuKeyDownListeners.get(div) as any);
+        submenuKeyDownListeners.delete(div);
+      }
       submenuInputPressedListeners.delete(div);
     }
   }
 
-  function button_onClick(_e: MouseEvent): void {
+  function button_click(_e: MouseEvent): void {
     show(getDiv());
   }
 
   let hoverTimeout: number = -1;
 
-  function button_onMouseOver(e: MouseEvent): void {
-    buttonRef.current!.focus();
+  function button_mouseOver(e: MouseEvent): void {
+    button_reference.current!.focus();
     hoverTimeout = window.setTimeout(() => {
       show(getDiv());
     }, 500);
   }
 
-  function button_onMouseOut(e: MouseEvent): void {
+  function button_mouseOut(e: MouseEvent): void {
     if (hoverTimeout !== -1) {
       window.clearTimeout(hoverTimeout);
       hoverTimeout = -1;
@@ -981,9 +1095,9 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
   }
 
   // Handle arrows and escape
-  function input_onInputPressed(e: Event): void {
+  function input_inputPressed(e: Event): void {
     // Obtain button element
-    const button = buttonRef.current!;
+    const button = button_reference.current!;
 
     // Obtain div element
     const div = getDiv();
@@ -1025,7 +1139,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
         // open submenu
         else if (
           input.justPressed(
-            !rtl_ref.value ? "navigateRight" : "navigateLeft",
+            !rtl_reference.value ? "navigateRight" : "navigateLeft",
           ) &&
           child.classList.contains(submenuItemClassName)
         ) {
@@ -1043,7 +1157,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
         // close current submenu
         else if (
           input.justPressed(
-            !rtl_ref.value ? "navigateLeft" : "navigateRight",
+            !rtl_reference.value ? "navigateLeft" : "navigateRight",
           )
         ) {
           hideAllFromParent(div);
@@ -1080,7 +1194,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
       // close current submenu
       else if (
         input.justPressed(
-          !rtl_ref.value ? "navigateLeft" : "navigateRight",
+          !rtl_reference.value ? "navigateLeft" : "navigateRight",
         )
       ) {
         hideAllFromParent(div);
@@ -1092,18 +1206,18 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
   }
 
   useEffect(() => {
-    const button = buttonRef.current!;
+    const button = button_reference.current!;
 
-    button.addEventListener("mouseover", button_onMouseOver);
-    button.addEventListener("mouseout", button_onMouseOut);
-    button.addEventListener("click", button_onClick);
+    button.addEventListener("mouseover", button_mouseOver);
+    button.addEventListener("mouseout", button_mouseOut);
+    button.addEventListener("click", button_click);
 
     // Submenu div
     const div = getDiv();
 
     // Track input pressed listener
     if (div) {
-      submenuInputPressedListeners.set(div, input_onInputPressed);
+      submenuInputPressedListeners.set(div, input_inputPressed);
     }
 
     return () => {
@@ -1115,7 +1229,7 @@ export function ContextMenuSubmenu(options: ContextMenuSubmenuOptions) {
   return (
     <SubmenuButton
       className={submenuItemClassName + " " + BUTTON_NAVIGABLE}
-      ref={buttonRef}
+      ref={button_reference}
       $rtl={rtl}
       $theme={theme}
       $hoverBackground={hoverBackground}
@@ -1164,10 +1278,10 @@ export function ContextMenuSubmenuList(options: ContextMenuSubmenuListOptions) {
   const theme = useContext(ThemeContext);
 
   // References
-  const divRef = useRef<HTMLDivElement | null>(null);
+  const div_reference = useRef<HTMLDivElement | null>(null);
 
   return (
-    <SubmenuMainDiv ref={divRef} className={submenuClassName} $theme={theme}>
+    <SubmenuMainDiv ref={div_reference} className={submenuClassName} $theme={theme}>
       <div className="ContextMenu-up-arrow">
         <UpArrowIcon size={7.5} />
       </div>
