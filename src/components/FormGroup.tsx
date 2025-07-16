@@ -11,6 +11,7 @@ const Div = styled.div<{
   display: flex;
   flex-direction: ${($) =>
     $.$vertical ? "column" : !$.$rtl ? "row" : "row-reverse"};
+  align-items: center;
   gap: 1rem;
 
   ${($) =>
