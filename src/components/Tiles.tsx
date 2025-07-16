@@ -236,7 +236,7 @@ export function Tiles(options: TilesOptions) {
 
   // Misc vars
   const { controller: tiles_controller } = options;
-  const tiles_state = new TilesState();
+  const tiles_state = useRef<TilesState>(new TilesState());
   const tiles_pages = new Map<
     string,
     {
@@ -261,15 +261,15 @@ export function Tiles(options: TilesOptions) {
   const rf = useRef<number>(16);
 
   // Tiles1
-  let tiles1: Tiles1 | null = null;
+  let tiles1 = useRef<Tiles1 | null>(null);
 
   // Modes
-  let selection_mode = false;
-  let drag_n_drop_mode = false;
+  let selection_mode = useRef<boolean>(false);
+  let drag_n_drop_mode = useRef<boolean>(false);
 
   // Initialize Tiles1 instance
   function init_tiles1(): void {
-    tiles1 = new Tiles1({
+    tiles1.current = new Tiles1({
       element: div_ref.current!,
       direction: "horizontal",
       labelClassName: labelClass,
@@ -285,34 +285,34 @@ export function Tiles(options: TilesOptions) {
     });
 
     // On state update
-    tiles1.addEventListener("stateUpdated", ({ detail: state }) => {
-      tiles_state._clear_and_set1(state);
-      options.stateUpdated?.(tiles_state);
+    tiles1.current!.addEventListener("stateUpdated", ({ detail: state }) => {
+      tiles_state.current._clear_and_set1(state);
+      options.stateUpdated?.(tiles_state.current);
     });
 
     // On drag start
-    tiles1.addEventListener("dragStart", ({ detail: { tile: el } }) => {
+    tiles1.current!.addEventListener("dragStart", ({ detail: { tile: el } }) => {
       if (el.getAttribute("data-drag-n-drop-mode") == "true") return;
     });
 
     // On drag move
-    tiles1.addEventListener("drag", ({ detail: { tile: el } }) => {
+    tiles1.current!.addEventListener("drag", ({ detail: { tile: el } }) => {
       if (el.getAttribute("data-dragging") != "true") {
         el.style.transform = el.getAttribute("data-transform-3d")!;
         return;
       }
 
       el.style.transform = "";
-      if (!drag_n_drop_mode) mode_signal({ dragNDrop: true });
+      if (!drag_n_drop_mode.current) mode_signal({ dragNDrop: true });
     });
 
     // On drag end
-    tiles1.addEventListener("dragEnd", ({ detail: { tile: el } }) => {
+    tiles1.current!.addEventListener("dragEnd", ({ detail: { tile: el } }) => {
       mode_signal({ dragNDrop: false });
     });
 
     // On tile added
-    tiles1.addEventListener("addedTile", ({ detail: { tile, button } }) => {
+    tiles1.current!.addEventListener("addedTile", ({ detail: { tile, button } }) => {
       let contextTimeout = -1,
         contextTimestamp = -1;
 
@@ -354,7 +354,7 @@ export function Tiles(options: TilesOptions) {
     });
 
     // On group added
-    tiles1.addEventListener("addedGroup", ({ detail: { group, label } }) => {
+    tiles1.current!.addEventListener("addedGroup", ({ detail: { group, label } }) => {
       // On label click, make it editable
       label.addEventListener("click", (e) => {
         // If already editing, do nothing.
@@ -386,7 +386,7 @@ export function Tiles(options: TilesOptions) {
           // turn label ineditable and save new value
           const label_val = input.value;
           label.innerHTML = "";
-          tiles1!.renameGroup(group.id, label_val);
+          tiles1.current!.renameGroup(group.id, label_val);
 
           clear_handler();
         };
@@ -394,7 +394,7 @@ export function Tiles(options: TilesOptions) {
         const cancel_label = () => {
           // turn label ineditable and discard last typed value
           label.innerHTML = "";
-          const group_state = tiles1!.state.groups.get(group.id);
+          const group_state = tiles1.current!.state.groups.get(group.id);
           if (group_state) label.innerText = group_state.label;
 
           clear_handler();
@@ -432,13 +432,13 @@ export function Tiles(options: TilesOptions) {
     selection?: boolean;
   }): void {
     if (params.dragNDrop) {
-      drag_n_drop_mode = true;
+      drag_n_drop_mode.current = true;
 
       // Set data-drag-n-drop-mode="true" attribute to tiles
       for (const tile_btn of div_ref.current!.querySelectorAll("." + tileClass))
         tile_btn.setAttribute("data-drag-n-drop-mode", "true");
     } else if (params.dragNDrop !== undefined) {
-      drag_n_drop_mode = false;
+      drag_n_drop_mode.current = false;
 
       // Remove data-drag-n-drop-mode attribute from tiles
       for (const tile_btn of div_ref.current!.querySelectorAll("." + tileClass))
@@ -446,13 +446,13 @@ export function Tiles(options: TilesOptions) {
     }
 
     if (params.selection) {
-      selection_mode = true;
+      selection_mode.current = true;
 
       // Set data-selection-mode="true" attribute to tiles
       for (const tile_btn of div_ref.current!.querySelectorAll("." + tileClass))
         tile_btn.setAttribute("data-selection-mode", "true");
     } else if (params.selection !== undefined) {
-      selection_mode = false;
+      selection_mode.current = false;
 
       // Remove data-selection-mode attribute from tiles
       for (const tile_btn of div_ref.current!.querySelectorAll("." + tileClass))
@@ -462,7 +462,7 @@ export function Tiles(options: TilesOptions) {
 
   function assert_tiles1_initialized(): void {
     assert(
-      !!tiles1,
+      !!tiles1.current,
       "Tiles not initialized yet. Make sure to run initialization code within the TilesController#initialized() event.",
     );
   }
@@ -500,7 +500,7 @@ export function Tiles(options: TilesOptions) {
       new CustomEvent("tileExistsResult", {
         detail: {
           requestId: e.detail.requestId,
-          value: tiles1!.state.tileExists(e.detail.tile),
+          value: tiles1.current!.state.tileExists(e.detail.tile),
         },
       }),
     );
@@ -518,7 +518,7 @@ export function Tiles(options: TilesOptions) {
       new CustomEvent("groupExistsResult", {
         detail: {
           requestId: e.detail.requestId,
-          value: tiles1!.state.groupExists(e.detail.group),
+          value: tiles1.current!.state.groupExists(e.detail.group),
         },
       }),
     );
@@ -687,13 +687,13 @@ export function Tiles(options: TilesOptions) {
   }
   function add_tile(tile: Tile): void {
     assert_tiles1_initialized();
-    assert(!tiles_state.tileExists(tile.id), "Duplicate tile: " + tile.id);
+    assert(!tiles_state.current.tileExists(tile.id), "Duplicate tile: " + tile.id);
     assert(
-      tiles_state.groupExists(tile.group),
+      tiles_state.current.groupExists(tile.group),
       "Group not found: " + tile.group,
     );
 
-    const element = tiles1!.addTile({
+    const element = tiles1.current!.addTile({
       id: tile.id,
       group: tile.group,
       x: tile.x,
@@ -718,8 +718,8 @@ export function Tiles(options: TilesOptions) {
     element.style.background = `linear-gradient(90deg, ${color} 0%, ${tile_color_b1} 100%)`;
 
     // Initialize state
-    const state1 = tiles1!.state.tiles.get(tile.id)!;
-    tiles_state.tiles.set(tile.id, {
+    const state1 = tiles1.current!.state.tiles.get(tile.id)!;
+    tiles_state.current.tiles.set(tile.id, {
       x: state1.x,
       y: state1.y,
       size: state1.size,
@@ -738,7 +738,7 @@ export function Tiles(options: TilesOptions) {
   }
   function remove_tile(tile_id: string): void {
     assert_tiles1_initialized();
-    tiles1!.removeTile(tile_id);
+    tiles1.current!.removeTile(tile_id);
     tiles_pages.delete(tile_id);
 
     const button = Array.from(
@@ -759,7 +759,7 @@ export function Tiles(options: TilesOptions) {
   }
   function resize_tile(tile_id: string, size: TileSize): void {
     assert_tiles1_initialized();
-    tiles1!.resizeTile(tile_id, size);
+    tiles1.current!.resizeTile(tile_id, size);
     const pages = tiles_pages.get(tile_id);
     if (pages)
       set_tile_pages(tile_id, pages.icon, pages.label, pages.livePages);
@@ -772,7 +772,8 @@ export function Tiles(options: TilesOptions) {
   }
   function clear(): void {
     assert_tiles1_initialized();
-    tiles1!.clear();
+    tiles1.current!.clear();
+    tiles_state.current.clear();
     mode_signal({ dragNDrop: false, selection: false });
   }
   tiles_controller.addEventListener("clear", tiles_controller_clear);
@@ -785,7 +786,7 @@ export function Tiles(options: TilesOptions) {
   }
   function set_checked(tile_id: string, value: boolean): void {
     const buttons = Array.from(
-      div_ref.current!.querySelectorAll("." + tileClass),
+      div_ref.current!.querySelectorAll("." + tileClass)
     ) as HTMLButtonElement[];
     const this_button = buttons.find(
       (btn) => btn.getAttribute("data-id") === tile_id,
@@ -830,7 +831,7 @@ export function Tiles(options: TilesOptions) {
   function set_tile_color(tile_id: string, color: string): void {
     assert_tiles1_initialized();
 
-    const state = tiles_state.tiles.get(tile_id);
+    const state = tiles_state.current.tiles.get(tile_id);
     if (!state) return;
 
     const element = Array.from(
@@ -845,7 +846,7 @@ export function Tiles(options: TilesOptions) {
     element.style.background = `linear-gradient(90deg, ${color} 0%, ${tile_color_b1} 100%)`;
     state.color = color;
 
-    options.stateUpdated?.(tiles_state);
+    options.stateUpdated?.(tiles_state.current);
   }
   tiles_controller.addEventListener(
     "setTileColor",
@@ -891,7 +892,7 @@ export function Tiles(options: TilesOptions) {
     tiles_pages.set(tile, { icon, label, livePages });
 
     // Retrieve state
-    const state = tiles_state.tiles.get(tile);
+    const state = tiles_state.current.tiles.get(tile);
 
     // Use the checked rect as a reference to before where page divs are added.
     const checked_rect = button.querySelector(
@@ -967,11 +968,11 @@ export function Tiles(options: TilesOptions) {
   function add_group(group: TileGroup): void {
     assert_tiles1_initialized();
     assert(
-      !tiles_state.groupExists(group.id),
+      !tiles_state.current.groupExists(group.id),
       "Duplicate group ID: " + group.id,
     );
 
-    const group_button = tiles1!.addGroup({
+    const group_button = tiles1.current!.addGroup({
       id: group.id,
       label: group.label,
     });
@@ -984,7 +985,7 @@ export function Tiles(options: TilesOptions) {
   }
   function remove_group(group_id: string): void {
     assert_tiles1_initialized();
-    tiles1!.removeGroup(group_id);
+    tiles1.current!.removeGroup(group_id);
   }
   tiles_controller.addEventListener(
     "removeGroup",
@@ -999,7 +1000,7 @@ export function Tiles(options: TilesOptions) {
   }
   function rename_group(group_id: string, label: string): void {
     assert_tiles1_initialized();
-    tiles1!.renameGroup(group_id, label);
+    tiles1.current!.renameGroup(group_id, label);
   }
   tiles_controller.addEventListener(
     "renameGroup",
@@ -1048,7 +1049,7 @@ export function Tiles(options: TilesOptions) {
 
     return () => {
       // Destroy Tiles1 instance
-      tiles1?.destroy();
+      tiles1.current?.destroy();
 
       // Dispose listeners on TilesController
       tiles_controller.removeEventListener(
