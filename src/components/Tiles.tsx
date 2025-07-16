@@ -766,6 +766,17 @@ export function Tiles(options: TilesOptions) {
   }
   tiles_controller.addEventListener("resizeTile", tiles_controller_resizeTile);
 
+  // Clear
+  function tiles_controller_clear(e: Event): void {
+    clear();
+  }
+  function clear(): void {
+    assert_tiles1_initialized();
+    tiles1!.clear();
+    mode_signal({ dragNDrop: false, selection: false });
+  }
+  tiles_controller.addEventListener("clear", tiles_controller_clear);
+
   // Set whether tile is checked or not
   function tiles_controller_setChecked(
     e: CustomEvent<{ id: string; value: boolean }>,
@@ -1093,6 +1104,7 @@ export function Tiles(options: TilesOptions) {
         "uncheckAll",
         tiles_controller_uncheckAll,
       );
+      tiles_controller.removeEventListener("clear", tiles_controller_clear);
 
       // Disopse listeners on window
       window.removeEventListener("keydown", on_key_down);
@@ -1358,6 +1370,7 @@ export class TilesState {
  */
 export class TilesController extends (EventTarget as TypedEventTarget<{
   initialized: Event;
+  clear: Event;
   addTile: CustomEvent<Tile>;
   tileExists: CustomEvent<{ requestId: string; tile: string }>;
   tileExistsResult: CustomEvent<{ requestId: string; value: boolean }>;
@@ -1481,6 +1494,12 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
       new CustomEvent("removeTile", {
         detail: id,
       }),
+    );
+  }
+
+  clear(): void {
+    this.dispatchEvent(
+      new Event("clear"),
     );
   }
 
