@@ -314,9 +314,48 @@ export function Tiles(options: TilesOptions) {
 
     // On tile added
     tiles1.current!.addEventListener("addedTile", ({ detail: { tile, button } }) => {
-      let contextTimeout = -1,
-        contextTimestamp = -1;
+      let
+        contextTimeout = -1,
+        contextTimestamp = -1,
+        justHeldLong = false;
 
+      // mouse down
+      button.addEventListener("mousedown", (e) => {
+        contextTimeout = window.setTimeout(() => {
+          // do not simulate context menu if dragging tile
+          if (button.getAttribute("data-dragging") == "true") return;
+
+          // holding long on a tile will check it
+          // (simulated context menu)
+          tile_simulated_context_menu(button);
+          justHeldLong = true;
+          contextTimestamp = Date.now();
+        }, 600);
+      });
+      // mouse up
+      button.addEventListener("mouseup", (e) => {
+        if (contextTimeout !== -1)
+          window.clearTimeout(contextTimeout), (contextTimeout = -1);
+      });
+      // mouse out
+      button.addEventListener("mouseout", (e) => {
+        if (contextTimeout !== -1)
+          window.clearTimeout(contextTimeout), (contextTimeout = -1);
+        if (justHeldLong) {
+          justHeldLong = false;
+          return;
+        }
+      });
+      // click
+      button.addEventListener("click", (e) => {
+        if (justHeldLong) {
+          justHeldLong = false;
+          return;
+        }
+        click(e);
+      });
+
+      // touch start
       button.addEventListener("touchstart", (e) => {
         contextTimeout = window.setTimeout(() => {
           // do not simulate context menu if dragging tile
@@ -325,18 +364,34 @@ export function Tiles(options: TilesOptions) {
           // holding long on a tile will check it
           // (simulated context menu)
           tile_simulated_context_menu(button);
+          justHeldLong = true;
           contextTimestamp = Date.now();
         }, 600);
       });
+      // touch end
       button.addEventListener("touchend", (e) => {
         if (contextTimeout !== -1)
           window.clearTimeout(contextTimeout), (contextTimeout = -1);
+        if (justHeldLong) {
+          justHeldLong = false;
+          return;
+        }
+        if (contextTimestamp === -1 || contextTimestamp < Date.now() - 100) {
+          click(e);
+        }
       });
+      // touch cancel
       button.addEventListener("touchcancel", (e) => {
         if (contextTimeout !== -1)
           window.clearTimeout(contextTimeout), (contextTimeout = -1);
+        if (justHeldLong) {
+          justHeldLong = false;
+          return;
+        }
       });
-      button.addEventListener("click", (e) => {
+
+      // click
+      function click(e: Event) {
         if (contextTimeout !== -1)
           window.clearTimeout(contextTimeout), (contextTimeout = -1);
         // a click in a tile
@@ -351,7 +406,7 @@ export function Tiles(options: TilesOptions) {
 
           contextTimestamp = -1;
         }
-      });
+      }
     });
 
     // On group added
