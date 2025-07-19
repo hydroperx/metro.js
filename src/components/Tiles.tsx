@@ -236,6 +236,7 @@ export function Tiles(options: TilesOptions) {
 
   // Misc vars
   const { controller: tiles_controller } = options;
+  const tiles_controller_reference = useRef<TilesController>(tiles_controller);
   const tiles_state = useRef<TilesState>(new TilesState());
   const tiles_pages = new Map<
     string,
@@ -423,7 +424,7 @@ export function Tiles(options: TilesOptions) {
     });
 
     // Emit initialization event
-    tiles_controller.dispatchEvent(new Event("initialized"));
+    tiles_controller_reference.current.dispatchEvent(new Event("initialized"));
   }
 
   // Detect a mode change
@@ -1115,6 +1116,10 @@ export function Tiles(options: TilesOptions) {
         window.removeEventListener("click", label_click_out_handler);
     };
   }, []);
+
+  useEffect(() => {
+    tiles_controller_reference.current = tiles_controller;
+  }, [tiles_controller]);
 
   return (
     <Div
