@@ -168,6 +168,16 @@ const Div = styled.div<{
     height: 4.4rem;
   }
 
+  & .${tileIconClass}.high {
+    width: 6.4rem;
+    height: 6.4rem;
+  }
+
+  & .${tileIconClass}.extra-high {
+    width: 8.4rem;
+    height: 8.4rem;
+  }
+
   & .${tileLabelClass} {
     font-size: 0.75rem;
     padding: 0.2rem 1rem;
@@ -177,6 +187,16 @@ const Div = styled.div<{
   & .Tile[data-size="small"] .${tileIconClass} {
     width: 2.5rem;
     height: 2.5rem;
+  }
+
+  & .Tile[data-size="small"] .${tileIconClass}.high {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  & .Tile[data-size="small"] .${tileIconClass}.extra-high {
+    width: 3.5rem;
+    height: 3.5rem;
   }
 
   & .Tile[data-size="small"] .${tileLabelClass} {
@@ -238,14 +258,16 @@ export function Tiles(options: TilesOptions) {
   const { controller: tiles_controller } = options;
   const tiles_controller_reference = useRef<TilesController>(tiles_controller);
   const tiles_state = useRef<TilesState>(new TilesState());
-  const tiles_pages = new Map<
+  const tiles_pages = useRef(new Map<
     string,
     {
       icon: string | undefined;
       label: string | undefined;
       livePages: LiveTilePage[] | undefined;
+      style: TileStyle | undefined;
+      iconSize: TileIconSize | undefined;
     }
-  >();
+  >());
 
   // Refs
   const div_ref = useRef<HTMLDivElement | null>(null);
@@ -692,17 +714,19 @@ export function Tiles(options: TilesOptions) {
       size: state1.size,
       group: state1.group,
       color,
+      style: tile.style,
+      iconSize: tile.iconSize,
     });
 
     // Initialize pages
-    set_tile_pages(tile.id, tile.icon, tile.label, tile.livePages);
+    set_tile_pages(tile.id, tile.icon, tile.label, tile.livePages, tile.iconSize, tile.style);
   }
 
   // Remove tile
   function remove_tile(tile_id: string): void {
     assert_tiles1_initialized();
     tiles1.current!.removeTile(tile_id);
-    tiles_pages.delete(tile_id);
+    tiles_pages.current.delete(tile_id);
 
     const button = Array.from(
       div_ref.current!.querySelectorAll("." + tileClass),
@@ -717,9 +741,9 @@ export function Tiles(options: TilesOptions) {
   function resize_tile(tile_id: string, size: TileSize): void {
     assert_tiles1_initialized();
     tiles1.current!.resizeTile(tile_id, size);
-    const pages = tiles_pages.get(tile_id);
+    const pages = tiles_pages.current.get(tile_id);
     if (pages)
-      set_tile_pages(tile_id, pages.icon, pages.label, pages.livePages);
+      set_tile_pages(tile_id, pages.icon, pages.label, pages.livePages, pages.iconSize, pages.style);
   }
 
   // Clear
@@ -727,6 +751,7 @@ export function Tiles(options: TilesOptions) {
     assert_tiles1_initialized();
     tiles1.current!.clear();
     tiles_state.current.clear();
+    tiles_pages.current.clear();
     mode_signal({ dragNDrop: false, selection: false });
   }
 
@@ -781,6 +806,8 @@ export function Tiles(options: TilesOptions) {
     icon: string | undefined,
     label: string | undefined,
     livePages: LiveTilePage[] | undefined,
+    iconSize: TileIconSize | undefined,
+    style: TileStyle | undefined,
   ): void {
     assert(
       livePages ? livePages!.length <= 2 : true,
@@ -795,7 +822,7 @@ export function Tiles(options: TilesOptions) {
     for (const page of Array.from(button.querySelectorAll("." + tilePageClass)))
       page.remove();
 
-    tiles_pages.set(tile, { icon, label, livePages });
+    tiles_pages.current.set(tile, { icon, label, livePages, iconSize, style });
 
     // Retrieve state
     const state = tiles_state.current.tiles.get(tile);
@@ -821,6 +848,18 @@ export function Tiles(options: TilesOptions) {
       if (icon) {
         const icon_el = document.createElement("div");
         icon_el.classList.add(tileIconClass);
+        if (iconSize !== undefined) {
+          switch (iconSize) {
+            case "high": {
+              icon_el.classList.add("high");
+              break;
+            }
+            case "extraHigh": {
+              icon_el.classList.add("extra-high");
+              break;
+            }
+          }
+        }
         icon_el.style.background = `url("${icon}") center no-repeat`;
         icon_el.style.backgroundSize = "contain";
         icon_wrap_el.appendChild(icon_el);
@@ -1013,6 +1052,8 @@ export function Tiles(options: TilesOptions) {
         icon?: string;
         label?: string;
         livePages?: LiveTilePage[];
+        iconSize?: TileIconSize;
+        style?: TileStyle;
       }>,
     ): void {
       assert_tiles1_initialized();
@@ -1021,6 +1062,8 @@ export function Tiles(options: TilesOptions) {
         e.detail.icon,
         e.detail.label,
         e.detail.livePages,
+        e.detail.iconSize,
+        e.detail.style,
       );
     }
 
@@ -1213,7 +1256,9 @@ export type Tile = {
   id: string;
 
   /**
-   * Tile color.
+   * Tile color. If `undefined`, displays a transparent tile.
+   * 
+   * @default undefined
    */
   color?: string;
 
@@ -1251,6 +1296,18 @@ export type Tile = {
   icon?: string;
 
   /**
+   * Tile's icon size.
+   */
+  iconSize?: TileIconSize;
+
+  /**
+   * Tile style.
+   * 
+   * @default "normal"
+   */
+  style?: TileStyle;
+
+  /**
    * List of HTML content for live tiles
    * with rolling animation, each element of
    * this array being a page of the tile.
@@ -1259,6 +1316,21 @@ export type Tile = {
    */
   livePages?: LiveTilePage[];
 };
+
+/**
+ * Tile style.
+ * 
+ * - If normal, then the icon is displayed at the center, and
+ *   the label is displayed at the bottom as normal characters.
+ * - If heading, then the label is displayed at the top-left as heading characters,
+ *   and the icon is displayed at the bottom-left.
+ */
+export type TileStyle = "normal" | "heading";
+
+/**
+ * Tile icon size variant.
+ */
+export type TileIconSize = "normal" | "high" | "extraHigh";
 
 export type LiveTilePage = {
   /**
@@ -1282,7 +1354,7 @@ export class TilesState {
   groups: Map<string, { index: number; label: string }> = new Map();
   tiles: Map<
     string,
-    { size: TileSize; x: number; y: number; group: string; color: string }
+    { size: TileSize; x: number; y: number; group: string; color?: string; style?: TileStyle; iconSize?: TileIconSize; }
   > = new Map();
 
   /**
@@ -1306,7 +1378,9 @@ export class TilesState {
         x: Number(o1.x),
         y: Number(o1.y),
         group: String(o1.group),
-        color: String(o1.color),
+        color: o1.color ? String(o1.color) : undefined,
+        iconSize: o1.iconSize ? (o1.iconSize as TileIconSize) : undefined,
+        style: o1.style ? (o1.style as TileStyle) : undefined,
       });
     }
     return r;
@@ -1330,7 +1404,9 @@ export class TilesState {
         x: t.x,
         y: t.y,
         group: t.group,
-        color: t.color,
+        color: t.color ?? null,
+        style: t.style ?? null,
+        iconSize: t.iconSize ?? null,
       };
     }
     return {
@@ -1358,15 +1434,26 @@ export class TilesState {
         y: tile.y,
         group: tile.group,
         color: tile.color,
+        style: tile.style,
+        iconSize: tile.iconSize,
       });
     }
   }
 
   /** @hidden */
   _clear_and_set1(state: Tiles1State): void {
-    const k_tile_colors = Array.from(this.tiles.entries()).map(([id, tile]) => [
+    type Stuff = {
+      color?: string,
+      style?: TileStyle,
+      iconSize?: TileIconSize,
+    };
+    const k_stuffs: [string, Stuff][] = Array.from(this.tiles.entries()).map(([id, tile]) => [
       id,
-      tile.color,
+      {
+        color: tile.color,
+        style: tile.style,
+        iconSize: tile.iconSize,
+      },
     ]);
     this.clear();
     for (const [id, group] of state.groups) {
@@ -1376,13 +1463,15 @@ export class TilesState {
       });
     }
     for (const [id, tile] of state.tiles) {
-      const k_color = k_tile_colors.find(([id1, color]) => id == id1);
+      const k_stuff = k_stuffs.find(([id1,]) => id == id1) as [string, Stuff];
       this.tiles.set(id, {
         size: tile.size,
         x: tile.x,
         y: tile.y,
         group: tile.group,
-        color: k_color?.[1] ?? "#724",
+        color: k_stuff?.[1]?.color ?? undefined,
+        style: k_stuff?.[1]?.style ?? undefined,
+        iconSize: k_stuff?.[1]?.iconSize ?? undefined,
       });
     }
   }
@@ -1432,6 +1521,8 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
     icon?: string;
     label?: string;
     livePages?: LiveTilePage[];
+    style?: TileStyle;
+    iconSize?: TileIconSize;
   }>;
   renameGroup: CustomEvent<{ id: string; value: string }>;
 }>) {
@@ -1625,13 +1716,15 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
     id: string,
     {
       icon,
+      iconSize,
       label,
       livePages,
-    }: { icon?: string; label?: string; livePages?: LiveTilePage[] },
+      style,
+    }: { icon?: string; label?: string; livePages?: LiveTilePage[], style?: TileStyle, iconSize?: TileIconSize },
   ): void {
     this.dispatchEvent(
       new CustomEvent("setTilePages", {
-        detail: { id, icon, label, livePages },
+        detail: { id, icon, label, livePages, style, iconSize },
       }),
     );
   }
