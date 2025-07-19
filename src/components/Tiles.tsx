@@ -468,92 +468,6 @@ export function Tiles(options: TilesOptions) {
     );
   }
 
-  // Handle request to get checked tiles
-  function tiles_controller_onGetChecked(
-    e: CustomEvent<{ requestId: string }>,
-  ) {
-    const div = div_ref.current;
-    let tiles: string[] = [];
-    if (div) {
-      tiles = Array.from(div.querySelectorAll("." + tileClass))
-        .filter((div) => div.getAttribute("data-checked") == "true")
-        .map((div) => div.getAttribute("data-id")!);
-    }
-    tiles_controller.dispatchEvent(
-      new CustomEvent("getCheckedResult", {
-        detail: {
-          requestId: e.detail.requestId,
-          tiles,
-        },
-      }),
-    );
-  }
-  tiles_controller.addEventListener(
-    "getChecked",
-    tiles_controller_onGetChecked,
-  );
-
-  // Handle request to determine whether a tile exists or not.
-  function tiles_controller_onTileExists(
-    e: CustomEvent<{ requestId: string; tile: string }>,
-  ) {
-    tiles_controller.dispatchEvent(
-      new CustomEvent("tileExistsResult", {
-        detail: {
-          requestId: e.detail.requestId,
-          value: tiles1.current!.state.tileExists(e.detail.tile),
-        },
-      }),
-    );
-  }
-  tiles_controller.addEventListener(
-    "tileExists",
-    tiles_controller_onTileExists,
-  );
-
-  // Handle request to determine whether a group exists or not.
-  function tiles_controller_onGroupExists(
-    e: CustomEvent<{ requestId: string; group: string }>,
-  ) {
-    tiles_controller.dispatchEvent(
-      new CustomEvent("groupExistsResult", {
-        detail: {
-          requestId: e.detail.requestId,
-          value: tiles1.current!.state.groupExists(e.detail.group),
-        },
-      }),
-    );
-  }
-  tiles_controller.addEventListener(
-    "groupExists",
-    tiles_controller_onGroupExists,
-  );
-
-  // Handle request to get a tile's button
-  function tiles_controller_onGetTileButton(
-    e: CustomEvent<{ requestId: string; tile: string }>,
-  ) {
-    const div = div_ref.current;
-    let button: HTMLButtonElement | null = null;
-    if (div) {
-      button = (Array.from(div.querySelectorAll("." + tileClass)).find(
-        (btn) => btn.getAttribute("data-id") == e.detail.tile,
-      ) ?? null) as HTMLButtonElement | null;
-    }
-    tiles_controller.dispatchEvent(
-      new CustomEvent("getTileButtonResult", {
-        detail: {
-          requestId: e.detail.requestId,
-          button,
-        },
-      }),
-    );
-  }
-  tiles_controller.addEventListener(
-    "getTileButton",
-    tiles_controller_onGetTileButton,
-  );
-
   // Tilting
   let tilting_button: HTMLButtonElement | null = null,
     tilting_pointer_id: number;
@@ -683,9 +597,6 @@ export function Tiles(options: TilesOptions) {
   }
 
   // Handle the request to add a tile
-  function tiles_controller_addTile(e: CustomEvent<Tile>) {
-    add_tile(e.detail);
-  }
   function add_tile(tile: Tile): void {
     assert_tiles1_initialized();
     assert(!tiles_state.current.tileExists(tile.id), "Duplicate tile: " + tile.id);
@@ -731,12 +642,8 @@ export function Tiles(options: TilesOptions) {
     // Initialize pages
     set_tile_pages(tile.id, tile.icon, tile.label, tile.livePages);
   }
-  tiles_controller.addEventListener("addTile", tiles_controller_addTile);
 
   // Remove tile
-  function tiles_controller_removeTile(e: CustomEvent<string>): void {
-    remove_tile(e.detail);
-  }
   function remove_tile(tile_id: string): void {
     assert_tiles1_initialized();
     tiles1.current!.removeTile(tile_id);
@@ -750,14 +657,8 @@ export function Tiles(options: TilesOptions) {
     if (button && button.getAttribute("data-dragging") === "true")
       mode_signal({ dragNDrop: false });
   }
-  tiles_controller.addEventListener("removeTile", tiles_controller_removeTile);
 
   // Resize tile
-  function tiles_controller_resizeTile(
-    e: CustomEvent<{ id: string; value: TileSize }>,
-  ): void {
-    resize_tile(e.detail.id, e.detail.value);
-  }
   function resize_tile(tile_id: string, size: TileSize): void {
     assert_tiles1_initialized();
     tiles1.current!.resizeTile(tile_id, size);
@@ -765,26 +666,16 @@ export function Tiles(options: TilesOptions) {
     if (pages)
       set_tile_pages(tile_id, pages.icon, pages.label, pages.livePages);
   }
-  tiles_controller.addEventListener("resizeTile", tiles_controller_resizeTile);
 
   // Clear
-  function tiles_controller_clear(e: Event): void {
-    clear();
-  }
   function clear(): void {
     assert_tiles1_initialized();
     tiles1.current!.clear();
     tiles_state.current.clear();
     mode_signal({ dragNDrop: false, selection: false });
   }
-  tiles_controller.addEventListener("clear", tiles_controller_clear);
 
   // Set whether tile is checked or not
-  function tiles_controller_setChecked(
-    e: CustomEvent<{ id: string; value: boolean }>,
-  ): void {
-    set_checked(e.detail.id, e.detail.value);
-  }
   function set_checked(tile_id: string, value: boolean): void {
     const buttons = Array.from(
       div_ref.current!.querySelectorAll("." + tileClass)
@@ -806,29 +697,8 @@ export function Tiles(options: TilesOptions) {
       options.checkedChange?.(checked_tiles);
     }
   }
-  tiles_controller.addEventListener("setChecked", tiles_controller_setChecked);
-
-  // Unchecks all tiles.
-  function tiles_controller_uncheckAll(e: Event): void {
-    const buttons = Array.from(
-      div_ref.current!.querySelectorAll("." + tileClass),
-    ) as HTMLButtonElement[];
-    for (const button of buttons) button.removeAttribute("data-checked");
-
-    // Mode change
-    mode_signal({ selection: false });
-
-    // Trigger checkedChange event
-    options.checkedChange?.([]);
-  }
-  tiles_controller.addEventListener("uncheckAll", tiles_controller_uncheckAll);
 
   // Recolor tile
-  function tiles_controller_setTileColor(
-    e: CustomEvent<{ id: string; value: string }>,
-  ): void {
-    set_tile_color(e.detail.id, e.detail.value);
-  }
   function set_tile_color(tile_id: string, color: string): void {
     assert_tiles1_initialized();
 
@@ -849,28 +719,8 @@ export function Tiles(options: TilesOptions) {
 
     options.stateUpdated?.(tiles_state.current);
   }
-  tiles_controller.addEventListener(
-    "setTileColor",
-    tiles_controller_setTileColor,
-  );
 
   // Set tile pages
-  function tiles_controller_setTilePages(
-    e: CustomEvent<{
-      id: string;
-      icon?: string;
-      label?: string;
-      livePages?: LiveTilePage[];
-    }>,
-  ): void {
-    assert_tiles1_initialized();
-    set_tile_pages(
-      e.detail.id,
-      e.detail.icon,
-      e.detail.label,
-      e.detail.livePages,
-    );
-  }
   function set_tile_pages(
     tile: string,
     icon: string | undefined,
@@ -957,15 +807,8 @@ export function Tiles(options: TilesOptions) {
       }
     }
   }
-  tiles_controller.addEventListener(
-    "setTilePages",
-    tiles_controller_setTilePages,
-  );
 
-  // Handle adding groups
-  function tiles_controller_addGroup(e: CustomEvent<TileGroup>): void {
-    add_group(e.detail);
-  }
+  // Add group
   function add_group(group: TileGroup): void {
     assert_tiles1_initialized();
     assert(
@@ -978,35 +821,18 @@ export function Tiles(options: TilesOptions) {
       label: group.label,
     });
   }
-  tiles_controller.addEventListener("addGroup", tiles_controller_addGroup);
 
-  // Remove group
-  function tiles_controller_removeGroup(e: CustomEvent<string>): void {
-    remove_group(e.detail);
-  }
+  //Remove group
   function remove_group(group_id: string): void {
     assert_tiles1_initialized();
     tiles1.current!.removeGroup(group_id);
   }
-  tiles_controller.addEventListener(
-    "removeGroup",
-    tiles_controller_removeGroup,
-  );
 
   // Rename group
-  function tiles_controller_renameGroup(
-    e: CustomEvent<{ id: string; value: string }>,
-  ): void {
-    rename_group(e.detail.id, e.detail.value);
-  }
   function rename_group(group_id: string, label: string): void {
     assert_tiles1_initialized();
     tiles1.current!.renameGroup(group_id, label);
   }
-  tiles_controller.addEventListener(
-    "renameGroup",
-    tiles_controller_renameGroup,
-  );
 
   // Observe root font size
   useEffect(() => {
@@ -1052,62 +878,6 @@ export function Tiles(options: TilesOptions) {
       // Destroy Tiles1 instance
       tiles1.current?.destroy();
 
-      // Dispose listeners on TilesController
-      tiles_controller.removeEventListener(
-        "getTileButton",
-        tiles_controller_onGetTileButton,
-      );
-      tiles_controller.removeEventListener(
-        "getChecked",
-        tiles_controller_onGetChecked,
-      );
-      tiles_controller.removeEventListener("addTile", tiles_controller_addTile);
-      tiles_controller.removeEventListener(
-        "resizeTile",
-        tiles_controller_resizeTile,
-      );
-      tiles_controller.removeEventListener(
-        "setTileColor",
-        tiles_controller_setTileColor,
-      );
-      tiles_controller.removeEventListener(
-        "setTilePages",
-        tiles_controller_setTilePages,
-      );
-      tiles_controller.removeEventListener(
-        "removeTile",
-        tiles_controller_removeTile,
-      );
-      tiles_controller.removeEventListener(
-        "tileExists",
-        tiles_controller_onTileExists,
-      );
-      tiles_controller.removeEventListener(
-        "addGroup",
-        tiles_controller_addGroup,
-      );
-      tiles_controller.removeEventListener(
-        "removeGroup",
-        tiles_controller_removeGroup,
-      );
-      tiles_controller.removeEventListener(
-        "groupExists",
-        tiles_controller_onGroupExists,
-      );
-      tiles_controller.removeEventListener(
-        "renameGroup",
-        tiles_controller_renameGroup,
-      );
-      tiles_controller.removeEventListener(
-        "setChecked",
-        tiles_controller_setChecked,
-      );
-      tiles_controller.removeEventListener(
-        "uncheckAll",
-        tiles_controller_uncheckAll,
-      );
-      tiles_controller.removeEventListener("clear", tiles_controller_clear);
-
       // Disopse listeners on window
       window.removeEventListener("keydown", on_key_down);
 
@@ -1118,7 +888,213 @@ export function Tiles(options: TilesOptions) {
   }, []);
 
   useEffect(() => {
+    // Reflect controller
     tiles_controller_reference.current = tiles_controller;
+
+    // Handle the request to add a tile
+    function tiles_controller_addTile(e: CustomEvent<Tile>) {
+      add_tile(e.detail);
+    }
+    tiles_controller.addEventListener("addTile", tiles_controller_addTile);
+
+    // Remove tile
+    function tiles_controller_removeTile(e: CustomEvent<string>): void {
+      remove_tile(e.detail);
+    }
+    tiles_controller.addEventListener("removeTile", tiles_controller_removeTile);
+
+    // Resize tile
+    function tiles_controller_resizeTile(
+      e: CustomEvent<{ id: string; value: TileSize }>,
+    ): void {
+      resize_tile(e.detail.id, e.detail.value);
+    }
+    tiles_controller.addEventListener("resizeTile", tiles_controller_resizeTile);
+
+    // Clear
+    function tiles_controller_clear(e: Event): void {
+      clear();
+    }
+    tiles_controller.addEventListener("clear", tiles_controller_clear);
+
+    // Set whether tile is checked or not
+    function tiles_controller_setChecked(
+      e: CustomEvent<{ id: string; value: boolean }>,
+    ): void {
+      set_checked(e.detail.id, e.detail.value);
+    }
+    tiles_controller.addEventListener("setChecked", tiles_controller_setChecked);
+
+    // Unchecks all tiles.
+    function tiles_controller_uncheckAll(e: Event): void {
+      const buttons = Array.from(
+        div_ref.current!.querySelectorAll("." + tileClass),
+      ) as HTMLButtonElement[];
+      for (const button of buttons) button.removeAttribute("data-checked");
+
+      // Mode change
+      mode_signal({ selection: false });
+
+      // Trigger checkedChange event
+      options.checkedChange?.([]);
+    }
+    tiles_controller.addEventListener("uncheckAll", tiles_controller_uncheckAll);
+
+    // Recolor tile
+    function tiles_controller_setTileColor(
+      e: CustomEvent<{ id: string; value: string }>,
+    ): void {
+      set_tile_color(e.detail.id, e.detail.value);
+    }
+    tiles_controller.addEventListener(
+      "setTileColor",
+      tiles_controller_setTileColor,
+    );
+
+    // Set tile pages
+    function tiles_controller_setTilePages(
+      e: CustomEvent<{
+        id: string;
+        icon?: string;
+        label?: string;
+        livePages?: LiveTilePage[];
+      }>,
+    ): void {
+      assert_tiles1_initialized();
+      set_tile_pages(
+        e.detail.id,
+        e.detail.icon,
+        e.detail.label,
+        e.detail.livePages,
+      );
+    }
+
+    tiles_controller.addEventListener(
+      "setTilePages",
+      tiles_controller_setTilePages,
+    );
+
+    // Handle request to get checked tiles
+    function tiles_controller_onGetChecked(
+      e: CustomEvent<{ requestId: string }>,
+    ) {
+      const div = div_ref.current;
+      let tiles: string[] = [];
+      if (div) {
+        tiles = Array.from(div.querySelectorAll("." + tileClass))
+          .filter((div) => div.getAttribute("data-checked") == "true")
+          .map((div) => div.getAttribute("data-id")!);
+      }
+      tiles_controller.dispatchEvent(
+        new CustomEvent("getCheckedResult", {
+          detail: {
+            requestId: e.detail.requestId,
+            tiles,
+          },
+        }),
+      );
+    }
+    tiles_controller.addEventListener(
+      "getChecked",
+      tiles_controller_onGetChecked,
+    );
+
+    // Handle request to determine whether a tile exists or not.
+    function tiles_controller_onTileExists(
+      e: CustomEvent<{ requestId: string; tile: string }>,
+    ) {
+      tiles_controller.dispatchEvent(
+        new CustomEvent("tileExistsResult", {
+          detail: {
+            requestId: e.detail.requestId,
+            value: tiles1.current!.state.tileExists(e.detail.tile),
+          },
+        }),
+      );
+    }
+    tiles_controller.addEventListener(
+      "tileExists",
+      tiles_controller_onTileExists,
+    );
+
+    // Handle request to determine whether a group exists or not.
+    function tiles_controller_onGroupExists(
+      e: CustomEvent<{ requestId: string; group: string }>,
+    ) {
+      tiles_controller.dispatchEvent(
+        new CustomEvent("groupExistsResult", {
+          detail: {
+            requestId: e.detail.requestId,
+            value: tiles1.current!.state.groupExists(e.detail.group),
+          },
+        }),
+      );
+    }
+    tiles_controller.addEventListener(
+      "groupExists",
+      tiles_controller_onGroupExists,
+    );
+
+    // Handle request to get a tile's button
+    function tiles_controller_onGetTileButton(
+      e: CustomEvent<{ requestId: string; tile: string }>,
+    ) {
+      const div = div_ref.current;
+      let button: HTMLButtonElement | null = null;
+      if (div) {
+        button = (Array.from(div.querySelectorAll("." + tileClass)).find(
+          (btn) => btn.getAttribute("data-id") == e.detail.tile,
+        ) ?? null) as HTMLButtonElement | null;
+      }
+      tiles_controller.dispatchEvent(
+        new CustomEvent("getTileButtonResult", {
+          detail: {
+            requestId: e.detail.requestId,
+            button,
+          },
+        }),
+      );
+    }
+    tiles_controller.addEventListener("getTileButton", tiles_controller_onGetTileButton);
+
+    // Handle adding groups
+    function tiles_controller_addGroup(e: CustomEvent<TileGroup>): void {
+      add_group(e.detail);
+    }
+    tiles_controller.addEventListener("addGroup", tiles_controller_addGroup);
+
+    // Remove group
+    function tiles_controller_removeGroup(e: CustomEvent<string>): void {
+      remove_group(e.detail);
+    }
+    tiles_controller.addEventListener("removeGroup", tiles_controller_removeGroup);
+
+    // Rename group
+    function tiles_controller_renameGroup(
+      e: CustomEvent<{ id: string; value: string }>,
+    ): void {
+      rename_group(e.detail.id, e.detail.value);
+    }
+    tiles_controller.addEventListener("renameGroup", tiles_controller_renameGroup);
+
+    return () => {
+      // Dispose listeners on TilesController
+      tiles_controller.removeEventListener("getTileButton", tiles_controller_onGetTileButton);
+      tiles_controller.removeEventListener("getChecked", tiles_controller_onGetChecked);
+      tiles_controller.removeEventListener("addTile", tiles_controller_addTile);
+      tiles_controller.removeEventListener("resizeTile", tiles_controller_resizeTile);
+      tiles_controller.removeEventListener("setTileColor", tiles_controller_setTileColor);
+      tiles_controller.removeEventListener("setTilePages", tiles_controller_setTilePages);
+      tiles_controller.removeEventListener("removeTile", tiles_controller_removeTile);
+      tiles_controller.removeEventListener("tileExists", tiles_controller_onTileExists);
+      tiles_controller.removeEventListener("addGroup", tiles_controller_addGroup);
+      tiles_controller.removeEventListener("removeGroup", tiles_controller_removeGroup);
+      tiles_controller.removeEventListener("groupExists", tiles_controller_onGroupExists);
+      tiles_controller.removeEventListener("renameGroup", tiles_controller_renameGroup);
+      tiles_controller.removeEventListener("setChecked", tiles_controller_setChecked);
+      tiles_controller.removeEventListener("uncheckAll", tiles_controller_uncheckAll);
+      tiles_controller.removeEventListener("clear", tiles_controller_clear);
+    };
   }, [tiles_controller]);
 
   return (
