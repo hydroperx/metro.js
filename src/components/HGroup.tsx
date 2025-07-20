@@ -148,7 +148,7 @@ export function HGroup(options: HGroupOptions) {
     overflowX = "hidden";
   }
   let overflowY = "";
-  if (options.clipVertical) {
+  if (options.clipVertical || options.wheelHorizontal) {
     overflowY = "hidden";
   }
   let justifyContent = "";

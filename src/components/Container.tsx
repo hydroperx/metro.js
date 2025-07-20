@@ -30,6 +30,7 @@ export function Container(options: ContainerOptions) {
 
   // Overflow X
   let overflowX = options.wheelHorizontal ? "auto" : "";
+  let overflowY = options.wheelHorizontal ? "hidden" : "";
 
   // Build transition
   let transition = "";
@@ -116,6 +117,7 @@ export function Container(options: ContainerOptions) {
       $maxWidth={options.maxWidth}
       $maxHeight={options.maxHeight}
       $overflowX={overflowX}
+      $overflowY={overflowY}
       $full={!!options.full}
       $user_select={user_select}
       $solid={!!options.solid}
@@ -228,6 +230,7 @@ const Div = styled.div<{
   $maxWidth?: number;
   $maxHeight?: number;
   $overflowX?: string;
+  $overflowY?: string;
   $full: boolean;
   $user_select: string;
   $solid: boolean;
@@ -257,6 +260,7 @@ const Div = styled.div<{
   font-size: ${fontSize};
   overflow: auto;
   ${($) => ($.$overflowX ? "overflow-x: " + $.$overflowX + ";" : "")}
+  ${($) => ($.$overflowY ? "overflow-y: " + $.$overflowY + ";" : "")}
   transition: ${($) => $.$transition};
   user-select: ${($) => $.$user_select};
   -moz-user-select: ${($) => $.$user_select};

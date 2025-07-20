@@ -65,7 +65,9 @@ const Div = styled.div<{
     opacity 0.3s ${($) => ($.$open ? "ease-out" : "ease-in")},
     transform 0.3s ${($) => ($.$open ? "ease-out" : "ease-in")};
   color: ${($) => $.$theme.colors.foreground};
-  padding: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  width: 100%;
+  height: 100%;
 
   &::-webkit-scrollbar {
     width: 12px;
