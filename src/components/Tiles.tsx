@@ -772,6 +772,9 @@ export function Tiles(options: TilesOptions) {
 
     // Initialize pages
     set_tile_pages(tile.id, tile.icon, tile.label, tile.livePages, tile.iconSize, tile.style);
+
+    // Trigger state update
+    options.stateUpdated?.(tiles_state.current);
   }
 
   // Remove tile
@@ -856,6 +859,7 @@ export function Tiles(options: TilesOptions) {
     }
     state.color = color;
 
+    // Trigger update
     options.stateUpdated?.(tiles_state.current);
   }
 
@@ -885,6 +889,14 @@ export function Tiles(options: TilesOptions) {
 
     // Retrieve state
     const state = tiles_state.current.tiles.get(tile);
+
+    if (state) {
+      state!.iconSize = iconSize;
+      state!.style = style;
+
+      // Trigger state update
+      options.stateUpdated?.(tiles_state.current);
+    }
 
     // Use the checked rect as a reference to before where page divs are added.
     const checked_rect = button.querySelector(
