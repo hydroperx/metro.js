@@ -213,8 +213,8 @@ export function HGroup(options: HGroupOptions) {
       )
         (multiplier *= 3), (last_fast_wheel_timestamp = Date.now());
       else last_fast_wheel_timestamp = -1;
-      const delta_y = e.deltaY * multiplier;
-      let target_scroll = div.scrollLeft + delta_y;
+      const delta = (e.deltaX || e.deltaY) * multiplier;
+      let target_scroll = div.scrollLeft + delta;
       target_scroll = Math.min(target_scroll, div.scrollWidth);
       div.scrollTo({ left: target_scroll, behavior: "smooth" });
       last_wheel_timestamp = Date.now();
