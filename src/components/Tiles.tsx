@@ -22,6 +22,7 @@ import * as RFConvert from "../utils/RFConvert";
 import { lighten, darken, enhanceBrightness, contrast } from "../utils/ColorUtils";
 import { fontFamily, fontSize } from "../utils/vars";
 import { randomHexLarge } from "../utils/RandomUtils";
+import { escapeHTML } from "../utils/EscapeUtils";
 
 // Cascading animations
 import "./Tiles.css";
@@ -65,6 +66,7 @@ const Div = styled.div<{
   transition:
     opacity 0.3s ${($) => ($.$open ? "ease-out" : "ease-in")},
     transform 0.3s ${($) => ($.$open ? "ease-out" : "ease-in")};
+  color: ${($) => $.$theme.colors.foreground};
 
   &::-webkit-scrollbar {
     width: 12px;
@@ -80,7 +82,6 @@ const Div = styled.div<{
   & .${labelClass} {
     overflow: hidden;
     word-break: none;
-    color: ${($) => $.$theme.colors.foreground};
     font-family: ${fontFamily};
     font-size: 1.2rem;
     font-weight: lighter;
@@ -339,7 +340,8 @@ export function Tiles(options: TilesOptions) {
       let
         contextTimeout = -1,
         contextTimestamp = -1,
-        justHeldLong = false;
+        justHeldLong = false,
+        touchDragging = false;
 
       // mouse down
       button.addEventListener("mousedown", (e) => {
@@ -379,6 +381,7 @@ export function Tiles(options: TilesOptions) {
 
       // touch start
       button.addEventListener("touchstart", (e) => {
+        touchDragging = false;
         contextTimeout = window.setTimeout(() => {
           // do not simulate context menu if dragging tile
           if (button.getAttribute("data-dragging") == "true") return;
@@ -390,12 +393,20 @@ export function Tiles(options: TilesOptions) {
           contextTimestamp = Date.now();
         }, 600);
       });
+      // touch move
+      button.addEventListener("touchmove", (e) => {
+        touchDragging = button.getAttribute("data-dragging") == "true";
+      });
       // touch end
       button.addEventListener("touchend", (e) => {
         if (contextTimeout !== -1)
           window.clearTimeout(contextTimeout), (contextTimeout = -1);
         if (justHeldLong) {
           justHeldLong = false;
+          return;
+        }
+        if (touchDragging) {
+          touchDragging = false;
           return;
         }
         if (contextTimestamp === -1 || contextTimestamp < Date.now() - 100) {
@@ -406,6 +417,7 @@ export function Tiles(options: TilesOptions) {
       button.addEventListener("touchcancel", (e) => {
         if (contextTimeout !== -1)
           window.clearTimeout(contextTimeout), (contextTimeout = -1);
+        touchDragging = false;
         if (justHeldLong) {
           justHeldLong = false;
           return;
@@ -706,6 +718,11 @@ export function Tiles(options: TilesOptions) {
     element.setAttribute("data-color", color);
     element.style.background = `linear-gradient(90deg, ${color} 0%, ${tile_color_b1} 100%)`;
 
+    // Label color
+    if (tile.labelColor) {
+      element.style.color = tile.labelColor;
+    }
+
     // Initialize state
     const state1 = tiles1.current!.state.tiles.get(tile.id)!;
     tiles_state.current.tiles.set(tile.id, {
@@ -716,6 +733,7 @@ export function Tiles(options: TilesOptions) {
       color,
       style: tile.style,
       iconSize: tile.iconSize,
+      labelColor: tile.labelColor,
     });
 
     // Initialize pages
@@ -841,37 +859,44 @@ export function Tiles(options: TilesOptions) {
       page_elements.push(page_el);
       button.insertBefore(page_el, checked_rect);
 
-      const icon_wrap_el = document.createElement("div");
-      icon_wrap_el.classList.add(tileIconWrapClass);
-      page_el.appendChild(icon_wrap_el);
+      if (style == "heading") {
+        label ??= "";
+        label = label.length >= 40 ? label.slice(0, 40) + "..." : label;
+        const img = icon ? "<img draggable='false' src=\"" + icon + "\" alt='new' style='width:3rem'>" : "";
+        page_el.innerHTML = "<div style='display:flex;flex-direction:column;justify-content:space-between;height:100%;padding:0.7rem'><h2 style='padding:0;margin:0;text-align:left;word-break:break-all;text-transform:lowercase'>" + escapeHTML(label) + "</h2>" + img + "</div>";
+      } else {
+        const icon_wrap_el = document.createElement("div");
+        icon_wrap_el.classList.add(tileIconWrapClass);
+        page_el.appendChild(icon_wrap_el);
 
-      if (icon) {
-        const icon_el = document.createElement("div");
-        icon_el.classList.add(tileIconClass);
-        if (iconSize !== undefined) {
-          switch (iconSize) {
-            case "high": {
-              icon_el.classList.add("high");
-              break;
-            }
-            case "extraHigh": {
-              icon_el.classList.add("extra-high");
-              break;
+        if (icon) {
+          const icon_el = document.createElement("div");
+          icon_el.classList.add(tileIconClass);
+          if (iconSize !== undefined) {
+            switch (iconSize) {
+              case "high": {
+                icon_el.classList.add("high");
+                break;
+              }
+              case "extraHigh": {
+                icon_el.classList.add("extra-high");
+                break;
+              }
             }
           }
+          icon_el.style.background = `url("${icon}") center no-repeat`;
+          icon_el.style.backgroundSize = "contain";
+          icon_wrap_el.appendChild(icon_el);
         }
-        icon_el.style.background = `url("${icon}") center no-repeat`;
-        icon_el.style.backgroundSize = "contain";
-        icon_wrap_el.appendChild(icon_el);
+
+        label ??= "";
+        label = label.length >= 40 ? label.slice(0, 40) + "..." : label;
+
+        const label_el = document.createElement("div");
+        label_el.classList.add(tileLabelClass);
+        label_el.innerText = label;
+        page_el.appendChild(label_el);
       }
-
-      label ??= "";
-      label = label.length >= 40 ? label.slice(0, 40) + "..." : label;
-
-      const label_el = document.createElement("div");
-      label_el.classList.add(tileLabelClass);
-      label_el.innerText = label;
-      page_el.appendChild(label_el);
     }
 
     if (state?.size !== "small") {
@@ -1045,6 +1070,35 @@ export function Tiles(options: TilesOptions) {
       tiles_controller_setTileColor,
     );
 
+    // Recolor tile label
+    function tiles_controller_setTileLabelColor(
+      e: CustomEvent<{ id: string; value?: string }>,
+    ): void {
+      assert_tiles1_initialized();
+
+      const tile_id = e.detail.id;
+      const color = e.detail.value;
+
+      const state = tiles_state.current.tiles.get(tile_id);
+      if (!state) return;
+
+      const element = Array.from(
+        div_ref.current!.querySelectorAll("." + tileClass),
+      ).find((btn) => btn.getAttribute("data-id") == tile_id) as
+        | HTMLButtonElement
+        | undefined;
+      if (!element) return;
+
+      element.style.color = color ?? "";
+      state.labelColor = color;
+
+      options.stateUpdated?.(tiles_state.current);
+    }
+    tiles_controller.addEventListener(
+      "setTileLabelColor",
+      tiles_controller_setTileLabelColor,
+    );
+
     // Set tile pages
     function tiles_controller_setTilePages(
       e: CustomEvent<{
@@ -1182,6 +1236,7 @@ export function Tiles(options: TilesOptions) {
       tiles_controller.removeEventListener("addTile", tiles_controller_addTile);
       tiles_controller.removeEventListener("resizeTile", tiles_controller_resizeTile);
       tiles_controller.removeEventListener("setTileColor", tiles_controller_setTileColor);
+      tiles_controller.removeEventListener("setTileLabelColor", tiles_controller_setTileLabelColor);
       tiles_controller.removeEventListener("setTilePages", tiles_controller_setTilePages);
       tiles_controller.removeEventListener("removeTile", tiles_controller_removeTile);
       tiles_controller.removeEventListener("tileExists", tiles_controller_onTileExists);
@@ -1291,6 +1346,11 @@ export type Tile = {
   label?: string;
 
   /**
+   * Label color.
+   */
+  labelColor?: string,
+
+  /**
    * Icon source.
    */
   icon?: string;
@@ -1354,7 +1414,16 @@ export class TilesState {
   groups: Map<string, { index: number; label: string }> = new Map();
   tiles: Map<
     string,
-    { size: TileSize; x: number; y: number; group: string; color?: string; style?: TileStyle; iconSize?: TileIconSize; }
+    {
+      size: TileSize;
+      x: number;
+      y: number;
+      group: string;
+      color?: string;
+      style?: TileStyle;
+      iconSize?: TileIconSize;
+      labelColor?: string;
+    }
   > = new Map();
 
   /**
@@ -1381,6 +1450,7 @@ export class TilesState {
         color: o1.color ? String(o1.color) : undefined,
         iconSize: o1.iconSize ? (o1.iconSize as TileIconSize) : undefined,
         style: o1.style ? (o1.style as TileStyle) : undefined,
+        labelColor: o1.labelColor ? String(o1.labelColor) : undefined,
       });
     }
     return r;
@@ -1407,6 +1477,7 @@ export class TilesState {
         color: t.color ?? null,
         style: t.style ?? null,
         iconSize: t.iconSize ?? null,
+        labelColor: t.labelColor ?? null,
       };
     }
     return {
@@ -1436,6 +1507,7 @@ export class TilesState {
         color: tile.color,
         style: tile.style,
         iconSize: tile.iconSize,
+        labelColor: tile.labelColor,
       });
     }
   }
@@ -1446,6 +1518,7 @@ export class TilesState {
       color?: string,
       style?: TileStyle,
       iconSize?: TileIconSize,
+      labelColor?: string,
     };
     const k_stuffs: [string, Stuff][] = Array.from(this.tiles.entries()).map(([id, tile]) => [
       id,
@@ -1453,6 +1526,7 @@ export class TilesState {
         color: tile.color,
         style: tile.style,
         iconSize: tile.iconSize,
+        labelColor: tile.labelColor,
       },
     ]);
     this.clear();
@@ -1472,6 +1546,7 @@ export class TilesState {
         color: k_stuff?.[1]?.color ?? undefined,
         style: k_stuff?.[1]?.style ?? undefined,
         iconSize: k_stuff?.[1]?.iconSize ?? undefined,
+        labelColor: k_stuff?.[1]?.labelColor ?? undefined,
       });
     }
   }
@@ -1516,6 +1591,7 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
   uncheckAll: Event;
   resizeTile: CustomEvent<{ id: string; value: TileSize }>;
   setTileColor: CustomEvent<{ id: string; value: string }>;
+  setTileLabelColor: CustomEvent<{ id: string; value?: string }>;
   setTilePages: CustomEvent<{
     id: string;
     icon?: string;
@@ -1710,6 +1786,17 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
   }
 
   /**
+   * Sets the label color of a tile.
+   */
+  setTileLabelColor(id: string, value: undefined | string): void {
+    this.dispatchEvent(
+      new CustomEvent("setTileLabelColor", {
+        detail: { id, value },
+      }),
+    );
+  }
+
+  /**
    * Sets the pages of a tile (icon, label and live tile pages).
    */
   setTilePages(
@@ -1724,7 +1811,7 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
   ): void {
     this.dispatchEvent(
       new CustomEvent("setTilePages", {
-        detail: { id, icon, label, livePages, style, iconSize },
+        detail: { id, icon, iconSize, label, livePages, style },
       }),
     );
   }
