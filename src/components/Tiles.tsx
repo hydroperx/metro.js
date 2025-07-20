@@ -918,7 +918,7 @@ export function Tiles(options: TilesOptions) {
         label ??= "";
         label = label.length >= 40 ? label.slice(0, 40) + "..." : label;
         const img = icon ? "<img draggable='false' src=\"" + icon + "\" alt='new' style='width:3rem'>" : "";
-        page_el.innerHTML = "<div style='display:flex;flex-direction:column;justify-content:space-between;height:100%;padding:0.7rem'><h2 style='padding:0;margin:0;text-align:left;word-break:break-all;text-transform:lowercase'>" + escapeHTML(label) + "</h2>" + img + "</div>";
+        page_el.innerHTML = "<div style='display:flex;flex-direction:column;justify-content:space-between;height:100%;padding:0.7rem'><h2 style='padding:0;margin:0;text-align:left;word-break:break-all'>" + escapeHTML(label) + "</h2>" + img + "</div>";
       } else {
         const icon_wrap_el = document.createElement("div");
         icon_wrap_el.classList.add(tileIconWrapClass);
