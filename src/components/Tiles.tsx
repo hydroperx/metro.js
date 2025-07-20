@@ -125,6 +125,12 @@ const Div = styled.div<{
     height: 100%;
   }
 
+  & .${tileClass}.transparent {
+    background: none;
+    outline: 0.2rem solid
+      ${($) => Color($.$theme.colors.foreground).alpha(0.2).toString()};
+  }
+
   & .${tileClass}[data-selection-mode="true"] {
     opacity: 0.7;
   }
@@ -141,6 +147,16 @@ const Div = styled.div<{
   & .${tileClass}:focus:not(:disabled) {
     outline: 0.17rem solid
       ${($) => Color($.$theme.colors.foreground).alpha(0.3).toString()};
+  }
+
+  & .${tileClass}.transparent:hover:not(:disabled) {
+    background: ${($) => Color($.$theme.colors.foreground).alpha(0.2).toString()};
+  }
+
+  & .${tileClass}.transparent:hover:not(:disabled),
+  & .${tileClass}.transparent:focus:not(:disabled) {
+    outline: 0.2rem solid
+      ${($) => Color($.$theme.colors.foreground).alpha(0.4).toString()};
   }
 
   & .${tileClass}:disabled {
@@ -597,6 +613,9 @@ export function Tiles(options: TilesOptions) {
   function tile_onPointerOver(e: PointerEvent): void {
     const tile_button = e.currentTarget as HTMLButtonElement;
     if (!tile_button.matches(":hover")) return;
+    if (tile_button.classList.contains("transparent")) {
+      return;
+    }
     const tile_color = tile_button.getAttribute("data-color")!;
     const tile_color_b1 = Color(tile_color).lighten(0.15).hex().toString();
     const tile_color_b2 = Color(tile_color).lighten(0.23).hex().toString();
@@ -606,6 +625,9 @@ export function Tiles(options: TilesOptions) {
   // Handle pointer out tile
   function tile_onPointerOut(e: PointerEvent): void {
     const tile_button = e.currentTarget as HTMLButtonElement;
+    if (tile_button.classList.contains("transparent")) {
+      return;
+    }
     const tile_color = tile_button.getAttribute("data-color")!;
     const tile_color_b1 = Color(tile_color).lighten(0.15).hex().toString();
     tile_button.style.background = `linear-gradient(90deg, ${tile_color} 0%, ${tile_color_b1} 100%)`;
@@ -713,10 +735,14 @@ export function Tiles(options: TilesOptions) {
         `;
 
     // Color
-    const color = tile.color || "#333";
-    const tile_color_b1 = Color(color).lighten(0.15).hex().toString();
-    element.setAttribute("data-color", color);
-    element.style.background = `linear-gradient(90deg, ${color} 0%, ${tile_color_b1} 100%)`;
+    const color = tile.color;
+    if (color) {
+      const tile_color_b1 = Color(color).lighten(0.15).hex().toString();
+      element.setAttribute("data-color", color);
+      element.style.background = `linear-gradient(90deg, ${color} 0%, ${tile_color_b1} 100%)`;
+    } else {
+      element.classList.add("transparent");
+    }
 
     // Label color
     if (tile.labelColor) {
@@ -797,7 +823,7 @@ export function Tiles(options: TilesOptions) {
   }
 
   // Recolor tile
-  function set_tile_color(tile_id: string, color: string): void {
+  function set_tile_color(tile_id: string, color: undefined | string): void {
     assert_tiles1_initialized();
 
     const state = tiles_state.current.tiles.get(tile_id);
@@ -810,9 +836,16 @@ export function Tiles(options: TilesOptions) {
       | undefined;
     if (!element) return;
 
-    const tile_color_b1 = Color(color).lighten(0.15).hex().toString();
-    element.setAttribute("data-color", color);
-    element.style.background = `linear-gradient(90deg, ${color} 0%, ${tile_color_b1} 100%)`;
+    if (color) {
+      const tile_color_b1 = Color(color).lighten(0.15).hex().toString();
+      element.setAttribute("data-color", color);
+      element.style.background = `linear-gradient(90deg, ${color} 0%, ${tile_color_b1} 100%)`;
+      if (element.classList.contains("transparent")) {
+        element.classList.remove("transparent");
+      }
+    } else if (!element.classList.contains("transparent")) {
+      element.classList.add("transparent");
+    }
     state.color = color;
 
     options.stateUpdated?.(tiles_state.current);
@@ -1061,7 +1094,7 @@ export function Tiles(options: TilesOptions) {
 
     // Recolor tile
     function tiles_controller_setTileColor(
-      e: CustomEvent<{ id: string; value: string }>,
+      e: CustomEvent<{ id: string; value: undefined | string }>,
     ): void {
       set_tile_color(e.detail.id, e.detail.value);
     }
@@ -1590,7 +1623,7 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
   setChecked: CustomEvent<{ id: string; value: boolean }>;
   uncheckAll: Event;
   resizeTile: CustomEvent<{ id: string; value: TileSize }>;
-  setTileColor: CustomEvent<{ id: string; value: string }>;
+  setTileColor: CustomEvent<{ id: string; value: undefined | string }>;
   setTileLabelColor: CustomEvent<{ id: string; value?: string }>;
   setTilePages: CustomEvent<{
     id: string;
@@ -1777,7 +1810,7 @@ export class TilesController extends (EventTarget as TypedEventTarget<{
   /**
    * Sets the color of a tile.
    */
-  setTileColor(id: string, value: string): void {
+  setTileColor(id: string, value: undefined | string): void {
     this.dispatchEvent(
       new CustomEvent("setTileColor", {
         detail: { id, value },

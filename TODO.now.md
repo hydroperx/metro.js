@@ -1,17 +1,18 @@
 Fix bug:
 
+- [ ] Fix dragging a tile causing wheel container to move.
 - [x] On mobile, dragging a tile clicks it. Fix that.
 
 Live pages:
 
-- [ ] color optional (i.e. tile may be transparent)
+- [x] color optional (i.e. tile may be transparent)
 - [x] iconSize
 - [x] labelColor (white or black)
 - [x] style
 
 API:
 
-- [ ] TilesController#setTileColor() -- Allow transparent parameter.
+- [x] TilesController#setTileColor() -- Allow transparent parameter.
 
 Icon issues:
 
