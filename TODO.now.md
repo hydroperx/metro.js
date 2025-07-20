@@ -1,18 +1,6 @@
 Fix bug:
 
-- [ ] Fix dragging a tile causing wheel container to move.
-- [x] On mobile, dragging a tile clicks it. Fix that.
-
-Live pages:
-
-- [x] color optional (i.e. tile may be transparent)
-- [x] iconSize
-- [x] labelColor (white or black)
-- [x] style
-
-API:
-
-- [x] TilesController#setTileColor() -- Allow transparent parameter.
+- [ ] Fix dragging a tile causing wheel container to move when having padding. (Has something to do with @hydroperx/tiles increasing width.)
 
 Icon issues:
 
