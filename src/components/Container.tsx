@@ -279,7 +279,7 @@ const Div = styled.div<{
       : ""}
     ${($) => ($.$full ? "width: 100%; height: 100%;" : "")}
 
-    &::-webkit-scrollbar {
+  &::-webkit-scrollbar {
     width: 12px;
     height: 12px;
     background: ${($) => $.$theme.colors.scrollBarTrack};

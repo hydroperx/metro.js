@@ -59,14 +59,13 @@ const Div = styled.div<{
   $rtl: boolean;
   $open: boolean;
 }>`
-  width: 100%;
-  height: 100%;
   opacity: ${($) => ($.$forced_invisible ? 0 : $.$scale)};
   transform: scale(${($) => $.$scale});
   transition:
     opacity 0.3s ${($) => ($.$open ? "ease-out" : "ease-in")},
     transform 0.3s ${($) => ($.$open ? "ease-out" : "ease-in")};
   color: ${($) => $.$theme.colors.foreground};
+  padding: 0.5rem;
 
   &::-webkit-scrollbar {
     width: 12px;
@@ -81,7 +80,6 @@ const Div = styled.div<{
 
   & .${labelClass} {
     overflow: hidden;
-    word-break: none;
     font-family: ${fontFamily};
     font-size: 1.2rem;
     font-weight: lighter;
@@ -357,10 +355,12 @@ export function Tiles(options: TilesOptions) {
         contextTimeout = -1,
         contextTimestamp = -1,
         justHeldLong = false,
-        touchDragging = false;
+        touchDragging = false,
+        cursorDragging = false;
 
       // mouse down
       button.addEventListener("mousedown", (e) => {
+        cursorDragging = false;
         contextTimeout = window.setTimeout(() => {
           // do not simulate context menu if dragging tile
           if (button.getAttribute("data-dragging") == "true") return;
@@ -371,6 +371,10 @@ export function Tiles(options: TilesOptions) {
           justHeldLong = true;
           contextTimestamp = Date.now();
         }, 600);
+      });
+      // mouse move
+      button.addEventListener("mousemove", e => {
+        cursorDragging = button.getAttribute("data-dragging") == "true";
       });
       // mouse up
       button.addEventListener("mouseup", (e) => {
@@ -390,6 +394,10 @@ export function Tiles(options: TilesOptions) {
       button.addEventListener("click", (e) => {
         if (justHeldLong) {
           justHeldLong = false;
+          return;
+        }
+        if (cursorDragging) {
+          cursorDragging = false;
           return;
         }
         click(e);
