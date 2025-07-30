@@ -5,6 +5,8 @@
   <a href="https://hydroper-metro-demo.vercel.app"><img src="https://img.shields.io/badge/Demo-gray"></a>
 </p>
 
+<img width="758" height="581" alt="image" src="https://github.com/user-attachments/assets/66f8a456-8212-4c35-8a07-71d60538f684" />
+
 A HTML5+React.js library accurately mimmicking the Metro design present in the Windows 8 operating system.
 
 ## Documentation
