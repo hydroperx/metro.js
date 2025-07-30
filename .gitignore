@@ -1,0 +1,11 @@
+# ignore NPM artifacts
+/node_modules
+
+# ignore TypeScript compiler output
+/dist
+
+# ignore NPM lockfile
+/package-lock.json
+
+# ignore API documentation
+/docs
