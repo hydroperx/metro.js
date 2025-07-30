@@ -5,7 +5,7 @@
 Installation:
 
 ```sh
-npm i @hydroperx/metrodragon
+npm i @hydroperx/metro
 ```
 
 ## Installing the required fonts

@@ -44,7 +44,7 @@ Here is a list of built-in icons:
 Register custom icons with:
 
 ```tsx
-import { IconRegistry } from "@hydroperx/metrodragon";
+import { IconRegistry } from "@hydroperx/metro";
 
 IconRegistry.register("iconX", { black: source, white: source });
 ```

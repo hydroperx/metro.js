@@ -10,7 +10,7 @@ Old: https://github.com/hydroperx/metro.js/tree/master/src/components
 
 # BaselineContainer
 
-Fundamental component used for integrating base MetroDragon style sheets within children nodes.
+Fundamental component used for integrating base Metro style sheets within children nodes.
 
 # Wheel scrolling
 

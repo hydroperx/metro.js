@@ -88,7 +88,7 @@ export function BaselineContainer(params: {
       id={params.id}
       className={
         [
-          "metrodragon-baseline-container",
+          "metro-baseline-container",
           ...[params.full ? ["full"] : []],
           ...[params.solid ? ["solid"] : []],
           ...[params.className ? [params.className] : []]

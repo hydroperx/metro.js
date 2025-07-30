@@ -1,45 +1,45 @@
-.metrodragon-baseline-container,
-.metrodragon-baseline-container div,
-.metrodragon-baseline-container button,
-.metrodragon-baseline-container input,
-.metrodragon-baseline-container textarea
-.metrodragon-baseline-container select,
-.metrodragon-baseline-container img {
+.metro-baseline-container,
+.metro-baseline-container div,
+.metro-baseline-container button,
+.metro-baseline-container input,
+.metro-baseline-container textarea
+.metro-baseline-container select,
+.metro-baseline-container img {
   box-sizing: border-box;
 }
 
-.metrodragon-baseline-container,
-.metrodragon-baseline-container button,
-.metrodragon-baseline-container input,
-.metrodragon-baseline-container textarea,
-.metrodragon-baseline-container select {
+.metro-baseline-container,
+.metro-baseline-container button,
+.metro-baseline-container input,
+.metro-baseline-container textarea,
+.metro-baseline-container select {
   font-family: "Noto Sans", "Segoe UI", sans;
   font-size: inherit;
 }
 
-.metrodragon-baseline-container code,
-.metrodragon-baseline-container pre {
+.metro-baseline-container code,
+.metro-baseline-container pre {
   font-family: "Courier Prime", "Courier New", monospace;
   font-size: 0.8em;
 }
 
-.metrodragon-baseline-container h1,
-.metrodragon-baseline-container h2 {
+.metro-baseline-container h1,
+.metro-baseline-container h2 {
   font-weight: lighter;
 }
-.metrodragon-baseline-container h3,
-.metrodragon-baseline-container h4 {
+.metro-baseline-container h3,
+.metro-baseline-container h4 {
   font-weight: bold;
 }
-.metrodragon-baseline-container h1 {
+.metro-baseline-container h1 {
   font-size: 2em;
 }
-.metrodragon-baseline-container h2 {
+.metro-baseline-container h2 {
   font-size: 1.7em;
 }
-.metrodragon-baseline-container h3 {
+.metro-baseline-container h3 {
   font-size: 1.3em;
 }
-.metrodragon-baseline-container h4 {
+.metro-baseline-container h4 {
   font-size: 1.1em;
 }

@@ -1,6 +1,6 @@
 {
-  "name": "@hydroperx/metrodragon",
-  "version": "1.0.6",
+  "name": "@hydroperx/metro",
+  "version": "2.0.0",
   "type": "module",
   "files": [
     "/dist"
@@ -22,7 +22,7 @@
   },
   "description": "Metro design components for React.js.",
   "repository": {
-    "url": "https://github.com/hydroperx/metrodragon.js.git"
+    "url": "https://github.com/hydroperx/metro.js.git"
   },
   "license": "Apache-2.0",
   "keywords": [
