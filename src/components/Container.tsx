@@ -106,7 +106,7 @@ export function Container(params: {
   const theme = React.useContext(ThemeContext);
 
   // Enable or disable selection
-  const userSelect = (params.selection ?? true) ? "auto" : "none";
+  const userSelect = typeof params.selection == "undefined" ? "inherit" : params.selection ? "auto" : "none";
 
   // References
   const div: React.Ref<null | HTMLDivElement> = React.useRef(null);

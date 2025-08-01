@@ -164,12 +164,10 @@ export function Button(params: ButtonParams) {
   // Display tooltip
   const userPointerEnter = useRef<undefined | React.PointerEventHandler<HTMLButtonElement>>(undefined);
   const pointerEnter = async (e: PointerEvent) => {
-    console.log("enter")
     hovering.current = true;
     if (tooltip_el.current) {
       const button = e.currentTarget as HTMLButtonElement;
       tooltip_timeout = window.setTimeout(() => {
-        console.log("here")
         if (hovering.current) {
           set_tooltip_visible(true);
         }
@@ -194,7 +192,6 @@ export function Button(params: ButtonParams) {
   const userPointerLeave = useRef<undefined | React.PointerEventHandler<HTMLButtonElement>>(undefined);
   const pointerLeave = (e: PointerEvent): any => {
     hovering.current = false;
-    console.log("leave")
     if (tooltip_timeout !== -1) {
       window.clearTimeout(tooltip_timeout);
       tooltip_timeout = -1;

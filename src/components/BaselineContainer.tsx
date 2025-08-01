@@ -80,7 +80,7 @@ export function BaselineContainer(params: {
   const theme = React.useContext(ThemeContext);
 
   // Enable or disable selection
-  const userSelect = (params.selection ?? true) ? "auto" : "none";
+  const userSelect = typeof params.selection == "undefined" ? "inherit" : params.selection ? "auto" : "none";
 
   // Layout
   return (
