@@ -55,15 +55,15 @@ const Div = styled.div<{
 }>`
   position: relative;
   width: 100%;
-  height: ${($) => $.$size * 0.25 * $.$em}px;
+  height: ${($) => $.$size * $.$em}px;
   overflow: hidden;
 
   & .progress-ellipsis__circle {
     position: absolute;
     left: 62.5%;
     animation: ${move} ${($) => $.$time}ms infinite;
-    width: ${($) => $.$size * 0.25 * $.$em}px;
-    height: ${($) => $.$size * 0.25 * $.$em}px;
+    width: ${($) => $.$size * $.$em}px;
+    height: ${($) => $.$size * $.$em}px;
     background: ${($) => $.$color};
     border-radius: 100%;
     opacity: 0;
@@ -103,6 +103,7 @@ const Div = styled.div<{
 export function ProgressBar(params: {
   /**
    * For an ellipsis, indicates the size of each dot.
+   * @default 4.5
    */
   size?: number;
 
@@ -152,7 +153,7 @@ export function ProgressBar(params: {
   let m = 30; // milliseconds
 
   // Size
-  const size = params.size ?? 1.5;
+  const size = EMConvert.points.em(params.size ?? 4.5);
 
   return (
     <Div
