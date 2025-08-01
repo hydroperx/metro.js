@@ -330,11 +330,14 @@ export function RightArrowIcon(params: IconParams) {
   );
 }
 
+/**
+ * Progress ring (orbit).
+ */
 export function ProgressRing(params: {
   /**
-   * Size; note that the definition of "size" is
-   * unstable in the `ProgressRing` component for now.
-   * The given normal is `size={9}`.
+   * Size; note that it overflows by a bit.
+   * The given normal is `size={27}`.
+   * @default 27
    */
   size?: number;
   style?: React.CSSProperties;
@@ -387,7 +390,7 @@ export function ProgressRing(params: {
   let m = 30; // milliseconds
 
   // Size
-  const size = params.size ?? 9;
+  const size = EMConvert.points.em(params.size ?? 27);
 
   return (
     <Div
@@ -472,15 +475,15 @@ const Div = styled.div<{
 }>`
   && {
     position: relative;
-    padding-top: ${($) => ($.$size * 0.25 * $.$em) / 5}px;
-    width: ${($) => $.$size * 0.25 * $.$em}px;
-    height: ${($) => $.$size * 0.25 * $.$em}px;
+    padding-top: ${($) => ($.$size * $.$em) / 5}px;
+    width: ${($) => $.$size * $.$em}px;
+    height: ${($) => $.$size * $.$em}px;
   }
 
   && .progress-ring__wrap {
     position: absolute;
-    width: ${($) => $.$size * 0.25 * $.$em - 2}px;
-    height: ${($) => $.$size * 0.25 * $.$em - 2}px;
+    width: ${($) => $.$size * $.$em - 2}px;
+    height: ${($) => $.$size * $.$em - 2}px;
   }
 
   && .progress-ring__circle {
@@ -488,8 +491,8 @@ const Div = styled.div<{
     animation-iteration-count: infinite;
     animation-name: ${orbit};
     animation-duration: ${($) => $.$time}ms;
-    width: ${($) => $.$size * 0.25 * $.$em - 2}px;
-    height: ${($) => $.$size * 0.25 * $.$em - 2}px;
+    width: ${($) => $.$size * $.$em - 2}px;
+    height: ${($) => $.$size * $.$em - 2}px;
 
     opacity: 0;
   }
@@ -497,9 +500,9 @@ const Div = styled.div<{
   && .progress-ring__circle:after {
     content: "";
     position: absolute;
-    width: ${($) => ($.$size * 0.25 * $.$em) / 8}px;
-    height: ${($) => ($.$size * 0.25 * $.$em) / 8}px;
-    border-radius: ${($) => ($.$size * 0.25 * $.$em) / 8}px;
+    width: ${($) => ($.$size * $.$em) / 8}px;
+    height: ${($) => ($.$size * $.$em) / 8}px;
+    border-radius: ${($) => ($.$size * $.$em) / 8}px;
     box-shadow: 0px 0px 5% ${($) => $.$color};
     background: ${($) => $.$color};
   }
