@@ -331,6 +331,11 @@ export function RightArrowIcon(params: IconParams) {
 }
 
 export function ProgressRing(params: {
+  /**
+   * Size; note that the definition of "size" is
+   * unstable in the `ProgressRing` component for now.
+   * The given normal is `size={9}`.
+   */
   size?: number;
   style?: React.CSSProperties;
   className?: string;
