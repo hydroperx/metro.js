@@ -4,7 +4,7 @@ import { Color } from "@hydroperx/color";
 import { input } from "@hydroperx/inputaction";
 import { useContext, useRef, useState, useEffect } from "react";
 import { styled } from "styled-components";
-import { computePosition, flip, shift, size } from "@floating-ui/dom";
+import { computePosition, flip, shift, size, offset } from "@floating-ui/dom";
 import assert from "assert";
 import $ from "jquery";
 
@@ -267,7 +267,7 @@ export function ContextMenu(params: ContextMenuParams) {
       const r = await computePosition(e.detail.reference, div, {
         placement: e.detail.prefer,
         middleware: [
-          flip(), shift(),
+          flip(), shift(), offset(10),
           size({
             apply({ availableWidth, availableHeight, elements }) {
               Object.assign(elements.floating.style, {
