@@ -13,6 +13,10 @@ A HTML5+React.js library accurately mimmicking the Metro design present in the W
 
 Refer to the wiki for guides.
 
+## Examples
+
+[Check the demo source](https://github.com/hydroperx/metro.demo.js/tree/master/src) for some usage of the various components.
+
 ## License
 
 Apache 2.0
