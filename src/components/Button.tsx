@@ -159,14 +159,18 @@ export function Button(params: ButtonParams) {
   const [tooltip_y, set_tooltip_y] = useState<number>(0);
   const tooltip_el: Ref<HTMLDivElement | null> = useRef(null);
   let tooltip_timeout = -1;
+  const hovering = useRef<boolean>(false);
 
   // Display tooltip
-  const userPointerOver = useRef<undefined | React.PointerEventHandler<HTMLButtonElement>>(undefined);
-  const pointerOver = async (e: PointerEvent) => {
+  const userPointerEnter = useRef<undefined | React.PointerEventHandler<HTMLButtonElement>>(undefined);
+  const pointerEnter = async (e: PointerEvent) => {
+    console.log("enter")
+    hovering.current = true;
     if (tooltip_el.current) {
       const button = e.currentTarget as HTMLButtonElement;
       tooltip_timeout = window.setTimeout(() => {
-        if (button.matches(":hover")) {
+        console.log("here")
+        if (hovering.current) {
           set_tooltip_visible(true);
         }
       }, 700);
@@ -183,18 +187,20 @@ export function Button(params: ButtonParams) {
       set_tooltip_y(r.y);
     }
 
-    return userPointerOver.current?.(e as any);
+    return userPointerEnter.current?.(e as any);
   };
 
   // Hide tooltip
-  const userPointerOut = useRef<undefined | React.PointerEventHandler<HTMLButtonElement>>(undefined);
-  const pointerOut = (e: PointerEvent): any => {
+  const userPointerLeave = useRef<undefined | React.PointerEventHandler<HTMLButtonElement>>(undefined);
+  const pointerLeave = (e: PointerEvent): any => {
+    hovering.current = false;
+    console.log("leave")
     if (tooltip_timeout !== -1) {
       window.clearTimeout(tooltip_timeout);
       tooltip_timeout = -1;
     }
     set_tooltip_visible(false);
-    return userPointerOut.current?.(e as any);
+    return userPointerLeave.current?.(e as any);
   };
 
   // sync tooltip side
@@ -204,12 +210,12 @@ export function Button(params: ButtonParams) {
 
   // Reflect pointer over handler
   useEffect(() => {
-    userPointerOver.current = params.pointerOver;
+    userPointerEnter.current = params.pointerEnter;
   }, []);
 
   // Reflect pointer out handler
   useEffect(() => {
-    userPointerOut.current = params.pointerOut;
+    userPointerLeave.current = params.pointerLeave;
   }, []);
 
   const Button = Button_comp!;
@@ -241,11 +247,11 @@ export function Button(params: ButtonParams) {
         onLostPointerCapture={params.lostPointerCapture}
         onPointerCancel={params.pointerCancel}
         onPointerDown={params.pointerDown}
-        onPointerEnter={params.pointerEnter}
-        onPointerLeave={params.pointerLeave}
+        onPointerEnter={pointerEnter as any}
+        onPointerLeave={pointerLeave as any}
         onPointerMove={params.pointerMove}
-        onPointerOut={pointerOut as any}
-        onPointerOver={pointerOver as any}
+        onPointerOut={params.pointerOut}
+        onPointerOver={params.pointerOver}
         onPointerUp={params.pointerUp}
         onTouchStart={params.touchStart}
         onTouchEnd={params.touchEnd}
@@ -681,14 +687,16 @@ export function CircleIconButton(params: CircleIconButtonParams) {
   const [tooltip_y, set_tooltip_y] = useState<number>(0);
   const tooltip_el: Ref<HTMLDivElement | null> = useRef(null);
   let tooltip_timeout = -1;
+  const hovering = useRef<boolean>(false);
 
   // Display tooltip
-  const userPointerOver = useRef<undefined | React.PointerEventHandler<HTMLButtonElement>>(undefined);
-  const pointerOver = async (e: PointerEvent) => {
+  const userPointerEnter = useRef<undefined | React.PointerEventHandler<HTMLButtonElement>>(undefined);
+  const pointerEnter = async (e: PointerEvent) => {
+    hovering.current = true;
     if (tooltip_el.current) {
       const button = e.currentTarget as HTMLButtonElement;
       tooltip_timeout = window.setTimeout(() => {
-        if (button.matches(":hover")) {
+        if (hovering.current) {
           set_tooltip_visible(true);
         }
       }, 700);
@@ -705,18 +713,19 @@ export function CircleIconButton(params: CircleIconButtonParams) {
       set_tooltip_y(r.y);
     }
 
-    return userPointerOver.current?.(e as any);
+    return userPointerEnter.current?.(e as any);
   };
 
   // Hide tooltip
-  const userPointerOut = useRef<undefined | React.PointerEventHandler<HTMLButtonElement>>(undefined);
-  const pointerOut = (e: PointerEvent): any => {
+  const userPointerLeave = useRef<undefined | React.PointerEventHandler<HTMLButtonElement>>(undefined);
+  const pointerLeave = (e: PointerEvent): any => {
+    hovering.current = false;
     if (tooltip_timeout !== -1) {
       window.clearTimeout(tooltip_timeout);
       tooltip_timeout = -1;
     }
     set_tooltip_visible(false);
-    return userPointerOut.current?.(e as any);
+    return userPointerLeave.current?.(e as any);
   };
 
   // sync tooltip side
@@ -726,12 +735,12 @@ export function CircleIconButton(params: CircleIconButtonParams) {
 
   // Reflect pointer over handler
   useEffect(() => {
-    userPointerOver.current = params.pointerOver;
+    userPointerEnter.current = params.pointerEnter;
   }, []);
 
   // Reflect pointer out handler
   useEffect(() => {
-    userPointerOut.current = params.pointerOut;
+    userPointerLeave.current = params.pointerLeave;
   }, []);
 
   return (
@@ -759,11 +768,11 @@ export function CircleIconButton(params: CircleIconButtonParams) {
         onLostPointerCapture={params.lostPointerCapture}
         onPointerCancel={params.pointerCancel}
         onPointerDown={params.pointerDown}
-        onPointerEnter={params.pointerEnter}
-        onPointerLeave={params.pointerLeave}
+        onPointerEnter={pointerEnter as any}
+        onPointerLeave={pointerLeave as any}
         onPointerMove={params.pointerMove}
-        onPointerOut={pointerOut as any}
-        onPointerOver={pointerOver as any}
+        onPointerOut={params.pointerOut}
+        onPointerOver={params.pointerOver}
         onPointerUp={params.pointerUp}
         onTouchStart={params.touchStart}
         onTouchEnd={params.touchEnd}

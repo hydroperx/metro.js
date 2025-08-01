@@ -291,13 +291,14 @@ export function Label(params: {
   const [tooltip_y, set_tooltip_y] = useState<number>(0);
   const tooltip_el: Ref<HTMLDivElement> = useRef(null);
   let tooltip_timeout = -1;
+  const hovering = useRef<boolean>(false);
 
   // Display tooltip
-  const pointerOver = async (e: PointerEvent) => {
+  const pointerEnter = async (e: PointerEvent) => {
+    hovering.current = true;
     if (tooltip_el.current) {
-      const element = e.target as HTMLElement;
       tooltip_timeout = window.setTimeout(() => {
-        if (element.matches(":hover")) {
+        if (hovering.current) {
           set_tooltip_visible(true);
         }
       }, 700);
@@ -316,7 +317,8 @@ export function Label(params: {
   };
 
   // Hide tooltip
-  const pointerOut = (e: PointerEvent): any => {
+  const pointerLeave = (e: PointerEvent): any => {
+    hovering.current = false;
     if (tooltip_timeout !== -1) {
       window.clearTimeout(tooltip_timeout);
       tooltip_timeout = -1;
@@ -350,8 +352,8 @@ export function Label(params: {
           <>
             <NormalLabel
               id={params.id}
-              onPointerOver={pointerOver as any}
-              onPointerOut={pointerOut as any}
+              onPointerEnter={pointerEnter as any}
+              onPointerLeave={pointerLeave as any}
               className={params.className}
               style={newStyle}
               htmlFor={params.for}
@@ -371,8 +373,8 @@ export function Label(params: {
         <>
           <NormalSpan
             id={params.id}
-            onPointerOver={pointerOver as any}
-            onPointerOut={pointerOut as any}
+            onPointerEnter={pointerEnter as any}
+            onPointerLeave={pointerLeave as any}
             className={params.className}
             style={newStyle}
             $preferPrimaryColors={preferPrimaryColors}
@@ -393,8 +395,8 @@ export function Label(params: {
           <>
             <H1Label
               id={params.id}
-              onPointerOver={pointerOver as any}
-              onPointerOut={pointerOut as any}
+              onPointerEnter={pointerEnter as any}
+              onPointerLeave={pointerLeave as any}
               className={params.className}
               style={newStyle}
               htmlFor={params.for}
@@ -414,8 +416,8 @@ export function Label(params: {
         <>
           <H1
             id={params.id}
-            onPointerOver={pointerOver as any}
-            onPointerOut={pointerOut as any}
+            onPointerEnter={pointerEnter as any}
+            onPointerLeave={pointerLeave as any}
             className={params.className}
             style={newStyle}
             $preferPrimaryColors={preferPrimaryColors}
@@ -436,8 +438,8 @@ export function Label(params: {
           <>
             <H2Label
               id={params.id}
-              onPointerOver={pointerOver as any}
-              onPointerOut={pointerOut as any}
+              onPointerEnter={pointerEnter as any}
+              onPointerLeave={pointerLeave as any}
               className={params.className}
               style={newStyle}
               htmlFor={params.for}
@@ -457,8 +459,8 @@ export function Label(params: {
         <>
           <H2
             id={params.id}
-            onPointerOver={pointerOver as any}
-            onPointerOut={pointerOut as any}
+            onPointerEnter={pointerEnter as any}
+            onPointerLeave={pointerLeave as any}
             className={params.className}
             style={newStyle}
             $preferPrimaryColors={preferPrimaryColors}
@@ -479,8 +481,8 @@ export function Label(params: {
           <>
             <H3Label
               id={params.id}
-              onPointerOver={pointerOver as any}
-              onPointerOut={pointerOut as any}
+              onPointerEnter={pointerEnter as any}
+              onPointerLeave={pointerLeave as any}
               className={params.className}
               style={newStyle}
               htmlFor={params.for}
@@ -500,8 +502,8 @@ export function Label(params: {
         <>
           <H3
             id={params.id}
-            onPointerOver={pointerOver as any}
-            onPointerOut={pointerOut as any}
+            onPointerEnter={pointerEnter as any}
+            onPointerLeave={pointerLeave as any}
             className={params.className}
             style={newStyle}
             $preferPrimaryColors={preferPrimaryColors}
@@ -522,8 +524,8 @@ export function Label(params: {
           <>
             <H4Label
               id={params.id}
-              onPointerOver={pointerOver as any}
-              onPointerOut={pointerOut as any}
+              onPointerEnter={pointerEnter as any}
+              onPointerLeave={pointerLeave as any}
               className={params.className}
               style={newStyle}
               htmlFor={params.for}
@@ -543,8 +545,8 @@ export function Label(params: {
         <>
           <H4
             id={params.id}
-            onPointerOver={pointerOver as any}
-            onPointerOut={pointerOut as any}
+            onPointerEnter={pointerEnter as any}
+            onPointerLeave={pointerLeave as any}
             className={params.className}
             style={newStyle}
             $preferPrimaryColors={preferPrimaryColors}
@@ -565,8 +567,8 @@ export function Label(params: {
           <>
             <LegendLabel
               id={params.id}
-              onPointerOver={pointerOver as any}
-              onPointerOut={pointerOut as any}
+              onPointerEnter={pointerEnter as any}
+              onPointerLeave={pointerLeave as any}
               className={params.className}
               style={newStyle}
               htmlFor={params.for}
@@ -586,8 +588,8 @@ export function Label(params: {
         <>
           <LegendSpan
             id={params.id}
-            onPointerOver={pointerOver as any}
-            onPointerOut={pointerOut as any}
+            onPointerEnter={pointerEnter as any}
+            onPointerLeave={pointerLeave as any}
             className={params.className}
             style={newStyle}
             $preferPrimaryColors={preferPrimaryColors}

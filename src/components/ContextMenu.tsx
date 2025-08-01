@@ -402,7 +402,7 @@ export function ContextMenu(params: ContextMenuParams) {
     // Test hover
     let out = true;
     if ($(div).is(":visible")) {
-      if (div.matches(":hover")) {
+      if (div.getAttribute("data-hover") == "true") {
         out = false;
       }
 
@@ -414,7 +414,7 @@ export function ContextMenu(params: ContextMenuParams) {
             continue;
           }
           // Test hover
-          if (div1.matches(":hover")) {
+          if (div1.getAttribute("data-hover") == "true") {
             out = false;
             break;
           }
@@ -535,11 +535,26 @@ export function ContextMenu(params: ContextMenuParams) {
   }, [visible]);
 
   useEffect(() => {
+    const div = div_reference.current!;
+
+    function pointerEnter() {
+      div.setAttribute("data-hover", "true");
+    }
+    function pointerLeave() {
+      div.removeAttribute("data-hover");
+    }
+    div.addEventListener("pointerenter", pointerEnter);
+    div.addEventListener("pointerleave", pointerLeave);
+
     eventDispatcher.addEventListener("show", eventDispatcher_show);
     eventDispatcher.addEventListener("hideAll", hideAll);
 
     // Cleanup
     return () => {
+      // Pointer events
+      div.removeEventListener("pointerenter", pointerEnter);
+      div.removeEventListener("pointerleave", pointerLeave);
+
       // Event dispatcher listeners
       eventDispatcher.removeEventListener("show", eventDispatcher_show);
       eventDispatcher.removeEventListener("hideAll", hideAll);
@@ -1315,6 +1330,23 @@ export function ContextMenuSubmenuList(params: ContextMenuSubmenuListParams) {
 
   // References
   const div_reference = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const div = div_reference.current!;
+    function pointerEnter() {
+      div.setAttribute("data-hover", "true");
+    }
+    function pointerLeave() {
+      div.removeAttribute("data-hover");
+    }
+    div.addEventListener("pointerenter", pointerEnter);
+    div.addEventListener("pointerleave", pointerLeave);
+
+    return () => {
+      div.removeEventListener("pointerenter", pointerEnter);
+      div.removeEventListener("pointerleave", pointerLeave);
+    };
+  }, []);
 
   return (
     <SubmenuMainDiv ref={div_reference} className={submenuClassName} $theme={theme}>
