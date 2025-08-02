@@ -72,8 +72,8 @@ const Div = styled.div<{
 
   && .group-label {
     overflow: hidden;
-    font-size: 1.2em;
-    font-weight: lighter;
+    font-size: ${$ => $.$direction == "horizontal" ? "1.2em" : "1em"};
+    font-weight: ${$ => $.$direction == "horizontal" ? "lighter" : "normal"};
   }
 
   && .group-label:hover {
@@ -392,7 +392,7 @@ export function Tiles(params: TilesParams) {
       smallSize: params.direction == "horizontal" ? 3.625 : 2.5,
       tileGap: params.direction == "horizontal" ? 0.6 : 0.5,
       groupGap: params.direction == "horizontal" ? 9 : 2,
-      labelHeight: params.direction == "horizontal" ? 3 : 2,
+      labelHeight: params.direction == "horizontal" ? 1.9 : 1.7,
       // For horizontal containers
       height: 6,
       // For vertical containers
