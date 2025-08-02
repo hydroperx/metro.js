@@ -166,17 +166,17 @@ const Div = styled.div<{
 
   && .tile-icon {
     width: 4.4em;
-    height: auto;
+    height: 4.4em;
   }
 
   && .tile-icon.high {
     width: 6.4em;
-    height: auto;
+    height: 6.4em;
   }
 
   && .tile-icon.extra-high {
     width: 8.4em;
-    height: auto;
+    height: 8.4em;
   }
 
   && .tile-label {
@@ -211,10 +211,21 @@ const Div = styled.div<{
 
   && .tile[data-size="small"] .tile-icon {
     width: 2.5em;
-    height: auto;
+    height: 2.5em;
+  }
+
+  && .tile[data-size="small"] .tile-icon.high {
+    width: 3em;
+    height: 3em;
+  }
+
+  && .tile[data-size="small"] .tile-icon.extra-high {
+    width: 3.5em;
+    height: 3.5em;
   }
 
   && .tile .tile-heading-content .tile-icon {
+    object-fit: contain;
     width: 3em;
     height: auto;
   }
@@ -226,16 +237,6 @@ const Div = styled.div<{
 
   && .tile[data-size="wide"] .tile-heading-content .tile-icon {
     width: 2.7em;
-    height: auto;
-  }
-
-  && .tile[data-size="small"] .tile-icon.high {
-    width: 3em;
-    height: auto;
-  }
-
-  && .tile[data-size="small"] .tile-icon.extra-high {
-    width: 3.5em;
     height: auto;
   }
 
