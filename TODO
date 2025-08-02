@@ -20,9 +20,6 @@ Fundamental component used for integrating base Metro style sheets within childr
 
 Component used for displaying a live tiles screen, either horizontally or vertically.
 
-- [ ] Animate tiles being added (scale from zero to one); however DO NOT do this when the parent scale is less than 1.
-- [ ] Animate tiles being removed (scale from one to zero): tileRemovalWork
-
 # ComboBox
 
 Component used for displaying a button that opens up a dropdown.

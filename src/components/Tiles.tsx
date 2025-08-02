@@ -8,6 +8,7 @@ import assert from "assert";
 import { Color } from "@hydroperx/color";
 import { TypedEventTarget } from "@hydroperx/event";
 import { Tiles as BaseTiles, TileSize, State as BaseState } from "@hydroperx/tiles";
+import { gsap } from "gsap";
 
 // local
 import { IconRegistry } from "./Icon";
@@ -19,6 +20,7 @@ import { lighten, darken, enhance, contrast } from "../utils/ColorUtils";
 import { randomHexLarge } from "../utils/RandomUtils";
 import { escapeHTML } from "../utils/EscapeUtils";
 import { TILES_OPEN_DELAY } from "../utils/Constants";
+import * as ScaleUtils from "../utils/ScaleUtilts";
 
 // TileSize
 export type { TileSize } from "@hydroperx/tiles";
@@ -353,6 +355,8 @@ export function Tiles(params: TilesParams) {
   const open = params.open ?? true;
   const [forced_invisible, set_forced_invisible] = useState<boolean>(true);
   const [scale, set_scale] = useState<number>(0);
+  const scale_reference = useRef<number>(scale);
+  scale_reference.current = scale;
 
   // Label events
   let label_click_out_handler: any = null;
@@ -395,6 +399,21 @@ export function Tiles(params: TilesParams) {
       groupWidth: params.groupWidth,
       // For vertical containers
       inlineGroups: params.inlineGroups,
+      // Tile removal work
+      tileRemovalWork(button) {
+        const content = button.getElementsByClassName("tile-content")[0] as HTMLElement;
+        return new Promise((resolve, reject) => {
+          gsap.to(content, {
+            scale: 0,
+            onUpdate() {
+              content.style.scale = String(gsap.getProperty(content, "scale"));
+            },
+            onComplete() { resolve(undefined) },
+            onInterrupt() { resolve(undefined) },
+            duration: 0.1,
+          });
+        });
+      },
     });
 
     // On state update
@@ -561,6 +580,26 @@ export function Tiles(params: TilesParams) {
       // Label color
       if (labelColor) {
         contentDiv.style.color = labelColor;
+      }
+
+      // Tween scale
+      if (scale_reference.current >= 1) {
+        gsap.fromTo(contentDiv, {
+          scale: 0,
+          onUpdate() {
+            contentDiv.style.scale = String(gsap.getProperty(contentDiv, "scale"));
+          },
+        }, {
+          scale: 1,
+          onUpdate() {
+            contentDiv.style.scale = String(gsap.getProperty(contentDiv, "scale"));
+          },
+          onComplete() {
+            contentDiv.style.scale = "";
+            contentDiv.style.transform = "";
+          },
+          duration: 0.1,
+        });
       }
     });
   }
